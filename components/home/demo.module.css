@@ -1,0 +1,104 @@
+.demoScroll { position: relative; flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; background: #fbfaf7; color: #173439; font-family: Arial, Helvetica, sans-serif; scrollbar-width: thin; scrollbar-color: #adb9b8 #f6f5f1; }
+.demoScroll button { cursor: pointer; font: inherit; }
+.demoScroll button:focus-visible { outline: 2px solid #668dbe; outline-offset: 4px; }
+.demoHeader { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; height: 84px; padding: 0 48px; background: #fbfaf7; border-bottom: 1px solid #18333c15; }
+.demoBrand { min-height: 44px; padding: 0; border: 0; background: none; text-align: left; color: #193b40; font-size: 20px !important; font-weight: 600 !important; letter-spacing: 5px; }
+.demoBrand span { display: block; font-size: 7px; letter-spacing: 2px; margin-top: 6px; color: #788582; font-weight: 400; }
+.demoMenuButton { min-height: 44px; min-width: 80px; display: inline-flex; align-items: center; gap: 30px; background: none; border: 0; color: #243c3e; font-size: 12px !important; padding: 12px 0 12px 12px; }
+.demoMenuButton span { font-size: 24px; line-height: 16px; }
+.demoMenu { position: absolute; right: 20px; top: 74px; display: flex; flex-direction: column; width: 240px; background: #fbfaf7; box-shadow: 0 12px 25px #102a3420; padding: 16px; border: 1px solid #e0e5df; }
+.demoMenu button { min-height: 44px; background: none; border: 0; text-align: left; padding: 14px; color: #193a3e; font-size: 13px; }
+.demoMenu button:hover { background: #e9eee9; }
+.marineHero { position: relative; height: 540px; overflow: hidden; background: #0c3341; color: #fff; }
+.marineImage { object-fit: cover; object-position: center; }
+.heroShade { position: absolute; inset: 0; background: linear-gradient(90deg, #021c2ad9, #07222a30 75%); }
+.marineCopy { position: relative; padding: 76px 60px; }
+.marineCopy > p:first-child { font-size: 9px; letter-spacing: 2.5px; margin: 0 0 24px; }
+.marineCopy h2 { font-family: Georgia, "Times New Roman", serif; font-size: 80px; font-weight: 400; letter-spacing: -2px; line-height: 1; margin: 0 0 25px; }
+.marineDescription { font-size: 13px; line-height: 1.8; color: #e2e7e8; margin-bottom: 26px; }
+.lightButton { min-height: 48px; display: inline-flex; align-items: center; justify-content: space-between; gap: 45px; border: 1px solid #f3f2eb; background: #f3f2eb; color: #19383e; padding: 16px 20px; font-size: 11px !important; transition: background .2s, transform .2s; }
+.lightButton:hover { background: #e0e8e0; transform: translateY(-2px); }
+.heroNote { position: absolute; bottom: 25px; right: 35px; font-size: 8px; letter-spacing: 2px; }
+.kicker { font-size: 8px; letter-spacing: 2px; line-height: 1.6; color: #72837f; margin: 0 0 19px; }
+.story { padding: 65px 55px; text-align: center; max-width: 700px; margin-inline: auto; }
+.story h2 { font-family: Georgia, "Times New Roman", serif; font-size: 55px; font-weight: 400; letter-spacing: -1px; line-height: 1.04; margin: 0 0 23px; }
+.story > p:not(.kicker) { color: #75817c; font-size: 13px; line-height: 1.9; max-width: 455px; margin: 0 auto 22px; }
+.story button { min-height: 44px; background: none; border: 0; border-bottom: 1px solid #8b9b95; padding: 6px 0; color: #24433d; font-size: 11px; }
+.story button span { padding-left: 22px; }
+.collection { padding: 50px 48px 60px; border-top: 1px solid #dfe5dd; }
+.collectionHeading { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; }
+.collectionHeading h2 { font-family: Georgia, "Times New Roman", serif; font-size: 43px; font-weight: 400; letter-spacing: -1px; margin: 0; }
+.collectionHeading > span { font-size: 10px; color: #7a8c83; }
+.modelGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.modelCard { background: #fff; border: 1px solid #e4e9e0; color: #203d3d; padding: 0; text-align: left; transition: box-shadow .2s, border-color .2s; }
+.modelCard:hover { box-shadow: 0 5px 15px #1b392610; }
+.selectedModel { border-color: #427165; }
+.modelImage { position: relative; height: 170px; overflow: hidden; background: #12414b; }
+.modelImage img { object-fit: cover; transition: transform .4s; }
+.modelImage1 img { object-position: 70% 65%; transform: scale(1.3); }
+.modelImage2 img { object-position: 80% 50%; transform: scale(1.5); }
+.modelCard:hover .modelImage0 img { transform: scale(1.04); }
+.modelCard:hover .modelImage1 img { transform: scale(1.34); }
+.modelCard:hover .modelImage2 img { transform: scale(1.54); }
+.modelText { padding: 20px; }
+.modelText > span:first-child { font-size: 7px; letter-spacing: .8px; color: #87948a; }
+.modelText h3 { font-family: Georgia, "Times New Roman", serif; font-size: 23px; font-weight: 400; margin: 12px 0; }
+.modelText p { font-size: 10px; color: #7d887f; margin: 0 0 20px; }
+.modelText p span { padding: 0 5px; }
+.modelAction { display: flex; justify-content: space-between; font-size: 10px; color: #486b5a; }
+.modelDetails { margin-top: 25px; border-top: 1px solid #dfe5dd; padding-top: 25px; }
+.modelDetails .kicker { margin-bottom: 10px; }
+.modelDetails h3 { font-family: Georgia, "Times New Roman", serif; font-size: 25px; font-weight: 400; margin: 0 0 10px; }
+.modelDetails > p:not(.kicker) { color: #708078; font-size: 12px; line-height: 1.8; max-width: 570px; }
+.modelDetails > span { font-size: 10px; color: #335a4e; }
+.viewing { background: #183b3e; color: #f5f4eb; text-align: center; padding: 64px 28px; }
+.viewing .kicker { color: #a3b7af; }
+.viewing h2 { font-family: Georgia, "Times New Roman", serif; font-size: 52px; font-weight: 400; letter-spacing: -1px; line-height: 1.05; margin: 0 0 28px; }
+.demoNotice { max-width: 450px; margin: 25px auto 0; font-size: 12px; line-height: 1.8; color: #c5d4c9; }
+.demoFooter { display: flex; justify-content: space-between; align-items: center; padding: 28px 40px; gap: 25px; }
+.demoFooter > span:first-child { font-size: 11px; letter-spacing: 3px; }
+.demoFooter > span:last-child { color: #8b958c; font-size: 9px; line-height: 1.7; }
+@media (max-width: 900px) {
+  .demoHeader { padding-inline: 30px; }
+  .marineCopy { padding: 72px 35px; }
+  .marineCopy h2 { font-size: 64px; }
+  .collection { padding-inline: 28px; }
+  .modelGrid { gap: 12px; }
+  .modelText { padding: 15px; }
+  .modelText h3 { font-size: 20px; }
+  .modelImage { height: 140px; }
+}
+@media (max-width: 620px) {
+  .demoHeader { height: 70px; padding-inline: 20px; }
+  .demoBrand { font-size: 15px !important; letter-spacing: 3px; }
+  .demoBrand span { font-size: 5px; letter-spacing: 1px; }
+  .demoMenuButton { gap: 16px; font-size: 10px !important; }
+  .demoMenu { right: 12px; top: 61px; max-width: calc(100% - 24px); }
+  .marineHero { height: 465px; }
+  .marineImage { object-position: 63% center; }
+  .heroShade { background: #061e3266; }
+  .marineCopy { padding: 73px 24px; }
+  .marineCopy > p:first-child { font-size: 7px; letter-spacing: 1.8px; }
+  .marineCopy h2 { font-size: clamp(42px, 13vw, 61px); letter-spacing: -1.5px; }
+  .marineDescription { font-size: 12px; }
+  .lightButton { font-size: 10px !important; padding: 14px 16px; gap: 25px; }
+  .heroNote { right: 22px; bottom: 23px; font-size: 6px; letter-spacing: 1px; }
+  .story { padding: 48px 27px; }
+  .story h2 { font-size: 44px; }
+  .story > p:not(.kicker) { font-size: 12px; }
+  .collection { padding: 36px 22px 45px; }
+  .collectionHeading h2 { font-size: 36px; }
+  .kicker { font-size: 6px; letter-spacing: 1.5px; }
+  .modelGrid { grid-template-columns: 1fr; gap: 20px; }
+  .modelImage { height: 195px; }
+  .modelText { padding: 20px; }
+  .modelText h3 { font-size: 26px; }
+  .viewing { padding: 48px 23px; }
+  .viewing h2 { font-size: 42px; }
+  .demoFooter { flex-direction: column; align-items: flex-start; padding: 26px 23px; gap: 16px; }
+  .demoFooter > span:last-child { font-size: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .demoScroll *, .demoScroll { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+  .lightButton:hover { transform: none; }
+}

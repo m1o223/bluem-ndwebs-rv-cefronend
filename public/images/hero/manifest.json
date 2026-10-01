@@ -1,0 +1,56 @@
+{
+  "source": {
+    "width": 1254,
+    "height": 1254,
+    "format": "jpeg",
+    "sha256": "b779c4ce7afc0a6d776b1f130aaf89f3a932b2114a345ed0e8ece629e836140b"
+  },
+  "crop": {
+    "left": 115,
+    "top": 230,
+    "width": 1024,
+    "height": 768
+  },
+  "format": "webp",
+  "lossless": true,
+  "quality": 100,
+  "upscaled": false,
+  "variants": [
+    {
+      "filename": "bluemind-hero-256.webp",
+      "width": 256,
+      "height": 192,
+      "bytes": 9050
+    },
+    {
+      "filename": "bluemind-hero-384.webp",
+      "width": 384,
+      "height": 288,
+      "bytes": 15728
+    },
+    {
+      "filename": "bluemind-hero-512.webp",
+      "width": 512,
+      "height": 384,
+      "bytes": 23794
+    },
+    {
+      "filename": "bluemind-hero-640.webp",
+      "width": 640,
+      "height": 480,
+      "bytes": 33036
+    },
+    {
+      "filename": "bluemind-hero-768.webp",
+      "width": 768,
+      "height": 576,
+      "bytes": 45700
+    },
+    {
+      "filename": "bluemind-hero-1024.webp",
+      "width": 1024,
+      "height": 768,
+      "bytes": 68538
+    }
+  ]
+}

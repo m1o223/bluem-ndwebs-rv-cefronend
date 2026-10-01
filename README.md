@@ -1,11 +1,15 @@
-# BlueMind Web Service — frontend infrastructure
+# BlueMind Web Service — frontend
 
-Temporary connectivity test only. No product features or UI design.
+Home has a white, minimal agency layout: orbit hero, one interactive project showcase, short company summary, final CTA, and footer. The other six routes remain centered page-name placeholders.
 
-Requires Node.js 22. Run `npm ci`, copy `.env.example` to `.env.local`, then `npm run dev`.
-Open http://localhost:3000 with the backend running on port 4000.
-Validate with `npm run build` and `npm run typecheck`.
+Requires Node.js 22. Run `npm ci`, then `npm run dev` and open http://localhost:3000. Validate with `npm run typecheck` and `npm run build`; serve that build with `npm start`.
 
-Deploy this repository root to Vercel. Set production `NEXT_PUBLIC_API_BASE_URL` to the verified HTTPS Render service origin and redeploy: public variables are embedded at build time. Never put credentials in a NEXT_PUBLIC variable. Do not use the localhost value in production.
+Routes: `/`, `/about`, `/services`, `/our-work`, `/how-we-work`, `/quote`, `/contact`.
 
-The page performs a browser request directly to `/api/health` and validates the response. A timeout or invalid response shows Failed.
+NORTH SEA is a fictional marine demo rendered inside a native modal dialog on Home. It has independent scrolling, a navigation menu, model selection, and a demo-only viewing action. Closing with the button, Escape, or backdrop restores the previous Home scroll position and focus. Reduced-motion preferences disable animation.
+
+No backend integration, authentication, database logic, or third-party tracking is used. No additional packages were installed. Existing environment templates are preserved for future infrastructure work.
+
+The Hero uses the supplied BlueMind image, cropped only around its white margins, in responsive lossless WebP sizes. The small SVG navigation mark remains temporary. The marine asset is original generated imagery stored locally; see `public/images/ASSET-NOTES.md` for image dimensions, export settings, provenance, and prompt.
+
+The tablet layout uses a compact menu up to 1120px, its own hero proportions and typography, and a three-column expanded navigation. Home and demo navigation/controls have minimum 44px touch targets. Portrait and landscape layouts adapt continuously between breakpoints.
