@@ -1,18 +1,30 @@
 import Link from "next/link";
-import HeroImage from "./hero-image";
-import styles from "./home.module.css";
+import HeroVisual from "./hero-visual";
+import PlanetWatermark from "./planet-watermark";
+import shared from "./home.module.css";
+import styles from "./hero.module.css";
 
 export default function Hero() {
   return (
-    <section className={`${styles.hero} ${styles.container}`} aria-labelledby="hero-title">
-      <div className={styles.heroCopy}>
-        <p className={styles.eyebrow}><span className={styles.blueDot} /> BLUEMIND WEB SERVICE</p>
-        <h1 id="hero-title">We design digital<br className={styles.desktopBreak} /> experiences that<br className={styles.desktopBreak} /> move businesses<br className={styles.desktopBreak} /> <span>forward.</span></h1>
-        <p className={styles.heroDescription}>Modern websites built with thoughtful design,<br className={styles.desktopBreak} /> clean development, and strong performance.</p>
-        <div className={styles.actions}><Link href="/quote" className={styles.primaryButton}>Get Started <span aria-hidden="true">↗</span></Link><Link href="/how-we-work" className={styles.textButton}>How We Work <span aria-hidden="true">→</span></Link></div>
+    <section className={styles.hero} aria-labelledby="hero-title" data-hero>
+      <PlanetWatermark />
+      <div className={styles.inner}>
+        <div className={styles.copy}>
+          <p className={`${shared.eyebrow} ${styles.eyebrow}`}><span className={shared.blueDot} /> BLUEMIND WEB SERVICE</p>
+          <h1 id="hero-title" className={styles.headline}>
+            <span>We design.</span>
+            <span>We develop.</span>
+            <span className={styles.accent}>You move forward.</span>
+          </h1>
+          <p className={styles.description}>Thoughtfully designed. Expertly developed.<br />Websites that move your business forward.</p>
+          <div className={`${shared.actions} ${styles.actions}`}>
+            <Link href="/quote" className={shared.primaryButton}>Get Started <span aria-hidden="true">↗</span></Link>
+            <Link href="/our-work" className={shared.textButton}>View Our Work <span aria-hidden="true">→</span></Link>
+          </div>
+        </div>
+        <HeroVisual />
+        <a className={styles.scrollCue} href="#selected-work"><span aria-hidden="true">↓</span> SCROLL TO EXPLORE</a>
       </div>
-      <HeroImage />
-      <a className={styles.scrollCue} href="#selected-work"><span aria-hidden="true">↓</span> SCROLL TO EXPLORE</a>
     </section>
   );
 }

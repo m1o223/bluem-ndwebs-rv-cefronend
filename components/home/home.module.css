@@ -66,13 +66,8 @@
 .homeNav .navCta { display: inline-flex; align-items: center; gap: 18px; padding: 13px 17px; border: 1px solid #dfe3e9; border-radius: 5px; color: #181d26; margin-left: 4px; transition: border-color .2s, background .2s; }
 .homeNav .navCta:hover { background: #f6f8fc; border-color: #a9b4c8; }
 .menuToggle { display: none; }
-.hero { position: relative; display: grid; grid-template-columns: 1.24fr 1fr; align-items: center; padding-top: 74px; padding-bottom: 91px; gap: 10px; }
-.heroCopy { position: relative; z-index: 1; animation: enter .8s ease-out both; }
 .eyebrow { display: flex; align-items: center; gap: 9px; color: #6a7381; font-size: 10px; line-height: 1.5; font-weight: 600; letter-spacing: 1.8px; margin: 0 0 24px; }
 .blueDot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: #2860e5; flex-shrink: 0; }
-.hero h1 { margin: 0; font-size: clamp(46px, 4.85vw, 68px); line-height: 1.08; font-weight: 500; letter-spacing: -3.5px; }
-.hero h1 > span { color: #2a61df; }
-.heroDescription { font-size: 14px; line-height: 1.8; color: #727983; margin: 25px 0 28px; }
 .actions { display: flex; align-items: center; flex-wrap: wrap; gap: 26px; }
 .primaryButton { min-height: 48px; display: inline-flex; align-items: center; justify-content: space-between; gap: 35px; font-size: 12px; line-height: 1.4; color: #fff; background: #171c25; border: 1px solid #171c25; padding: 16px 22px; border-radius: 5px; transition: background .2s, transform .2s; }
 .primaryButton:hover { background: #2b3b58; transform: translateY(-2px); }
@@ -80,10 +75,6 @@
 .textButton { min-height: 44px; display: inline-flex; align-items: center; gap: 17px; color: #272d37; font-size: 12px; line-height: 1.4; padding-block: 10px; }
 .textButton:hover { color: #2860e5; }
 .textButton span { font-size: 17px; }
-.heroArtwork { display: block; width: 100%; max-width: 512px; aspect-ratio: 4 / 3; justify-self: center; }
-.heroImage { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: contain; object-position: center; }
-.scrollCue { position: absolute; bottom: 28px; left: 0; display: inline-flex; align-items: center; gap: 15px; font-size: 8px; letter-spacing: 1.6px; color: #7b8390; }
-.scrollCue span { font-size: 19px; letter-spacing: 0; color: #333e50; }
 .showcase { background: #f6f7f9; border-block: 1px solid #edf0f3; padding: 64px 0 45px; scroll-margin-top: 25px; }
 .sectionHeading { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 31px; gap: 30px; }
 .sectionHeading .eyebrow { margin-bottom: 12px; }
@@ -145,7 +136,6 @@
 .closeButton { min-height: 44px; display: inline-flex; align-items: center; gap: 15px; color: #202938; border: 1px solid #dce1e8; border-radius: 4px; background: #fff; padding: 9px 12px; font-size: 12px !important; cursor: pointer; white-space: nowrap; }
 .closeButton:hover { background: #f2f5fa; }
 .closeButton span { font-size: 19px; line-height: 12px; }
-@keyframes enter { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes viewer-enter { from { opacity: 0; transform: translateY(25px) scale(.975); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes viewer-exit { to { opacity: 0; transform: translateY(12px) scale(.985); } }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
@@ -155,8 +145,6 @@
   .homeNav a { font-size: 11px; }
   .brand { font-size: 20px; }
   .brand svg { width: 40px; height: 40px; }
-  .hero { padding-top: 60px; }
-  .hero h1 { letter-spacing: -2.5px; }
 }
 @media (max-width: 1120px) {
   .container { width: calc(100% - 56px); }
@@ -167,9 +155,6 @@
   .navExpanded { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 20px; }
   .homeNav a { font-size: 13px; justify-content: flex-start; }
   .homeNav .navCta { margin-left: 0; }
-  .hero { grid-template-columns: 1.2fr 1fr; gap: 30px; padding-block: 52px 78px; }
-  .hero h1 { font-size: clamp(38px, 4.7vw, 50px); line-height: 1.12; }
-  .heroDescription { font-size: 13px; }
   .actions { gap: 18px; }
   .primaryButton { padding: 14px 17px; gap: 24px; }
   .about { gap: 40px; padding-block: 65px; }
@@ -188,14 +173,8 @@
   .brandSub { font-size: 9px; letter-spacing: 1.6px; }
   .navExpanded { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 15px; }
   .homeNav { left: -16px; right: -16px; padding: 22px 24px; }
-  .hero { grid-template-columns: 1fr; gap: 20px; padding-top: 42px; padding-bottom: 64px; }
-  .hero h1 { font-size: clamp(39px, 10.1vw, 54px); line-height: 1.1; letter-spacing: -2px; }
   .eyebrow { font-size: 8px; letter-spacing: 1.5px; margin-bottom: 20px; }
-  .heroDescription { font-size: 13px; line-height: 1.8; margin-block: 23px 25px; }
   .desktopBreak { display: none; }
-  .hero h1 .desktopBreak { display: block; }
-  .heroArtwork { max-width: 245px; margin: 0 auto; }
-  .scrollCue { bottom: 19px; font-size: 7px; }
   .showcase { padding-block: 42px 35px; }
   .sectionHeading { align-items: flex-start; flex-direction: column; gap: 14px; margin-bottom: 25px; }
   .sectionHeading h2 { font-size: 33px; }

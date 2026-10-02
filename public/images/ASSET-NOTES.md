@@ -10,11 +10,11 @@ The Home Hero now uses the user's supplied `5906666964128566900.jpg` (1254 × 12
 
 `hero/bluemind-hero-{256,384,512,640,768,1024}.webp` are deterministic responsive exports, at a 4:3 ratio. WebP lossless, quality 100, effort 6; Lanczos3 downsampling only for smaller sizes. Decoded pixels in the 1024 × 768 export exactly match the original crop. See `hero/manifest.json` for dimensions, byte sizes, and the original checksum.
 
-A responsive HTML picture chooses the required resolution by viewport and pixel density, with eager loading/high fetch priority. Explicit dimensions and a reserved 4:3 aspect ratio prevent layout shift. Pre-generated lossless assets bypass further lossy image optimization. Desktop at 2× selects 1024 × 768; tablet at 2× selects 640 × 480; mobile at 2× selects 512 × 384 and at 3× selects 768 × 576. No true 4K detail can be created from this source.
+A responsive HTML picture chooses the closest available resolution by viewport and pixel density, up to the source crop's native 1024 × 768 dimensions. Eager loading, explicit dimensions, and a reserved 4:3 aspect ratio prevent layout shift. Pre-generated lossless assets bypass further lossy image optimization. The watermark uses the largest export on high-DPI displays; no new detail or true 4K resolution is manufactured from this source.
 
 To reproduce exports without altering the source, run `node scripts/prepare-hero-image.mjs <path-to-original-jpeg>` from the frontend root. Sharp is already installed through Next.js; no dependencies were added.
 
-The small SVG navigation mark in `components/home/planet.tsx` remains the temporary version; this update changes only the Home Hero image.
+The supplied image is now a top-right Hero background watermark at 9% opacity, behind reusable HTML/CSS website and code previews. The image exports are unchanged. `planet-watermark.tsx` reserves its 4:3 ratio and uses viewport-aware source selection; the small SVG navigation mark in `components/home/planet.tsx` remains the temporary version.
 
 # Supplied BlueMind browser and app icons
 
