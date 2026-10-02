@@ -1,0 +1,22 @@
+{
+  "name": "BlueMind Web Service",
+  "short_name": "BlueMind",
+  "start_url": "/",
+  "scope": "/",
+  "display": "browser",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/icons/bluemind-192-894db5406f99.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/bluemind-512-8e7ece442cf9.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

@@ -15,3 +15,11 @@ A responsive HTML picture chooses the required resolution by viewport and pixel 
 To reproduce exports without altering the source, run `node scripts/prepare-hero-image.mjs <path-to-original-jpeg>` from the frontend root. Sharp is already installed through Next.js; no dependencies were added.
 
 The small SVG navigation mark in `components/home/planet.tsx` remains the temporary version; this update changes only the Home Hero image.
+
+# Supplied BlueMind browser and app icons
+
+The favicon and app icons use the same original `5906666964128566900.jpg` (1254 × 1254, SHA-256 `b779c4ce7afc0a6d776b1f130aaf89f3a932b2114a345ed0e8ece629e836140b`). A square whitespace crop (left 184, top 163, width/height 900) preserves the complete black planet and orbit without distortion. The source remains unchanged. Its original opaque white background is retained; no artwork was redrawn, recolored, sharpened, or enlarged.
+
+Lossless PNG exports in `public/icons/` are 16, 32, 48, 64, 128, 152, 167, 180, 192, and 512 pixels square, resized with Lanczos3 and PNG compression level 9 (lossless). `public/favicon.ico` contains native 16/32/48/64-pixel 32-bit bitmap frames. Apple touch icons use 152/167/180-pixel PNGs; the lightweight `public/site.webmanifest` references 192/512-pixel PNGs. No service worker or installation flow is added.
+
+Next.js root metadata imports the generated `app/favicon-metadata.json`, so every current route inherits the same icons. PNG filenames contain their content hashes; ICO and manifest URLs include content versions to avoid stale caches. To reproduce the assets and metadata, run `node scripts/prepare-icons.mjs <path-to-original-jpeg>` from the frontend root. Sharp is already installed through Next.js; no package was added.

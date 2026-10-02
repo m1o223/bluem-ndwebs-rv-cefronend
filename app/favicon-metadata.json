@@ -1,0 +1,50 @@
+{
+  "icons": {
+    "icon": [
+      {
+        "url": "/favicon.ico?v=5d702d9ed66f",
+        "type": "image/x-icon",
+        "sizes": "16x16 32x32 48x48 64x64"
+      },
+      {
+        "url": "/icons/bluemind-16-d2c4607c1f38.png",
+        "sizes": "16x16",
+        "type": "image/png"
+      },
+      {
+        "url": "/icons/bluemind-32-2c109a90cab9.png",
+        "sizes": "32x32",
+        "type": "image/png"
+      },
+      {
+        "url": "/icons/bluemind-48-874d3d572525.png",
+        "sizes": "48x48",
+        "type": "image/png"
+      },
+      {
+        "url": "/icons/bluemind-64-4fc14061262e.png",
+        "sizes": "64x64",
+        "type": "image/png"
+      }
+    ],
+    "shortcut": "/favicon.ico?v=5d702d9ed66f",
+    "apple": [
+      {
+        "url": "/icons/bluemind-152-b99b5f74776c.png",
+        "sizes": "152x152",
+        "type": "image/png"
+      },
+      {
+        "url": "/icons/bluemind-167-0f7917de3d33.png",
+        "sizes": "167x167",
+        "type": "image/png"
+      },
+      {
+        "url": "/icons/bluemind-180-4bf4c21ff471.png",
+        "sizes": "180x180",
+        "type": "image/png"
+      }
+    ]
+  },
+  "manifest": "/site.webmanifest?v=b1cc1263f4d0"
+}
