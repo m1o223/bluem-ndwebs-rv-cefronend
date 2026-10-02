@@ -18,7 +18,7 @@
     transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
-.card:focus-visible {
+.card:focus-visible:not(:disabled) {
   outline: 2px solid #171717;
   outline-offset: 5px;
 }
@@ -38,12 +38,19 @@
   z-index: 3;
   display: grid;
   place-items: center;
-  background: #15151555;
-  opacity: 0;
+  background: transparent;
   pointer-events: none;
-  transition: opacity 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: background-color 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
-.hoverOverlay > span {
+.cardCta {
+  position: absolute;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  transition:
+    bottom 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
   padding: 14px 24px;
   border: 1px solid #fff;
   border-radius: 12px;
@@ -57,7 +64,11 @@
   filter: blur(8px);
 }
 .card:focus-visible .hoverOverlay {
-  opacity: 1;
+  background: #15151555;
+}
+.card:focus-visible .cardCta {
+  bottom: 50%;
+  transform: translate(-50%, 50%);
 }
 @media (hover: hover) and (pointer: fine) {
   .card:hover {
@@ -68,23 +79,18 @@
     filter: blur(8px);
   }
   .card:hover .hoverOverlay {
-    opacity: 1;
+    background: #15151555;
+  }
+  .card:hover .cardCta {
+    bottom: 50%;
+    transform: translate(-50%, 50%);
   }
 }
 .category {
   display: block;
   margin-top: 6px;
-  font-size: 10px;
+  font-size: 12px;
   color: #60656c;
-}
-.cardCta {
-  flex-shrink: 0;
-  padding: 10px 12px;
-  border: 1px solid #d0d0d0;
-  border-radius: 8px;
-  color: #181818;
-  font-size: 11px;
-  white-space: nowrap;
 }
 .toolbar {
   display: flex;
@@ -146,13 +152,6 @@
   line-height: 1.08;
   letter-spacing: -1px;
   margin: 13px 0 20px;
-}
-.miniButton {
-  display: inline-block;
-  padding: 10px 13px;
-  font-size: 8px;
-  border: 1px solid currentColor;
-  background: #ffffffb0;
 }
 .productArt {
   position: absolute;
@@ -221,10 +220,6 @@
 .preview[data-preview="real-estate"] .previewCopy {
   width: 82%;
 }
-.preview[data-preview="photography"] .miniButton,
-.preview[data-preview="real-estate"] .miniButton {
-  background: #ffffff10;
-}
 .preview[data-preview="furniture"] .previewCopy {
   margin-top: 25px;
   padding: 18px;
@@ -272,11 +267,11 @@
   align-self: center;
   font-size: 12px;
 }
-.hint {
-  font-size: 11px;
-  color: #808996;
+.disclosure {
+  font-size: 13px;
+  color: #59616d;
   line-height: 1.6;
-  margin: 28px 0 0;
+  margin: -12px 0 28px;
 }
 @media (max-width: 700px) {
   .grid {
@@ -294,11 +289,33 @@
 @media (prefers-reduced-motion: reduce) {
   .card,
   .preview,
-  .hoverOverlay {
+  .hoverOverlay,
+  .cardCta {
     transition: none;
   }
   .card:hover,
   .card:active {
     transform: none;
+  }
+}
+
+.revealSection {
+  overflow-x: clip;
+}
+.reveal {
+  --reveal-distance: 32px;
+  min-width: 0;
+}
+.reveal > .card {
+  height: 100%;
+}
+@media (max-width: 1050px) {
+  .reveal {
+    --reveal-distance: 24px;
+  }
+}
+@media (max-width: 700px) {
+  .reveal {
+    --reveal-distance: 14px;
   }
 }

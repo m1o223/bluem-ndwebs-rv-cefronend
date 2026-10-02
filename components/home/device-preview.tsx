@@ -74,6 +74,8 @@ export default function DevicePreview({
       box.style.height = `${h * scale}px`;
     }
     const sizeObserver = new ResizeObserver(() => {
+      // A minimized native dialog has no box; retain the mounted demo and viewport.
+      if (!host.clientWidth || !host.clientHeight) return;
       setAvailable({
         width: host.clientWidth,
         height: host.clientHeight,

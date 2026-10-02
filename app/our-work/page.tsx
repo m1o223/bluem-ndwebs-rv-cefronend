@@ -1,3 +1,3 @@
 export default function OurWorkPage() {
-  return <h1>Our Work</h1>;
+  return <h1>Website Concepts</h1>;
 }

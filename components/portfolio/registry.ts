@@ -5,7 +5,7 @@ export const projects = [
   {
     id: "ecommerce",
     brand: "MORROW",
-    category: "E-Commerce",
+    category: "E-Commerce Concept",
     title: "Good skin. Simple days.",
     description: "A considered skincare store, from discovery to checkout.",
     color: "#dce5d4",
@@ -15,7 +15,7 @@ export const projects = [
   {
     id: "ai-platform",
     brand: "ASTER",
-    category: "AI Platform",
+    category: "AI Platform Concept",
     title: "Space for your ideas.",
     description:
       "A thoughtful writing workspace that turns a spark into a first draft.",
@@ -26,7 +26,7 @@ export const projects = [
   {
     id: "photography",
     brand: "JUNE ATLAS",
-    category: "Photography / Gallery",
+    category: "Photography Concept",
     title: "A story in the stillness.",
     description: "An editorial archive of places, spaces and ways of seeing.",
     color: "#1d2926",
@@ -36,7 +36,7 @@ export const projects = [
   {
     id: "corporate",
     brand: "MERIDIAN",
-    category: "Corporate Company",
+    category: "Corporate Website Concept",
     title: "A clearer way forward.",
     description:
       "Independent thinking and connected expertise for a new chapter.",
@@ -47,7 +47,7 @@ export const projects = [
   {
     id: "furniture",
     brand: "FORM & FIELD",
-    category: "Furniture / Interior",
+    category: "Furniture & Interior Concept",
     title: "Made for living.",
     description:
       "Quiet forms, honest materials and a home that feels like you.",
@@ -58,7 +58,7 @@ export const projects = [
   {
     id: "real-estate",
     brand: "HAVEN",
-    category: "Real Estate",
+    category: "Real Estate Concept",
     title: "Find a home. Feel at home.",
     description:
       "Thoughtfully selected spaces and a more personal property search.",
@@ -69,7 +69,7 @@ export const projects = [
   {
     id: "restaurant",
     brand: "SERA",
-    category: "Restaurant",
+    category: "Restaurant Concept",
     title: "A little Italy. A good evening.",
     description:
       "Fresh pasta, seasonal plates and an unhurried neighbourhood table.",

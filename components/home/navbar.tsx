@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import Planet from "./planet";
 import styles from "./home.module.css";
 
-const links = [["/", "Home"], ["/about", "About Us"], ["/services", "Services"], ["/our-work", "Our Work"], ["/how-we-work", "How We Work"], ["/contact", "Contact"]];
+const links = [["/", "Home"], ["/about", "About Us"], ["/services", "Services"], ["/#selected-work", "Website Concepts"], ["/how-we-work", "How We Work"], ["/contact", "Contact"]];
 
 export default function Navbar() {
   const [expanded, setExpanded] = useState(false);
