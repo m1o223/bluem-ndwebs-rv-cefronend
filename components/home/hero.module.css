@@ -6,7 +6,15 @@
 .headline > span { display: block; }
 .headline .accent { color: #2a61df; font-size: .89em; margin-top: 7px; letter-spacing: -2.7px; }
 .description { max-width: 400px; margin: 26px 0 30px; color: #727983; font-size: 14px; line-height: 1.85; }
-.actions { gap: 25px; }
+.hero .actions { gap: 14px; }
+.ctaButton { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; height: 54px; padding: 0 28px; border: 1px solid #171717; border-radius: 16px; background: #fff; color: #171717; font-size: 16px; font-weight: 500; line-height: 1.25; white-space: nowrap; touch-action: manipulation; transition: transform 200ms cubic-bezier(.22, 1, .36, 1), box-shadow 200ms ease-out; }
+.primaryCta { border-width: 2px; font-weight: 600; }
+.hero .ctaButton:focus-visible { outline: 2px solid #171717; outline-offset: 4px; }
+@media (hover: hover) and (pointer: fine) {
+  .ctaButton:hover { transform: translateY(-2px); box-shadow: 0 4px 10px #0000000a; }
+  .primaryCta:hover { box-shadow: 0 6px 14px #0000000f; }
+}
+.ctaButton:active { transform: translateY(1px); box-shadow: none; transition-duration: 100ms; }
 .planet { position: absolute; z-index: -1; display: block; width: 720px; aspect-ratio: 4 / 3; top: -135px; right: -125px; opacity: .09; pointer-events: none; user-select: none; }
 .planetImage { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: contain; }
 .visual { position: relative; width: 100%; min-width: 0; height: 526px; margin: 0; container-type: inline-size; }
@@ -147,7 +155,6 @@
   .headline .accent { font-size: .86em; letter-spacing: -1.5px; margin-top: 6px; }
   .eyebrow { margin-bottom: 19px; }
   .description { font-size: 12px; line-height: 1.8; margin-block: 21px 22px; }
-  .actions { gap: 21px; }
   .visual { height: 374px; }
   .websiteWindow { top: 115px; width: 94%; border-radius: 7px; }
   .codeWindow { width: 88%; border-radius: 7px; }
@@ -199,4 +206,5 @@
 @media (prefers-reduced-motion: reduce) {
   .hero *, .hero *::before, .hero *::after { animation: none !important; transition: none !important; }
   .websiteWindow:hover { transform: none; }
+  .ctaButton:hover, .ctaButton:active { transform: none; }
 }

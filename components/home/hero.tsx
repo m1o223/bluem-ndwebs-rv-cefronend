@@ -18,8 +18,8 @@ export default function Hero() {
           </h1>
           <p className={styles.description}>Thoughtfully designed. Expertly developed.<br />Websites that move your business forward.</p>
           <div className={`${shared.actions} ${styles.actions}`}>
-            <Link href="/quote" className={shared.primaryButton}>Get Started <span aria-hidden="true">↗</span></Link>
-            <Link href="/our-work" className={shared.textButton}>View Our Work <span aria-hidden="true">→</span></Link>
+            <Link href="/quote" className={`${styles.ctaButton} ${styles.primaryCta}`}>Get Started</Link>
+            <Link href="/our-work" className={styles.ctaButton}>View Our Work</Link>
           </div>
         </div>
         <HeroVisual />
