@@ -3,7 +3,7 @@
     "name": "forest",
     "source": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=max&w=2000&q=92",
     "license": "https://unsplash.com/license",
-    "bytes": 914198,
+    "bytes": 882500,
     "width": 2000,
     "height": 1332
   },
@@ -19,7 +19,7 @@
     "name": "interior",
     "source": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=max&w=2000&q=92",
     "license": "https://unsplash.com/license",
-    "bytes": 533403,
+    "bytes": 437186,
     "width": 2000,
     "height": 1360
   },
@@ -35,7 +35,7 @@
     "name": "kitchen",
     "source": "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=max&w=2000&q=92",
     "license": "https://unsplash.com/license",
-    "bytes": 432218,
+    "bytes": 300284,
     "width": 2000,
     "height": 1333
   },
@@ -43,7 +43,7 @@
     "name": "cottage",
     "source": "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=max&w=2000&q=92",
     "license": "https://unsplash.com/license",
-    "bytes": 532635,
+    "bytes": 382370,
     "width": 2000,
     "height": 1334
   },
@@ -51,7 +51,7 @@
     "name": "coast",
     "source": "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=max&w=2000&q=92",
     "license": "https://unsplash.com/license",
-    "bytes": 329235,
+    "bytes": 226272,
     "width": 2000,
     "height": 1333
   },
@@ -59,7 +59,7 @@
     "name": "lake",
     "source": "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=max&w=2000&q=92",
     "license": "https://unsplash.com/license",
-    "bytes": 636523,
+    "bytes": 541932,
     "width": 2000,
     "height": 1333
   },
@@ -91,7 +91,7 @@
     "name": "pasta",
     "source": "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=max&w=2000&q=92",
     "license": "https://unsplash.com/license",
-    "bytes": 474496,
+    "bytes": 365024,
     "width": 2000,
     "height": 1246
   },
@@ -99,7 +99,7 @@
     "name": "office",
     "source": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=max&w=2000&q=92",
     "license": "https://unsplash.com/license",
-    "bytes": 442943,
+    "bytes": 269930,
     "width": 2000,
     "height": 1335
   },
@@ -107,7 +107,7 @@
     "name": "workspace",
     "source": "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=max&w=2000&q=92",
     "license": "https://unsplash.com/license",
-    "bytes": 425819,
+    "bytes": 252210,
     "width": 2000,
     "height": 1335
   },
