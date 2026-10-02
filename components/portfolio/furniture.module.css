@@ -1,0 +1,721 @@
+.project {
+  --paper: #f8f6f1;
+  --ink: #403c31;
+  --accent: #786b4c;
+  background: var(--paper);
+  color: var(--ink);
+}
+.announcement {
+  text-align: center;
+  padding: 9px 20px;
+  background: #68634f;
+  color: #f7f3e6;
+  font-size: 10px;
+  letter-spacing: 0.8px;
+}
+.hero {
+  min-height: 665px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 60px 6%;
+}
+.heroPhoto {
+  position: absolute !important;
+  inset: 0;
+}
+.heroPhoto img {
+  object-position: center 58%;
+}
+.heroCard {
+  position: relative;
+  max-width: 410px;
+  padding: 38px 38px 40px;
+  background: #f7f4ebf2;
+}
+.eyebrow {
+  font-size: 9px;
+  line-height: 1.6;
+  letter-spacing: 1.7px;
+  color: #827b67;
+  margin: 0 0 24px;
+}
+.hero h1 {
+  font-family: Georgia, serif;
+  font-size: 78px;
+  font-weight: 400;
+  letter-spacing: -3px;
+  line-height: 0.99;
+  margin: 0 0 25px;
+}
+.hero em {
+  color: #797456;
+}
+.heroCard > p:not(.eyebrow) {
+  font-size: 13px;
+  color: #7f7968;
+  margin-bottom: 27px;
+}
+.primary {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #5e604b;
+  background: #5e604b;
+  color: #fffbed;
+  padding: 14px 22px;
+  font-size: 12px !important;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+.primary:hover {
+  background: #454d36;
+  transform: translateY(-1px);
+}
+.heroCaption {
+  position: absolute;
+  right: 30px;
+  bottom: 25px;
+  font-size: 8px;
+  letter-spacing: 1.6px;
+  background: #f5efdfc9;
+  padding: 9px 13px;
+}
+.collection {
+  padding: 75px 6% 50px;
+}
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+.heading h2,
+.spaces h2,
+.consultation h2 {
+  font-family: Georgia, serif;
+  font-size: 45px;
+  font-weight: 400;
+  line-height: 1.14;
+  letter-spacing: -1.4px;
+  margin: 0;
+}
+.heading > p {
+  font-size: 12px;
+  color: #87826e;
+  margin: 0;
+}
+.filters {
+  display: flex;
+  gap: 25px;
+  border-bottom: 1px solid #d8d4c6;
+  margin-bottom: 30px;
+}
+.filters button {
+  min-height: 44px;
+  border: 0;
+  background: none;
+  color: #8a836c;
+  font-size: 12px !important;
+  padding: 12px 0;
+  border-bottom: 1px solid transparent;
+}
+.filters button[aria-pressed="true"] {
+  color: #403e2e;
+  border-bottom-color: #403e2e;
+}
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 25px;
+}
+.product {
+  padding: 0;
+  text-align: left;
+  border: 0;
+  background: none;
+  color: inherit;
+}
+.productPhoto {
+  height: 350px;
+  background: #eeeee7;
+}
+.productPhoto img {
+  object-position: center 57%;
+  transition: transform 0.4s;
+}
+.product:hover .productPhoto img {
+  transform: scale(1.02);
+}
+.objectPhoto img {
+  object-position: 67% center;
+}
+.product > div:last-child {
+  padding-top: 21px;
+}
+.product > div > span {
+  font-size: 9px;
+  color: #928a73;
+}
+.product h3 {
+  font-family: Georgia, serif;
+  font-size: 24px;
+  font-weight: 400;
+  margin: 12px 0;
+}
+.product p {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11px;
+  color: #77785f;
+}
+.product p > span {
+  font-size: 9px;
+}
+.miniSwatches {
+  display: flex;
+  gap: 6px;
+  margin-top: 17px;
+}
+.miniSwatches i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1px solid #0001;
+}
+.notice {
+  min-height: 25px;
+  font-size: 12px;
+  color: #7c7e58;
+  margin: 24px 0 0;
+}
+.spaces {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  background: #eae7dc;
+}
+.spacePhoto {
+  min-height: 550px;
+}
+.spaces > div:last-child {
+  padding: 65px 12%;
+  align-self: center;
+}
+.spaces h2 {
+  font-size: 50px;
+}
+.spaces h2 em {
+  color: #848363;
+}
+.spaces > div > p:not(.eyebrow) {
+  font-size: 13px;
+  color: #827f6b;
+  margin-block: 25px;
+}
+.textButton {
+  min-height: 44px;
+  padding: 12px 0;
+  border: 0;
+  border-bottom: 1px solid #9f9e82;
+  background: none;
+  color: #5e6347;
+  font-size: 11px !important;
+  text-align: left;
+}
+.materials {
+  padding: 75px 6%;
+}
+.materialGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+.materialArt {
+  height: 200px;
+}
+.wood {
+  background: repeating-linear-gradient(
+    91deg,
+    #bd9771 0px,
+    #bf9973 6px,
+    #ac8462 7px,
+    #c4a381 9px,
+    #bc9370 13px
+  );
+}
+.textile {
+  background-color: #d4cbb6;
+  background-image:
+    repeating-linear-gradient(0deg, #a99d8840 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, #fcf9ed60 0 1px, transparent 1px 4px);
+}
+.detail {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 32px;
+}
+.materialArt.detail {
+  display: block;
+  background: #afa789;
+  border: 12px solid #dcd7c7;
+  box-shadow: inset 0 0 0 1px #8e876c;
+}
+.materialGrid h3 {
+  font-family: Georgia, serif;
+  font-size: 23px;
+  font-weight: 400;
+  margin: 22px 0 12px;
+}
+.materialGrid p {
+  font-size: 12px;
+  color: #8a8470;
+  max-width: 270px;
+}
+.consultation {
+  text-align: center;
+  padding: 65px 6%;
+  background: #e8eadd;
+}
+.consultation h2 {
+  font-size: 53px;
+}
+.consultation h2 em {
+  color: #7e8462;
+}
+.consultation > p:not(.eyebrow) {
+  margin-block: 25px;
+  font-size: 13px;
+  color: #858c6b;
+}
+.footerNote {
+  font-size: 10px;
+  color: #858568;
+}
+.detailPhoto {
+  height: 460px;
+  background: #eae9de;
+}
+.detailPhoto img {
+  object-fit: contain;
+}
+.photoControls {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+}
+.photoControls button {
+  min-height: 44px;
+  padding: 10px 13px;
+  border: 1px solid #c8c9b5;
+  background: none;
+  color: #73775c;
+  font-size: 11px !important;
+}
+.photoControls button[aria-pressed="true"] {
+  background: #e6e8d9;
+  border-color: #7f8465;
+}
+.price {
+  font-size: 27px;
+  color: #5a6144;
+  margin: 0 0 20px;
+}
+.detail > div > p:not(.eyebrow):not(.price):not(.small) {
+  font-size: 13px;
+  color: #818668;
+}
+.detail h3 {
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 27px;
+}
+.swatches {
+  display: grid;
+  gap: 9px;
+}
+.swatches button {
+  display: flex;
+  gap: 13px;
+  align-items: center;
+  padding: 10px 13px;
+  min-height: 46px;
+  color: #757c5c;
+  border: 1px solid #ccd1bb;
+  background: none;
+  font-size: 12px !important;
+  text-align: left;
+}
+.swatches button[aria-pressed="true"] {
+  background: #e9eddd;
+  border-color: #7f8b62;
+}
+.swatches i {
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  border: 1px solid #0001;
+}
+.selection {
+  min-height: 20px;
+  font-size: 11px !important;
+}
+.specs {
+  font-size: 11px;
+  color: #8d9574;
+}
+.specs > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  border-top: 1px solid #d0d8bb;
+  padding: 12px 0;
+}
+.specs dd {
+  margin: 0;
+  color: #676f50;
+  text-align: right;
+}
+.quantity {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  margin: 20px 0;
+  border: 1px solid #b6c298;
+}
+.quantity button {
+  width: 44px;
+  height: 44px;
+  background: none;
+  border: 0;
+  color: inherit;
+}
+.quantity button:disabled {
+  opacity: 0.4;
+}
+.quantity output {
+  min-width: 35px;
+  text-align: center;
+  font-size: 13px;
+}
+.small {
+  font-size: 10px;
+  color: #8c9875;
+  line-height: 1.8;
+}
+.editList > div {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  align-items: start;
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid #c6d3ab;
+}
+.editPhoto {
+  height: 145px;
+}
+.editList h3 {
+  font-family: Georgia, serif;
+  font-size: 23px;
+  font-weight: 400;
+  margin: 0 0 10px;
+}
+.editList p {
+  font-size: 11px;
+  color: #87956d;
+  margin: 0;
+}
+.editList .quantity {
+  margin: 15px 0 0;
+}
+.remove {
+  min-height: 44px;
+  padding: 10px 0;
+  border: 0;
+  background: none;
+  color: #7d9060;
+  font-size: 11px !important;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.estimate {
+  display: flex;
+  justify-content: space-between;
+  padding: 25px 0;
+  font-size: 13px;
+}
+.estimate strong {
+  font-size: 23px;
+  font-weight: 400;
+}
+.form {
+  display: grid;
+  gap: 17px;
+}
+.form > p {
+  font-size: 13px;
+  color: #81915f;
+}
+.form label {
+  display: grid;
+  gap: 9px;
+  font-size: 12px;
+  min-width: 0;
+}
+.form input,
+.form select,
+.form textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 12px;
+  border: 1px solid #b9c897;
+  color: inherit;
+  background: #fefff8;
+  border-radius: 1px;
+}
+.form textarea {
+  resize: vertical;
+}
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.form small {
+  font-size: 10px;
+  color: #849661;
+  line-height: 1.7;
+}
+.empty {
+  padding: 25px 0;
+  text-align: center;
+}
+.empty h3 {
+  font-family: Georgia, serif;
+  font-size: 32px;
+  font-weight: 400;
+}
+.empty > p:not(.eyebrow) {
+  color: #889f61;
+  font-size: 13px;
+}
+@container project (max-width:1050px) {
+  .hero {
+    min-height: 560px;
+    padding: 45px 5%;
+  }
+  .heroCard {
+    max-width: 340px;
+    padding: 30px;
+  }
+  .hero h1 {
+    font-size: 66px;
+  }
+  .collection {
+    padding: 55px 5% 35px;
+  }
+  .heading h2 {
+    font-size: 36px;
+  }
+  .productGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 22px;
+  }
+  .productGrid > :last-child {
+    grid-column: 1/-1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    align-items: center;
+  }
+  .productGrid > :last-child > div:last-child {
+    padding: 25px;
+  }
+  .productPhoto {
+    height: 330px;
+  }
+  .spacePhoto {
+    min-height: 440px;
+  }
+  .spaces {
+    grid-template-columns: 1fr 1fr;
+  }
+  .spaces > div:last-child {
+    padding: 40px 10%;
+  }
+  .spaces h2 {
+    font-size: 38px;
+  }
+  .materials {
+    padding: 55px 5%;
+  }
+  .materialGrid {
+    gap: 20px;
+  }
+  .materialArt {
+    height: 155px;
+  }
+  .materialGrid h3 {
+    font-size: 21px;
+  }
+  .consultation h2 {
+    font-size: 42px;
+  }
+}
+@container project (max-width:700px) {
+  .project header {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-block: 14px;
+  }
+  .project header > button:first-child {
+    width: 100%;
+    text-align: center;
+    font-size: 23px !important;
+  }
+  .project header > div {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .hero {
+    min-height: 620px;
+    align-items: flex-end;
+    padding: 28px 6% 65px;
+  }
+  .heroPhoto img {
+    object-position: 59% center;
+  }
+  .heroCard {
+    width: 100%;
+    max-width: none;
+    padding: 28px;
+  }
+  .hero h1 {
+    font-size: 66px;
+  }
+  .heroCard > p:not(.eyebrow) {
+    max-width: 280px;
+  }
+  .heroCaption {
+    right: 6%;
+    bottom: 25px;
+    font-size: 7px;
+  }
+  .collection {
+    padding: 42px 6% 30px;
+  }
+  .heading {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .heading h2 {
+    font-size: 36px;
+  }
+  .heading > p {
+    font-size: 11px;
+  }
+  .filters {
+    gap: 24px;
+  }
+  .productGrid {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+  .productGrid > :last-child {
+    grid-column: auto;
+    display: block;
+  }
+  .productGrid > :last-child > div:last-child {
+    padding: 21px 0 0;
+  }
+  .productPhoto {
+    height: 350px;
+  }
+  .product p > span {
+    font-size: 10px;
+  }
+  .spaces {
+    grid-template-columns: 1fr;
+  }
+  .spacePhoto {
+    min-height: 300px;
+  }
+  .spaces > div:last-child {
+    padding: 42px 7%;
+  }
+  .spaces h2 {
+    font-size: 40px;
+  }
+  .materials {
+    padding: 42px 6%;
+  }
+  .materialGrid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    margin-top: 30px;
+  }
+  .materialGrid > div {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 0 22px;
+    align-items: center;
+  }
+  .materialArt {
+    height: 120px;
+    grid-row: span 2;
+  }
+  .materialGrid h3 {
+    margin: 0;
+    font-size: 23px;
+  }
+  .materialGrid p {
+    font-size: 11px;
+  }
+  .consultation {
+    padding: 42px 6%;
+  }
+  .consultation h2 {
+    font-size: 38px;
+  }
+  .detail {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  .detailPhoto {
+    height: 320px;
+  }
+  .detail .primary {
+    width: 100%;
+    padding-inline: 12px;
+  }
+  .editList > div {
+    grid-template-columns: 75px 1fr;
+    gap: 16px;
+  }
+  .editPhoto {
+    height: 120px;
+  }
+  .editList h3 {
+    font-size: 21px;
+  }
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+  .form input,
+  .form select,
+  .form textarea {
+    font-size: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .primary:hover,
+  .product:hover .productPhoto img {
+    transform: none;
+  }
+}

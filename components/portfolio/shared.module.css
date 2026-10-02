@@ -1,0 +1,287 @@
+.viewport {
+  position: relative;
+  isolation: isolate;
+  contain: layout style inline-size;
+  container: project / inline-size;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+  background: #fff;
+}
+.scrollViewport {
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.viewport *,
+.viewport *::before,
+.viewport *::after {
+  box-sizing: border-box;
+}
+.viewport {
+  --paper: #fff;
+  --ink: #202321;
+  --accent: #253e35;
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--ink);
+}
+.viewport button,
+.viewport input,
+.viewport select,
+.viewport textarea {
+  font: inherit;
+}
+.viewport button {
+  cursor: pointer;
+  touch-action: manipulation;
+  min-width: 44px;
+}
+.viewport button:disabled {
+  cursor: default;
+}
+.viewport button:focus-visible,
+.viewport a:focus-visible,
+.viewport input:focus-visible,
+.viewport textarea:focus-visible,
+.viewport select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+.viewport p {
+  line-height: 1.7;
+}
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 4%;
+  min-height: 80px;
+  border-bottom: 1px solid #7773;
+  background: var(--paper);
+  color: var(--ink);
+}
+.brand {
+  min-height: 44px;
+  border: 0;
+  padding: 0;
+  background: none;
+  color: inherit;
+  font-size: 25px !important;
+  font-weight: 600 !important;
+  letter-spacing: -1px;
+  white-space: nowrap;
+  text-align: left;
+}
+.brand small {
+  display: block;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 1.8px;
+  margin-top: 5px;
+}
+.desktopLinks {
+  display: flex;
+  gap: 22px;
+}
+.desktopLinks button,
+.mobileMenu button {
+  min-height: 44px;
+  background: none;
+  border: 0;
+  padding: 10px 4px;
+  color: inherit;
+  font-size: 13px;
+}
+.desktopLinks button:hover {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.navActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.navAction {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid currentColor;
+  background: none;
+  color: inherit;
+  border-radius: 3px;
+  font-size: 12px !important;
+  white-space: nowrap;
+}
+.menuButton {
+  display: none;
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  padding: 10px 6px;
+  font-size: 13px !important;
+}
+.mobileMenu {
+  position: absolute;
+  inset: 100% 0 auto;
+  display: grid;
+  padding: 18px 5%;
+  gap: 6px;
+  background: var(--paper);
+  border-bottom: 1px solid #7773;
+  box-shadow: 0 12px 25px #0001;
+}
+.mobileMenu button {
+  text-align: left;
+}
+.photo {
+  position: relative;
+  overflow: hidden;
+  background: #e6e7e2;
+}
+.photo img {
+  object-fit: cover;
+}
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  padding: 28px;
+  background: #12201d80;
+  overflow: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.panel {
+  flex: 0 1 580px;
+  width: 100%;
+  min-width: 0;
+  margin-block: auto;
+  background: var(--paper);
+  color: var(--ink);
+  padding: 26px;
+  box-shadow: 0 20px 70px #0003;
+  border-radius: 10px;
+  animation: panel-enter 180ms ease-out;
+}
+.widePanel {
+  flex-basis: 1000px;
+}
+.panelHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+.panelHeading h2 {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+.panelHeading button {
+  min-height: 44px;
+  padding: 9px 10px;
+  border: 1px solid #7775;
+  background: none;
+  color: inherit;
+  font-size: 12px;
+  white-space: nowrap;
+  border-radius: 3px;
+}
+.panelHeading span {
+  padding-left: 10px;
+  font-size: 18px;
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  border-top: 1px solid #7773;
+  padding: 34px 5%;
+  background: var(--paper);
+}
+.footer strong {
+  font-size: 20px;
+  letter-spacing: -0.5px;
+}
+.footer small {
+  font-size: 11px;
+  line-height: 1.6;
+  max-width: 330px;
+}
+@keyframes panel-enter {
+  from {
+    opacity: 0;
+    translate: 0 5px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@container project (max-width: 1050px) {
+  .desktopLinks {
+    display: none;
+  }
+  .menuButton {
+    display: block;
+  }
+  .nav {
+    padding-inline: 4%;
+  }
+}
+@container project (max-width: 700px) {
+  .nav {
+    padding: 12px 5%;
+    min-height: 70px;
+    gap: 12px;
+  }
+  .brand {
+    font-size: 22px !important;
+  }
+  .brand small {
+    font-size: 8px;
+    letter-spacing: 1px;
+  }
+  .navActions {
+    gap: 10px;
+  }
+  .navAction {
+    padding-inline: 10px;
+  }
+  .overlay {
+    padding: 12px;
+  }
+  .panel {
+    padding: 20px;
+  }
+  .panelHeading h2 {
+    font-size: 21px;
+  }
+  .footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .viewport *,
+  .viewport *::before,
+  .viewport *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
