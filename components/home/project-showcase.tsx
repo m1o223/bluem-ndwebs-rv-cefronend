@@ -35,9 +35,12 @@ export default function ProjectShowcase() {
               key={project.id}
               className={portfolio.card}
               data-project-card={project.id}
-              onClick={() => setSelected(project.id)}
+              onClick={(event) => {
+                event.currentTarget.focus({ preventScroll: true });
+                setSelected(project.id);
+              }}
               aria-haspopup="dialog"
-              aria-label={`Explore ${project.brand} ${project.category} project`}
+              aria-label={`View Project: ${project.brand}, ${project.category}`}
             >
               <div className={portfolio.toolbar}>
                 <span className={portfolio.dots} aria-hidden="true">
@@ -51,57 +54,65 @@ export default function ProjectShowcase() {
                 </span>
                 <span aria-hidden="true">↗</span>
               </div>
-              <div
-                className={portfolio.preview}
-                data-preview={project.id}
-                style={{ background: project.color, color: project.ink }}
-              >
-                <div className={portfolio.previewNav}>
-                  <span>{project.brand}</span>
-                  <span>Explore &nbsp; About &nbsp; Contact</span>
-                </div>
-                <div className={portfolio.previewCopy}>
-                  <span>{project.category.toUpperCase()}</span>
-                  <h3>{project.title}</h3>
-                  <div className={portfolio.miniButton}>Step inside</div>
-                </div>
-                {project.id === "ai-platform" && (
-                  <div className={portfolio.aiMini} aria-hidden="true">
-                    <span>✳</span>
-                    <div>
-                      <i />
-                      <i />
-                      <i />
-                    </div>
-                    <small>
-                      A little spark.
-                      <br />A clearer first draft.
-                    </small>
+              <div className={portfolio.previewShell}>
+                <div
+                  className={portfolio.preview}
+                  data-preview={project.id}
+                  style={{ background: project.color, color: project.ink }}
+                >
+                  <div className={portfolio.previewNav}>
+                    <span>{project.brand}</span>
+                    <span>Explore &nbsp; About &nbsp; Contact</span>
                   </div>
-                )}
-                {project.id === "ecommerce" ? (
-                  <div className={portfolio.productArt}>
-                    <ProductArt />
+                  <div className={portfolio.previewCopy}>
+                    <span>{project.category.toUpperCase()}</span>
+                    <h3>{project.title}</h3>
+                    <div className={portfolio.miniButton}>Step inside</div>
                   </div>
-                ) : (
-                  project.image && (
-                    <div className={portfolio.previewPhoto}>
-                      <Image
-                        src={`/images/portfolio/${project.image}.webp`}
-                        fill
-                        alt=""
-                        sizes="(max-width:700px) 80vw, 500px"
-                      />
+                  {project.id === "ai-platform" && (
+                    <div className={portfolio.aiMini} aria-hidden="true">
+                      <span>✳</span>
+                      <div>
+                        <i />
+                        <i />
+                        <i />
+                      </div>
+                      <small>
+                        A little spark.
+                        <br />A clearer first draft.
+                      </small>
                     </div>
-                  )
-                )}
+                  )}
+                  {project.id === "ecommerce" ? (
+                    <div className={portfolio.productArt}>
+                      <ProductArt />
+                    </div>
+                  ) : (
+                    project.image && (
+                      <div className={portfolio.previewPhoto}>
+                        <Image
+                          src={`/images/portfolio/${project.image}.webp`}
+                          fill
+                          alt=""
+                          sizes="(max-width:700px) 80vw, 500px"
+                        />
+                      </div>
+                    )
+                  )}
+                </div>
+                <span className={portfolio.hoverOverlay} aria-hidden="true">
+                  <span>View Project</span>
+                </span>
               </div>
               <div className={portfolio.caption}>
                 <div>
                   <strong>{project.brand}</strong>
+                  <span className={portfolio.category}>{project.category}</span>
                   <p>{project.description}</p>
                 </div>
-                <span aria-hidden="true">↗</span>
+                <span className={portfolio.cardCta} aria-hidden="true">
+                  View Project
+                </span>
               </div>
             </button>
           ))}
@@ -111,10 +122,13 @@ export default function ProjectShowcase() {
           interactions.
         </p>
       </div>
-      <InteractiveProjectViewer
-        project={selected}
-        onClose={() => setSelected(null)}
-      />
+      {selected && (
+        <InteractiveProjectViewer
+          key={selected}
+          project={selected}
+          onClose={() => setSelected(null)}
+        />
+      )}
     </section>
   );
 }

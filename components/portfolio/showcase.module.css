@@ -15,12 +15,76 @@
   cursor: pointer;
   color: #20242a;
   transition:
-    transform 0.2s,
-    box-shadow 0.2s;
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 30px #182c4412;
+.card:focus-visible {
+  outline: 2px solid #171717;
+  outline-offset: 5px;
+}
+.card:active {
+  transform: translateY(-1px);
+}
+.previewShell {
+  position: relative;
+  overflow: hidden;
+}
+.preview {
+  transition: filter 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.hoverOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  background: #15151555;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.hoverOverlay > span {
+  padding: 14px 24px;
+  border: 1px solid #fff;
+  border-radius: 12px;
+  background: #fff;
+  color: #151515;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 18px #00000012;
+}
+.card:focus-visible .preview {
+  filter: blur(8px);
+}
+.card:focus-visible .hoverOverlay {
+  opacity: 1;
+}
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 32px #17171716;
+  }
+  .card:hover .preview {
+    filter: blur(8px);
+  }
+  .card:hover .hoverOverlay {
+    opacity: 1;
+  }
+}
+.category {
+  display: block;
+  margin-top: 6px;
+  font-size: 10px;
+  color: #60656c;
+}
+.cardCta {
+  flex-shrink: 0;
+  padding: 10px 12px;
+  border: 1px solid #d0d0d0;
+  border-radius: 8px;
+  color: #181818;
+  font-size: 11px;
+  white-space: nowrap;
 }
 .toolbar {
   display: flex;
@@ -214,9 +278,6 @@
   line-height: 1.6;
   margin: 28px 0 0;
 }
-.dialog {
-  width: min(1520px, calc(100% - 48px));
-}
 @media (max-width: 700px) {
   .grid {
     grid-template-columns: 1fr;
@@ -229,15 +290,15 @@
   .caption {
     padding: 20px;
   }
-  .dialog {
-    width: calc(100% - 16px);
-  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .card {
+  .card,
+  .preview,
+  .hoverOverlay {
     transition: none;
   }
-  .card:hover {
+  .card:hover,
+  .card:active {
     transform: none;
   }
 }

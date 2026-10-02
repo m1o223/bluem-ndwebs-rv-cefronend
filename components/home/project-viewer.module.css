@@ -1,0 +1,352 @@
+.dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(1520px, calc(100% - 48px));
+  height: min(980px, calc(100dvh - 48px));
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  border: 1px solid #d7d7d7;
+  border-radius: 12px;
+  background: #f5f5f3;
+  color: #171717;
+  overflow: hidden;
+  box-shadow: 0 24px 80px #11111126;
+  transform: translateY(100dvh);
+  transition:
+    transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
+    width 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    height 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.dialog[data-revealed="true"] {
+  transform: translateY(0);
+}
+.dialog[data-expanded="true"] {
+  width: 100%;
+  height: 100dvh;
+  border-radius: 0;
+  border-width: 0;
+}
+.dialog::backdrop {
+  background: #15151500;
+  backdrop-filter: blur(3px);
+  transition: background-color 480ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.dialog[data-revealed="true"]::backdrop {
+  background: #15151524;
+}
+.shell {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 18px 8px 8px;
+  min-height: 64px;
+  flex-shrink: 0;
+  border-bottom: 1px solid #dededb;
+  background: #fff;
+}
+.windowTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.windowControls {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.trafficButton {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  display: grid;
+  place-items: center;
+  background: none;
+  cursor: pointer;
+}
+.yellowControl {
+  width: 16px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+}
+.red,
+.yellow,
+.green {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: block;
+  border: 1px solid #00000013;
+}
+.red {
+  background: #ff5f57;
+}
+.yellow {
+  background: #febc2e;
+}
+.green {
+  background: #28c840;
+}
+.trafficButton svg {
+  width: 10px;
+  height: 10px;
+  fill: none;
+  stroke: #272727;
+  stroke-width: 1.2;
+  opacity: 0;
+}
+.trafficButton:hover svg,
+.trafficButton:focus-visible svg {
+  opacity: 1;
+}
+.projectTitle {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+.projectTitle strong {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.projectTitle > span {
+  font-size: 10px;
+  color: #686868;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 44px;
+  flex-shrink: 0;
+  padding: 10px 14px;
+  border: 1px solid #d8d8d8;
+  border-radius: 8px;
+  background: #fff;
+  color: #171717;
+  font-size: 12px;
+  cursor: pointer;
+}
+.backButton span {
+  font-size: 18px;
+}
+.backButton:hover {
+  background: #f4f4f3;
+  border-color: #999;
+}
+.deviceBar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  padding: 9px 16px;
+  border-bottom: 1px solid #dededb;
+  flex-shrink: 0;
+  background: #fafafa;
+}
+.deviceControls {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+}
+.deviceControls button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 80px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition:
+    background-color 160ms,
+    color 160ms;
+}
+.deviceControls button[aria-pressed="true"] {
+  border-color: #1d1d1d;
+  background: #1d1d1d;
+  color: #fff;
+}
+.deviceControls button:hover:not([aria-pressed="true"]) {
+  color: #171717;
+  background: #f2f2f0;
+}
+.orientationControls {
+  display: flex;
+  gap: 4px;
+}
+.orientationControls button {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid #d5d5d5;
+  border-radius: 7px;
+  background: #fff;
+  font-size: 11px;
+  color: #626262;
+  cursor: pointer;
+}
+.orientationControls button[aria-pressed="true"] {
+  border-color: #171717;
+  color: #171717;
+  background: #e9e9e7;
+}
+.topBar button:focus-visible,
+.deviceBar button:focus-visible {
+  outline: 2px solid #171717;
+  outline-offset: 3px;
+}
+.stage {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  padding: 18px;
+  overflow: hidden;
+}
+.availableArea {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.presentation {
+  position: relative;
+  flex-shrink: 0;
+  outline: 1px solid #d8d8d4;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 8px 24px #1515150d;
+}
+.logicalFrame {
+  position: absolute;
+  inset: 0 auto auto 0;
+  display: flex;
+  flex-direction: column;
+  transform-origin: top left;
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.logicalFrame[data-ready="true"] {
+  transition:
+    width 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    height 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.loading {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #5b5b5b;
+  background: #fff;
+  font:
+    14px Arial,
+    sans-serif;
+}
+.loading > span {
+  width: 28px;
+  height: 28px;
+  border: 2px solid #e4e4e2;
+  border-top-color: #333;
+  border-radius: 50%;
+  animation: loading-turn 800ms linear infinite;
+}
+.loading p {
+  margin: 0;
+}
+@keyframes loading-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (max-width: 700px) {
+  .dialog {
+    width: calc(100% - 16px);
+    height: calc(100dvh - 16px);
+    border-radius: 9px;
+  }
+  .topBar {
+    padding: 6px 10px 6px 2px;
+    gap: 8px;
+    min-height: 60px;
+  }
+  .windowTitle {
+    gap: 4px;
+  }
+  .projectTitle strong {
+    font-size: 11px;
+  }
+  .projectTitle > span {
+    font-size: 9px;
+  }
+  .backButton {
+    gap: 6px;
+    padding: 9px 8px;
+    font-size: 10px;
+  }
+  .deviceBar {
+    padding: 7px 10px;
+    gap: 6px;
+  }
+  .deviceControls {
+    width: 100%;
+  }
+  .deviceControls button {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 6px;
+    gap: 5px;
+  }
+  .stage {
+    padding: 10px;
+  }
+}
+@media (max-width: 480px) {
+  .deviceControls svg {
+    display: none;
+  }
+  .stage {
+    padding: 4px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dialog,
+  .dialog::backdrop,
+  .dialog *,
+  .logicalFrame[data-ready="true"] {
+    transition: none !important;
+    animation: none !important;
+  }
+}

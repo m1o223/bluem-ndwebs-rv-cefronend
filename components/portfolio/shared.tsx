@@ -27,12 +27,17 @@ export function scrollToSection(control: HTMLElement, section: string) {
     `[data-section="${section}"]`,
   );
   if (!viewport || !target) return;
+  // Bounding boxes are visual pixels; scrolling uses logical layout pixels.
+  const scale =
+    viewport.getBoundingClientRect().width / viewport.offsetWidth || 1;
   const headerHeight =
-    viewport.querySelector("header")?.getBoundingClientRect().height || 80;
+    (viewport.querySelector("header")?.getBoundingClientRect().height ||
+      80 * scale) / scale;
   viewport.scrollTo({
     top:
-      target.getBoundingClientRect().top -
-      viewport.getBoundingClientRect().top +
+      (target.getBoundingClientRect().top -
+        viewport.getBoundingClientRect().top) /
+        scale +
       viewport.scrollTop -
       headerHeight -
       8,

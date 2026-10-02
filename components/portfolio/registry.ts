@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import ProjectLoading from "../home/project-loading";
 
 export const projects = [
   {
@@ -79,11 +80,19 @@ export const projects = [
 ] as const;
 export type ProjectId = (typeof projects)[number]["id"];
 export const projectComponents = {
-  ecommerce: dynamic(() => import("./ecommerce")),
-  "ai-platform": dynamic(() => import("./ai-platform")),
-  photography: dynamic(() => import("./photography")),
-  corporate: dynamic(() => import("./corporate")),
-  furniture: dynamic(() => import("./furniture")),
-  "real-estate": dynamic(() => import("./real-estate")),
-  restaurant: dynamic(() => import("./restaurant")),
+  ecommerce: dynamic(() => import("./ecommerce"), { loading: ProjectLoading }),
+  "ai-platform": dynamic(() => import("./ai-platform"), {
+    loading: ProjectLoading,
+  }),
+  photography: dynamic(() => import("./photography"), {
+    loading: ProjectLoading,
+  }),
+  corporate: dynamic(() => import("./corporate"), { loading: ProjectLoading }),
+  furniture: dynamic(() => import("./furniture"), { loading: ProjectLoading }),
+  "real-estate": dynamic(() => import("./real-estate"), {
+    loading: ProjectLoading,
+  }),
+  restaurant: dynamic(() => import("./restaurant"), {
+    loading: ProjectLoading,
+  }),
 };
