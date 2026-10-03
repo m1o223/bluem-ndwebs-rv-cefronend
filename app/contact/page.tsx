@@ -2,6 +2,7 @@ import { Footer } from "../../components/home/sections";
 import homeStyles from "../../components/home/home.module.css";
 import { contactConfig } from "./contact-config";
 import styles from "./contact.module.css";
+import ContactForm from "./contact-form";
 
 export default function ContactPage() {
   return (
@@ -34,7 +35,7 @@ export default function ContactPage() {
             </aside>
             <section className={styles.formSpace} aria-labelledby="form-preview-title">
               <h2 id="form-preview-title">Message form</h2>
-              <p>The contact form will be added in the next stage.<br />Sending is not enabled in this preview.</p>
+              <ContactForm />
             </section>
           </div>
         </div>
