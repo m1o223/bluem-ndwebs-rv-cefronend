@@ -60,16 +60,17 @@
 .brand svg { width: 47px; height: 47px; }
 .brandSub { display: block; font-size: 11px; font-weight: 400; letter-spacing: 1.3px; margin-top: 2px; }
 .navPanel { display: contents; }
-.homeNav { display: flex; align-items: center; gap: 24px; }
-.homeNav a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 6px 3px; color: #20242b; font-size: 12px; white-space: nowrap; }
+.homeNav { display: flex; align-items: center; gap: 22px; }
+.homeNav a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 6px 3px; color: #20242b; font-size: 13px; white-space: nowrap; }
 .homeNav a[aria-current="page"] { font-weight: 600; }
 .navLabel { position: relative; }
 .navLabel::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: #171717; transform: scaleX(0); transform-origin: left; transition: transform 180ms ease-out; }
 .homeNav a:hover .navLabel::after,
 .homeNav a:focus-visible .navLabel::after,
 .homeNav a[aria-current="page"] .navLabel::after { transform: scaleX(1); }
-.homeNav .navCta { display: inline-flex; align-items: center; gap: 18px; padding: 13px 17px; border: 1px solid #dfe3e9; border-radius: 5px; color: #181d26; margin-left: 4px; transition: border-color .2s, background .2s; }
+.homeNav .navCta { display: inline-flex; align-items: center; gap: 18px; padding: 13px 17px; border: 1px solid #dfe3e9; border-radius: 5px; color: #181d26; margin-left: 12px; transition: border-color .2s, background .2s; }
 .homeNav .navCta:hover { background: #f5f5f5; border-color: #777; }
+.homeNav .navCta[aria-current="page"] { border-color: #171717; background: #f5f5f5; }
 .navCta > span { transition: transform 180ms ease-out; }
 .navCta:hover > span { transform: translate(2px, -2px); }
 .header a:focus-visible,

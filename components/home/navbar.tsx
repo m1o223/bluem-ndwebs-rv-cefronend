@@ -39,7 +39,7 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
         <div className={`${styles.navPanel} ${expanded ? styles.navExpanded : ""}`}>
           <nav id="home-navigation" aria-label="Main navigation" className={styles.homeNav} inert={compact && !expanded} aria-hidden={compact && !expanded ? true : undefined}>
             {links.map(([href, label]) => <Link key={href} href={href} onClick={() => setExpanded(false)} aria-current={href === activePath ? "page" : undefined}><span className={styles.navLabel}>{label}</span></Link>)}
-            <Link href="/quote" className={styles.navCta} onClick={() => setExpanded(false)}>Request a Quote <span aria-hidden="true">↗</span></Link>
+            <Link href="/quote" className={styles.navCta} onClick={() => setExpanded(false)} aria-current={activePath === "/quote" ? "page" : undefined}>Request a Quote <span aria-hidden="true">↗</span></Link>
           </nav>
         </div>
       </div>
