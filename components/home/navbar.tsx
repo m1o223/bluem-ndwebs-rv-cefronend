@@ -7,7 +7,7 @@ import styles from "./home.module.css";
 
 const links = [["/", "Home"], ["/about", "About Us"], ["/services", "Services"], ["/#selected-work", "Website Concepts"], ["/how-we-work", "How We Work"], ["/contact", "Contact"]];
 
-export default function Navbar() {
+export default function Navbar({ activePath = "/" }: { activePath?: string }) {
   const [expanded, setExpanded] = useState(false);
   const [compact, setCompact] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -38,7 +38,7 @@ export default function Navbar() {
         </button>
         <div className={`${styles.navPanel} ${expanded ? styles.navExpanded : ""}`}>
           <nav id="home-navigation" aria-label="Main navigation" className={styles.homeNav} inert={compact && !expanded} aria-hidden={compact && !expanded ? true : undefined}>
-            {links.map(([href, label]) => <Link key={href} href={href} onClick={() => setExpanded(false)} aria-current={href === "/" ? "page" : undefined}><span className={styles.navLabel}>{label}</span></Link>)}
+            {links.map(([href, label]) => <Link key={href} href={href} onClick={() => setExpanded(false)} aria-current={href === activePath ? "page" : undefined}><span className={styles.navLabel}>{label}</span></Link>)}
             <Link href="/quote" className={styles.navCta} onClick={() => setExpanded(false)}>Request a Quote <span aria-hidden="true">↗</span></Link>
           </nav>
         </div>

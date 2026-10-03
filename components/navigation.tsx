@@ -16,7 +16,7 @@ const links = [
 
 export default function Navigation() {
   const pathname = usePathname();
-  if (pathname === "/") return <Navbar />;
+  if (pathname === "/" || pathname === "/contact") return <Navbar activePath={pathname} />;
   return (
     <nav aria-label="Main navigation" className="temporary-navigation">
       {links.map(({ href, label }) => (
