@@ -1,5 +1,6 @@
 import { Footer } from "../../components/home/sections";
 import homeStyles from "../../components/home/home.module.css";
+import { PlanetWatermark } from "../../components/planet-watermark";
 import { contactConfig } from "./contact-config";
 import styles from "./contact.module.css";
 import ContactForm from "./contact-form";
@@ -8,18 +9,7 @@ export default function ContactPage() {
   return (
     <div id="top" className={`${homeStyles.home} ${styles.page}`}>
       <section className={styles.contact} aria-labelledby="contact-title">
-        <picture className={styles.watermark} aria-hidden="true">
-          <img
-            src="/images/hero/bluemind-hero-1024.webp"
-            srcSet={[384, 512, 640, 768, 1024].map(width => `/images/hero/bluemind-hero-${width}.webp ${width}w`).join(", ")}
-            sizes="(max-width: 620px) 410px, (max-width: 959px) 600px, 720px"
-            width={1024}
-            height={768}
-            alt=""
-            loading="eager"
-            decoding="async"
-          />
-        </picture>
+        <PlanetWatermark className={styles.watermark} sizes="(max-width: 620px) 410px, (max-width: 959px) 600px, 720px" />
         <div className={`${homeStyles.container} ${styles.content}`}>
           <div className={styles.intro}>
             <h1 id="contact-title">Contact Us</h1>
