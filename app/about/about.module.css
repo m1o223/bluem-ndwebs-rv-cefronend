@@ -1,10 +1,3 @@
-:global(.page-content).mainContent { display: block; padding: 0; text-align: left; width: 100%; }
-.page { display: flex; flex-direction: column; min-height: calc(100dvh - 95px); background: #fff; }
-.body { position: relative; isolation: isolate; overflow: clip; flex: 1; padding-block: 54px 72px; }
-.content { position: relative; z-index: 1; }
-.intro { max-width: 650px; margin-bottom: 42px; }
-.intro h1 { margin: 0; font-size: clamp(38px, 4.5vw, 54px); font-weight: 500; letter-spacing: -2px; line-height: 1.09; }
-.intro p { margin: 20px 0 0; color: #515b69; font-size: 14px; line-height: 1.85; }
 .sections { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
 .section { min-width: 0; padding-top: 24px; border-top: 1px solid #dfe4eb; background: #fff; }
 .section h2 { margin: 0 0 23px; font-size: 21px; font-weight: 500; letter-spacing: -.6px; line-height: 1.35; }
@@ -13,12 +6,8 @@
 .section li::before { content: ""; position: absolute; left: 0; top: .85em; width: 3px; height: 3px; border-radius: 50%; background: #717b89; }
 .watermark { position: absolute; z-index: 0; top: -150px; right: -150px; width: 720px; aspect-ratio: 4 / 3; opacity: .09; pointer-events: none; user-select: none; mask-image: linear-gradient(to bottom, #000 35%, transparent 85%); }
 .watermark img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: contain; }
-.intro,
-.sections { animation: about-enter 420ms cubic-bezier(.22, 1, .36, 1) both; }
-@keyframes about-enter { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
 @media (max-width: 1050px) {
-  .page { min-height: calc(100dvh - 79px); }
   .sections { grid-template-columns: minmax(0, 1fr); gap: 26px; }
   .section { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.5fr); gap: 28px; }
   .section h2 { margin: 0; }
@@ -27,17 +16,8 @@
 }
 
 @media (max-width: 620px) {
-  .page { min-height: calc(100dvh - 76px); }
-  .body { padding-block: 34px 44px; }
-  .intro { margin-bottom: 30px; }
-  .intro h1 { letter-spacing: -1.5px; }
-  .intro p { margin-top: 16px; }
   .section { grid-template-columns: minmax(0, 1fr); gap: 18px; padding-top: 22px; }
   .section h2 { font-size: 20px; }
   .section ul { gap: 12px; }
   .watermark { width: 360px; top: -95px; right: -120px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .intro, .sections { animation: none; }
 }

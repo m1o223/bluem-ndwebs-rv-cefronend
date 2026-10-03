@@ -1,5 +1,7 @@
 import { Footer } from "../../components/home/sections";
 import homeStyles from "../../components/home/home.module.css";
+import pageStyles from "../../components/page-identity.module.css";
+import { PlanetWatermark } from "../../components/planet-watermark";
 import styles from "./about.module.css";
 
 const sections = [
@@ -37,26 +39,15 @@ const sections = [
 
 export default function AboutPage() {
   return (
-    <div id="top" className={`${homeStyles.home} ${styles.page}`}>
-      <div className={styles.body}>
-        <picture className={styles.watermark} aria-hidden="true">
-          <img
-            src="/images/hero/bluemind-hero-1024.webp"
-            srcSet={[384, 512, 640, 768, 1024].map(width => `/images/hero/bluemind-hero-${width}.webp ${width}w`).join(", ")}
-            sizes="(max-width: 620px) 360px, (max-width: 1050px) 600px, 720px"
-            width={1024}
-            height={768}
-            alt=""
-            loading="eager"
-            decoding="async"
-          />
-        </picture>
-        <div className={`${homeStyles.container} ${styles.content}`}>
-          <div className={styles.intro}>
+    <div id="top" className={`${homeStyles.home} ${pageStyles.page}`}>
+      <div className={pageStyles.body}>
+        <PlanetWatermark className={styles.watermark} sizes="(max-width: 620px) 360px, (max-width: 1050px) 600px, 720px" />
+        <div className={`${homeStyles.container} ${pageStyles.content}`}>
+          <div className={`${pageStyles.intro} ${pageStyles.enter}`}>
             <h1>About Us</h1>
             <p>Websites built around your ideas, with professional work, clear communication, and fair pricing.</p>
           </div>
-          <div className={styles.sections}>
+          <div className={`${styles.sections} ${pageStyles.enter}`}>
             {sections.map(section => (
               <section key={section.id} className={styles.section} aria-labelledby={section.id}>
                 <h2 id={section.id}>{section.title}</h2>
