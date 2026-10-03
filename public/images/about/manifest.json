@@ -1,0 +1,70 @@
+{
+  "team-orbit": {
+    "src": "/images/about/team-orbit-eb558032b7.webp",
+    "width": 1050,
+    "height": 551,
+    "source": "5911113359086522209.jpg",
+    "sourceSha256": "eb558032b70a7d834b6cfa7ea3a9df14fc2eba123f1838d2cad1b2a6c7b15056",
+    "originalWidth": 1254,
+    "originalHeight": 1254,
+    "crop": {
+      "left": 100,
+      "top": 324,
+      "width": 1050,
+      "height": 551
+    },
+    "format": "lossless WebP",
+    "upscaled": false
+  },
+  "quality-check": {
+    "src": "/images/about/quality-check-2957bd8846.webp",
+    "width": 836,
+    "height": 791,
+    "source": "5911113359086522210.jpg",
+    "sourceSha256": "2957bd88467251cca267dc1476b846560f93ba7114982a1b597512ea361b74ba",
+    "originalWidth": 1254,
+    "originalHeight": 1254,
+    "crop": {
+      "left": 207,
+      "top": 262,
+      "width": 836,
+      "height": 791
+    },
+    "format": "lossless WebP",
+    "upscaled": false
+  },
+  "distinctive-bulbs": {
+    "src": "/images/about/distinctive-bulbs-98ec62b23c.webp",
+    "width": 1097,
+    "height": 562,
+    "source": "5911113359086522208.jpg",
+    "sourceSha256": "98ec62b23c179da6843d6e3a4a68c5f46d4ab6e7ba8fd6c50aad336589e49ebd",
+    "originalWidth": 1254,
+    "originalHeight": 1254,
+    "crop": {
+      "left": 77,
+      "top": 311,
+      "width": 1097,
+      "height": 562
+    },
+    "format": "lossless WebP",
+    "upscaled": false
+  },
+  "idea-to-website": {
+    "src": "/images/about/idea-to-website-268f58638a.webp",
+    "width": 1205,
+    "height": 343,
+    "source": "5911113359086522207.jpg",
+    "sourceSha256": "268f58638aff12adc15a6159fff305680ed877dd8fe38fe4e2fd430a975add04",
+    "originalWidth": 1280,
+    "originalHeight": 853,
+    "crop": {
+      "left": 34,
+      "top": 259,
+      "width": 1205,
+      "height": 343
+    },
+    "format": "lossless WebP",
+    "upscaled": false
+  }
+}
