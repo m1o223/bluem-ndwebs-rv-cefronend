@@ -1,3 +1,15 @@
+/* Original transparent artwork follows the existing title/section entrance animations. */
+.titleGroup { display: flex; align-items: center; align-self: start; gap: 12px; min-width: 0; }
+.titleGroup h1, .titleGroup h2, .titleGroup span { min-width: 0; }
+.icon { display: block; flex-shrink: 0; height: auto; object-fit: contain; }
+.mainTitle { gap: 16px; }
+.mainIcon { width: 56px; }
+.headlineIcon { width: 84px; }
+.sectionIcon { width: 60px; }
+.compactIcon { width: 42px; }
+.relaxedIcon { width: 48px; }
+.ctaIcon { width: 72px; }
+
 .intro { max-width: 700px; }
 .intro .headline { margin-top: 20px; color: #171c25; font-size: clamp(23px, 2.5vw, 30px); font-weight: 500; line-height: 1.3; letter-spacing: -.8px; }
 .intro .headline + p { margin-top: 14px; max-width: 590px; }
@@ -23,6 +35,13 @@
   .cta { align-items: flex-start; flex-direction: column; gap: 20px; }
 }
 @media (max-width: 620px) {
+  .titleGroup { gap: 10px; }
+  .mainIcon { width: 42px; }
+  .headlineIcon { width: 68px; }
+  .sectionIcon { width: 56px; }
+  .compactIcon { width: 40px; }
+  .relaxedIcon { width: 46px; }
+  .ctaIcon { width: 64px; }
   .intro .headline { margin-top: 16px; letter-spacing: -.5px; }
   .section { grid-template-columns: minmax(0, 1fr); gap: 10px; padding-block: 22px 25px; }
   .number { padding-top: 0; }

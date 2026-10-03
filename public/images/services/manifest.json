@@ -1,0 +1,155 @@
+{
+  "services-hand": {
+    "src": "/images/services/services-hand-0377021a27.webp",
+    "width": 726,
+    "height": 713,
+    "source": "5911113359086522213.jpg",
+    "sourceSha256": "0377021a278f7f72e2b68b28920d028512c4e1824965340267016fb8800c5828",
+    "originalWidth": 1280,
+    "originalHeight": 853,
+    "crop": {
+      "left": 286,
+      "top": 63,
+      "width": 726,
+      "height": 713
+    },
+    "format": "lossless WebP",
+    "upscaled": false
+  },
+  "client-to-team": {
+    "src": "/images/services/client-to-team-ec08a7015d.webp",
+    "width": 1154,
+    "height": 443,
+    "source": "5911113359086522214.jpg",
+    "sourceSha256": "ec08a7015da57e218f435441f8dd148b36245e16b0a93f16b60a12b6d213cddc",
+    "originalWidth": 1280,
+    "originalHeight": 853,
+    "crop": {
+      "left": 67,
+      "top": 197,
+      "width": 1154,
+      "height": 443
+    },
+    "format": "lossless WebP",
+    "upscaled": false
+  },
+  "idea-to-ready": {
+    "src": "/images/services/idea-to-ready-2d0a6f8109.webp",
+    "width": 1093,
+    "height": 482,
+    "source": "5911113359086522215.jpg",
+    "sourceSha256": "2d0a6f81090dc9eb7e16bcbca03ba8e6fdc641b754f2bedcd2917b939f3ff9ba",
+    "originalWidth": 1280,
+    "originalHeight": 853,
+    "crop": {
+      "left": 103,
+      "top": 174,
+      "width": 1093,
+      "height": 482
+    },
+    "format": "lossless WebP",
+    "upscaled": false
+  },
+  "no-knowledge": {
+    "src": "/images/services/no-knowledge-d031852b07.webp",
+    "width": 832,
+    "height": 738,
+    "source": "5911113359086522216.jpg",
+    "sourceSha256": "d031852b0784d5ca8065fac265b14943cbc5a74d52d7602a5359756e04fa1acf",
+    "originalWidth": 1280,
+    "originalHeight": 853,
+    "crop": {
+      "left": 230,
+      "top": 38,
+      "width": 832,
+      "height": 738
+    },
+    "format": "lossless WebP",
+    "upscaled": false
+  },
+  "explain-idea": {
+    "src": "/images/services/explain-idea-fb8b2514b8.webp",
+    "width": 1097,
+    "height": 595,
+    "source": "5911113359086522217.jpg",
+    "sourceSha256": "fb8b2514b8d1604661b60110c4407b60dafd5b21d4dd32031b8c3dd1ff4c1e9a",
+    "originalWidth": 1280,
+    "originalHeight": 853,
+    "crop": {
+      "left": 98,
+      "top": 126,
+      "width": 1097,
+      "height": 595
+    },
+    "format": "lossless WebP",
+    "upscaled": false
+  },
+  "fast-delivery": {
+    "src": "/images/services/fast-delivery-1bbfeb9307.webp",
+    "width": 1035,
+    "height": 463,
+    "source": "5911113359086522218.jpg",
+    "sourceSha256": "1bbfeb93076f999b6db73493d9c1cc71129c775bbce1c838255a89bc5c0575a9",
+    "originalWidth": 1280,
+    "originalHeight": 853,
+    "crop": {
+      "left": 122,
+      "top": 179,
+      "width": 1035,
+      "height": 463
+    },
+    "format": "lossless WebP",
+    "upscaled": false
+  },
+  "ready-website": {
+    "src": "/images/services/ready-website-a07d08de47.webp",
+    "width": 941,
+    "height": 497,
+    "source": "5911113359086522219.jpg",
+    "sourceSha256": "a07d08de47cc971f8ba6b3f361901ed35e475339edd98b3281d2d921c7c057dd",
+    "originalWidth": 1280,
+    "originalHeight": 853,
+    "crop": {
+      "left": 165,
+      "top": 189,
+      "width": 941,
+      "height": 497
+    },
+    "format": "lossless WebP",
+    "upscaled": false
+  },
+  "no-headaches": {
+    "src": "/images/services/no-headaches-01d2ae3771.webp",
+    "width": 898,
+    "height": 717,
+    "source": "5911113359086522221.jpg",
+    "sourceSha256": "01d2ae3771b841ffba163b4e85d24268ce82b5dba3c91a1dcac75a4eeb03a07e",
+    "originalWidth": 1280,
+    "originalHeight": 853,
+    "crop": {
+      "left": 209,
+      "top": 58,
+      "width": 898,
+      "height": 717
+    },
+    "format": "lossless WebP",
+    "upscaled": false
+  },
+  "website-idea": {
+    "src": "/images/services/website-idea-6cca501bb0.webp",
+    "width": 1123,
+    "height": 686,
+    "source": "5911113359086522220.jpg",
+    "sourceSha256": "6cca501bb09c6bc04bd53a6ee6884456560466e2169d8465b2147b15db173c11",
+    "originalWidth": 1280,
+    "originalHeight": 853,
+    "crop": {
+      "left": 92,
+      "top": 68,
+      "width": 1123,
+      "height": 686
+    },
+    "format": "lossless WebP",
+    "upscaled": false
+  }
+}
