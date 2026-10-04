@@ -1,0 +1,102 @@
+.intro { max-width: 660px; }
+.intro .byline { margin-top: 9px; font-size: 12px; letter-spacing: .8px; color: #717b89; }
+.intro .headline { margin-top: 26px; font-size: clamp(23px, 2.5vw, 30px); color: #171c25; font-weight: 500; line-height: 1.3; letter-spacing: -.8px; }
+.intro .headline + p { margin-top: 14px; }
+.plansSection { border-top: 1px solid #dfe4eb; padding-top: 28px; background: #fff; }
+.plansIntro h2, .faq > h2, .formSection > h2 { margin: 0; font-size: 26px; font-weight: 500; letter-spacing: -.8px; line-height: 1.35; }
+.plansIntro p, .formIntro { margin: 12px 0 0; color: #515b69; font-size: 14px; line-height: 1.8; }
+.billingToggle { display: flex; width: fit-content; max-width: 100%; gap: 4px; margin: 26px 0 0; padding: 5px; border: 1px solid #dfe4eb; border-radius: 12px; }
+.billingOption { position: relative; cursor: pointer; }
+.billingOption input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.billingOption > span { min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px 20px; border-radius: 8px; color: #515b69; font-size: 14px; font-weight: 500; transition: color 160ms ease-out, background-color 160ms ease-out; }
+.billingOption small { padding: 4px 6px; border: 1px solid #dfe4eb; border-radius: 5px; color: #171c25; font-size: 9px; white-space: nowrap; }
+.billingOption input:checked + span { background: #171c25; color: #fff; }
+.billingOption input:checked + span small { color: #fff; border-color: #757b86; }
+.billingOption input:focus-visible + span { outline: 2px solid #171717; outline-offset: 3px; }
+.saving { margin: 10px 0 24px; color: #515b69; font-size: 12px; line-height: 1.8; }
+.pricing { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+.plan { display: flex; flex-direction: column; min-width: 0; padding: 26px 24px; border: 1px solid #dfe4eb; border-radius: 10px; background: #fff; transition: transform 200ms cubic-bezier(.22, 1, .36, 1), border-color 200ms ease-out, box-shadow 200ms ease-out; }
+.plan.popular { padding: 25px 23px; border: 2px solid #171c25; background: #fafbfc; }
+.planTop { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 24px; margin-bottom: 20px; color: #717b89; font-size: 11px; letter-spacing: .5px; }
+.badge { display: inline-flex; align-items: center; gap: 7px; padding: 6px 9px; border-radius: 16px; background: #171c25; color: #fff; font-size: 9px; font-weight: 600; letter-spacing: .6px; white-space: nowrap; }
+.star { display: block; flex-shrink: 0; width: 11px; height: 11px; color: #171c25; }
+.badge .star { width: 9px; height: 9px; color: #fff; }
+.plan h3 { margin: 0; font-size: 22px; font-weight: 500; line-height: 1.3; letter-spacing: -.6px; }
+.description { margin: 14px 0 0; min-height: 66px; font-size: 13px; line-height: 1.7; color: #515b69; }
+.priceSlot { margin: 22px 0 24px; min-height: 80px; }
+.price { margin: 0; animation: price-enter 180ms ease-out both; }
+.price strong { display: block; font-size: 42px; font-weight: 600; line-height: 1.15; letter-spacing: -1.5px; font-variant-numeric: tabular-nums; }
+.price span { display: block; margin-top: 7px; font-size: 12px; color: #515b69; line-height: 1.8; }
+.featureList { display: grid; gap: 12px; list-style: none; margin: 0 0 28px; padding: 20px 0 0; border-top: 1px solid #dfe4eb; }
+.featureList li { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.6; }
+.featureList .star { margin-top: 4px; }
+.button { cursor: pointer; font-family: inherit; font-weight: 600; }
+.button:disabled { cursor: default; }
+.button:focus-visible { outline: 2px solid #171717; outline-offset: 4px; }
+.plan > .button { margin-top: auto; width: 100%; font-size: 15px; padding-inline: 16px; }
+.planNotes { margin-top: 20px; }
+.planNotes p { margin: 0; font-size: 12px; line-height: 1.8; color: #515b69; }
+.planNotes p + p { margin-top: 18px; font-size: 13px; color: #171c25; }
+.planNotes span { color: #515b69; }
+.faq { margin-top: 56px; padding-top: 30px; border-top: 1px solid #dfe4eb; }
+.questions { margin-top: 24px; max-width: 900px; }
+.questions details { border-bottom: 1px solid #dfe4eb; }
+.questions summary { position: relative; padding: 18px 32px 18px 0; min-height: 52px; font-size: 15px; font-weight: 500; cursor: pointer; list-style: none; line-height: 1.5; }
+.questions summary::-webkit-details-marker { display: none; }
+.questions summary::after { content: "+"; position: absolute; right: 5px; font-size: 19px; font-weight: 400; }
+.questions details[open] summary::after { content: "−"; }
+.questions summary:focus-visible { outline: 2px solid #171717; outline-offset: 3px; border-radius: 4px; }
+.questions p, .questions ul { max-width: 730px; margin: 0 0 18px; color: #515b69; font-size: 13px; line-height: 1.8; }
+.questions ul { padding-left: 20px; }
+.formSection { scroll-margin-top: 28px; margin-top: 56px; padding: 32px; border: 1px solid #dfe4eb; border-radius: 10px; background: #fff; max-width: 900px; }
+.formNote, .formNotice { color: #515b69; font-size: 12px; line-height: 1.8; }
+.formNote { margin: 18px 0 24px; }
+.formGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 20px; }
+.field { min-width: 0; }
+.field label { display: block; margin-bottom: 8px; font-size: 12px; font-weight: 500; line-height: 1.6; }
+.optional { color: #727983; font-weight: 400; }
+.field input, .field select, .field textarea { display: block; width: 100%; min-width: 0; min-height: 46px; padding: 11px 12px; border: 1px solid #dfe4eb; border-radius: 8px; background: #fff; color: #171c25; font: inherit; font-size: 16px; line-height: 1.5; }
+.field select { padding-right: 28px; }
+.field textarea { min-height: 140px; resize: vertical; }
+.field input:focus-visible, .field select:focus-visible, .field textarea:focus-visible { outline: 2px solid #171717; outline-offset: 3px; border-color: #171717; }
+.field [aria-invalid="true"] { border-color: #717b89; }
+.error { margin: 7px 0 0; color: #171c25; font-size: 12px; font-weight: 600; line-height: 1.6; }
+.fullWidth, .selection { grid-column: 1 / -1; }
+.selection { margin: 0; padding-block: 14px; border-block: 1px solid #dfe4eb; font-size: 13px; line-height: 1.8; color: #515b69; }
+.selection strong { color: #171c25; font-weight: 600; }
+.selection span { margin-left: 12px; }
+.formSection form > .button { margin-top: 24px; }
+.formNotice { margin: 12px 0 0; }
+.watermark { position: absolute; z-index: 0; top: -70px; right: -320px; width: 800px; aspect-ratio: 4 / 3; opacity: .09; pointer-events: none; user-select: none; mask-image: linear-gradient(to bottom, #000 20%, transparent 85%); }
+.watermark img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: contain; }
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+@keyframes price-enter { from { opacity: .3; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+@media (hover: hover) and (pointer: fine) { .plan:hover { transform: translateY(-3px); border-color: #aab1bc; box-shadow: 0 8px 24px #192c4909; } .plan.popular:hover { border-color: #171c25; } }
+@media (max-width: 1050px) {
+  .pricing { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .plan:last-child { grid-column: 1 / -1; }
+  .plan:last-child .featureList { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .plan:last-child .description { min-height: 0; }
+  .plan:last-child > .button { width: fit-content; min-width: 220px; }
+  .watermark { width: 640px; top: -50px; right: -340px; }
+}
+@media (max-width: 700px) {
+  .pricing, .formGrid { grid-template-columns: minmax(0, 1fr); }
+  .plan:last-child { grid-column: auto; }
+  .plan:last-child .featureList { grid-template-columns: minmax(0, 1fr); }
+  .plan:last-child > .button { width: 100%; min-width: 0; }
+  .description { min-height: 0; }
+}
+@media (max-width: 620px) {
+  .intro .headline { margin-top: 22px; letter-spacing: -.5px; }
+  .plan { padding: 24px; }
+  .plan.popular { padding: 23px; }
+  .plansIntro h2, .faq > h2, .formSection > h2 { font-size: 23px; }
+  .billingOption > span { padding-inline: 14px; gap: 8px; }
+  .faq { margin-top: 40px; padding-top: 26px; }
+  .formSection { padding: 24px 20px; margin-top: 36px; }
+  .selection span { display: block; margin-left: 0; margin-top: 3px; }
+  .formSection form > .button { max-width: 100%; padding-inline: 20px; font-size: 15px; }
+  .watermark { width: 400px; top: -45px; right: -180px; }
+}
+@media (prefers-reduced-motion: reduce) { .price { animation: none; } .plan, .button, .billingOption > span { transition: none; } .plan:hover, .button:hover, .button:active { transform: none; } }

@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import styles from "./home.module.css";
 
-const links = [["/", "Home"], ["/about", "About Us"], ["/services", "Services"], ["/#selected-work", "Website Concepts"], ["/how-we-work", "How We Work"], ["/contact", "Contact"]];
+const links = [["/", "Home"], ["/about", "About Us"], ["/services", "Services"], ["/#selected-work", "Website Concepts"], ["/how-we-work", "How We Work"], ["/care", "Website Care"], ["/contact", "Contact"]];
 
 export default function Navbar({ activePath = "/" }: { activePath?: string }) {
   const [expanded, setExpanded] = useState(false);
@@ -13,7 +13,7 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
   const toggleRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    const media = window.matchMedia("(max-width: 1120px)");
+    const media = window.matchMedia("(max-width: 1240px)");
     const updateLayout = () => {
       setCompact(media.matches);
       setExpanded(false);

@@ -1,0 +1,17 @@
+{
+  "instagram": {
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/instagram.svg",
+    "provider": "Simple Icons",
+    "purpose": "Social mark; no account URL assigned"
+  },
+  "tiktok": {
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/tiktok.svg",
+    "provider": "Simple Icons",
+    "purpose": "Social mark; no account URL assigned"
+  },
+  "x": {
+    "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/x.svg",
+    "provider": "Simple Icons",
+    "purpose": "Social mark; no account URL assigned"
+  }
+}

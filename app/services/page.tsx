@@ -1,7 +1,6 @@
 import Image from "next/image";
 import icons from "../../public/images/services/manifest.json";
 import Link from "next/link";
-import { Footer } from "../../components/home/sections";
 import homeStyles from "../../components/home/home.module.css";
 import buttonStyles from "../../components/home/hero.module.css";
 import pageStyles from "../../components/page-identity.module.css";
@@ -53,7 +52,6 @@ export default function ServicesPage() {
           </section>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }
