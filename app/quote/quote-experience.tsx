@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import buttonStyles from "../../components/home/hero.module.css";
 import pageStyles from "../../components/page-identity.module.css";
+import { StarMark } from "../../components/star-mark";
 import { includedFeatures, interestOptions, packages, timelineOptions } from "./quote-data";
 import styles from "./quote.module.css";
 
@@ -10,10 +11,6 @@ type RequiredField = "fullName" | "email" | "interest" | "idea";
 type Errors = Partial<Record<RequiredField, string>>;
 const previewNotice = "Quote sending is not connected yet. This form currently checks your details only.";
 const buttonClass = `${buttonStyles.ctaButton} ${buttonStyles.primaryCta} ${styles.button}`;
-
-function StarMark() {
-  return <svg className={styles.star} viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path fill="currentColor" d="m10 0 2.4 7.6L20 10l-7.6 2.4L10 20l-2.4-7.6L0 10l7.6-2.4Z" /></svg>;
-}
 
 function DeviceMark({ device }: { device: "Desktop" | "Tablet" | "Mobile" }) {
   return <svg viewBox="0 0 40 40" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -66,13 +63,13 @@ export default function QuoteExperience() {
   return (
     <>
       <div className={`${styles.valueIntro} ${pageStyles.enter}`}>
-        <StarMark />
+        <StarMark className={styles.star} />
         <div><h2>More included. No unnecessary extras.</h2><p>Professional websites built for desktop, tablet and mobile — included as standard.</p></div>
       </div>
       <section className={`${styles.pricing} ${pageStyles.enter}`} aria-label="Website packages and starting prices">
         {packages.map(item => (
           <article key={item.id} className={`${styles.package} ${item.popular ? styles.popular : ""}`} aria-labelledby={`package-${item.id}`}>
-            <div className={styles.packageTop}><span>{item.id}</span>{item.popular && <span className={styles.badge}><StarMark />MOST POPULAR</span>}</div>
+            <div className={styles.packageTop}><span>{item.id}</span>{item.popular && <span className={styles.badge}><StarMark className={styles.star} />MOST POPULAR</span>}</div>
             <div className={styles.summary}>
               <h2 id={`package-${item.id}`}>{item.title}</h2>
               <p className={styles.price}>{item.price.startsWith("From ") ? <><span>From </span>{item.price.slice(5)}</> : item.price}</p>
@@ -80,7 +77,7 @@ export default function QuoteExperience() {
               {item.scope && <p className={styles.scope}>{item.scope}</p>}
             </div>
             <p className={styles.description}>{item.description}</p>
-            <ul className={styles.featureList}>{item.features.map(feature => <li key={feature}><StarMark /><span>{feature}</span></li>)}</ul>
+            <ul className={styles.featureList}>{item.features.map(feature => <li key={feature}><StarMark className={styles.star} /><span>{feature}</span></li>)}</ul>
             {item.id === "06" && <p className={styles.customNote}>Examples depend on your project. Your quote defines the included features and timeline.</p>}
             <button type="button" className={buttonClass} disabled={!interactive} onClick={() => choosePackage(item.title)}>{item.cta}</button>
           </article>
@@ -96,7 +93,7 @@ export default function QuoteExperience() {
           <div className={styles.devices}>{(["Desktop", "Tablet", "Mobile"] as const).map(device => <div key={device}><DeviceMark device={device} /><span>{device.toUpperCase()}</span></div>)}</div>
           <div><h3>Included as standard.</h3><p>No extra design charge for responsive layouts.</p></div>
         </div>
-        <div className={styles.includedGrid}>{includedFeatures.map(feature => <div key={feature.title} className={styles.includedFeature}><StarMark /><div><h3>{feature.title}</h3><p>{feature.text}</p></div></div>)}</div>
+        <div className={styles.includedGrid}>{includedFeatures.map(feature => <div key={feature.title} className={styles.includedFeature}><StarMark className={styles.star} /><div><h3>{feature.title}</h3><p>{feature.text}</p></div></div>)}</div>
       </section>
       <section className={`${styles.notSure} ${pageStyles.enter}`} aria-labelledby="not-sure-title">
         <div><h2 id="not-sure-title">Not sure which option is right for you?</h2><p>Tell us what you have in mind. We’ll help you find the right option for your project.</p></div>
