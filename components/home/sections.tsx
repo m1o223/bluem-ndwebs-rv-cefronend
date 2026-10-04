@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SiteFooter from "../site-footer";
 import styles from "./home.module.css";
 
 export function AboutSummary() {
@@ -15,5 +16,5 @@ export function FinalCTA() {
 }
 
 export function Footer() {
-  return <footer className={`${styles.footer} ${styles.container}`}><span>© {new Date().getFullYear()} BlueMind Web Service</span><span>Thoughtfully designed. Built to perform.</span><a href="#top">Back to top <span aria-hidden="true">↑</span></a></footer>;
+  return <><div className={styles.home}><FinalCTA /></div><SiteFooter /></>;
 }

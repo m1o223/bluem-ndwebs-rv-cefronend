@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Footer } from "../../components/home/sections";
 import homeStyles from "../../components/home/home.module.css";
 import pageStyles from "../../components/page-identity.module.css";
 import { PlanetWatermark } from "../../components/planet-watermark";
@@ -21,6 +20,5 @@ export default function CarePage() {
       </div>
       <PlanetWatermark className={styles.watermark} sizes="(max-width: 620px) 400px, (max-width: 1050px) 640px, 800px" />
     </div>
-    <Footer />
   </div>;
 }

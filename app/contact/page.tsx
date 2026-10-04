@@ -1,4 +1,3 @@
-import { Footer } from "../../components/home/sections";
 import homeStyles from "../../components/home/home.module.css";
 import { PlanetWatermark } from "../../components/planet-watermark";
 import { contactConfig } from "./contact-config";
@@ -30,7 +29,6 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
-      <Footer />
     </div>
   );
 }

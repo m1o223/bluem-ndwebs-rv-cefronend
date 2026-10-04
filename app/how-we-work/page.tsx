@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Footer } from "../../components/home/sections";
 import homeStyles from "../../components/home/home.module.css";
 import buttonStyles from "../../components/home/hero.module.css";
 import pageStyles from "../../components/page-identity.module.css";
@@ -51,7 +50,6 @@ export default function HowWeWorkPage() {
         </div>
         <PlanetWatermark className={styles.watermark} sizes="(max-width: 620px) 400px, (max-width: 1050px) 640px, 800px" />
       </div>
-      <Footer />
     </div>
   );
 }

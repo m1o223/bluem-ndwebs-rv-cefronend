@@ -1,6 +1,5 @@
 import Image from "next/image";
 import icons from "../../public/images/about/manifest.json";
-import { Footer } from "../../components/home/sections";
 import homeStyles from "../../components/home/home.module.css";
 import pageStyles from "../../components/page-identity.module.css";
 import { PlanetWatermark } from "../../components/planet-watermark";
@@ -87,7 +86,6 @@ export default function AboutPage() {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

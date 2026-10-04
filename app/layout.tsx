@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { Footer } from "../components/home/sections";
 import Navigation from "../components/navigation";
 import PageContent from "../components/page-content";
 import faviconMetadata from "./favicon-metadata.json";
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <Navigation />
         <PageContent>{children}</PageContent>
+        <Footer />
       </body>
     </html>
   );
