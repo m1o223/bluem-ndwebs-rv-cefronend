@@ -48,19 +48,20 @@
   gap: 30px;
 }
 .brand {
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
   gap: 9px;
   color: #151c2b;
-  font-size: 22px;
+  font-size: 21px;
   font-weight: 650;
   letter-spacing: -.8px;
   flex-shrink: 0;
 }
-.brand svg { width: 47px; height: 47px; }
+.brand img { width: 42px; height: 42px; object-fit: contain; flex-shrink: 0; }
 .brandSub { display: block; font-size: 11px; font-weight: 400; letter-spacing: 1.3px; margin-top: 2px; }
 .navPanel { display: contents; }
-.homeNav { display: flex; align-items: center; gap: 18px; }
+.homeNav { display: flex; align-items: center; gap: 20px; }
 .homeNav a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 6px 3px; color: #20242b; font-size: 13px; white-space: nowrap; }
 .homeNav a[aria-current="page"] { font-weight: 600; }
 .navLabel { position: relative; }
@@ -68,11 +69,9 @@
 .homeNav a:hover .navLabel::after,
 .homeNav a:focus-visible .navLabel::after,
 .homeNav a[aria-current="page"] .navLabel::after { transform: scaleX(1); }
-.homeNav .navCta { display: inline-flex; align-items: center; gap: 18px; padding: 13px 17px; border: 1px solid #dfe3e9; border-radius: 5px; color: #181d26; margin-left: 12px; transition: border-color .2s, background .2s; }
+.homeNav .navCta { display: inline-flex; align-items: center; padding: 13px 20px; justify-content: center; border: 1px solid #dfe3e9; border-radius: 5px; color: #181d26; margin-left: 8px; transition: border-color .2s, background .2s; }
 .homeNav .navCta:hover { background: #f5f5f5; border-color: #777; }
 .homeNav .navCta[aria-current="page"] { border-color: #171717; background: #f5f5f5; }
-.navCta > span { transition: transform 180ms ease-out; }
-.navCta:hover > span { transform: translate(2px, -2px); }
 .header a:focus-visible,
 .header button:focus-visible { outline-color: #171717; }
 .menuToggle { display: none; }
@@ -153,8 +152,8 @@
   .headerInner { width: calc(100% - 48px); gap: 15px; }
   .homeNav { gap: 17px; }
   .homeNav a { font-size: 11px; }
-  .brand { font-size: 20px; }
-  .brand svg { width: 40px; height: 40px; }
+  .brand { font-size: 19px; }
+  .brand img { width: 38px; height: 38px; }
   .brandSub { font-size: 10.5px; letter-spacing: 1.2px; }
 }
 @media (max-width: 1240px) {
@@ -193,8 +192,8 @@
 @media (max-width: 620px) {
   .container { width: calc(100% - 40px); }
   .headerInner { width: calc(100% - 32px); min-height: 75px; }
-  .brand { font-size: 20px; }
-  .brand svg { width: 41px; height: 41px; }
+  .brand { font-size: 19px; }
+  .brand img { width: 38px; height: 38px; }
   .navPanel { left: -16px; right: -16px; }
   .homeNav { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 15px; padding: 22px 24px; }
   .eyebrow { font-size: 8px; letter-spacing: 1.5px; margin-bottom: 20px; }
