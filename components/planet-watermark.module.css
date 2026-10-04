@@ -2,7 +2,7 @@
   /* The planet body is centered at (509.5, 382.5) in the original 1024×768 crop.
      Keep the orbit and dot in the same asset; rotate only the image, not its layout wrapper. */
   transform-origin: 49.7559% 49.8047%;
-  animation: planet-turn 32s linear infinite;
+  animation: planet-turn 48s linear infinite;
 }
 
 @keyframes planet-turn {
