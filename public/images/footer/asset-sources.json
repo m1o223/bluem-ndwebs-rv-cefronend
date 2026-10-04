@@ -13,5 +13,38 @@
     "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/x.svg",
     "provider": "Simple Icons",
     "purpose": "Social mark; no account URL assigned"
+  },
+  "apple-pay": {
+    "source": "https://developer.apple.com/apple-pay/marketing/Apple-Pay-Mark.zip",
+    "provider": "Apple Developer",
+    "format": "SVG",
+    "purpose": "Informational planned payment method; no checkout enabled",
+    "modifications": "None"
+  },
+  "google-pay": {
+    "source": "https://developers.google.com/static/pay/api/download-assets/Google-Pay-Acceptance.zip",
+    "provider": "Google Developers",
+    "format": "SVG",
+    "purpose": "Informational planned payment method; no checkout enabled",
+    "modifications": "None"
+  },
+  "visa": {
+    "source": "https://corporate.visa.com/content/dam/VCOM/corporate/about-visa/images/visa-brandmark-blue-1960x622.png",
+    "provider": "Visa media kit",
+    "format": "PNG",
+    "purpose": "Informational planned payment method; no checkout enabled",
+    "modifications": "None"
+  },
+  "mastercard": {
+    "source": "https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/cards/mastercard.svg",
+    "provider": "Datatrans payment-logos",
+    "format": "SVG",
+    "purpose": "Informational planned payment method; no checkout enabled",
+    "modifications": "None",
+    "license": "CC-BY-SA-4.0",
+    "attribution": "Mastercard SVG from Datatrans payment-logos, used unchanged under CC-BY-SA-4.0.",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "officialReference": "https://www.mastercard.com/brandcenter/us/en/download-artwork.html",
+    "note": "Direct Mastercard downloads returned HTTP 403; licensed payment-provider copy used."
   }
 }
