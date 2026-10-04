@@ -20,12 +20,10 @@ export const footerConfig = {
     { name: "X", icon: "/images/footer/x.svg", url: null },
   ] satisfies Social[],
   paymentMethods: [
-    { name: "Apple Pay", asset: null }, { name: "Google Pay", asset: null },
-    { name: "Visa", asset: null }, { name: "Mastercard", asset: null },
-    { name: "Klarna", asset: null },
+    { name: "Apple Pay", asset: "/images/footer/apple-pay.svg" }, { name: "Google Pay", asset: "/images/footer/google-pay.svg" },
+    { name: "Visa", asset: "/images/footer/visa.png" }, { name: "Mastercard", asset: "/images/footer/mastercard.svg" },
   ] satisfies Payment[],
-  // Payment marks stay unrendered until their use is approved. Plain names
-  // communicate planned support without imitating licensed artwork.
+  comingSoonPayment: "Klarna",
   legalLinks: [
     { label: "Privacy Policy", href: null },
     { label: "Terms & Conditions", href: null },
