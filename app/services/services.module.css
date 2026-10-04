@@ -22,13 +22,13 @@
 .cta h2 { margin: 0; font-size: 24px; font-weight: 500; letter-spacing: -.7px; line-height: 1.35; }
 .cta p { margin: 12px 0 0; color: #515b69; font-size: 14px; line-height: 1.8; }
 .cta a:focus-visible { outline-color: #171717; }
-.watermark { position: absolute; z-index: 0; top: -70px; right: -240px; width: 800px; aspect-ratio: 4 / 3; opacity: .09; pointer-events: none; user-select: none; mask-image: linear-gradient(to bottom, #000 20%, transparent 85%); }
+.watermark { position: absolute; z-index: 0; top: -70px; right: -320px; width: 800px; aspect-ratio: 4 / 3; opacity: .09; pointer-events: none; user-select: none; mask-image: linear-gradient(to bottom, #000 20%, transparent 85%); }
 .watermark img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: contain; }
 @media (max-width: 1050px) {
   .sections { column-gap: 32px; }
   .section { grid-template-columns: 22px minmax(0, 1fr); gap: 12px; }
   .section h2 { font-size: 20px; }
-  .watermark { width: 640px; top: -50px; right: -220px; }
+  .watermark { width: 640px; top: -50px; right: -340px; }
 }
 @media (max-width: 700px) {
   .sections { grid-template-columns: minmax(0, 1fr); }
