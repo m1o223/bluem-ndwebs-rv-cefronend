@@ -1,15 +1,20 @@
-.rotating {
-  /* The planet body is centered at (509.5, 382.5) in the original 1024×768 crop.
-     Keep the orbit and dot in the same asset; rotate only the image, not its layout wrapper. */
-  transform-origin: 49.7559% 49.8047%;
-  animation: planet-turn 48s linear infinite;
+﻿.rotating {
+  /* Keep the planet and orbit together so the ring moves naturally with the mark. */
+  transform-origin: 50% 50%;
+  filter: saturate(.92) contrast(.96) brightness(1.03);
+  animation: planet-turn 16s linear infinite;
+  will-change: transform;
 }
 
 @keyframes planet-turn {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from { transform: rotateX(5deg) rotateY(-7deg) rotateZ(0deg); }
+  to { transform: rotateX(5deg) rotateY(-7deg) rotateZ(360deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rotating { animation: none; }
+  .rotating {
+    animation: none;
+    transform: rotateX(5deg) rotateY(-7deg) rotateZ(-8deg);
+    will-change: auto;
+  }
 }

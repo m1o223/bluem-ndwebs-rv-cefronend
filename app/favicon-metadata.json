@@ -2,7 +2,7 @@
   "icons": {
     "icon": [
       {
-        "url": "/favicon.ico?v=5d702d9ed66f",
+        "url": "/favicon.ico?v=20bbea176887",
         "type": "image/x-icon",
         "sizes": "16x16 32x32 48x48 64x64"
       },
@@ -27,7 +27,7 @@
         "type": "image/png"
       }
     ],
-    "shortcut": "/favicon.ico?v=5d702d9ed66f",
+    "shortcut": "/favicon.ico?v=20bbea176887",
     "apple": [
       {
         "url": "/icons/bluemind-152-b99b5f74776c.png",
@@ -46,5 +46,5 @@
       }
     ]
   },
-  "manifest": "/site.webmanifest?v=b1cc1263f4d0"
+  "manifest": "/site.webmanifest"
 }

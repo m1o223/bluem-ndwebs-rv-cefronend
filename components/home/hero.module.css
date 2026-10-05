@@ -1,4 +1,4 @@
-.hero { position: relative; isolation: isolate; overflow: clip; background: #fff; }
+﻿.hero { position: relative; isolation: isolate; overflow: clip; background: #fff; }
 .inner { position: relative; display: grid; grid-template-columns: .88fr 1.12fr; align-items: center; gap: 32px; width: min(1300px, calc(100% - 80px)); margin-inline: auto; padding-block: 54px 82px; }
 .copy { position: relative; z-index: 2; min-width: 0; padding-bottom: 20px; animation: copy-enter .7s ease-out both; }
 .eyebrow { margin-bottom: 27px; }
@@ -15,7 +15,7 @@
   .primaryCta:hover { box-shadow: 0 6px 14px #0000000f; }
 }
 .ctaButton:active { transform: translateY(1px); box-shadow: none; transition-duration: 100ms; }
-.planet { position: absolute; z-index: -1; display: block; width: 720px; aspect-ratio: 4 / 3; top: -135px; right: -125px; opacity: .09; pointer-events: none; user-select: none; }
+.planet { position: absolute; z-index: -1; display: block; width: 720px; aspect-ratio: 4 / 3; top: -135px; right: -125px; opacity: .055; pointer-events: none; user-select: none; }
 .planetImage { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: contain; }
 .visual { position: relative; width: 100%; min-width: 0; height: 526px; margin: 0; container-type: inline-size; }
 .windows { position: absolute; inset: 0; }
@@ -208,3 +208,4 @@
   .websiteWindow:hover { transform: none; }
   .ctaButton:hover, .ctaButton:active { transform: none; }
 }
+

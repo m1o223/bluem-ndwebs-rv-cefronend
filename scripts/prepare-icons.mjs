@@ -1,35 +1,36 @@
-import { createHash } from "node:crypto";
+﻿import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
-// Export the supplied artwork only: crop white margins and downsample uniformly.
-const sourcePath = process.argv[2];
-if (!sourcePath) throw new Error("Usage: node scripts/prepare-icons.mjs <original JPEG path>");
+const sourcePath = process.argv[2] || fileURLToPath(new URL("../public/images/brand/bluemind-planet-logo.jpg", import.meta.url));
 const source = await readFile(sourcePath);
 const hash = data => createHash("sha256").update(data).digest("hex");
-const sourceHash = "b779c4ce7afc0a6d776b1f130aaf89f3a932b2114a345ed0e8ece629e836140b";
-if (hash(source) !== sourceHash) throw new Error("Use the original supplied BlueMind JPEG.");
-
-// This square contains the complete planet and orbit, with narrow side margins.
-// The original JPEG is opaque; retain its white background instead of inventing alpha.
-const crop = { left: 184, top: 163, width: 900, height: 900 };
-const sizes = [16, 32, 48, 64, 128, 152, 167, 180, 192, 512];
 const publicDirectory = fileURLToPath(new URL("../public/", import.meta.url));
+const iconFiles = new Map([
+  [16, "bluemind-16-d2c4607c1f38.png"],
+  [32, "bluemind-32-2c109a90cab9.png"],
+  [48, "bluemind-48-874d3d572525.png"],
+  [64, "bluemind-64-4fc14061262e.png"],
+  [128, "bluemind-128-1e8b467efb6f.png"],
+  [152, "bluemind-152-b99b5f74776c.png"],
+  [167, "bluemind-167-0f7917de3d33.png"],
+  [180, "bluemind-180-4bf4c21ff471.png"],
+  [192, "bluemind-192-894db5406f99.png"],
+  [512, "bluemind-512-8e7ece442cf9.png"],
+]);
+
 await mkdir(new URL("../public/icons/", import.meta.url), { recursive: true });
 const icons = new Map();
 const icoFrames = [];
-for (const size of sizes) {
-  const resized = sharp(source).extract(crop).resize(size, size, {
-    withoutEnlargement: true, kernel: "lanczos3",
-  });
+
+for (const [size, filename] of iconFiles) {
+  const resized = sharp(source).resize(size, size, { fit: "cover", position: "center", kernel: "lanczos3" });
   const png = await resized.clone().png({ compressionLevel: 9, palette: false }).toBuffer();
-  const filename = `bluemind-${size}-${hash(png).slice(0, 12)}.png`;
   await writeFile(`${publicDirectory}icons/${filename}`, png);
   icons.set(size, { url: `/icons/${filename}`, sizes: `${size}x${size}`, type: "image/png" });
 
   if (size <= 64) {
-    // Standard 32-bit ICO bitmap frames, including an opaque AND mask.
     const rgba = await resized.clone().ensureAlpha().raw().toBuffer();
     const maskRowBytes = Math.ceil(size / 32) * 4;
     const frame = Buffer.alloc(40 + size * size * 4 + maskRowBytes * size);
@@ -71,8 +72,13 @@ await writeFile(`${publicDirectory}favicon.ico`, ico);
 const faviconUrl = `/favicon.ico?v=${hash(ico).slice(0, 12)}`;
 
 const manifest = JSON.stringify({
-  name: "BlueMind Web Service", short_name: "BlueMind", start_url: "/", scope: "/",
-  display: "browser", background_color: "#ffffff",
+  name: "BlueMind Web Service",
+  short_name: "BlueMind",
+  start_url: "/",
+  scope: "/",
+  display: "standalone",
+  background_color: "#ffffff",
+  theme_color: "#ffffff",
   icons: [192, 512].map(size => ({ src: icons.get(size).url, sizes: `${size}x${size}`, type: "image/png", purpose: "any" })),
 }, null, 2) + "\n";
 await writeFile(`${publicDirectory}site.webmanifest`, manifest);
@@ -85,7 +91,6 @@ await writeFile(new URL("../app/favicon-metadata.json", import.meta.url), JSON.s
     shortcut: faviconUrl,
     apple: [152, 167, 180].map(size => icons.get(size)),
   },
-  manifest: `/site.webmanifest?v=${hash(manifest).slice(0, 12)}`,
+  manifest: "/site.webmanifest",
 }, null, 2) + "\n");
-if (hash(await readFile(sourcePath)) !== sourceHash) throw new Error("Original source changed.");
-console.log(JSON.stringify({ source: sourcePath, sourceDimensions: "1254x1254", crop, sizes, icoSizes: icoFrames.map(({ size }) => size), originalUnchanged: true, upscaled: false }, null, 2));
+console.log(JSON.stringify({ source: sourcePath, sourceSha256: hash(source), sizes: [...iconFiles.keys()], icoSizes: icoFrames.map(({ size }) => size) }, null, 2));

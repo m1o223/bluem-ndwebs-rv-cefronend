@@ -1,4 +1,5 @@
-import Image from "next/image";
+﻿import Image from "next/image";
+import { BlueMindPlanetLogo } from "./blue-mind-planet-logo";
 import Link from "next/link";
 import { footerConfig as config } from "./site-footer-config";
 import homeStyles from "./home/home.module.css";
@@ -9,14 +10,14 @@ export default function SiteFooter() {
     <div className={homeStyles.container}>
       <div className={styles.columns}>
         <div className={styles.brandSection}>
-          <Link href="/" className={styles.brand} aria-label="BlueMind Web Service home"><Image src={config.logo} width={64} height={64} alt="" aria-hidden="true" /><span>BlueMind<span className={styles.brandSub}>Web Service</span></span></Link>
+          <Link href="/" className={styles.brand} aria-label="BlueMind Web Service home"><BlueMindPlanetLogo className={styles.brandLogo} /><span>BlueMind<span className={styles.brandSub}>Web Service</span></span></Link>
           <p>{config.brandTagline}</p>
         </div>
         <nav aria-label="Footer explore" className={styles.linkGroup}><h2>Explore</h2><ul>{config.explore.map(([href,label]) => <li key={href}><Link href={href}>{label}</Link></li>)}</ul></nav>
         <nav aria-label="Footer services" className={styles.linkGroup}><h2>Services</h2><ul>{config.services.map(([href,label]) => <li key={label}><Link href={href}>{label}</Link></li>)}</ul></nav>
         <section className={styles.contact} aria-labelledby="footer-contact-title"><h2 id="footer-contact-title">Contact</h2>
           {config.contact.approved ? <dl><div><dt>Email</dt><dd><a href={`mailto:${config.contact.email}`}>{config.contact.email}</a></dd></div><div><dt>Phone</dt><dd><a href={`tel:${config.contact.phone.replace(/\s/g, "")}`}>{config.contact.phone}</a></dd></div></dl> : <><dl><div><dt>Email</dt><dd>Details awaiting approval</dd></div><div><dt>Phone</dt><dd>Details awaiting approval</dd></div></dl><p className={styles.note}>Contact details will be added once confirmed.</p></>}
-          <Link href="/contact" className={styles.contactLink}>Contact Us <span aria-hidden="true">→</span></Link>
+          <Link href="/contact" className={styles.contactLink}>Contact Us <span aria-hidden="true">â†’</span></Link>
         </section>
       </div>
       <div className={styles.middle}>
@@ -25,8 +26,10 @@ export default function SiteFooter() {
       </div>
       <div className={styles.bottom}>
         <div><nav aria-label="Footer legal"><ul>{config.legalLinks.map(item => <li key={item.label}>{item.href ? <Link href={item.href}>{item.label}</Link> : <span>{item.label}</span>}</li>)}</ul></nav><p className={styles.note}>Legal policies awaiting review and publication.</p></div>
-        <p className={styles.copyright}>© {new Date().getFullYear()} {config.brandName}. All rights reserved.</p>
+        <p className={styles.copyright}>Â© {new Date().getFullYear()} {config.brandName}. All rights reserved.</p>
       </div>
     </div>
   </footer>;
 }
+
+

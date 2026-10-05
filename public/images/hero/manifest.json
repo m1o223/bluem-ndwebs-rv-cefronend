@@ -1,56 +1,50 @@
 {
   "source": {
+    "path": "C:\\Users\\mohme\\Desktop\\BlueMind Web Service\\frontend\\public\\images\\brand\\bluemind-planet-logo.jpg",
     "width": 1254,
     "height": 1254,
     "format": "jpeg",
-    "sha256": "b779c4ce7afc0a6d776b1f130aaf89f3a932b2114a345ed0e8ece629e836140b"
-  },
-  "crop": {
-    "left": 115,
-    "top": 230,
-    "width": 1024,
-    "height": 768
+    "sha256": "6063d8c51ae4a83c12f10d370dc0d800ec579bb90e8c310611545d10316ef858"
   },
   "format": "webp",
-  "lossless": true,
-  "quality": 100,
+  "quality": 96,
   "upscaled": false,
   "variants": [
     {
       "filename": "bluemind-hero-256.webp",
       "width": 256,
       "height": 192,
-      "bytes": 9050
+      "bytes": 5758
     },
     {
       "filename": "bluemind-hero-384.webp",
       "width": 384,
       "height": 288,
-      "bytes": 15728
+      "bytes": 10346
     },
     {
       "filename": "bluemind-hero-512.webp",
       "width": 512,
       "height": 384,
-      "bytes": 23794
+      "bytes": 14906
     },
     {
       "filename": "bluemind-hero-640.webp",
       "width": 640,
       "height": 480,
-      "bytes": 33036
+      "bytes": 20356
     },
     {
       "filename": "bluemind-hero-768.webp",
       "width": 768,
       "height": 576,
-      "bytes": 45700
+      "bytes": 26516
     },
     {
       "filename": "bluemind-hero-1024.webp",
       "width": 1024,
       "height": 768,
-      "bytes": 68538
+      "bytes": 39532
     }
   ]
 }

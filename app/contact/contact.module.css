@@ -1,4 +1,4 @@
-:global(.page-content).mainContent {
+﻿:global(.page-content).mainContent {
   display: block;
   padding: 0;
   text-align: left;
@@ -38,7 +38,7 @@
   right: -100px;
   width: 720px;
   aspect-ratio: 4 / 3;
-  opacity: .09;
+  opacity: .055;
   pointer-events: none;
   user-select: none;
 }
@@ -141,3 +141,4 @@
   .watermark { width: 410px; top: -40px; right: -130px; }
   .formSpace { min-height: 250px; padding: 24px; }
 }
+

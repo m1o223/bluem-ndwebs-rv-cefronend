@@ -3,8 +3,9 @@
   "short_name": "BlueMind",
   "start_url": "/",
   "scope": "/",
-  "display": "browser",
+  "display": "standalone",
   "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "icons": [
     {
       "src": "/icons/bluemind-192-894db5406f99.png",

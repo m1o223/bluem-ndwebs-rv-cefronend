@@ -1,4 +1,4 @@
-import { contactConfig } from "../app/contact/contact-config";
+﻿import { contactConfig } from "../app/contact/contact-config";
 
 type Social = { name: string; icon: string; url: string | null };
 type Legal = { label: string; href: string | null };
@@ -6,7 +6,6 @@ type Payment = { name: string; asset: string | null };
 export const footerConfig = {
   brandName: "BlueMind Web Service",
   brandTagline: "Your idea. Our expertise. Built for the web.",
-  logo: "/icons/bluemind-512-8e7ece442cf9.png",
   contact: { ...contactConfig, approved: false },
   explore: [
     ["/", "Home"], ["/about", "About Us"], ["/services", "Services"],
@@ -30,3 +29,4 @@ export const footerConfig = {
     { label: "Cookie Policy", href: null },
   ] satisfies Legal[],
 } as const;
+
