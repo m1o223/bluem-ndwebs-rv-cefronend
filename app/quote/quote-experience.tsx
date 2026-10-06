@@ -4,12 +4,13 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import buttonStyles from "../../components/home/hero.module.css";
 import pageStyles from "../../components/page-identity.module.css";
 import { StarMark } from "../../components/star-mark";
+import { postApi } from "../lib/api-client";
 import { includedFeatures, interestOptions, packages, timelineOptions } from "./quote-data";
 import styles from "./quote.module.css";
 
 type RequiredField = "fullName" | "email" | "interest" | "idea";
 type Errors = Partial<Record<RequiredField, string>>;
-const previewNotice = "Quote sending is not connected yet. This form currently checks your details only.";
+const readyNotice = "Tell us about your project and we will get back to you.";
 const buttonClass = `${buttonStyles.ctaButton} ${buttonStyles.primaryCta} ${styles.button}`;
 
 function DeviceMark({ device }: { device: "Desktop" | "Tablet" | "Mobile" }) {
@@ -21,7 +22,8 @@ function DeviceMark({ device }: { device: "Desktop" | "Tablet" | "Mobile" }) {
 export default function QuoteExperience() {
   const [interest, setInterest] = useState("");
   const [errors, setErrors] = useState<Errors>({});
-  const [notice, setNotice] = useState(previewNotice);
+  const [notice, setNotice] = useState(readyNotice);
+  const [submitting, setSubmitting] = useState(false);
   const [interactive, setInteractive] = useState(false);
   const formSection = useRef<HTMLElement>(null);
   const interestSelect = useRef<HTMLSelectElement>(null);
@@ -30,12 +32,12 @@ export default function QuoteExperience() {
   function choosePackage(name: string) {
     setInterest(name);
     setErrors(current => ({ ...current, interest: undefined }));
-    setNotice(previewNotice);
+    setNotice(readyNotice);
     formSection.current?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
     interestSelect.current?.focus({ preventScroll: true });
   }
 
-  function submitQuote(event: FormEvent<HTMLFormElement>) {
+  async function submitQuote(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
     const data = new FormData(form);
@@ -49,12 +51,32 @@ export default function QuoteExperience() {
     setErrors(next);
     const first = Object.keys(next)[0] as RequiredField | undefined;
     if (first) {
-      setNotice(previewNotice);
+      setNotice(readyNotice);
       const input = form.elements.namedItem(first);
       if (input instanceof HTMLElement) input.focus();
       return;
     }
-    setNotice("Your details passed validation. Quote sending is not connected yet; no request was sent.");
+    setSubmitting(true);
+    setNotice("Sending your quote request...");
+    const result = await postApi("/api/quote", {
+      name: value("fullName"),
+      email: value("email"),
+      company: value("company") || undefined,
+      service: value("interest"),
+      projectDescription: value("idea"),
+      desiredTimeline: value("timeline") || undefined
+    });
+    setSubmitting(false);
+
+    if (!result.success) {
+      setNotice(result.error || "We could not send your quote request. Please try again.");
+      return;
+    }
+
+    form.reset();
+    setInterest("");
+    setErrors({});
+    setNotice(result.message);
   }
 
   const describedBy = (field: RequiredField) => errors[field] ? `quote-${field}-error` : undefined;
@@ -79,7 +101,7 @@ export default function QuoteExperience() {
             <p className={styles.description}>{item.description}</p>
             <ul className={styles.featureList}>{item.features.map(feature => <li key={feature}><StarMark className={styles.star} /><span>{feature}</span></li>)}</ul>
             {item.id === "06" && <p className={styles.customNote}>Examples depend on your project. Your quote defines the included features and timeline.</p>}
-            <button type="button" className={buttonClass} disabled={!interactive} onClick={() => choosePackage(item.title)}>{item.cta}</button>
+            <button type="button" className={buttonClass} disabled={!interactive || submitting} onClick={() => choosePackage(item.title)}>{item.cta}</button>
           </article>
         ))}
       </section>
@@ -97,11 +119,11 @@ export default function QuoteExperience() {
       </section>
       <section className={`${styles.notSure} ${pageStyles.enter}`} aria-labelledby="not-sure-title">
         <div><h2 id="not-sure-title">Not sure which option is right for you?</h2><p>Tell us what you have in mind. We’ll help you find the right option for your project.</p></div>
-        <button type="button" className={buttonClass} disabled={!interactive} onClick={() => choosePackage("Not Sure Yet")}>Tell Us About Your Project</button>
+        <button type="button" className={buttonClass} disabled={!interactive || submitting} onClick={() => choosePackage("Not Sure Yet")}>Tell Us About Your Project</button>
       </section>
       <section id="quote-form" ref={formSection} className={`${styles.formSection} ${pageStyles.enter}`} aria-labelledby="quote-form-title">
         <h2 id="quote-form-title">Tell us about your project</h2>
-        <form noValidate onSubmit={submitQuote} aria-labelledby="quote-form-title" aria-describedby="quote-required quote-notice" onChange={() => setNotice(previewNotice)}>
+        <form noValidate onSubmit={submitQuote} aria-labelledby="quote-form-title" aria-describedby="quote-required quote-notice" onChange={() => setNotice(readyNotice)}>
           <p id="quote-required" className={styles.formNote}>Fields marked * are required.</p>
           <div className={styles.formGrid}>
             <div className={styles.field}><label htmlFor="quote-fullName">Full Name <span aria-hidden="true">*</span></label><input id="quote-fullName" name="fullName" autoComplete="name" required aria-invalid={errors.fullName ? true : undefined} aria-describedby={describedBy("fullName")} />{errorMessage("fullName")}</div>
@@ -111,7 +133,7 @@ export default function QuoteExperience() {
             <div className={`${styles.field} ${styles.fullWidth}`}><label htmlFor="quote-idea">Tell us about your idea <span aria-hidden="true">*</span></label><textarea id="quote-idea" name="idea" rows={7} required aria-invalid={errors.idea ? true : undefined} aria-describedby={[describedBy("idea"), "quote-idea-help"].filter(Boolean).join(" ")} />{errorMessage("idea")}<div id="quote-idea-help" className={styles.helper}><p>Not sure how to explain your idea?</p><p>You can use ChatGPT to help describe what you have in mind, then paste it here.</p></div></div>
             <div className={styles.field}><label htmlFor="quote-timeline">When would you like it ready? <span className={styles.optional}>(Optional)</span></label><select id="quote-timeline" name="timeline" defaultValue=""><option value="">Select a timeline</option>{timelineOptions.map(option => <option key={option}>{option}</option>)}</select></div>
           </div>
-          <button type="submit" className={buttonClass} disabled={!interactive}>Request My Quote</button>
+          <button type="submit" className={buttonClass} disabled={!interactive || submitting}>{submitting ? "Sending..." : "Request My Quote"}</button>
           <p id="quote-notice" className={styles.formNotice} role="status">{notice}</p>
         </form>
       </section>
