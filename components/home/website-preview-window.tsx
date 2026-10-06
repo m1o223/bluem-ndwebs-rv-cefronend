@@ -6,11 +6,15 @@ import styles from "./hero.module.css";
 
 export default function WebsitePreviewWindow() {
   const [flipped, setFlipped] = useState(false);
-  const toggleFlip = () => setFlipped(value => !value);
+  const [controlsVisible, setControlsVisible] = useState(false);
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Escape") {
+      setControlsVisible(false);
+      return;
+    }
     if (event.key !== "Enter" && event.key !== " ") return;
     event.preventDefault();
-    toggleFlip();
+    setControlsVisible(true);
   };
 
   return (
@@ -18,13 +22,16 @@ export default function WebsitePreviewWindow() {
       className={`${styles.websiteWindow} ${styles.heroFlipCard}`}
       data-website-preview
       data-flipped={flipped}
-      role="button"
+      data-controls-visible={controlsVisible}
+      role="group"
       tabIndex={0}
-      aria-label={flipped ? "Show forma website design preview" : "Show forma website code view"}
-      onClick={toggleFlip}
+      aria-label="Forma website preview mode controls"
+      onClick={(event) => {
+        if ((event.target as HTMLElement).closest("button")) return;
+        setControlsVisible(true);
+      }}
       onKeyDown={handleKeyDown}
-      onMouseLeave={() => setFlipped(false)}
-      onBlur={() => setFlipped(false)}
+      onMouseLeave={() => setControlsVisible(false)}
     >
       <div className={styles.heroFlipInner}>
         <div className={`${styles.heroFlipFace} ${styles.heroFlipFront}`}>
@@ -63,6 +70,36 @@ export default function WebsitePreviewWindow() {
             <span><b>08</b><em>export default</em> FormaHero;</span>
           </code></pre>
           <div className={styles.heroCodeStatus}><span><i /> Design system mapped to components.</span><span>front-end ready</span></div>
+        </div>
+      </div>
+      <div className={styles.heroModeOverlay} aria-hidden="false">
+        <div className={styles.heroModeActions}>
+          <button
+            type="button"
+            className={styles.heroModeButton}
+            data-active={!flipped}
+            aria-pressed={!flipped}
+            onClick={(event) => {
+              event.stopPropagation();
+              setFlipped(false);
+              setControlsVisible(true);
+            }}
+          >
+            View Page
+          </button>
+          <button
+            type="button"
+            className={styles.heroModeButton}
+            data-active={flipped}
+            aria-pressed={flipped}
+            onClick={(event) => {
+              event.stopPropagation();
+              setFlipped(true);
+              setControlsVisible(true);
+            }}
+          >
+            View Code
+          </button>
         </div>
       </div>
     </div>

@@ -1,10 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { type TouchEvent, useRef, useState } from "react";
-import InteractiveProjectViewer, {
-  type ProjectViewerHandle,
-} from "./project-viewer";
+import { useState } from "react";
 import { projects, type ProjectId } from "../portfolio/registry";
 import ProductArt from "../portfolio/product-art";
 import ConceptReveal from "./concept-reveal";
@@ -27,40 +24,32 @@ function conceptCodeLines(project: Project) {
 }
 
 export default function ProjectShowcase() {
-  const viewer = useRef<ProjectViewerHandle>(null);
-  const touchStart = useRef<{ x: number; y: number } | null>(null);
-  const [selected, setSelected] = useState<ProjectId | null>(null);
-  const [flippedCards, setFlippedCards] = useState<Set<ProjectId>>(() => new Set());
+  const [codeCards, setCodeCards] = useState<Set<ProjectId>>(() => new Set());
+  const [controlsCards, setControlsCards] = useState<Set<ProjectId>>(() => new Set());
 
-  const toggleTouchFlip = (projectId: ProjectId) => {
-    setFlippedCards(current => {
+  const setCardMode = (projectId: ProjectId, showCode: boolean) => {
+    setCodeCards(current => {
       const next = new Set(current);
-      if (next.has(projectId)) next.delete(projectId);
-      else next.add(projectId);
+      if (showCode) next.add(projectId);
+      else next.delete(projectId);
       return next;
     });
   };
 
-  const shouldUseTapFlip = () =>
-    window.innerWidth <= 700 || window.matchMedia("(hover: none), (pointer: coarse)").matches;
-
-  const handleTouchStart = (event: TouchEvent<HTMLButtonElement>) => {
-    const touch = event.touches[0];
-    touchStart.current = touch ? { x: touch.clientX, y: touch.clientY } : null;
+  const revealControls = (projectId: ProjectId) => {
+    setControlsCards(current => {
+      const next = new Set(current);
+      next.add(projectId);
+      return next;
+    });
   };
 
-  const handleTouchEnd = (event: TouchEvent<HTMLButtonElement>, projectId: ProjectId) => {
-    const start = touchStart.current;
-    const touch = event.changedTouches[0];
-    touchStart.current = null;
-    if (!start || !touch) return;
-
-    const moved = Math.hypot(touch.clientX - start.x, touch.clientY - start.y);
-    if (moved > 12) return;
-
-    event.preventDefault();
-    event.currentTarget.focus({ preventScroll: true });
-    toggleTouchFlip(projectId);
+  const hideControls = (projectId: ProjectId) => {
+    setControlsCards(current => {
+      const next = new Set(current);
+      next.delete(projectId);
+      return next;
+    });
   };
 
   return (
@@ -94,28 +83,26 @@ export default function ProjectShowcase() {
               direction={index % 2 === 0 ? "right" : "left"}
               stagger={index % 2 === 1}
             >
-              <button
+              <article
                 className={portfolio.card}
                 data-project-card={project.id}
-                data-flipped={flippedCards.has(project.id)}
-                onTouchStart={handleTouchStart}
-                onTouchEnd={(event) => handleTouchEnd(event, project.id)}
-                onKeyDown={(event) => {
-                  if (event.key !== "Enter" && event.key !== " ") return;
-                  event.preventDefault();
-                  toggleTouchFlip(project.id);
-                }}
+                data-flipped={codeCards.has(project.id)}
+                data-controls-visible={controlsCards.has(project.id)}
+                tabIndex={0}
+                aria-label={`${project.brand} concept preview controls`}
                 onClick={(event) => {
-                  event.currentTarget.focus({ preventScroll: true });
-                  if (shouldUseTapFlip()) {
-                    toggleTouchFlip(project.id);
+                  if ((event.target as HTMLElement).closest("button")) return;
+                  revealControls(project.id);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") {
+                    hideControls(project.id);
                     return;
                   }
-                  if (selected === project.id) viewer.current?.restore();
-                  else setSelected(project.id);
+                  if (event.key !== "Enter" && event.key !== " ") return;
+                  event.preventDefault();
+                  revealControls(project.id);
                 }}
-                aria-haspopup="dialog"
-                aria-label={`View Demo: ${project.brand}, ${project.category}`}
               >
                 <div className={portfolio.flipStage}>
                   <div className={portfolio.flipInner}>
@@ -196,6 +183,36 @@ export default function ProjectShowcase() {
                       </div>
                     </div>
                   </div>
+                  <div className={portfolio.modeOverlay} aria-hidden="false">
+                    <div className={portfolio.modeActions}>
+                      <button
+                        type="button"
+                        className={portfolio.modeButton}
+                        data-active={!codeCards.has(project.id)}
+                        aria-pressed={!codeCards.has(project.id)}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setCardMode(project.id, false);
+                          revealControls(project.id);
+                        }}
+                      >
+                        View Page
+                      </button>
+                      <button
+                        type="button"
+                        className={portfolio.modeButton}
+                        data-active={codeCards.has(project.id)}
+                        aria-pressed={codeCards.has(project.id)}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setCardMode(project.id, true);
+                          revealControls(project.id);
+                        }}
+                      >
+                        View Code
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 <div className={portfolio.caption}>
                   <div>
@@ -206,19 +223,11 @@ export default function ProjectShowcase() {
                     <p>{project.description}</p>
                   </div>
                 </div>
-              </button>
+              </article>
             </ConceptReveal>
           ))}
         </div>
       </div>
-      {selected && (
-        <InteractiveProjectViewer
-          ref={viewer}
-          key={selected}
-          project={selected}
-          onClose={() => setSelected(null)}
-        />
-      )}
     </section>
   );
 }
