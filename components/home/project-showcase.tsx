@@ -1,31 +1,31 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { projects, type ProjectId } from "../portfolio/registry";
 import ProductArt from "../portfolio/product-art";
 import ConceptReveal from "./concept-reveal";
+import {
+  templateConceptByProject,
+  type CodeTabKey,
+} from "./template-concept-data";
 import portfolio from "../portfolio/showcase.module.css";
 import styles from "./home.module.css";
-
-type Project = (typeof projects)[number];
-
-function conceptCodeLines(project: Project) {
-  const componentName = project.brand.replace(/[^a-z]/gi, "") || "Concept";
-  return [
-    `const ${componentName}Preview = () => (`,
-    `  <WebsiteShell brand="${project.brand}">`,
-    `    <Hero category="${project.category}" />`,
-    `    <Headline>${project.title}</Headline>`,
-    "    <ResponsivePreview motion />",
-    "  </WebsiteShell>",
-    ");",
-  ];
-}
 
 export default function ProjectShowcase() {
   const [codeCards, setCodeCards] = useState<Set<ProjectId>>(() => new Set());
   const [controlsCards, setControlsCards] = useState<Set<ProjectId>>(() => new Set());
+  const [activeTabs, setActiveTabs] = useState<Partial<Record<ProjectId, CodeTabKey>>>({});
+
+  useEffect(() => {
+    const resetOnOutsidePointer = (event: PointerEvent) => {
+      if ((event.target as HTMLElement | null)?.closest("[data-project-card]")) return;
+      resetAllCards();
+    };
+
+    document.addEventListener("pointerdown", resetOnOutsidePointer);
+    return () => document.removeEventListener("pointerdown", resetOnOutsidePointer);
+  }, []);
 
   const setCardMode = (projectId: ProjectId, showCode: boolean) => {
     setCodeCards(current => {
@@ -36,6 +36,10 @@ export default function ProjectShowcase() {
     });
   };
 
+  const setActiveTab = (projectId: ProjectId, tab: CodeTabKey) => {
+    setActiveTabs(current => ({ ...current, [projectId]: tab }));
+  };
+
   const revealControls = (projectId: ProjectId) => {
     setControlsCards(current => {
       const next = new Set(current);
@@ -44,12 +48,18 @@ export default function ProjectShowcase() {
     });
   };
 
-  const hideControls = (projectId: ProjectId) => {
+  const resetCard = (projectId: ProjectId) => {
+    setCardMode(projectId, false);
     setControlsCards(current => {
       const next = new Set(current);
       next.delete(projectId);
       return next;
     });
+  };
+
+  const resetAllCards = () => {
+    setCodeCards(new Set());
+    setControlsCards(new Set());
   };
 
   return (
@@ -83,6 +93,12 @@ export default function ProjectShowcase() {
               direction={index % 2 === 0 ? "right" : "left"}
               stagger={index % 2 === 1}
             >
+              {(() => {
+                const template = templateConceptByProject[project.id];
+                const activeTabKey = activeTabs[project.id] || template.codeTabs[0].key;
+                const activeTab = template.codeTabs.find((tab) => tab.key === activeTabKey) || template.codeTabs[0];
+
+                return (
               <article
                 className={portfolio.card}
                 data-project-card={project.id}
@@ -90,18 +106,20 @@ export default function ProjectShowcase() {
                 data-controls-visible={controlsCards.has(project.id)}
                 tabIndex={0}
                 aria-label={`${project.brand} concept preview controls`}
+                onMouseLeave={() => resetCard(project.id)}
                 onClick={(event) => {
                   if ((event.target as HTMLElement).closest("button")) return;
+                  if ((event.target as HTMLElement).closest("a")) return;
                   revealControls(project.id);
                 }}
                 onKeyDown={(event) => {
                   if (event.key === "Escape") {
-                    hideControls(project.id);
+                    resetCard(project.id);
                     return;
                   }
                   if (event.key !== "Enter" && event.key !== " ") return;
                   event.preventDefault();
-                  revealControls(project.id);
+                  if (!codeCards.has(project.id)) revealControls(project.id);
                 }}
               >
                 <div className={portfolio.flipStage}>
@@ -168,45 +186,76 @@ export default function ProjectShowcase() {
                     <div className={`${portfolio.flipFace} ${portfolio.flipBack}`}>
                       <div className={portfolio.codeToolbar}>
                         <span className={portfolio.dots} aria-hidden="true"><i /><i /><i /></span>
-                        <span>{project.brand.toLowerCase()}-preview.tsx</span>
-                        <i>TSX</i>
+                        <span>{activeTab.filename}</span>
+                        <a
+                          className={portfolio.runButton}
+                          href={template.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Run ${project.brand} website`}
+                          onClick={(event) => event.stopPropagation()}
+                        >
+                          Run Website
+                        </a>
                       </div>
                       <div className={portfolio.codePanel}>
-                        <div className={portfolio.codeTabs}><span>React</span><span>Next.js</span><span>CSS Modules</span></div>
-                        <pre><code>{conceptCodeLines(project).map((line, lineIndex) => (
-                          <span className={portfolio.codeLine} key={`${project.id}-${lineIndex}`}>
-                            <b>{String(lineIndex + 1).padStart(2, "0")}</b>
-                            <span>{line}</span>
-                          </span>
-                        ))}</code></pre>
-                        <div className={portfolio.codeFooter}><span><i /> component architecture</span><span>responsive</span></div>
+                        <div className={portfolio.codeTabs} role="tablist" aria-label={`${project.brand} code files`}>
+                          {template.codeTabs.map((tab) => (
+                            <button
+                              key={tab.key}
+                              type="button"
+                              role="tab"
+                              aria-selected={activeTab.key === tab.key}
+                              className={portfolio.codeTab}
+                              data-active={activeTab.key === tab.key}
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                setActiveTab(project.id, tab.key);
+                              }}
+                            >
+                              {tab.label}
+                            </button>
+                          ))}
+                        </div>
+                        <div
+                          className={portfolio.codeScroll}
+                          onWheel={(event) => event.stopPropagation()}
+                          onTouchMove={(event) => event.stopPropagation()}
+                        >
+                          <pre><code>{activeTab.code.split("\n").map((line, lineIndex) => (
+                            <span className={portfolio.codeLine} key={`${project.id}-${activeTab.key}-${lineIndex}`}>
+                              <b>{String(lineIndex + 1).padStart(2, "0")}</b>
+                              <span>{line || " "}</span>
+                            </span>
+                          ))}</code></pre>
+                        </div>
+                        <div className={portfolio.codeFooter}><span><i /> template-specific implementation</span><span>{project.brand}</span></div>
                       </div>
                     </div>
                   </div>
                   <div className={portfolio.modeOverlay} aria-hidden="false">
                     <div className={portfolio.modeActions}>
-                      <button
-                        type="button"
+                      <a
                         className={portfolio.modeButton}
-                        data-active={!codeCards.has(project.id)}
-                        aria-pressed={!codeCards.has(project.id)}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          setCardMode(project.id, false);
-                          revealControls(project.id);
-                        }}
+                        href={template.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(event) => event.stopPropagation()}
+                        aria-label={`View ${project.brand} website`}
                       >
-                        View Page
-                      </button>
+                        View Website
+                      </a>
                       <button
                         type="button"
                         className={portfolio.modeButton}
-                        data-active={codeCards.has(project.id)}
-                        aria-pressed={codeCards.has(project.id)}
                         onClick={(event) => {
                           event.stopPropagation();
                           setCardMode(project.id, true);
-                          revealControls(project.id);
+                          setControlsCards(current => {
+                            const next = new Set(current);
+                            next.delete(project.id);
+                            return next;
+                          });
                         }}
                       >
                         View Code
@@ -224,6 +273,8 @@ export default function ProjectShowcase() {
                   </div>
                 </div>
               </article>
+                );
+              })()}
             </ConceptReveal>
           ))}
         </div>

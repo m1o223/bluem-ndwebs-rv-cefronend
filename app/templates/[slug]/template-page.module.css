@@ -1,0 +1,32 @@
+.page {
+  min-height: 100vh;
+  background: #f6f7f5;
+}
+
+.frame {
+  height: 100vh;
+  min-height: 0;
+  background: #fff;
+}
+
+.notFound {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  background: #fff;
+  color: #172033;
+  text-align: center;
+}
+
+.notFound h1 {
+  margin: 0 0 12px;
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 500;
+  letter-spacing: -1.5px;
+}
+
+.notFound p {
+  margin: 0;
+  color: #687284;
+}

@@ -62,6 +62,10 @@
 .card[data-flipped="true"] .flipInner {
   transform: rotateY(180deg);
 }
+.card[data-flipped="true"] .modeOverlay {
+  opacity: 0;
+  pointer-events: none;
+}
 @media (hover: hover) and (pointer: fine) {
   .card:hover {
     transform: translateY(-4px);
@@ -84,10 +88,20 @@
   transition: opacity 220ms ease, background-color 220ms ease;
 }
 .card:hover .modeOverlay,
-.card:focus-within .modeOverlay,
+.card:focus-visible .modeOverlay,
 .card[data-controls-visible="true"] .modeOverlay {
   opacity: 1;
   pointer-events: auto;
+}
+.card[data-controls-visible="true"] .modeOverlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+.card[data-flipped="true"]:hover .modeOverlay,
+.card[data-flipped="true"]:focus-visible .modeOverlay,
+.card[data-flipped="true"][data-controls-visible="true"] .modeOverlay {
+  opacity: 0;
+  pointer-events: none;
 }
 .modeActions {
   display: inline-flex;
@@ -101,10 +115,14 @@
 .modeButton {
   min-width: 96px;
   height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid #dce2ea;
   border-radius: 999px;
   background: #fff;
   color: #172033;
+  text-decoration: none;
   font: inherit;
   font-size: 12px;
   font-weight: 600;
@@ -169,12 +187,35 @@
 }
 .codeToolbar > span:nth-child(2) {
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.codeToolbar > i {
-  font-style: normal;
-  font-size: 8px;
-  color: #9fb9e7;
-  letter-spacing: 1px;
+.runButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 94px;
+  height: 28px;
+  border: 1px solid #7ba3d7;
+  border-radius: 999px;
+  background: #d9e9ff;
+  color: #132033;
+  font-size: 9px;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    background .2s ease,
+    border-color .2s ease,
+    transform .2s ease;
+}
+.runButton:hover,
+.runButton:focus-visible {
+  border-color: #aacbfb;
+  background: #f3f8ff;
+  outline: none;
+  transform: translateY(-1px);
 }
 .codePanel {
   display: flex;
@@ -190,18 +231,49 @@
 .codeTabs {
   display: flex;
   gap: 8px;
+  flex-wrap: wrap;
   margin-bottom: 16px;
 }
-.codeTabs span {
+.codeTab {
   border: 1px solid #334157;
   border-radius: 999px;
   padding: 5px 8px;
+  background: #111a28;
   color: #9fb0c6;
   font-size: 8px;
+  font: inherit;
+  cursor: pointer;
+  transition:
+    background .2s ease,
+    border-color .2s ease,
+    color .2s ease;
+}
+.codeTab:hover,
+.codeTab:focus-visible {
+  border-color: #516982;
+  color: #e5eefb;
+  outline: none;
+}
+.codeTab[data-active="true"] {
+  border-color: #91b7ea;
+  background: #1f3148;
+  color: #eef6ff;
+}
+.codeScroll {
+  min-height: 0;
+  flex: 1;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid #253248;
+  border-radius: 8px;
+  background: #08111cf0;
+  padding: 12px;
+  scrollbar-color: #445a75 #111a28;
+  scrollbar-width: thin;
 }
 .codePanel pre {
   margin: 0;
-  overflow: hidden;
+  min-width: max-content;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   font-size: 11px;
   line-height: 1.9;
@@ -421,6 +493,16 @@
   .codePanel pre {
     font-size: 10px;
   }
+  .codeToolbar {
+    padding: 11px 12px;
+  }
+  .runButton {
+    min-width: 86px;
+    height: 28px;
+  }
+  .codePanel {
+    padding: 14px;
+  }
   .modeOverlay {
     padding: 18px;
     background: #10182726;
@@ -443,7 +525,9 @@
   .card,
   .flipInner,
   .modeOverlay,
-  .modeButton {
+  .modeButton,
+  .codeTab,
+  .runButton {
     transition: none;
   }
   .card:hover,
