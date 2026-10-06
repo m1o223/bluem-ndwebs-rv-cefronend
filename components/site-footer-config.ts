@@ -2,7 +2,7 @@
 
 type Social = { name: string; icon: string; url: string | null };
 type Legal = { label: string; href: string | null };
-type Payment = { name: string; asset: string | null };
+type Payment = { name: string; asset: string | null; note?: string };
 export const footerConfig = {
   brandName: "BlueMind Web Service",
   brandTagline: "Your idea. Our expertise. Built for the web.",
@@ -21,12 +21,11 @@ export const footerConfig = {
   paymentMethods: [
     { name: "Apple Pay", asset: "/images/footer/apple-pay.svg" }, { name: "Google Pay", asset: "/images/footer/google-pay.svg" },
     { name: "Visa", asset: "/images/footer/visa.png" }, { name: "Mastercard", asset: "/images/footer/mastercard.svg" },
+    { name: "Klarna", asset: "/images/footer/klarna.svg", note: "Coming soon" },
   ] satisfies Payment[],
-  comingSoonPayment: "Klarna",
   legalLinks: [
     { label: "Privacy Policy", href: null },
     { label: "Terms & Conditions", href: null },
     { label: "Cookie Policy", href: null },
   ] satisfies Legal[],
 } as const;
-

@@ -22,7 +22,7 @@ export default function SiteFooter() {
       </div>
       <div className={styles.middle}>
         <section aria-labelledby="footer-social-title"><h2 id="footer-social-title">Follow BlueMind Web Service</h2><ul className={styles.social}>{config.social.map(item => <li key={item.name}>{item.url ? <a href={item.url} target="_blank" rel="noopener noreferrer" aria-label={`${config.brandName} on ${item.name}`}><Image src={item.icon} width={18} height={18} alt="" /><span>{item.name}</span></a> : <span className={styles.pendingSocial}><Image src={item.icon} width={18} height={18} alt="" /><span>{item.name}</span></span>}</li>)}</ul><p className={styles.note}>Official account links awaiting confirmation.</p></section>
-        <section aria-labelledby="footer-payments-title" className={styles.payments}><h2 id="footer-payments-title">Payment methods we plan to support</h2><ul>{config.paymentMethods.map(method => <li key={method.name}>{method.asset ? <Image src={method.asset} width={92} height={32} alt={method.name} /> : method.name}</li>)}</ul><p className={styles.comingSoon}><span>{config.comingSoonPayment}</span><small>Coming soon</small></p><p className={styles.note}>Planned support. Online payments are not enabled yet.</p></section>
+        <section aria-labelledby="footer-payments-title" className={styles.payments}><h2 id="footer-payments-title">Payment methods we plan to support</h2><ul>{config.paymentMethods.map(method => <li key={method.name}>{method.asset ? <Image src={method.asset} width={92} height={32} alt={method.name} /> : <span>{method.name}</span>}{method.note ? <small>{method.note}</small> : null}</li>)}</ul><p className={styles.note}>Planned support. Online payments are not enabled yet.</p></section>
       </div>
       <div className={styles.bottom}>
         <div><nav aria-label="Footer legal"><ul>{config.legalLinks.map(item => <li key={item.label}>{item.href ? <Link href={item.href}>{item.label}</Link> : <span>{item.label}</span>}</li>)}</ul></nav><p className={styles.note}>Legal policies awaiting review and publication.</p></div>
@@ -31,5 +31,3 @@ export default function SiteFooter() {
     </div>
   </footer>;
 }
-
-

@@ -24,13 +24,13 @@
 .social img { width: 18px; height: 18px; object-fit: contain; }
 .social a { transition: opacity 180ms ease-out, transform 180ms ease-out; }
 .social a:hover { opacity: .7; transform: translateY(-2px); }
-.payments ul { display: grid; grid-template-columns: repeat(4, 104px); gap: 9px; }
-.payments li { display: flex; justify-content: center; align-items: center; height: 54px; padding: 8px 12px; border: 1px solid #dfe4eb; border-radius: 6px; background: #fff; }
+.payments ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 104px)); gap: 10px; }
+.payments li { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; min-height: 62px; padding: 8px 12px; border: 1px solid #dfe4eb; border-radius: 6px; background: #fff; }
 .payments img { width: 72px; height: 36px; object-fit: contain; flex-shrink: 0; }
 .payments img[alt="Google Pay"] { width: 96px; height: 48px; }
 .payments img[alt="Visa"] { width: 66px; height: 24px; }
-.comingSoon { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin: 16px 0 0; color: #515b69; font-size: 12px; }
-.comingSoon small { border: 1px solid #dfe4eb; border-radius: 4px; padding: 4px 7px; font-size: 10px; line-height: 1.5; }
+.payments img[alt="Klarna"] { width: 78px; height: 34px; }
+.payments li small { color: #515b69; font-size: 10px; line-height: 1.2; }
 .bottom { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; padding-top: 24px; }
 .bottom nav ul { display: flex; flex-wrap: wrap; gap: 10px 22px; font-size: 11px; line-height: 1.8; color: #515b69; }
 .bottom nav a { color: inherit; display: inline-flex; min-height: 36px; align-items: center; }
@@ -40,4 +40,3 @@
 @media (max-width: 620px) { .footer { padding-block: 34px 24px; } .brandLogo { --logo-size: 56px; } .columns { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-bottom: 28px; } .linkGroup a { min-height: 44px; } .middle { padding-block: 26px; } .bottom nav ul { gap: 12px 20px; } }
 @media (max-width: 620px) { .payments ul { grid-template-columns: repeat(2, 104px); } }
 @media (prefers-reduced-motion: reduce) { .footer a { transition: none; } .social a:hover { transform: none; } }
-

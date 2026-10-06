@@ -46,5 +46,12 @@
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
     "officialReference": "https://www.mastercard.com/brandcenter/us/en/download-artwork.html",
     "note": "Direct Mastercard downloads returned HTTP 403; licensed payment-provider copy used."
+  },
+  "klarna": {
+    "source": "https://x.klarnacdn.net/payment-method/assets/badges/generic/klarna.svg",
+    "provider": "Klarna CDN",
+    "format": "SVG",
+    "purpose": "Informational planned payment method; no checkout enabled",
+    "modifications": "None"
   }
 }
