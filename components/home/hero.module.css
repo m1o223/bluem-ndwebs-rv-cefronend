@@ -15,8 +15,8 @@
   .primaryCta:hover { box-shadow: 0 6px 14px #0000000f; }
 }
 .ctaButton:active { transform: translateY(1px); box-shadow: none; transition-duration: 100ms; }
-.planet { position: absolute; z-index: -1; display: block; width: 720px; aspect-ratio: 4 / 3; top: -135px; right: -125px; opacity: .055; pointer-events: none; user-select: none; }
-.planetImage { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: contain; }
+.planet { position: absolute; z-index: -1; display: block; width: 720px; aspect-ratio: 4 / 3; top: -135px; right: -125px; opacity: .14; pointer-events: none; user-select: none; background: transparent; border: 0; box-shadow: none; mix-blend-mode: multiply; }
+.planetImage { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: contain; background: transparent; }
 .visual { position: relative; width: 100%; min-width: 0; height: 526px; margin: 0; container-type: inline-size; }
 .windows { position: absolute; inset: 0; }
 .websiteWindow, .codeWindow { position: absolute; overflow: hidden; border-radius: 10px; border: 1px solid #dfe4eb; }
@@ -27,6 +27,28 @@
 .windowDots i { width: 5px; height: 5px; border-radius: 50%; background: #cfd5df; }
 .windowTitle { flex: 1; font-size: 9px; color: #8a939f; letter-spacing: .15px; }
 .windowLabel { color: #7b8696; font-size: 7px; letter-spacing: 1px; white-space: nowrap; }
+.heroFlipCard { height: 354px; padding: 0; overflow: visible; border: 0; background: transparent; box-shadow: none; color: inherit; text-align: left; cursor: pointer; perspective: 1200px; transform: translateZ(0); }
+.heroFlipCard:focus-visible { outline: 2px solid #171717; outline-offset: 6px; }
+.heroFlipInner { position: relative; display: block; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 780ms cubic-bezier(.2, .8, .2, 1); }
+.heroFlipCard:hover .heroFlipInner,
+.heroFlipCard:focus-visible .heroFlipInner,
+.heroFlipCard[data-flipped="true"] .heroFlipInner { transform: rotateY(180deg); }
+.heroFlipFace { position: absolute; inset: 0; display: block; overflow: hidden; border: 1px solid #dfe4eb; border-radius: 10px; backface-visibility: hidden; transform-style: preserve-3d; box-shadow: 0 20px 44px #192c4911, 0 3px 10px #192c4907; }
+.heroFlipFront { background: #fff; }
+.heroFlipBack { display: flex; flex-direction: column; background: linear-gradient(145deg, #172232, #0d1420); color: #d9e4f4; border-color: #2d394b; transform: rotateY(180deg); box-shadow: 0 24px 48px #0c152633; }
+.heroCodeMeta { display: flex; align-items: center; gap: 12px; padding: 12px 16px 0; color: #95a6be; font-size: 8px; }
+.heroCodeMeta span:first-child { color: #b8d2ff; }
+.heroCodeMeta i { margin-left: auto; font-style: normal; color: #adc5ea; font-size: 8px; }
+.heroCodeBlock { flex: 1; margin: 14px 0 10px; padding: 0 16px; overflow: hidden; font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: clamp(10px, 1.8cqw, 12px); line-height: 1.9; }
+.heroCodeBlock code,
+.heroCodeBlock span { display: block; }
+.heroCodeBlock b { display: inline-block; width: 26px; color: #63758f; font-weight: 400; user-select: none; }
+.heroCodeBlock em { color: #c6a7ef; font-style: normal; }
+.heroCodeBlock i { color: #9fc5ff; font-style: normal; }
+.heroCodeBlock strong { color: #b8ddb9; font-weight: 400; }
+.heroCodeStatus { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 16px; border-top: 1px solid #2b3648; color: #9aa9bd; font-size: 7px; }
+.heroCodeStatus span:first-child { display: inline-flex; align-items: center; gap: 6px; }
+.heroCodeStatus i { width: 4px; height: 4px; border-radius: 50%; background: #9fc7ad; }
 .codeWindow .windowChrome { background: #253042; border-color: #384355; }
 .codeWindow .windowDots i { background: #5c6779; }
 .codeWindow .windowTitle { color: #d3dce9; }
@@ -114,6 +136,7 @@
   .description { font-size: 13px; }
   .visual { height: 488px; }
   .websiteWindow { top: 138px; }
+  .heroFlipCard { height: 330px; }
   .codeWindow { width: 88%; }
   .codeBody { font-size: 11px; }
   .studioNavigation { padding: 13px 20px 9px; }
@@ -136,6 +159,7 @@
   .description { font-size: 13px; margin-block: 18px 21px; }
   .visual { width: min(680px, 100%); justify-self: center; height: 496px; }
   .websiteWindow { top: 139px; }
+  .heroFlipCard { height: 358px; }
   .codeWindow { width: 81%; top: 0; }
   .codeBody { font-size: 13px; }
   .studioHeadline { font-size: 36px; }
@@ -147,7 +171,7 @@
   .typeTile > strong { font-size: 60px; }
   .designCard { display: block; }
   .performanceCard { bottom: 32px; }
-  .planet { top: 86px; width: 600px; right: -105px; }
+  .planet { top: 86px; width: 600px; right: -105px; opacity: .12; }
 }
 @media (max-width: 620px) {
   .inner { width: calc(100% - 40px); gap: 27px; padding-block: 33px 54px; }
@@ -157,6 +181,12 @@
   .description { font-size: 12px; line-height: 1.8; margin-block: 21px 22px; }
   .visual { height: 374px; }
   .websiteWindow { top: 115px; width: 94%; border-radius: 7px; }
+  .heroFlipCard { height: 251px; }
+  .heroFlipFace { border-radius: 7px; }
+  .heroCodeMeta { padding: 10px 11px 0; gap: 9px; font-size: 7px; }
+  .heroCodeBlock { font-size: clamp(8px, 2.4cqw, 10px); line-height: 1.65; padding-inline: 11px; margin-block: 11px 8px; }
+  .heroCodeBlock b { width: 20px; }
+  .heroCodeStatus { padding: 8px 11px; font-size: 5px; }
   .codeWindow { width: 88%; border-radius: 7px; }
   .windowChrome { height: 27px; padding-inline: 10px; gap: 9px; }
   .windowDots { gap: 3px; }
@@ -199,12 +229,15 @@
   .performanceGraph { height: 25px; margin-top: 9px; }
   .miniCard p { font-size: 6px; margin-top: 6px; }
   .visualCaption { bottom: -9px; left: 0; right: auto; font-size: 5px; letter-spacing: .6px; }
-  .planet { width: 410px; top: 283px; right: -82px; }
+  .planet { width: 410px; top: 283px; right: -82px; opacity: .105; }
   .scrollCue { font-size: 6px; min-height: 24px; bottom: 9px; gap: 10px; }
   .scrollCue > span { font-size: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .hero *, .hero *::before, .hero *::after { animation: none !important; transition: none !important; }
+  .heroFlipCard:hover .heroFlipInner,
+  .heroFlipCard:focus-visible .heroFlipInner,
+  .heroFlipCard[data-flipped="true"] .heroFlipInner { transform: rotateY(180deg); }
   .websiteWindow:hover { transform: none; }
   .ctaButton:hover, .ctaButton:active { transform: none; }
 }

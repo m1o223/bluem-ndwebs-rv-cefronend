@@ -1,20 +1,21 @@
-﻿.rotating {
-  /* Keep the planet and orbit together so the ring moves naturally with the mark. */
+.rotating {
+  display: block;
   transform-origin: 50% 50%;
-  filter: saturate(.92) contrast(.96) brightness(1.03);
-  animation: planet-turn 16s linear infinite;
+  backface-visibility: hidden;
+  filter: saturate(.95) contrast(.98) brightness(1.02);
+  animation: planet-turn 24s linear infinite;
   will-change: transform;
 }
 
 @keyframes planet-turn {
-  from { transform: rotateX(5deg) rotateY(-7deg) rotateZ(0deg); }
-  to { transform: rotateX(5deg) rotateY(-7deg) rotateZ(360deg); }
+  from { transform: perspective(1200px) rotateX(5deg) rotateY(-10deg) rotateZ(0deg); }
+  to { transform: perspective(1200px) rotateX(5deg) rotateY(-10deg) rotateZ(360deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .rotating {
     animation: none;
-    transform: rotateX(5deg) rotateY(-7deg) rotateZ(-8deg);
+    transform: perspective(1200px) rotateX(5deg) rotateY(-10deg) rotateZ(-8deg);
     will-change: auto;
   }
 }

@@ -158,17 +158,23 @@
 }
 @media (max-width: 1240px) {
   .headerInner { position: relative; min-height: 78px; }
-  .menuToggle { min-height: 44px; min-width: 88px; display: flex; align-items: center; gap: 22px; border: 1px solid #e2e7ef; border-radius: 4px; background: #fff; padding: 10px 13px; font-size: 12px !important; cursor: pointer; }
+  .menuToggle { min-height: 44px; min-width: 92px; display: flex; align-items: center; justify-content: space-between; gap: 18px; border: 1px solid #e2e7ef; border-radius: 6px; background: #fff; color: #171c25; padding: 10px 12px 10px 14px; font-size: 12px !important; cursor: pointer; transition: background .2s ease, border-color .2s ease, box-shadow .2s ease, color .2s ease; }
+  .menuToggle:hover { background: #f8fafc; border-color: #cdd5df; box-shadow: 0 6px 18px #1720330a; }
+  .menuToggle:active { background: #f1f4f8; box-shadow: none; }
   .menuLabel, .menuSymbol { display: grid; }
   .menuLabel > span, .menuSymbol > span { grid-area: 1 / 1; transition: opacity 180ms ease-out, transform 180ms ease-out; }
   .menuLabel > span:last-child, .menuSymbol > span:last-child { opacity: 0; }
-  .menuSymbol { font-size: 18px; line-height: 12px; }
-  .menuSymbol > span:first-child { transform: rotate(0); }
+  .menuSymbol { width: 22px; height: 22px; place-items: center; border: 1px solid #e4e9f0; border-radius: 50%; background: #fbfcfd; color: #202938; flex-shrink: 0; transition: border-color .2s ease, background .2s ease; }
+  .menuToggle:hover .menuSymbol { border-color: #cbd3dd; background: #fff; }
+  .menuSymbol svg { grid-area: 1 / 1; width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; transition: opacity 180ms ease-out, transform 180ms ease-out; }
+  .menuOpenIcon { transform: rotate(0) scale(1); }
+  .menuCloseIcon { opacity: 0; transform: rotate(-45deg) scale(.72); }
   .menuToggle[data-expanded="true"] .menuLabel > span:first-child,
-  .menuToggle[data-expanded="true"] .menuSymbol > span:first-child { opacity: 0; }
-  .menuToggle[data-expanded="true"] .menuSymbol > span:first-child { transform: rotate(90deg); }
-  .menuToggle[data-expanded="true"] .menuLabel > span:last-child,
-  .menuToggle[data-expanded="true"] .menuSymbol > span:last-child { opacity: 1; }
+  .menuToggle[data-expanded="true"] .menuOpenIcon { opacity: 0; }
+  .menuToggle[data-expanded="true"] .menuOpenIcon { transform: rotate(45deg) scale(.72); }
+  .menuToggle[data-expanded="true"] .menuLabel > span:last-child { opacity: 1; }
+  .menuToggle[data-expanded="true"] .menuCloseIcon { opacity: 1; transform: rotate(0) scale(1); }
+  .menuToggle[data-expanded="true"] .menuSymbol { border-color: #c7d0dc; background: #f7f9fc; }
   /* Clip the sliding panel below the header; keep it mounted for both directions. */
   .navPanel { display: block; position: absolute; left: -24px; right: -24px; top: 100%; z-index: 10; overflow: hidden; visibility: hidden; pointer-events: none; transition: visibility 0s linear 440ms; }
   .homeNav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 20px; padding: 23px 28px; border-bottom: 1px solid #e0e6ee; background: #fff; transform: translateY(-100%); transition: transform 440ms cubic-bezier(.22, 1, .36, 1); }

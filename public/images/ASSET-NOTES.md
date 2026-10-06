@@ -10,7 +10,7 @@ The project now uses the user's supplied real 3D planet logo from `5918232791365
 
 Navbar, footer, reusable planet helpers, favicon metadata, app manifest icons, and decorative watermark exports are generated from this supplied logo. The visible brand name remains BlueMind Web Service while the icon mark uses the new black planet with white curved bands and orbit ring.
 
-`hero/bluemind-hero-{256,384,512,640,768,1024}.webp` are responsive watermark exports on a subtle light canvas at a 4:3 ratio. They are intentionally dimmed in page CSS so the logo component remains the visual focus.
+`hero/bluemind-hero-{256,384,512,640,768,1024}.webp` are responsive transparent-background watermark exports at a 4:3 ratio. They are intentionally blended in page CSS so the planet appears integrated with the hero instead of sitting inside a visible panel.
 
 `public/icons/` contains PNG browser/app icon exports at 16, 32, 48, 64, 128, 152, 167, 180, 192, and 512 pixels. `public/favicon.ico` contains 16/32/48/64-pixel frames. Next.js root metadata imports `app/favicon-metadata.json`, so every current route inherits the same browser icons.
 
