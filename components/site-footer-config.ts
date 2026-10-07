@@ -6,7 +6,7 @@ type Payment = { name: string; asset: string | null; note?: string };
 export const footerConfig = {
   brandName: "BlueMind Web Service",
   brandTagline: "Your idea. Our expertise. Built for the web.",
-  contact: { ...contactConfig, approved: false },
+  contact: contactConfig,
   explore: [
     ["/", "Home"], ["/about", "About Us"], ["/services", "Services"],
     ["/how-we-work", "How We Work"], ["/#selected-work", "Website Concepts"],

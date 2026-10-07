@@ -17,10 +17,8 @@ export default function ContactPage() {
           <div className={styles.columns}>
             <aside className={styles.details} aria-label="Contact information">
               <dl>
-                <div><dt>Email</dt><dd>{contactConfig.email}</dd></div>
-                <div><dt>Phone</dt><dd>{contactConfig.phone}</dd></div>
+                <div><dt>Email</dt><dd><a href={`mailto:${contactConfig.email}`}>{contactConfig.email}</a></dd></div>
               </dl>
-              <p className={styles.previewNotice}>{contactConfig.previewNotice}</p>
             </aside>
             <section className={styles.formSpace} aria-labelledby="form-preview-title">
               <h2 id="form-preview-title">Message form</h2>

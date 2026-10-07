@@ -16,7 +16,7 @@ export default function SiteFooter() {
         <nav aria-label="Footer explore" className={styles.linkGroup}><h2>Explore</h2><ul>{config.explore.map(([href,label]) => <li key={href}><Link href={href}>{label}</Link></li>)}</ul></nav>
         <nav aria-label="Footer services" className={styles.linkGroup}><h2>Services</h2><ul>{config.services.map(([href,label]) => <li key={label}><Link href={href}>{label}</Link></li>)}</ul></nav>
         <section className={styles.contact} aria-labelledby="footer-contact-title"><h2 id="footer-contact-title">Contact</h2>
-          {config.contact.approved ? <dl><div><dt>Email</dt><dd><a href={`mailto:${config.contact.email}`}>{config.contact.email}</a></dd></div><div><dt>Phone</dt><dd><a href={`tel:${config.contact.phone.replace(/\s/g, "")}`}>{config.contact.phone}</a></dd></div></dl> : <><dl><div><dt>Email</dt><dd>Details awaiting approval</dd></div><div><dt>Phone</dt><dd>Details awaiting approval</dd></div></dl><p className={styles.note}>Contact details will be added once confirmed.</p></>}
+          <dl><div><dt>Email</dt><dd><a href={`mailto:${config.contact.email}`}>{config.contact.email}</a></dd></div></dl>
           <Link href="/contact" className={styles.contactLink}>Contact Us <span aria-hidden="true">â†’</span></Link>
         </section>
       </div>
