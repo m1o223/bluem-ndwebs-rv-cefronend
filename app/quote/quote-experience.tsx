@@ -6,10 +6,13 @@ import pageStyles from "../../components/page-identity.module.css";
 import { StarMark } from "../../components/star-mark";
 import { postApi } from "../lib/api-client";
 import { includedFeatures, interestOptions, packages, timelineOptions } from "./quote-data";
+import PurchaseCheckout from "./purchase-checkout";
 import styles from "./quote.module.css";
 
 type RequiredField = "fullName" | "email" | "interest" | "idea";
 type Errors = Partial<Record<RequiredField, string>>;
+type Package = (typeof packages)[number];
+type FixedPackage = Package & { price: `From ${string} SEK` };
 const readyNotice = "Tell us about your project and we will get back to you.";
 const buttonClass = `${buttonStyles.ctaButton} ${buttonStyles.primaryCta} ${styles.button}`;
 
@@ -25,9 +28,14 @@ export default function QuoteExperience() {
   const [notice, setNotice] = useState(readyNotice);
   const [submitting, setSubmitting] = useState(false);
   const [interactive, setInteractive] = useState(false);
+  const [checkoutPackage, setCheckoutPackage] = useState<FixedPackage | null>(null);
   const formSection = useRef<HTMLElement>(null);
   const interestSelect = useRef<HTMLSelectElement>(null);
   useEffect(() => setInteractive(true), []);
+
+  function isFixedPackage(item: Package): item is FixedPackage {
+    return item.price.startsWith("From ");
+  }
 
   function choosePackage(name: string) {
     setInterest(name);
@@ -101,10 +109,11 @@ export default function QuoteExperience() {
             <p className={styles.description}>{item.description}</p>
             <ul className={styles.featureList}>{item.features.map(feature => <li key={feature}><StarMark className={styles.star} /><span>{feature}</span></li>)}</ul>
             {item.id === "06" && <p className={styles.customNote}>Examples depend on your project. Your quote defines the included features and timeline.</p>}
-            <button type="button" className={buttonClass} disabled={!interactive || submitting} onClick={() => choosePackage(item.title)}>{item.cta}</button>
+            <button type="button" className={buttonClass} disabled={!interactive || submitting} onClick={() => isFixedPackage(item) ? setCheckoutPackage(item) : choosePackage(item.title)}>{item.cta}</button>
           </article>
         ))}
       </section>
+      <PurchaseCheckout selectedPackage={checkoutPackage} onClose={() => setCheckoutPackage(null)} />
       <div className={styles.disclaimer}>
         <p>Starting prices. Final price and delivery time depend on your project requirements.</p>
         <p>Third-party costs such as domains, hosting, paid plugins, payment-provider fees, and external services are not included unless stated otherwise.</p>

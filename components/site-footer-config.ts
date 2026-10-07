@@ -21,6 +21,7 @@ export const footerConfig = {
   paymentMethods: [
     { name: "Apple Pay", asset: "/images/footer/apple-pay.svg" }, { name: "Google Pay", asset: "/images/footer/google-pay.svg" },
     { name: "Visa", asset: "/images/footer/visa.png" }, { name: "Mastercard", asset: "/images/footer/mastercard.svg" },
+    { name: "PayPal", asset: null },
     { name: "Klarna", asset: "/images/footer/klarna.svg", note: "Coming soon" },
   ] satisfies Payment[],
   legalLinks: [

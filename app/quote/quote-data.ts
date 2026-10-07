@@ -1,6 +1,7 @@
 export const packages = [
   {
     "id": "01",
+    "checkoutId": "one-page-website",
     "title": "One Page Website",
     "price": "From 4,490 SEK",
     "delivery": "Estimated delivery: 3–5 days",
@@ -18,11 +19,12 @@ export const packages = [
       "Launch assistance",
       "Revisions included"
     ],
-    "cta": "Get My Quote",
+    "cta": "Get Started",
     "popular": false
   },
   {
     "id": "02",
+    "checkoutId": "small-website",
     "title": "Small Website",
     "price": "From 5,990 SEK",
     "delivery": "Estimated delivery: 4–6 days",
@@ -40,11 +42,12 @@ export const packages = [
       "Launch assistance",
       "Revisions included"
     ],
-    "cta": "Get My Quote",
+    "cta": "Get Started",
     "popular": false
   },
   {
     "id": "03",
+    "checkoutId": "business-website",
     "title": "Business Website",
     "price": "From 7,490 SEK",
     "delivery": "Estimated delivery: 5–8 days",
@@ -64,11 +67,12 @@ export const packages = [
       "Launch assistance",
       "Revisions included"
     ],
-    "cta": "Get My Quote",
+    "cta": "Get Started",
     "popular": true
   },
   {
     "id": "04",
+    "checkoutId": "business-plus",
     "title": "Business Plus",
     "price": "From 9,990 SEK",
     "delivery": "Estimated delivery: 7–12 days",
@@ -89,11 +93,12 @@ export const packages = [
       "Launch assistance",
       "Revisions included"
     ],
-    "cta": "Get My Quote",
+    "cta": "Get Started",
     "popular": false
   },
   {
     "id": "05",
+    "checkoutId": "online-store",
     "title": "Online Store",
     "price": "From 12,990 SEK",
     "delivery": "Estimated delivery: 10–18 days",
@@ -113,11 +118,12 @@ export const packages = [
       "Store launch assistance",
       "Revisions included"
     ],
-    "cta": "Get My Quote",
+    "cta": "Get Started",
     "popular": false
   },
   {
     "id": "06",
+    "checkoutId": "custom-website",
     "title": "Custom Website",
     "price": "Custom Quote",
     "delivery": "Timeline based on your project",
@@ -135,7 +141,7 @@ export const packages = [
       "Project-specific setup",
       "Launch assistance"
     ],
-    "cta": "Tell Us Your Idea",
+    "cta": "Request a Quote",
     "popular": false
   }
 ] as const;
