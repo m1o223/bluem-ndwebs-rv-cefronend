@@ -6,11 +6,19 @@ import { BlueMindPlanetLogo } from "../blue-mind-planet-logo";
 import styles from "./home.module.css";
 
 const links = [["/", "Home"], ["/about", "About Us"], ["/services", "Services"], ["/#selected-work", "Website Concepts"], ["/how-we-work", "How We Work"], ["/care", "Website Care"], ["/contact", "Contact"]];
+const languages = [
+  { code: "EN", label: "English" },
+  { code: "SV", label: "Svenska" },
+  { code: "AR", label: "العربية" },
+];
 
 export default function Navbar({ activePath = "/" }: { activePath?: string }) {
   const [expanded, setExpanded] = useState(false);
   const [compact, setCompact] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
+  const [languageOpen, setLanguageOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const languageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 1240px)");
@@ -33,6 +41,24 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
     document.addEventListener("keydown", closeOnEscape);
     return () => document.removeEventListener("keydown", closeOnEscape);
   }, [expanded]);
+
+  useEffect(() => {
+    if (!languageOpen) return;
+    const closeLanguageMenu = (event: MouseEvent) => {
+      if (languageRef.current?.contains(event.target as Node)) return;
+      setLanguageOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setLanguageOpen(false);
+    };
+    document.addEventListener("mousedown", closeLanguageMenu);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("mousedown", closeLanguageMenu);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [languageOpen]);
 
   return (
     <header className={styles.header} onKeyDown={(event) => {
@@ -58,6 +84,30 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
           <nav id="home-navigation" aria-label="Main navigation" className={styles.homeNav} inert={compact && !expanded} aria-hidden={compact && !expanded ? true : undefined}>
             {links.map(([href, label]) => <Link key={href} href={href} onClick={() => setExpanded(false)} aria-current={href === activePath ? "page" : undefined}><span className={styles.navLabel}>{label}</span></Link>)}
             <Link href="/quote" className={styles.navCta} onClick={() => setExpanded(false)} aria-current={activePath === "/quote" ? "page" : undefined}>Request a Quote</Link>
+            <div className={styles.languageSelector} ref={languageRef}>
+              <button className={styles.languageButton} type="button" aria-label={`Selected language: ${selectedLanguage.label}`} aria-haspopup="menu" aria-expanded={languageOpen} onClick={() => setLanguageOpen((open) => !open)}>
+                <span aria-hidden="true" className={styles.languageIcon}>🌐</span>
+                <span>{selectedLanguage.code}</span>
+              </button>
+              <div className={styles.languageMenu} role="menu" data-open={languageOpen}>
+                {languages.map((language) => (
+                  <button
+                    key={language.code}
+                    type="button"
+                    role="menuitemradio"
+                    aria-checked={selectedLanguage.code === language.code}
+                    data-selected={selectedLanguage.code === language.code}
+                    onClick={() => {
+                      setSelectedLanguage(language);
+                      setLanguageOpen(false);
+                    }}
+                  >
+                    <span>{language.label}</span>
+                    <small>{language.code}</small>
+                  </button>
+                ))}
+              </div>
+            </div>
           </nav>
         </div>
       </div>

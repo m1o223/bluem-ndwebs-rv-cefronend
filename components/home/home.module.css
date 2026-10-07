@@ -72,6 +72,19 @@
 .homeNav .navCta { display: inline-flex; align-items: center; padding: 13px 20px; justify-content: center; border: 1px solid #dfe3e9; border-radius: 5px; color: #181d26; margin-left: 8px; transition: border-color .2s, background .2s; }
 .homeNav .navCta:hover { background: #f5f5f5; border-color: #777; }
 .homeNav .navCta[aria-current="page"] { border-color: #171717; background: #f5f5f5; }
+.languageSelector { position: relative; display: inline-flex; align-items: center; }
+.languageButton { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 9px 12px; border: 1px solid #dfe3e9; border-radius: 5px; background: #fff; color: #181d26; font-size: 12px !important; font-weight: 650; letter-spacing: .4px; cursor: pointer; box-shadow: 0 1px 0 #10182805; transition: transform 220ms cubic-bezier(.22, 1, .36, 1), border-color 180ms ease, background 180ms ease, box-shadow 180ms ease; }
+.languageButton:hover,
+.languageButton[aria-expanded="true"] { border-color: #aeb6c2; background: #f8fafc; box-shadow: 0 8px 22px #1720330a; }
+.languageIcon { font-size: 14px; line-height: 1; }
+.languageMenu { position: absolute; top: calc(100% + 10px); right: 0; z-index: 25; display: grid; gap: 4px; min-width: 178px; padding: 7px; border: 1px solid #dfe5ed; border-radius: 9px; background: #fff; box-shadow: 0 18px 44px #1118271f; opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-6px) scale(.98); transform-origin: top right; transition: opacity 180ms ease, transform 180ms cubic-bezier(.22, 1, .36, 1), visibility 0s linear 180ms; }
+.languageMenu[data-open="true"] { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0) scale(1); transition-delay: 0s; }
+.languageMenu button { width: 100%; min-height: 40px; display: flex; align-items: center; justify-content: space-between; gap: 14px; border: 0; border-radius: 6px; background: transparent; color: #20242b; padding: 9px 10px; font-size: 12px !important; cursor: pointer; text-align: left; transition: background 180ms ease, color 180ms ease, transform 180ms cubic-bezier(.22, 1, .36, 1); }
+.languageMenu button:hover,
+.languageMenu button:focus-visible,
+.languageMenu button[data-selected="true"] { background: #f4f6f9; color: #111827; }
+.languageMenu small { color: #87909d; font-size: 10px; font-weight: 700; letter-spacing: .8px; }
+.languageMenu button[data-selected="true"] small { color: #171c25; }
 .header a:focus-visible,
 .header button:focus-visible { outline-color: #171717; }
 .menuToggle { display: none; }
@@ -182,6 +195,9 @@
   .navExpanded .homeNav { transform: translateY(0); }
   .homeNav a { font-size: 13px; justify-content: flex-start; }
   .homeNav .navCta { margin-left: 0; }
+  .languageSelector { width: 100%; }
+  .languageButton { width: 100%; justify-content: space-between; }
+  .languageMenu { left: 0; right: auto; width: min(230px, 100%); transform-origin: top left; }
 }
 @media (max-width: 1120px) {
   .container { width: calc(100% - 56px); }
@@ -202,6 +218,7 @@
   .brandLogo { --logo-size: 38px; }
   .navPanel { left: -16px; right: -16px; }
   .homeNav { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 15px; padding: 22px 24px; }
+  .languageSelector { grid-column: 1 / -1; max-width: 190px; }
   .eyebrow { font-size: 8px; letter-spacing: 1.5px; margin-bottom: 20px; }
   .desktopBreak { display: none; }
   .showcase { padding-block: 42px 35px; }
@@ -242,6 +259,6 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .home *, .header *, .projectDialog, .projectDialog *, .projectDialog::backdrop { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
-  .projectCard:hover, .primaryButton:hover { transform: none; }
+  .projectCard:hover, .primaryButton:hover, .languageButton:hover { transform: none; }
 }
 
