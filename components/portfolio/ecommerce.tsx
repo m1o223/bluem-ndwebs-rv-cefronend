@@ -317,7 +317,7 @@ export default function EcommerceProject() {
                 id="morrow-email"
                 type="email"
                 required
-                placeholder="you@example.com"
+                placeholder="Email address"
                 autoComplete="email"
               />
               <button className={styles.button}>Join the list</button>
