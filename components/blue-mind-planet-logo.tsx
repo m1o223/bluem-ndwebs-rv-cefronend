@@ -4,19 +4,18 @@ import styles from "./blue-mind-planet-logo.module.css";
 type BlueMindPlanetLogoProps = {
   className?: string;
   priority?: boolean;
-  animated?: boolean;
 };
 
-export function BlueMindPlanetLogo({ className = "", priority = false, animated = true }: BlueMindPlanetLogoProps) {
+export function BlueMindPlanetLogo({ className = "", priority = false }: BlueMindPlanetLogoProps) {
   return (
     <span
-      className={`${styles.logo} ${animated ? styles.animated : ""} ${className}`}
+      className={`${styles.logo} ${className}`}
       aria-hidden="true"
       data-bluemind-logo
     >
       <span className={styles.tilt}>
         <Image
-          src="/images/brand/bluemind-planet-logo.jpg"
+          src="/images/brand/bluemind-planet-logo-transparent.png"
           width={512}
           height={512}
           alt=""

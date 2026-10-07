@@ -57,25 +57,10 @@
   object-fit: cover;
   transform-origin: 50% 50%;
   backface-visibility: hidden;
-  will-change: transform;
-}
-
-.animated .image {
-  animation: bluemind-planet-spin 16s linear infinite;
-}
-
-@keyframes bluemind-planet-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tilt,
-  .image {
+  .tilt {
     will-change: auto;
-  }
-
-  .animated .image {
-    animation: none;
   }
 }
