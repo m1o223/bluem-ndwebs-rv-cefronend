@@ -79,11 +79,18 @@
 .careReview dl div, .careState dl div { display: flex; justify-content: space-between; gap: 18px; }
 .careReview dt, .careState dt { color: #717b89; font-size: 11px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
 .careReview dd, .careState dd { margin: 0; color: #171c25; font-size: 13px; font-weight: 700; text-align: right; overflow-wrap: anywhere; }
-.careMethods { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 18px 0; }
-.careMethods button { min-height: 72px; padding: 14px; border: 1px solid #dfe4eb; border-radius: 14px; background: #fff; color: #171c25; cursor: pointer; font: inherit; font-weight: 700; text-align: center; transition: transform 200ms cubic-bezier(.22, 1, .36, 1), border-color 180ms ease, background 180ms ease; }
+.careMethods { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 18px 0; }
+.careMethods button { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px; min-height: 78px; padding: 14px; border: 1px solid #dfe4eb; border-radius: 14px; background: #fff; color: #171c25; cursor: pointer; font: inherit; font-weight: 700; text-align: left; transition: transform 200ms cubic-bezier(.22, 1, .36, 1), border-color 180ms ease, background 180ms ease, box-shadow 180ms ease; }
 .careMethods button[data-selected="true"] { border-color: #171c25; background: #fafbfc; box-shadow: inset 0 0 0 1px #171c25; }
 .careMethods button:disabled { cursor: not-allowed; opacity: .62; }
+.careMethods button[data-method="klarna"] { background: #fff3f8; border-color: #f0bdd4; opacity: .78; }
 .careMethods small { display: block; margin-top: 6px; color: #626b78; font-size: 11px; font-weight: 500; }
+.paymentBrand { display: inline-grid; place-items: center; width: 76px; height: 38px; border: 1px solid #edf0f4; border-radius: 10px; background: #fff; overflow: hidden; }
+.paymentBrand img { display: block; max-width: 64px; max-height: 28px; object-fit: contain; }
+.paypalBrand { color: #003087; font-size: 16px; font-weight: 800; letter-spacing: -.4px; }
+.paypalBrand::first-letter { color: #009cde; }
+.klarnaBrand { border-color: #ffa8cd; background: #ffa8cd; }
+.klarnaBrand img { max-width: 62px; max-height: 26px; }
 .careCardDemo { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin-bottom: 20px; padding: 16px; border: 1px solid #dfe4eb; border-radius: 14px; background: #fafbfc; }
 .careCardDemo label { display: grid; gap: 7px; color: #171c25; font-size: 12px; font-weight: 700; }
 .careCardDemo input { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid #dfe4eb; border-radius: 10px; background: #fff; color: #171c25; font: inherit; }
@@ -97,7 +104,7 @@
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 @keyframes price-enter { from { opacity: .3; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 @media (hover: hover) and (pointer: fine) { .plan:hover { transform: translateY(-3px); border-color: #aab1bc; box-shadow: 0 8px 24px #192c4909; } .plan.popular:hover { border-color: #171c25; } }
-@media (hover: hover) and (pointer: fine) { .careMethods button:hover:not(:disabled) { transform: translateY(-2px); border-color: #aab1bc; } }
+@media (hover: hover) and (pointer: fine) { .careMethods button:hover:not(:disabled) { transform: translateY(-2px); border-color: #aab1bc; box-shadow: 0 12px 28px rgb(25 44 73 / 10%); } }
 @media (max-width: 1050px) {
   .pricing { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .plan:last-child { grid-column: 1 / -1; }

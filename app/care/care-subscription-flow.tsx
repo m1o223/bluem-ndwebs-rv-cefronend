@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { StarMark } from "../../components/star-mark";
 import buttonStyles from "../../components/home/hero.module.css";
@@ -18,6 +19,12 @@ const methodLabels: Record<PaymentMethod, string> = {
   paypal: "PayPal",
   klarna: "Klarna",
 };
+
+function PaymentBrand({ method }: { method: PaymentMethod }) {
+  if (method === "paypal") return <span className={`${styles.paymentBrand} ${styles.paypalBrand}`} aria-hidden="true">PayPal</span>;
+  const asset = method === "visa" ? "/images/footer/visa.png" : method === "mastercard" ? "/images/footer/mastercard.svg" : method === "apple-pay" ? "/images/footer/apple-pay.svg" : method === "google-pay" ? "/images/footer/google-pay.svg" : "/images/footer/klarna.svg";
+  return <span className={`${styles.paymentBrand} ${method === "klarna" ? styles.klarnaBrand : ""}`} aria-hidden="true"><Image src={asset} width={method === "mastercard" ? 58 : 72} height={34} alt="" /></span>;
+}
 
 const buttonClass = `${buttonStyles.ctaButton} ${styles.button}`;
 
@@ -131,7 +138,7 @@ export default function CareSubscriptionFlow() {
       {step === "payment" && <div className={styles.carePayment}>
         <h3>Choose payment method</h3>
         <p className={styles.formNote}>Frontend demo only. No payment is processed today.</p>
-        <div className={styles.careMethods}>{(Object.keys(methodLabels) as PaymentMethod[]).map(method => <button key={method} type="button" disabled={method === "klarna"} data-selected={paymentMethod === method} onClick={() => setPaymentMethod(method)}><span>{methodLabels[method]}</span>{method === "klarna" && <small>Coming Soon</small>}</button>)}</div>
+        <div className={styles.careMethods}>{(Object.keys(methodLabels) as PaymentMethod[]).map(method => <button key={method} type="button" disabled={method === "klarna"} data-method={method} data-selected={paymentMethod === method} onClick={() => setPaymentMethod(method)}><PaymentBrand method={method} /><span>{methodLabels[method]}</span>{method === "klarna" && <small>Coming Soon</small>}</button>)}</div>
         {(paymentMethod === "visa" || paymentMethod === "mastercard") && <div className={styles.careCardDemo}><label>Card number<input placeholder="1234 5678 9012 3456" autoComplete="off" /></label><label>Expiry<input placeholder="MM / YY" autoComplete="off" /></label><label>CVC<input placeholder="CVC" autoComplete="off" /></label></div>}
         <button type="button" className={`${buttonClass} ${buttonStyles.primaryCta}`} disabled={paymentMethod === "klarna"} onClick={simulateCarePayment}>Pay {priceFor(selectedPlan, billing)}</button>
       </div>}

@@ -101,12 +101,25 @@
 .paymentSummary div, .detailsSummary dl div { display: flex; justify-content: space-between; gap: 18px; }
 .paymentSummary dd, .detailsSummary dd { margin: 0; color: #171c25; font-size: 13px; font-weight: 700; text-align: right; }
 .demoNotice { margin: 14px 0 0; color: #626b78; font-size: 12px; line-height: 1.8; }
-.methodGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 22px; }
-.methodGrid button { min-height: 74px; padding: 15px; text-align: center; }
-.methodGrid button:disabled { cursor: not-allowed; opacity: .62; }
+.methodGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 22px; }
+.methodGrid button { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px; min-height: 78px; padding: 14px; text-align: left; }
+.methodGrid button:disabled { cursor: not-allowed; opacity: .76; }
+.methodGrid button[data-method="klarna"] { background: #fff3f8; border-color: #f0bdd4; }
+.methodGrid button[data-method="klarna"][data-selected="true"] { box-shadow: none; }
+.paymentBrand { display: inline-grid; place-items: center; width: 76px; height: 38px; border: 1px solid #edf0f4; border-radius: 10px; background: #fff; overflow: hidden; }
+.paymentBrand img { display: block; max-width: 64px; max-height: 28px; object-fit: contain; }
+.paypalBrand { color: #003087; font-size: 16px; font-weight: 800; letter-spacing: -.4px; }
+.paypalBrand::first-letter { color: #009cde; }
+.klarnaBrand { border-color: #ffa8cd; background: #ffa8cd; }
+.klarnaBrand img { max-width: 62px; max-height: 26px; }
 .cardDemo { display: grid; gap: 14px; margin-top: 20px; padding: 18px; border: 1px solid #dfe4eb; border-radius: 16px; background: linear-gradient(140deg, #f8fafc, #fff); }
 .cardDemo label, .detailsFields label { display: grid; gap: 7px; color: #171c25; font-size: 12px; font-weight: 600; line-height: 1.5; }
 .cardDemo input, .detailsFields input, .detailsFields textarea, .detailsFields select { width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border: 1px solid #dfe4eb; border-radius: 10px; background: #fff; color: #171c25; font: inherit; font-size: 15px; }
+.cardNumberWrap { position: relative; display: block; }
+.cardNumberWrap input { padding-right: 92px; }
+.cardInlineBrand { position: absolute; top: 50%; right: 8px; transform: translateY(-50%); pointer-events: none; }
+.cardInlineBrand .paymentBrand { width: 70px; height: 30px; border-radius: 8px; }
+.cardInlineBrand .paymentBrand img { max-width: 56px; max-height: 22px; }
 .cardDemo > div, .detailGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 .walletDemo { margin-top: 20px; padding: 18px; border: 1px solid #dfe4eb; border-radius: 16px; background: #171c25; color: #fff; font-size: 17px; font-weight: 700; text-align: center; }
 .checkoutActions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
@@ -166,7 +179,7 @@
 .watermark { position: absolute; z-index: 0; top: -70px; right: -320px; width: 800px; aspect-ratio: 4 / 3; opacity: .055; pointer-events: none; user-select: none; mask-image: linear-gradient(to bottom, #000 20%, transparent 85%); }
 .watermark img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: contain; }
 @media (hover: hover) and (pointer: fine) { .package:hover { transform: translateY(-3px); border-color: #aab1bc; box-shadow: 0 8px 24px #192c4909; } .package.popular:hover { border-color: #171c25; } }
-@media (hover: hover) and (pointer: fine) { .checkoutPrimary:hover:not(:disabled), .checkoutGhost:hover, .planGrid button:hover, .methodGrid button:hover:not(:disabled), .featureChips button:hover, .checkoutClose:hover { transform: translateY(-2px); } }
+@media (hover: hover) and (pointer: fine) { .checkoutPrimary:hover:not(:disabled), .checkoutGhost:hover, .planGrid button:hover, .methodGrid button:hover:not(:disabled), .featureChips button:hover, .checkoutClose:hover { transform: translateY(-2px); } .methodGrid button:hover:not(:disabled) { box-shadow: 0 12px 28px rgb(25 44 73 / 10%); } }
 @media (hover: hover) and (pointer: fine) { .careUpsell button:hover, .billingMini button:hover { transform: translateY(-2px); border-color: #aab1bc; } }
 @media (max-width: 1050px) {
   .pricing { grid-template-columns: repeat(2, minmax(0, 1fr)); }

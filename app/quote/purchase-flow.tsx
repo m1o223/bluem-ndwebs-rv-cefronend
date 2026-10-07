@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { carePlans, priceFor, type Billing, type PlanName } from "../care/care-data";
@@ -37,6 +38,18 @@ const methodLabels: Record<PaymentMethod, string> = {
   paypal: "PayPal",
   klarna: "Klarna",
 };
+
+function PaymentBrand({ method }: { method: PaymentMethod }) {
+  if (method === "paypal") return <span className={`${styles.paymentBrand} ${styles.paypalBrand}`} aria-hidden="true">PayPal</span>;
+  const asset = method === "visa" ? "/images/footer/visa.png" : method === "mastercard" ? "/images/footer/mastercard.svg" : method === "apple-pay" ? "/images/footer/apple-pay.svg" : method === "google-pay" ? "/images/footer/google-pay.svg" : "/images/footer/klarna.svg";
+  return <span className={`${styles.paymentBrand} ${method === "klarna" ? styles.klarnaBrand : ""}`} aria-hidden="true"><Image src={asset} width={method === "mastercard" ? 58 : 72} height={34} alt="" /></span>;
+}
+
+function detectCardBrand(value: string): "visa" | "mastercard" {
+  const digits = value.replace(/\D/g, "");
+  if (digits.startsWith("5") || /^2[2-7]/.test(digits)) return "mastercard";
+  return "visa";
+}
 
 const featureChips = ["Contact Form", "Booking", "Online Store", "Gallery", "Blog", "Payments", "Maps", "Social Media", "Newsletter", "Other"];
 const demoCode = "123456";
@@ -82,6 +95,7 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
   const [step, setStep] = useState<Step>("review");
   const [paymentPlan, setPaymentPlan] = useState<PaymentPlan>("full");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("visa");
+  const [cardNumber, setCardNumber] = useState("");
   const [processingText, setProcessingText] = useState("Processing payment...");
   const [projectDetails, setProjectDetails] = useState<ProjectDetails>({ projectName: "", business: "", websiteType: "", pages: "", style: "", domain: "", logo: "", notes: "", selectedFeatures: [] });
   const [customerEmail, setCustomerEmail] = useState("");
@@ -105,6 +119,7 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
     setStep("review");
     setPaymentPlan("full");
     setPaymentMethod("visa");
+    setCardNumber("");
     setProcessingText("Processing payment...");
     setProjectDetails({ projectName: "", business: "", websiteType: "", pages: "", style: "", domain: "", logo: "", notes: "", selectedFeatures: [] });
     setCustomerEmail("");
@@ -292,8 +307,8 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
               <p className={styles.checkoutEyebrow}>Frontend payment simulation</p>
               <h2 id="checkout-title">Choose payment method</h2>
               <p className={styles.demoNotice}>Demo only. No real payment is processed, and card details are not sent or stored.</p>
-              <div className={styles.methodGrid}>{(Object.keys(methodLabels) as PaymentMethod[]).map(method => <button key={method} type="button" disabled={method === "klarna"} data-selected={paymentMethod === method} onClick={() => setPaymentMethod(method)}><span>{methodLabels[method]}</span>{method === "klarna" && <small>Coming Soon</small>}</button>)}</div>
-              {(paymentMethod === "visa" || paymentMethod === "mastercard") && <div className={styles.cardDemo}><label>Cardholder name<input placeholder="Name on card" autoComplete="off" /></label><label>Card number<input inputMode="numeric" placeholder="1234 5678 9012 3456" autoComplete="off" /></label><div><label>Expiry date<input placeholder="MM / YY" autoComplete="off" /></label><label>CVC<input inputMode="numeric" placeholder="CVC" autoComplete="off" /></label></div></div>}
+              <div className={styles.methodGrid}>{(Object.keys(methodLabels) as PaymentMethod[]).map(method => <button key={method} type="button" disabled={method === "klarna"} data-method={method} data-selected={paymentMethod === method} onClick={() => setPaymentMethod(method)}><PaymentBrand method={method} /><span>{methodLabels[method]}</span>{method === "klarna" && <small>Coming Soon</small>}</button>)}</div>
+              {(paymentMethod === "visa" || paymentMethod === "mastercard") && <div className={styles.cardDemo}><label>Cardholder name<input placeholder="Name on card" autoComplete="off" /></label><label>Card number<span className={styles.cardNumberWrap}><input inputMode="numeric" placeholder="1234 5678 9012 3456" autoComplete="off" value={cardNumber} onChange={event => setCardNumber(event.target.value)} /><span className={styles.cardInlineBrand}><PaymentBrand method={detectCardBrand(cardNumber)} /></span></span></label><div><label>Expiry date<input placeholder="MM / YY" autoComplete="off" /></label><label>CVC<input inputMode="numeric" placeholder="CVC" autoComplete="off" /></label></div></div>}
               {paymentMethod === "apple-pay" && <div className={styles.walletDemo}>Apple Pay confirmation ready</div>}
               {paymentMethod === "google-pay" && <div className={styles.walletDemo}>Google Pay confirmation ready</div>}
               {paymentMethod === "paypal" && <div className={styles.walletDemo}>Continue with PayPal</div>}
