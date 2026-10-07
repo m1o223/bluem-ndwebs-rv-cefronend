@@ -6,7 +6,7 @@ import pageStyles from "../../components/page-identity.module.css";
 import { StarMark } from "../../components/star-mark";
 import { postApi } from "../lib/api-client";
 import { includedFeatures, interestOptions, packages, timelineOptions } from "./quote-data";
-import PurchaseCheckout from "./purchase-checkout";
+import PurchaseFlow from "./purchase-flow";
 import styles from "./quote.module.css";
 
 type RequiredField = "fullName" | "email" | "interest" | "idea";
@@ -113,7 +113,7 @@ export default function QuoteExperience() {
           </article>
         ))}
       </section>
-      <PurchaseCheckout selectedPackage={checkoutPackage} onClose={() => setCheckoutPackage(null)} />
+      <PurchaseFlow selectedPackage={checkoutPackage} onClose={() => setCheckoutPackage(null)} />
       <div className={styles.disclaimer}>
         <p>Starting prices. Final price and delivery time depend on your project requirements.</p>
         <p>Third-party costs such as domains, hosting, paid plugins, payment-provider fees, and external services are not included unless stated otherwise.</p>
