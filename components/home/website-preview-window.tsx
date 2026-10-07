@@ -1,20 +1,21 @@
 "use client";
 
-import { type KeyboardEvent, useState } from "react";
+import { type KeyboardEvent, type PointerEvent, useState } from "react";
 import PreviewWindowChrome from "./preview-window-chrome";
 import styles from "./hero.module.css";
 
 export default function WebsitePreviewWindow() {
   const [flipped, setFlipped] = useState(false);
-  const [controlsVisible, setControlsVisible] = useState(false);
+
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Escape") {
-      setControlsVisible(false);
-      return;
-    }
     if (event.key !== "Enter" && event.key !== " ") return;
     event.preventDefault();
-    setControlsVisible(true);
+    setFlipped((current) => !current);
+  };
+
+  const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "mouse") return;
+    setFlipped((current) => !current);
   };
 
   return (
@@ -22,23 +23,19 @@ export default function WebsitePreviewWindow() {
       className={`${styles.websiteWindow} ${styles.heroFlipCard}`}
       data-website-preview
       data-flipped={flipped}
-      data-controls-visible={controlsVisible}
-      role="group"
+      role="button"
       tabIndex={0}
-      aria-label="Forma website preview mode controls"
-      onClick={(event) => {
-        if ((event.target as HTMLElement).closest("button")) return;
-        setControlsVisible(true);
-      }}
+      aria-pressed={flipped}
+      aria-label="Flip website preview between page design and code view"
+      onPointerUp={handlePointerUp}
       onKeyDown={handleKeyDown}
-      onMouseLeave={() => setControlsVisible(false)}
     >
       <div className={styles.heroFlipInner}>
         <div className={`${styles.heroFlipFace} ${styles.heroFlipFront}`}>
           <PreviewWindowChrome title="forma.studio" label="WEBSITE DESIGN" />
           <div className={styles.studioNavigation}>
             <span className={styles.studioBrand}>forma<span>(R)</span></span>
-            <span className={styles.studioLinks}>Work <span>Studio</span> <span className={styles.studioContact}>Let's talk -&gt;</span></span>
+            <span className={styles.studioLinks}>Work <span>Studio</span> <span className={styles.studioContact}>Let&apos;s talk -&gt;</span></span>
           </div>
           <div className={styles.studioHero}>
             <div className={styles.studioCopy}>
@@ -54,7 +51,7 @@ export default function WebsitePreviewWindow() {
               <span className={styles.studyNote}>PURPOSE IN EVERY PIXEL.</span>
             </div>
           </div>
-          <div className={styles.studioFooter}><span><i /> Made for what's next.</span><span>Design that works. <b>-&gt;</b></span></div>
+          <div className={styles.studioFooter}><span><i /> Made for what&apos;s next.</span><span>Design that works. <b>-&gt;</b></span></div>
         </div>
         <div className={`${styles.heroFlipFace} ${styles.heroFlipBack}`}>
           <PreviewWindowChrome title="forma-card.tsx" label="CODE VIEW" />
@@ -70,36 +67,6 @@ export default function WebsitePreviewWindow() {
             <span><b>08</b><em>export default</em> FormaHero;</span>
           </code></pre>
           <div className={styles.heroCodeStatus}><span><i /> Design system mapped to components.</span><span>front-end ready</span></div>
-        </div>
-      </div>
-      <div className={styles.heroModeOverlay} aria-hidden="false">
-        <div className={styles.heroModeActions}>
-          <button
-            type="button"
-            className={styles.heroModeButton}
-            data-active={!flipped}
-            aria-pressed={!flipped}
-            onClick={(event) => {
-              event.stopPropagation();
-              setFlipped(false);
-              setControlsVisible(true);
-            }}
-          >
-            View Page
-          </button>
-          <button
-            type="button"
-            className={styles.heroModeButton}
-            data-active={flipped}
-            aria-pressed={flipped}
-            onClick={(event) => {
-              event.stopPropagation();
-              setFlipped(true);
-              setControlsVisible(true);
-            }}
-          >
-            View Code
-          </button>
         </div>
       </div>
     </div>
