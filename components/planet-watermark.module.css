@@ -1,21 +1,63 @@
-.rotating {
-  display: block;
+.planetSpin {
+  overflow: visible;
+  transform: perspective(1200px) rotateX(5deg) rotateY(-10deg);
   transform-origin: 50% 50%;
   backface-visibility: hidden;
   filter: saturate(.95) contrast(.98) brightness(1.02);
-  animation: planet-turn 24s linear infinite;
+}
+
+.planetLight,
+.surfaceImage {
+  display: block;
+  backface-visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+.planetLight {
+  position: relative;
+  z-index: 1;
+}
+
+.surfaceMask {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  clip-path: ellipse(34% 42% at 50% 50%);
+  opacity: .82;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.surfaceTrack {
+  display: flex;
+  width: 200%;
+  height: 100%;
+  animation: planet-axis-turn 3s linear infinite;
   will-change: transform;
 }
 
-@keyframes planet-turn {
-  from { transform: perspective(1200px) rotateX(5deg) rotateY(-10deg) rotateZ(0deg); }
-  to { transform: perspective(1200px) rotateX(5deg) rotateY(-10deg) rotateZ(360deg); }
+.surfaceImage {
+  width: 50%;
+  height: 100%;
+  flex: 0 0 50%;
+  object-fit: contain;
+}
+
+@keyframes planet-axis-turn {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rotating {
+  .planetSpin {
+    transform: perspective(1200px) rotateX(5deg) rotateY(-10deg);
+  }
+
+  .surfaceTrack {
     animation: none;
-    transform: perspective(1200px) rotateX(5deg) rotateY(-10deg) rotateZ(-8deg);
+    transform: translate3d(-18%, 0, 0);
     will-change: auto;
   }
 }
