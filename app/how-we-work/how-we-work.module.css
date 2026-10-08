@@ -14,7 +14,7 @@
 .cta h2 { margin: 0; font-size: 24px; font-weight: 500; letter-spacing: -.7px; line-height: 1.35; }
 .cta p { margin: 12px 0 0; color: #515b69; font-size: 14px; line-height: 1.8; }
 .cta a:focus-visible { outline: 2px solid #171717; outline-offset: 4px; }
-.watermark { position: absolute; z-index: 0; top: -70px; right: -320px; width: 800px; aspect-ratio: 4 / 3; opacity: .055; pointer-events: none; user-select: none; mask-image: linear-gradient(to bottom, #000 20%, transparent 85%); }
+.watermark { position: absolute; z-index: 0; top: -70px; right: -320px; width: 800px; aspect-ratio: 4 / 3; opacity: .075; pointer-events: none; user-select: none; mask-image: linear-gradient(to bottom, #000 20%, transparent 85%); }
 .watermark img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: contain; }
 @media (max-width: 1050px) {
   .step { gap: 18px; }

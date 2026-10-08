@@ -180,7 +180,7 @@
 @keyframes checkout-spin { to { transform: rotate(360deg); } }
 @keyframes success-circle { to { stroke-dashoffset: 0; } }
 @keyframes success-check { to { stroke-dashoffset: 0; } }
-.watermark { position: absolute; z-index: 0; top: -70px; right: -320px; width: 800px; aspect-ratio: 4 / 3; opacity: .055; pointer-events: none; user-select: none; mask-image: linear-gradient(to bottom, #000 20%, transparent 85%); }
+.watermark { position: absolute; z-index: 0; top: -70px; right: -320px; width: 800px; aspect-ratio: 4 / 3; opacity: .075; pointer-events: none; user-select: none; mask-image: linear-gradient(to bottom, #000 20%, transparent 85%); }
 .watermark img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: contain; }
 @media (hover: hover) and (pointer: fine) { .package:hover { transform: translateY(-3px); border-color: #aab1bc; box-shadow: 0 8px 24px #192c4909; } .package.popular:hover { border-color: #171c25; } }
 @media (hover: hover) and (pointer: fine) { .checkoutPrimary:hover:not(:disabled), .checkoutGhost:hover, .planGrid button:hover, .methodGrid button:hover:not(:disabled), .featureChips button:hover, .checkoutClose:hover { transform: translateY(-2px); } .methodGrid button:hover:not(:disabled) { box-shadow: 0 12px 28px rgb(25 44 73 / 10%); } }

@@ -15,7 +15,7 @@
 .section ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
 .section li { position: relative; padding-left: 15px; color: #515b69; font-size: 14px; line-height: 1.8; }
 .section li::before { content: ""; position: absolute; left: 0; top: .85em; width: 3px; height: 3px; border-radius: 50%; background: #717b89; }
-.watermark { position: absolute; z-index: 0; top: -150px; right: -220px; width: 720px; aspect-ratio: 4 / 3; opacity: .055; pointer-events: none; user-select: none; mask-image: linear-gradient(to bottom, #000 35%, transparent 85%); }
+.watermark { position: absolute; z-index: 0; top: -150px; right: -220px; width: 720px; aspect-ratio: 4 / 3; opacity: .075; pointer-events: none; user-select: none; mask-image: linear-gradient(to bottom, #000 35%, transparent 85%); }
 .watermark img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: contain; }
 
 @media (max-width: 1050px) {

@@ -3,7 +3,7 @@
   transform: perspective(1200px) rotateX(5deg) rotateY(-10deg);
   transform-origin: 50% 50%;
   backface-visibility: hidden;
-  filter: saturate(.95) contrast(.98) brightness(1.02);
+  filter: saturate(1) contrast(1.06) brightness(.92);
 }
 
 .planetLight,
@@ -25,7 +25,7 @@
   z-index: 2;
   overflow: hidden;
   clip-path: ellipse(34% 42% at 50% 50%);
-  opacity: .82;
+  opacity: .9;
   mix-blend-mode: multiply;
   pointer-events: none;
 }
@@ -34,8 +34,7 @@
   display: flex;
   width: 200%;
   height: 100%;
-  animation: planet-axis-turn 3s linear infinite;
-  will-change: transform;
+  transform: translate3d(-18%, 0, 0);
 }
 
 .surfaceImage {
@@ -43,21 +42,4 @@
   height: 100%;
   flex: 0 0 50%;
   object-fit: contain;
-}
-
-@keyframes planet-axis-turn {
-  from { transform: translate3d(0, 0, 0); }
-  to { transform: translate3d(-50%, 0, 0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .planetSpin {
-    transform: perspective(1200px) rotateX(5deg) rotateY(-10deg);
-  }
-
-  .surfaceTrack {
-    animation: none;
-    transform: translate3d(-18%, 0, 0);
-    will-change: auto;
-  }
 }
