@@ -523,5 +523,19 @@
   "Cancel Subscription": "Säg upp prenumeration",
   "Your service remains active until": "Din tjänst är aktiv till",
   "Confirm Cancellation": "Bekräfta uppsägning",
-  "Keep Subscription": "Behåll prenumerationen"
+  "Keep Subscription": "Behåll prenumerationen",
+  "Built with intention.": "Byggt med tydlig avsikt.",
+  "Your subscription was confirmed by Stripe and saved by BlueMind.": "Din prenumeration har bekräftats av Stripe och sparats hos BlueMind.",
+  "Confirming your subscription...": "Bekräftar din prenumeration...",
+  "Stripe is sending the verified subscription result to BlueMind.": "Stripe skickar det verifierade prenumerationsresultatet till BlueMind.",
+  "Paid through": "Betald till",
+  "Next renewal": "Nästa förnyelse",
+  "Renewal disabled": "Förnyelse avstängd",
+  "Active until paid period ends": "Aktiv till den betalda perioden slutar",
+  "No BlueMind Care subscriptions were found for this verified email.": "Inga BlueMind Care-prenumerationer hittades för den verifierade e-postadressen.",
+  "No BlueMind Care subscriptions were found for this email.": "Inga BlueMind Care-prenumerationer hittades för den här e-postadressen.",
+  "WEBSITE DESIGN": "WEBBDESIGN",
+  "A fictional concept by BlueMind · No affiliation with a real boat company.": "Ett fiktivt koncept av BlueMind · Ingen koppling till ett verkligt båtföretag.",
+  "A fictional concept. Your address stays in this preview.": "Ett fiktivt koncept. Din adress stannar i den här förhandsvisningen.",
+  "Work Studio": "Arbetsstudio"
 }
