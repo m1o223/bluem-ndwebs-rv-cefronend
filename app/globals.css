@@ -1,8 +1,25 @@
+:root {
+  --font-body-family: "Inter", "Segoe UI", Arial, sans-serif;
+  --font-heading-family: "Cormorant Garamond", Georgia, serif;
+  --font-arabic-family: "IBM Plex Sans Arabic", "Tahoma", "Arial", sans-serif;
+  --text-readable: clamp(0.95rem, 0.9rem + 0.2vw, 1.05rem);
+  --text-small-readable: clamp(0.86rem, 0.82rem + 0.16vw, 0.95rem);
+}
+
 * {
   box-sizing: border-box;
 }
 
+html {
+  font-family: var(--font-body-family);
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
+  --font-body-family: var(--font-sans), "Inter", "Segoe UI", Arial, sans-serif;
+  --font-heading-family: var(--font-heading), "Cormorant Garamond", Georgia, serif;
+  --font-arabic-family: var(--font-arabic), "IBM Plex Sans Arabic", "Tahoma", "Arial", sans-serif;
   margin: 0;
   min-height: 100vh;
   min-height: 100dvh;
@@ -10,15 +27,63 @@ body {
   flex-direction: column;
   background: white;
   color: black;
+  font-family: var(--font-body-family);
+  font-size: 16px;
+  line-height: 1.62;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-body[data-locale="ar"] :where(h1, h2, h3, h4, h5, h6, p, li, label, legend, summary, dt, dd, figcaption, blockquote, button, a, input, textarea, select, span, small, strong):not([data-no-translate], [data-no-translate] *, [aria-hidden="true"], [aria-hidden="true"] *) {
+body:not([data-locale="ar"]) :where(h1, h2, h3):not([data-no-translate], [data-no-translate] *, [aria-hidden="true"], [aria-hidden="true"] *) {
+  font-family: var(--font-heading-family) !important;
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+body:not([data-locale="ar"]) :where(h4, h5, h6, p, li, label, legend, summary, dt, dd, figcaption, blockquote, button, a, input, textarea, select, small):not([data-no-translate], [data-no-translate] *, [aria-hidden="true"], [aria-hidden="true"] *) {
+  font-family: var(--font-body-family) !important;
+}
+
+body :where(p, li, summary, dt, dd, figcaption, blockquote):not([data-no-translate], [data-no-translate] *, [aria-hidden="true"], [aria-hidden="true"] *) {
+  line-height: 1.68;
+}
+
+body :where(button, input, textarea, select, label):not([data-no-translate], [data-no-translate] *, [aria-hidden="true"], [aria-hidden="true"] *) {
+  font-size: max(0.95rem, 15px);
+  line-height: 1.45;
+}
+
+body :where(input, textarea, select):not([data-no-translate], [data-no-translate] *, [aria-hidden="true"], [aria-hidden="true"] *) {
+  font-family: var(--font-body-family);
+}
+
+
+body :where(button, a[role="button"], a[class*="Button"], a[class*="Cta"], a[class*="navCta"], input, textarea, select, label) {
+  font-family: var(--font-body-family) !important;
+}
+
+body[data-locale="ar"] :where(button, a[role="button"], a[class*="Button"], a[class*="Cta"], a[class*="navCta"], input, textarea, select, label) {
+  font-family: var(--font-arabic-family) !important;
+}
+body[data-locale="ar"] {
+  font-family: var(--font-arabic-family);
+}
+
+body[data-locale="ar"] :where(h1, h2, h3, h4, h5, h6, p, li, label, legend, summary, dt, dd, figcaption, blockquote, button, a, input, textarea, select, span, small, strong, em):not([data-no-translate], [data-no-translate] *, [aria-hidden="true"], [aria-hidden="true"] *) {
   direction: rtl;
   unicode-bidi: plaintext;
+  font-family: var(--font-arabic-family) !important;
+  letter-spacing: 0;
 }
 
 body[data-locale="ar"] :where(p, li, label, legend, summary, dt, dd, h1, h2, h3):not([data-no-translate], [data-no-translate] *, [aria-hidden="true"], [aria-hidden="true"] *) {
   text-align: start;
+}
+
+body[data-locale="ar"] :where(h1, h2, h3):not([data-no-translate], [data-no-translate] *, [aria-hidden="true"], [aria-hidden="true"] *) {
+  line-height: 1.12;
 }
 
 .temporary-navigation {
@@ -78,6 +143,17 @@ a[role="button"] {
   a[class*="navCta"]:hover,
   a[role="button"]:hover {
     transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 760px) {
+  body {
+    font-size: 15.5px;
+    line-height: 1.64;
+  }
+
+  body:not([data-locale="ar"]) :where(h1, h2, h3):not([data-no-translate], [data-no-translate] *, [aria-hidden="true"], [aria-hidden="true"] *) {
+    line-height: 1.03;
   }
 }
 
