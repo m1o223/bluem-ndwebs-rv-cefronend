@@ -32,7 +32,7 @@ const storageKey = "bluemind-language";
 const languages: Language[] = [
   { code: "en", short: "EN", label: "English" },
   { code: "sv", short: "SV", label: "Svenska" },
-  { code: "ar", short: "AR", label: "العربية" },
+  { code: "ar", short: "AR", label: "\u0627\u0644\u0639\u0631\u0628\u064a\u0629" },
 ];
 const messages: Record<Locale, MessageMap> = {
   en: {},
@@ -73,25 +73,25 @@ function translateDynamicValue(value: string, locale: Locale) {
   if (locale === "sv") {
     if (value.startsWith("Pay ") && value.endsWith(" now")) return `Betala ${value.slice(4, -4)} nu`;
     if (value.startsWith("Pay ")) return `Betala ${value.slice(4)}`;
-    if (value.startsWith("Choose ")) return `Välj ${value.slice(7)}`;
-    if (value.includes(" SEK / month")) return value.replace(" SEK / month", " SEK / månad");
-    if (value.includes(" SEK / year")) return value.replace(" SEK / year", " SEK / år");
-    if (value.startsWith("Restore ")) return `Återställ ${value.slice(8)}`;
+    if (value.startsWith("Choose ")) return `V\u00e4lj ${value.slice(7)}`;
+    if (value.includes(" SEK / month")) return value.replace(" SEK / month", " SEK / m\u00e5nad");
+    if (value.includes(" SEK / year")) return value.replace(" SEK / year", " SEK / \u00e5r");
+    if (value.startsWith("Restore ")) return `\u00c5terst\u00e4ll ${value.slice(8)}`;
     if (value.startsWith("View Website: ")) return value.replace("View Website: ", "Visa webbplats: ");
-    if (value.startsWith("Close ")) return `Stäng ${value.slice(6)}`;
-    if (value.startsWith("Open ")) return `Öppna ${value.slice(5)}`;
-    if (value.endsWith("All rights reserved.")) return value.replace("All rights reserved.", "Alla rättigheter förbehållna.");
+    if (value.startsWith("Close ")) return `St\u00e4ng ${value.slice(6)}`;
+    if (value.startsWith("Open ")) return `\u00d6ppna ${value.slice(5)}`;
+    if (value.endsWith("All rights reserved.")) return value.replace("All rights reserved.", "Alla r\u00e4ttigheter f\u00f6rbeh\u00e5llna.");
   }
   if (locale === "ar") {
-    if (value.startsWith("Pay ") && value.endsWith(" now")) return `ادفع ${value.slice(4, -4)} الآن`;
-    if (value.startsWith("Pay ")) return `ادفع ${value.slice(4)}`;
-    if (value.startsWith("Choose ")) return `اختر ${value.slice(7)}`;
-    if (value.includes(" SEK / month")) return value.replace(" SEK / month", " SEK / شهر");
-    if (value.includes(" SEK / year")) return value.replace(" SEK / year", " SEK / سنة");
-    if (value.startsWith("Restore ")) return `استعادة ${value.slice(8)}`;
-    if (value.startsWith("View Website: ")) return value.replace("View Website: ", "عرض الموقع: ");
-    if (value.startsWith("Close ")) return `إغلاق ${value.slice(6)}`;
-    if (value.startsWith("Open ")) return `فتح ${value.slice(5)}`;
+    if (value.startsWith("Pay ") && value.endsWith(" now")) return `\u0627\u062f\u0641\u0639 ${value.slice(4, -4)} \u0627\u0644\u0622\u0646`;
+    if (value.startsWith("Pay ")) return `\u0627\u062f\u0641\u0639 ${value.slice(4)}`;
+    if (value.startsWith("Choose ")) return `\u0627\u062e\u062a\u0631 ${value.slice(7)}`;
+    if (value.includes(" SEK / month")) return value.replace(" SEK / month", " SEK / \u0634\u0647\u0631");
+    if (value.includes(" SEK / year")) return value.replace(" SEK / year", " SEK / \u0633\u0646\u0629");
+    if (value.startsWith("Restore ")) return `\u0627\u0633\u062a\u0639\u0627\u062f\u0629 ${value.slice(8)}`;
+    if (value.startsWith("View Website: ")) return value.replace("View Website: ", "\u0639\u0631\u0636 \u0627\u0644\u0645\u0648\u0642\u0639: ");
+    if (value.startsWith("Close ")) return `\u0625\u063a\u0644\u0627\u0642 ${value.slice(6)}`;
+    if (value.startsWith("Open ")) return `\u0641\u062a\u062d ${value.slice(5)}`;
   }
   return value;
 }
@@ -114,7 +114,13 @@ function translateAttributes(root: ParentNode, locale: Locale) {
       const current = element.getAttribute(name);
       if (!current?.trim()) return;
       const originalAttribute = `${originalAttributePrefix}${name.replace(/[^a-z0-9-]/gi, "-")}`;
-      const original = element.getAttribute(originalAttribute) ?? current;
+      const storedOriginal = element.getAttribute(originalAttribute);
+      if (locale === "en") {
+        element.setAttribute(originalAttribute, current);
+        return;
+      }
+      const previousTranslated = storedOriginal ? translateValue(storedOriginal, locale) : null;
+      const original = storedOriginal && current === previousTranslated ? storedOriginal : current;
       element.setAttribute(originalAttribute, original);
       const translated = translateValue(original, locale);
       if (current !== translated) element.setAttribute(name, translated);

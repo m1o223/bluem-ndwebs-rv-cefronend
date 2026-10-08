@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="BlueMind AI">
+  <defs>
+    <filter id="soft-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#000" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" fill="none"/>
+  <g filter="url(#soft-shadow)" transform="translate(256 256)">
+    <g fill="none" stroke="#050505" stroke-width="7" stroke-linejoin="round" opacity="0.96">
+      <rect x="-134" y="-134" width="268" height="268" transform="rotate(0)"/>
+      <rect x="-134" y="-134" width="268" height="268" transform="rotate(10)"/>
+      <rect x="-134" y="-134" width="268" height="268" transform="rotate(20)"/>
+      <rect x="-134" y="-134" width="268" height="268" transform="rotate(30)"/>
+      <rect x="-134" y="-134" width="268" height="268" transform="rotate(40)"/>
+      <rect x="-134" y="-134" width="268" height="268" transform="rotate(50)"/>
+      <rect x="-134" y="-134" width="268" height="268" transform="rotate(60)"/>
+      <rect x="-134" y="-134" width="268" height="268" transform="rotate(70)"/>
+      <rect x="-134" y="-134" width="268" height="268" transform="rotate(80)"/>
+    </g>
+    <circle r="106" fill="#fff" opacity="0.96"/>
+  </g>
+</svg>
