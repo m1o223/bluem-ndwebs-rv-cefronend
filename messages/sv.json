@@ -529,5 +529,15 @@
   "We could not send the verification code. Please try again.": "Vi kunde inte skicka verifieringskoden. FÃ¶rsÃ¶k igen.",
   "We could not verify the code. Please try again.": "Vi kunde inte verifiera koden. FÃ¶rsÃ¶k igen.",
   "Verification code sent.": "Verifieringskoden har skickats.",
-  "Email verified.": "E-posten Ã¤r verifierad."
+  "Email verified.": "E-posten Ã¤r verifierad.",
+  "How can I cancel my subscription?": "Hur kan jag säga upp min prenumeration?",
+  "For monthly plans, you can cancel future renewal at any time. Your service remains active until the end of your current paid month.": "För månadsplaner kan du stoppa framtida förnyelse när som helst. Tjänsten fortsätter att vara aktiv till slutet av den redan betalda månaden.",
+  "For annual plans, you pay once for 12 months of service at the price of 10 months. You can turn off automatic renewal at any time, and your service will remain active until the end of your paid annual period.": "För årsplaner betalar du en gång för 12 månaders service till priset av 10 månader. Du kan stänga av automatisk förnyelse när som helst, och tjänsten är fortsatt aktiv till slutet av den betalda årsperioden.",
+  "Annual billing is paid upfront once per year: 10 months of payments for 12 months of service.": "Årsbetalning görs i förskott en gång per år: du betalar för 10 månader och får 12 månaders service.",
+  "Manage / Cancel Your Subscription": "Hantera / säg upp din prenumeration",
+  "Cancel Future Renewal": "Stoppa framtida förnyelse",
+  "Cancel Subscription": "Säg upp prenumeration",
+  "Your service remains active until": "Din tjänst är aktiv till",
+  "Confirm Cancellation": "Bekräfta uppsägning",
+  "Keep Subscription": "Behåll prenumerationen"
 }

@@ -135,3 +135,106 @@ export async function getStripeCheckoutStatus(sessionId: string): Promise<Stripe
     return { success: false, error: "We could not reach the payment service. Please check your connection and try again." };
   }
 }
+
+export type CareBillingInterval = "monthly" | "yearly";
+
+export type CareCheckoutPayload = {
+  planId: string;
+  billingInterval: CareBillingInterval;
+  orderNumber: string;
+  customerEmail: string;
+  checkoutAttemptId: string;
+  emailVerificationToken: string;
+  testMode?: boolean;
+};
+
+export type CareSubscription = {
+  id: string;
+  orderNumber: string;
+  customerName?: string;
+  customerEmail: string;
+  planId: string;
+  planName: string;
+  billingInterval: CareBillingInterval;
+  price: string;
+  amountOre: number;
+  currency: string;
+  status: string;
+  currentPeriodStart?: string;
+  currentPeriodEnd?: string;
+  paidThroughDate?: string;
+  nextRenewalDate?: string | null;
+  cancelAtPeriodEnd: boolean;
+  cancellation?: { reason?: string; reasonText?: string; requestedAt?: string; effectiveAt?: string };
+  testMode?: boolean;
+};
+
+export type CareCheckoutResult =
+  | { success: true; checkout: { checkoutUrl: string; sessionId: string; planId: string; planName: string; billingInterval: CareBillingInterval; amountOre: number; currency: string; testMode?: boolean } }
+  | { success: false; error: string; fields?: Record<string, string> };
+
+export type CareCheckoutStatus =
+  | { success: true; status: string; sessionId?: string; subscription?: CareSubscription | null }
+  | { success: false; error: string };
+
+export type CareManageResult =
+  | { success: true; email: string; subscriptions: CareSubscription[] }
+  | { success: false; error: string; fields?: Record<string, string> };
+
+export type CareCancelResult =
+  | { success: true; subscription: CareSubscription; alreadyCancelled?: boolean }
+  | { success: false; error: string; fields?: Record<string, string> };
+
+export async function createCareStripeCheckout(payload: CareCheckoutPayload): Promise<CareCheckoutResult> {
+  if (!API_BASE_URL) return { success: false, error: "Service is not configured yet. Please try again later." };
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/care/stripe/checkout`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || data?.success !== true || !data?.checkout?.checkoutUrl) {
+      return {
+        success: false,
+        error: typeof data?.error === "string" ? data.error : "We could not start BlueMind Care checkout. Please try again.",
+        fields: data?.fields && typeof data.fields === "object" ? data.fields : undefined,
+      };
+    }
+    return { success: true, checkout: data.checkout };
+  } catch {
+    return { success: false, error: "We could not reach the subscription service. Please check your connection and try again." };
+  }
+}
+
+export async function getCareCheckoutStatus(sessionId: string): Promise<CareCheckoutStatus> {
+  if (!API_BASE_URL) return { success: false, error: "Service is not configured yet. Please try again later." };
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/care/stripe/sessions/${encodeURIComponent(sessionId)}`, {
+      method: "GET",
+      cache: "no-store",
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || data?.success !== true) {
+      return { success: false, error: typeof data?.error === "string" ? data.error : "We could not confirm this subscription yet." };
+    }
+    return data as CareCheckoutStatus;
+  } catch {
+    return { success: false, error: "We could not reach the subscription service. Please check your connection and try again." };
+  }
+}
+
+export async function loadCareSubscriptions(payload: { email: string; checkoutAttemptId: string; emailVerificationToken: string }): Promise<CareManageResult> {
+  return postJson<Extract<CareManageResult, { success: true }>>("/api/care/subscriptions/manage", payload, "We could not load your subscriptions. Please try again.") as Promise<CareManageResult>;
+}
+
+export async function cancelCareSubscription(payload: {
+  email: string;
+  checkoutAttemptId: string;
+  emailVerificationToken: string;
+  subscriptionId: string;
+  reason: string;
+  reasonText?: string;
+}): Promise<CareCancelResult> {
+  return postJson<Extract<CareCancelResult, { success: true }>>("/api/care/subscriptions/cancel", payload, "We could not update your subscription. Please try again.") as Promise<CareCancelResult>;
+}

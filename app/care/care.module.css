@@ -14,6 +14,7 @@
 .billingOption input:checked + span small { color: #fff; border-color: #757b86; }
 .billingOption input:focus-visible + span { outline: 2px solid #171717; outline-offset: 3px; }
 .saving { margin: 10px 0 24px; color: #515b69; font-size: 12px; line-height: 1.8; }
+.testNotice { margin: 12px 0 24px; width: fit-content; max-width: 100%; padding: 9px 12px; border: 1px solid #eedaa5; border-radius: 999px; background: #fff8e8; color: #765112; font-size: 12px; font-weight: 700; line-height: 1.5; }
 .pricing { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
 .plan { display: flex; flex-direction: column; min-width: 0; padding: 26px 24px; border: 1px solid #dfe4eb; border-radius: 10px; background: #fff; transition: transform 200ms cubic-bezier(.22, 1, .36, 1), border-color 200ms ease-out, box-shadow 200ms ease-out; }
 .plan.popular { padding: 25px 23px; border: 2px solid #171c25; background: #fafbfc; }
@@ -98,6 +99,18 @@
 .careState p { margin: 0; color: #515b69; font-size: 14px; line-height: 1.8; }
 .careState .careSuccessMark { width: 76px; height: 76px; margin-bottom: 16px; color: #171c25; }
 .careSpinner { width: 58px; height: 58px; margin-bottom: 20px; border: 2px solid #dfe4eb; border-top-color: #171c25; border-radius: 999px; animation: care-spin 850ms linear infinite; }
+.subscriptionList { display: grid; gap: 14px; margin-top: 22px; }
+.subscriptionCard { display: grid; gap: 16px; padding: 18px; border: 1px solid #dfe4eb; border-radius: 14px; background: #fafbfc; }
+.subscriptionCard h3, .cancelPanel h3 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -.3px; }
+.subscriptionCard p, .cancelPanel p { margin: 6px 0 0; color: #515b69; font-size: 13px; line-height: 1.7; text-transform: capitalize; }
+.subscriptionCard dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; }
+.subscriptionCard dl div { display: grid; gap: 4px; padding: 12px; border: 1px solid #dfe4eb; border-radius: 10px; background: #fff; }
+.subscriptionCard dt { color: #717b89; font-size: 10px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
+.subscriptionCard dd { margin: 0; color: #171c25; font-size: 13px; font-weight: 700; overflow-wrap: anywhere; }
+.cancelPanel { display: grid; gap: 14px; margin-top: 18px; padding: 18px; border: 1px solid #dfe4eb; border-radius: 14px; background: #fff; }
+.cancelPanel label { display: grid; gap: 8px; color: #171c25; font-size: 12px; font-weight: 700; }
+.cancelPanel select, .cancelPanel textarea { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid #dfe4eb; border-radius: 10px; background: #fff; color: #171c25; font: inherit; }
+.checkoutActions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 @keyframes care-spin { to { transform: rotate(360deg); } }
 .watermark { position: absolute; z-index: 0; top: -70px; right: -320px; width: 800px; aspect-ratio: 4 / 3; opacity: .055; pointer-events: none; user-select: none; mask-image: linear-gradient(to bottom, #000 20%, transparent 85%); }
 .watermark img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: contain; }
@@ -116,6 +129,9 @@
 @media (max-width: 700px) {
   .pricing, .formGrid { grid-template-columns: minmax(0, 1fr); }
   .careMethods, .careCardDemo { grid-template-columns: minmax(0, 1fr); }
+  .subscriptionCard dl { grid-template-columns: minmax(0, 1fr); }
+  .checkoutActions { align-items: stretch; flex-direction: column; }
+  .checkoutActions > button { width: 100%; }
   .careReview dl div, .careState dl div { align-items: flex-start; flex-direction: column; gap: 4px; }
   .careReview dd, .careState dd { text-align: left; }
   .plan:last-child { grid-column: auto; }

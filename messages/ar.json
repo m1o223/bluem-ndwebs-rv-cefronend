@@ -490,5 +490,15 @@
   "We could not send the verification code. Please try again.": "Ù„Ù… Ù†ØªÙ…ÙƒÙ† Ù…Ù† Ø¥Ø±Ø³Ø§Ù„ Ø±Ù…Ø² Ø§Ù„ØªØ­Ù‚Ù‚. Ø­Ø§ÙˆÙ„ Ù…Ø±Ø© Ø£Ø®Ø±Ù‰.",
   "We could not verify the code. Please try again.": "Ù„Ù… Ù†ØªÙ…ÙƒÙ† Ù…Ù† Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ø±Ù…Ø². Ø­Ø§ÙˆÙ„ Ù…Ø±Ø© Ø£Ø®Ø±Ù‰.",
   "Verification code sent.": "ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø±Ù…Ø² Ø§Ù„ØªØ­Ù‚Ù‚.",
-  "Email verified.": "ØªÙ… Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ."
+  "Email verified.": "ØªÙ… Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ.",
+  "How can I cancel my subscription?": "كيف يمكنني إلغاء الاشتراك؟",
+  "For monthly plans, you can cancel future renewal at any time. Your service remains active until the end of your current paid month.": "في الخطط الشهرية، يمكنك إلغاء التجديد المستقبلي في أي وقت. وتبقى الخدمة فعالة حتى نهاية الشهر المدفوع الحالي.",
+  "For annual plans, you pay once for 12 months of service at the price of 10 months. You can turn off automatic renewal at any time, and your service will remain active until the end of your paid annual period.": "في الخطط السنوية، تدفع مرة واحدة مقابل 12 شهراً من الخدمة بسعر 10 أشهر. يمكنك إيقاف التجديد التلقائي في أي وقت، وستبقى الخدمة فعالة حتى نهاية الفترة السنوية المدفوعة.",
+  "Annual billing is paid upfront once per year: 10 months of payments for 12 months of service.": "تُدفع الخطة السنوية مقدماً مرة واحدة في السنة: تدفع مقابل 10 أشهر وتحصل على 12 شهراً من الخدمة.",
+  "Manage / Cancel Your Subscription": "إدارة / إلغاء الاشتراك",
+  "Cancel Future Renewal": "إلغاء التجديد المستقبلي",
+  "Cancel Subscription": "إلغاء الاشتراك",
+  "Your service remains active until": "تبقى خدمتك فعالة حتى",
+  "Confirm Cancellation": "تأكيد الإلغاء",
+  "Keep Subscription": "الاحتفاظ بالاشتراك"
 }
