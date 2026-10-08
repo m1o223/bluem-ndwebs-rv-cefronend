@@ -3,21 +3,18 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { BlueMindPlanetLogo } from "../blue-mind-planet-logo";
+import { useLocalization, type Locale } from "../localization-provider";
 import styles from "./home.module.css";
 
 const links = [["/", "Home"], ["/about", "About Us"], ["/services", "Services"], ["/#selected-work", "Website Concepts"], ["/how-we-work", "How We Work"], ["/care", "Website Care"], ["/contact", "Contact"]];
-const languages = [
-  { code: "EN", label: "English" },
-  { code: "SV", label: "Svenska" },
-  { code: "AR", label: "العربية" },
-];
 
 export default function Navbar({ activePath = "/" }: { activePath?: string }) {
+  const { locale, languages, setLocale } = useLocalization();
   const [expanded, setExpanded] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
   const [languageOpen, setLanguageOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const languageRef = useRef<HTMLDivElement>(null);
+  const selectedLanguage = languages.find((language) => language.code === locale) ?? languages[0];
 
   useEffect(() => {
     if (!expanded) return;
@@ -58,10 +55,10 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
       <div className={styles.headerInner}>
         <Link className={styles.brand} href="/" aria-label="BlueMind Web Service home"><BlueMindPlanetLogo className={styles.brandLogo} priority /><span>BlueMind<span className={styles.brandSub}>Web Service</span></span></Link>
         <div className={styles.headerControls}>
-          <div className={styles.languageSelector} ref={languageRef}>
+          <div className={styles.languageSelector} ref={languageRef} data-no-translate>
             <button className={styles.languageButton} type="button" aria-label={`Selected language: ${selectedLanguage.label}`} aria-haspopup="menu" aria-expanded={languageOpen} onClick={() => setLanguageOpen((open) => !open)}>
               <span aria-hidden="true" className={styles.languageIcon}>🌐</span>
-              <span>{selectedLanguage.code}</span>
+              <span>{selectedLanguage.short}</span>
               <span className={styles.languageChevron} aria-hidden="true">▾</span>
             </button>
             <div className={styles.languageMenu} role="menu" data-open={languageOpen}>
@@ -70,15 +67,15 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
                   key={language.code}
                   type="button"
                   role="menuitemradio"
-                  aria-checked={selectedLanguage.code === language.code}
-                  data-selected={selectedLanguage.code === language.code}
+                  aria-checked={locale === language.code}
+                  data-selected={locale === language.code}
                   onClick={() => {
-                    setSelectedLanguage(language);
+                    setLocale(language.code as Locale);
                     setLanguageOpen(false);
                   }}
                 >
                   <span>{language.label}</span>
-                  <small>{language.code}</small>
+                  <small>{language.short}</small>
                 </button>
               ))}
             </div>
