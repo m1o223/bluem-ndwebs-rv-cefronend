@@ -6,11 +6,11 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { carePlans, priceFor, type Billing, type PlanName } from "../care/care-data";
 import { createStripeCheckout, sendEmailVerificationCode, verifyEmailVerificationCode } from "../lib/api-client";
 import { useLocalization } from "../../components/localization-provider";
-import { packages } from "./quote-data";
+import { packages, testPackage } from "./quote-data";
 import styles from "./quote.module.css";
 
-type Package = (typeof packages)[number];
-type FixedPackage = Package & { price: `From ${string} SEK` };
+type Package = (typeof packages)[number] | typeof testPackage;
+type FixedPackage = Package & { checkoutId: string; price: string };
 type PaymentPlan = "full" | "deposit";
 type PaymentMethod = "visa" | "mastercard" | "apple-pay" | "google-pay" | "paypal" | "klarna";
 type Step = "review" | "details" | "email" | "choice" | "method" | "processing" | "success" | "care" | "final" | "error";
@@ -125,6 +125,7 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
   const payNow = total ? paymentPlan === "deposit" ? total / 2 : total : 0;
   const remaining = total ? total - payNow : 0;
   const selectedCarePlan = carePlans.find(item => item.name === carePlan);
+  const isTestPackage = selectedPackage?.checkoutId === "bluemind-test-package";
 
   useEffect(() => {
     if (!selectedPackage) return;
@@ -265,6 +266,7 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
         projectDetails.style ? `Style: ${projectDetails.style}` : "",
       ].filter(Boolean).join("\n\n"),
       requestedFeatures: projectDetails.selectedFeatures,
+      customerLanguage: locale,
       websiteDetails: {
         businessName: projectDetails.projectName,
         businessDescription: projectDetails.business,
@@ -372,10 +374,11 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
             <>
               <p className={styles.checkoutEyebrow}>Payment choice</p>
               <h2 id="checkout-title">How would you like to pay?</h2>
-              <div className={styles.planGrid}>
+              <div className={styles.planGrid} data-single={isTestPackage ? "true" : undefined}>
                 <button type="button" data-selected={paymentPlan === "full"} onClick={() => setPaymentPlan("full")}><span>Pay in Full</span><strong>{formatSek(total)}</strong><small>No remaining balance.</small></button>
-                <button type="button" data-selected={paymentPlan === "deposit"} onClick={() => setPaymentPlan("deposit")}><span>Pay 50% Now</span><strong>{formatSek(total / 2)}</strong><small>Pay the remaining {formatSek(total / 2)} before final delivery.</small></button>
+                {!isTestPackage && <button type="button" data-selected={paymentPlan === "deposit"} onClick={() => setPaymentPlan("deposit")}><span>Pay 50% Now</span><strong>{formatSek(total / 2)}</strong><small>Pay the remaining {formatSek(total / 2)} before final delivery.</small></button>}
               </div>
+              {isTestPackage && <p className={styles.demoNotice}>Sandbox Test Only - No real payment will be charged. This package uses full payment only.</p>}
               {paymentSummary}
               <button type="button" className={styles.checkoutPrimary} onClick={() => setStep("method")}>Continue to Payment</button>
             </>

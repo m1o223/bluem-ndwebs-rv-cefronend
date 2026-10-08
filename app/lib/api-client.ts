@@ -83,6 +83,7 @@ export type StripeCheckoutPayload = {
   phone?: string;
   projectDescription: string;
   requestedFeatures: string[];
+  customerLanguage?: "en" | "sv" | "ar";
   websiteDetails: Record<string, string>;
 };
 

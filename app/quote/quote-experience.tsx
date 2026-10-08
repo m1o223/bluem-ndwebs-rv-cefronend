@@ -5,14 +5,14 @@ import buttonStyles from "../../components/home/hero.module.css";
 import pageStyles from "../../components/page-identity.module.css";
 import { StarMark } from "../../components/star-mark";
 import { getStripeCheckoutStatus, postApi, type StripeCheckoutStatus } from "../lib/api-client";
-import { includedFeatures, interestOptions, packages, timelineOptions } from "./quote-data";
+import { includedFeatures, interestOptions, packages, testPackage, timelineOptions } from "./quote-data";
 import PurchaseFlow from "./purchase-flow";
 import styles from "./quote.module.css";
 
 type RequiredField = "fullName" | "email" | "interest" | "idea";
 type Errors = Partial<Record<RequiredField, string>>;
-type Package = (typeof packages)[number];
-type FixedPackage = Package & { price: `From ${string} SEK` };
+type Package = (typeof packages)[number] | typeof testPackage;
+type FixedPackage = Package & { checkoutId: string; price: string };
 const readyNotice = "Tell us about your project and we will get back to you.";
 const buttonClass = `${buttonStyles.ctaButton} ${buttonStyles.primaryCta} ${styles.button}`;
 
@@ -31,9 +31,14 @@ export default function QuoteExperience() {
   const [checkoutPackage, setCheckoutPackage] = useState<FixedPackage | null>(null);
   const [returnSessionId, setReturnSessionId] = useState("");
   const [checkoutStatus, setCheckoutStatus] = useState<StripeCheckoutStatus | null>(null);
+  const [showTestPackage, setShowTestPackage] = useState(false);
   const formSection = useRef<HTMLElement>(null);
   const interestSelect = useRef<HTMLSelectElement>(null);
-  useEffect(() => setInteractive(true), []);
+  useEffect(() => {
+    setInteractive(true);
+    const params = new URLSearchParams(window.location.search);
+    setShowTestPackage(params.get("testPurchase") === "1" || params.get("sandboxTest") === "1");
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -71,7 +76,7 @@ export default function QuoteExperience() {
   }, [returnSessionId]);
 
   function isFixedPackage(item: Package): item is FixedPackage {
-    return item.price.startsWith("From ");
+    return item.checkoutId !== "custom-website" && /SEK/i.test(item.price);
   }
 
   function choosePackage(name: string) {
@@ -150,6 +155,22 @@ export default function QuoteExperience() {
           </article>
         ))}
       </section>
+      {showTestPackage && (
+        <section className={`${styles.testPricing} ${pageStyles.enter}`} aria-label="Stripe Sandbox test purchase package">
+          <article className={`${styles.package} ${styles.testPackage}`} aria-labelledby="package-test">
+            <div className={styles.packageTop}><span>TEST</span><span className={styles.testBadge}>Sandbox Test Only - No Real Payment</span></div>
+            <div className={styles.summary}>
+              <h2 id="package-test">{testPackage.title}</h2>
+              <p className={styles.price}>{testPackage.price}</p>
+              <p className={styles.delivery}>{testPackage.delivery}</p>
+              <p className={styles.scope}>{testPackage.scope}</p>
+            </div>
+            <p className={styles.description}>{testPackage.description}</p>
+            <ul className={styles.featureList}>{testPackage.features.map(feature => <li key={feature}><StarMark className={styles.star} /><span>{feature}</span></li>)}</ul>
+            <button type="button" className={buttonClass} disabled={!interactive || submitting} onClick={() => setCheckoutPackage(testPackage)}>{testPackage.cta}</button>
+          </article>
+        </section>
+      )}
       <PurchaseFlow selectedPackage={checkoutPackage} onClose={() => setCheckoutPackage(null)} />
       {returnSessionId && (
         <div className={styles.checkoutBackdrop} role="presentation">

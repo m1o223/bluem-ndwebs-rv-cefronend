@@ -146,6 +146,26 @@ export const packages = [
   }
 ] as const;
 
+export const testPackage = {
+  "id": "TEST",
+  "checkoutId": "bluemind-test-package",
+  "title": "BlueMind Test Package",
+  "price": "10 SEK - Test Mode",
+  "delivery": "Sandbox checkout verification only",
+  "scope": "Sandbox Test Only - No Real Payment",
+  "description": "A test package created to verify BlueMind's secure checkout, payment confirmation, order processing, and email notification system.",
+  "features": [
+    "Secure checkout test",
+    "Payment confirmation",
+    "Order tracking",
+    "Email notifications",
+    "Admin Dashboard integration"
+  ],
+  "cta": "Test Purchase",
+  "popular": false,
+  "testOnly": true
+} as const;
+
 export const includedFeatures = [
   {
     "title": "Custom design",
