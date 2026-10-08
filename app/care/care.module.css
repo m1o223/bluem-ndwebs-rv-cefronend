@@ -45,7 +45,7 @@
 .questions summary { position: relative; padding: 18px 32px 18px 0; min-height: 52px; font-size: 15px; font-weight: 500; cursor: pointer; list-style: none; line-height: 1.5; }
 .questions summary::-webkit-details-marker { display: none; }
 .questions summary::after { content: "+"; position: absolute; right: 5px; font-size: 19px; font-weight: 400; }
-.questions details[open] summary::after { content: "âˆ’"; }
+.questions details[open] summary::after { content: "−"; }
 .questions summary:focus-visible { outline: 2px solid #171717; outline-offset: 3px; border-radius: 4px; }
 .questions p, .questions ul { max-width: 730px; margin: 0 0 18px; color: #515b69; font-size: 13px; line-height: 1.8; }
 .questions ul { padding-left: 20px; }

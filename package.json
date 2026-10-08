@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check:encoding": "node scripts/check-translations-encoding.mjs",
+    "prebuild": "npm run check:encoding"
   },
   "engines": {
     "node": "22.x"

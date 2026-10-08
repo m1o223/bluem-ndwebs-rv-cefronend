@@ -17,7 +17,7 @@ export default function SiteFooter() {
         <nav aria-label="Footer services" className={styles.linkGroup}><h2>Services</h2><ul>{config.services.map(([href,label]) => <li key={label}><Link href={href}>{label}</Link></li>)}</ul></nav>
         <section className={styles.contact} aria-labelledby="footer-contact-title"><h2 id="footer-contact-title">Contact</h2>
           <dl><div><dt>Email</dt><dd><a href={`mailto:${config.contact.email}`}>{config.contact.email}</a></dd></div></dl>
-          <Link href="/contact" className={styles.contactLink}>Contact Us <span aria-hidden="true">â†’</span></Link>
+          <Link href="/contact" className={styles.contactLink}>Contact Us <span aria-hidden="true">→</span></Link>
         </section>
       </div>
       <div className={styles.middle}>
@@ -26,7 +26,7 @@ export default function SiteFooter() {
       </div>
       <div className={styles.bottom}>
         <div><nav aria-label="Footer legal"><ul>{config.legalLinks.map(item => <li key={item.label}>{item.href ? <Link href={item.href}>{item.label}</Link> : <span>{item.label}</span>}</li>)}</ul></nav><p className={styles.note}>Legal policies awaiting review and publication.</p></div>
-        <p className={styles.copyright}>Â© {new Date().getFullYear()} {config.brandName}. All rights reserved.</p>
+        <p className={styles.copyright}>© {new Date().getFullYear()} {config.brandName}. All rights reserved.</p>
       </div>
     </div>
   </footer>;
