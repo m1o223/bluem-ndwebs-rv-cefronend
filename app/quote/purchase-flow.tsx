@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { carePlans, priceFor, type Billing, type PlanName } from "../care/care-data";
+import { createStripeCheckout } from "../lib/api-client";
 import { packages } from "./quote-data";
 import styles from "./quote.module.css";
 
@@ -96,6 +97,7 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
   const [paymentPlan, setPaymentPlan] = useState<PaymentPlan>("full");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("visa");
   const [cardNumber, setCardNumber] = useState("");
+  const [checkoutError, setCheckoutError] = useState("");
   const [processingText, setProcessingText] = useState("Processing payment...");
   const [projectDetails, setProjectDetails] = useState<ProjectDetails>({ projectName: "", business: "", websiteType: "", pages: "", style: "", domain: "", logo: "", notes: "", selectedFeatures: [] });
   const [customerEmail, setCustomerEmail] = useState("");
@@ -120,6 +122,7 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
     setPaymentPlan("full");
     setPaymentMethod("visa");
     setCardNumber("");
+    setCheckoutError("");
     setProcessingText("Processing payment...");
     setProjectDetails({ projectName: "", business: "", websiteType: "", pages: "", style: "", domain: "", logo: "", notes: "", selectedFeatures: [] });
     setCustomerEmail("");
@@ -204,6 +207,43 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
       setProcessingText(nextStep === "care" ? "Activating BlueMind Care..." : "Preparing your order...");
       window.setTimeout(() => setStep(nextStep), 1300);
     }, 1500);
+  }
+
+  async function startStripeCheckout() {
+    if (!selectedPackage) return;
+    setCheckoutError("");
+    setProcessingText("Opening secure Stripe Checkout...");
+    const result = await createStripeCheckout({
+      packageId: selectedPackage.checkoutId,
+      paymentOption: paymentPlan,
+      customerName: projectDetails.projectName || customerEmail,
+      verifiedEmail: customerEmail,
+      projectDescription: [
+        projectDetails.notes,
+        projectDetails.business ? `Business: ${projectDetails.business}` : "",
+        projectDetails.websiteType ? `Website type: ${projectDetails.websiteType}` : "",
+        projectDetails.pages ? `Pages: ${projectDetails.pages}` : "",
+        projectDetails.style ? `Style: ${projectDetails.style}` : "",
+      ].filter(Boolean).join("\n\n"),
+      requestedFeatures: projectDetails.selectedFeatures,
+      websiteDetails: {
+        businessName: projectDetails.projectName,
+        businessDescription: projectDetails.business,
+        websiteType: projectDetails.websiteType,
+        pagesNeeded: projectDetails.pages,
+        preferredStyle: projectDetails.style,
+        domainStatus: projectDetails.domain,
+        logoStatus: projectDetails.logo,
+        additionalNotes: projectDetails.notes,
+      },
+    });
+
+    if (!result.success) {
+      setCheckoutError(result.error);
+      setStep("error");
+      return;
+    }
+    window.location.assign(result.checkout.checkoutUrl);
   }
 
   const paymentSummary = (
@@ -304,18 +344,17 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
 
           {step === "method" && (
             <>
-              <p className={styles.checkoutEyebrow}>Frontend payment simulation</p>
+              <p className={styles.checkoutEyebrow}>Stripe Sandbox Checkout</p>
               <h2 id="checkout-title">Choose payment method</h2>
-              <p className={styles.demoNotice}>Demo only. No real payment is processed, and card details are not sent or stored.</p>
+              <p className={styles.demoNotice}>You will continue to secure Stripe Checkout in test mode. BlueMind never receives or stores card numbers or CVC.</p>
               <div className={styles.methodGrid}>{(Object.keys(methodLabels) as PaymentMethod[]).map(method => <button key={method} type="button" disabled={method === "klarna"} data-method={method} data-selected={paymentMethod === method} onClick={() => setPaymentMethod(method)}><PaymentBrand method={method} /><span>{methodLabels[method]}</span>{method === "klarna" && <small>Coming Soon</small>}</button>)}</div>
-              {(paymentMethod === "visa" || paymentMethod === "mastercard") && <div className={styles.cardDemo}><label>Cardholder name<input placeholder="Name on card" autoComplete="off" /></label><label>Card number<span className={styles.cardNumberWrap}><input inputMode="numeric" placeholder="1234 5678 9012 3456" autoComplete="off" value={cardNumber} onChange={event => setCardNumber(event.target.value)} /><span className={styles.cardInlineBrand}><PaymentBrand method={detectCardBrand(cardNumber)} /></span></span></label><div><label>Expiry date<input placeholder="MM / YY" autoComplete="off" /></label><label>CVC<input inputMode="numeric" placeholder="CVC" autoComplete="off" /></label></div></div>}
-              {paymentMethod === "apple-pay" && <div className={styles.walletDemo}>Apple Pay confirmation ready</div>}
-              {paymentMethod === "google-pay" && <div className={styles.walletDemo}>Google Pay confirmation ready</div>}
-              {paymentMethod === "paypal" && <div className={styles.walletDemo}>Continue with PayPal</div>}
+              {(paymentMethod === "visa" || paymentMethod === "mastercard") && <div className={styles.walletDemo}>Card payment will be completed securely on Stripe.</div>}
+              {paymentMethod === "apple-pay" && <div className={styles.walletDemo}>Apple Pay availability is handled by Stripe Checkout.</div>}
+              {paymentMethod === "google-pay" && <div className={styles.walletDemo}>Google Pay availability is handled by Stripe Checkout.</div>}
+              {paymentMethod === "paypal" && <div className={styles.walletDemo}>PayPal is planned. Continue with Stripe card checkout for this test payment.</div>}
               {paymentSummary}
               <div className={styles.checkoutActions}>
-                <button type="button" className={styles.checkoutPrimary} disabled={paymentMethod === "klarna"} onClick={() => simulatePayment(false, "success")}>{paymentPlan === "deposit" ? `Pay ${formatSek(payNow)} now` : `Pay ${formatSek(payNow)}`}</button>
-                <button type="button" className={styles.checkoutGhost} onClick={() => simulatePayment(true)}>Test error state</button>
+                <button type="button" className={styles.checkoutPrimary} disabled={paymentMethod === "klarna"} onClick={startStripeCheckout}>{paymentPlan === "deposit" ? `Pay ${formatSek(payNow)} now` : `Pay ${formatSek(payNow)}`}</button>
               </div>
             </>
           )}
@@ -363,7 +402,7 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
             </div>
           )}
 
-          {step === "error" && <div className={styles.errorState}><span aria-hidden="true">!</span><h2 id="checkout-title">Payment couldn&apos;t be completed.</h2><p>Please check your payment details and try again. This is a frontend demo error state.</p><button type="button" className={styles.checkoutPrimary} onClick={() => setStep("method")}>Try Again</button></div>}
+          {step === "error" && <div className={styles.errorState}><span aria-hidden="true">!</span><h2 id="checkout-title">Payment couldn&apos;t be completed.</h2><p>{checkoutError || "Please check your payment details and try again."}</p><button type="button" className={styles.checkoutPrimary} onClick={() => setStep("method")}>Try Again</button></div>}
         </div>
       </div>
     </div>

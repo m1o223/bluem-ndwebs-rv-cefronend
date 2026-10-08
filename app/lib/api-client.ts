@@ -32,3 +32,64 @@ export async function postApi(path: "/api/contact" | "/api/quote", payload: Reco
     window.clearTimeout(timeout);
   }
 }
+
+export type StripeCheckoutPayload = {
+  packageId: string;
+  paymentOption: "full" | "deposit";
+  customerName: string;
+  verifiedEmail: string;
+  companyName?: string;
+  phone?: string;
+  projectDescription: string;
+  requestedFeatures: string[];
+  websiteDetails: Record<string, string>;
+};
+
+export type StripeCheckoutResult =
+  | { success: true; checkout: { checkoutUrl: string; sessionId: string; amountDueNowOre: number; remainingBalanceOre: number; totalAmountOre: number; currency: string } }
+  | { success: false; error: string; fields?: Record<string, string> };
+
+export type StripeCheckoutStatus =
+  | { success: true; status: string; sessionId?: string; order?: { orderNumber: string; packageName?: string; email?: string; paymentStatus?: string; projectStatus?: string; amountPaidOre?: number; remainingBalanceOre?: number; totalAmountOre?: number } | null; amounts?: { total: string; paid: string; remaining: string } }
+  | { success: false; error: string };
+
+export async function createStripeCheckout(payload: StripeCheckoutPayload): Promise<StripeCheckoutResult> {
+  if (!API_BASE_URL) return { success: false, error: "Service is not configured yet. Please try again later." };
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/payments/stripe/checkout`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || data?.success !== true || !data?.checkout?.checkoutUrl) {
+      return {
+        success: false,
+        error: typeof data?.error === "string" ? data.error : "We could not start Stripe Checkout. Please try again.",
+        fields: data?.fields && typeof data.fields === "object" ? data.fields : undefined,
+      };
+    }
+    return { success: true, checkout: data.checkout };
+  } catch {
+    return { success: false, error: "We could not reach the payment service. Please check your connection and try again." };
+  }
+}
+
+export async function getStripeCheckoutStatus(sessionId: string): Promise<StripeCheckoutStatus> {
+  if (!API_BASE_URL) return { success: false, error: "Service is not configured yet. Please try again later." };
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/payments/stripe/sessions/${encodeURIComponent(sessionId)}`, {
+      method: "GET",
+      cache: "no-store",
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || data?.success !== true) {
+      return { success: false, error: typeof data?.error === "string" ? data.error : "We could not confirm this checkout yet." };
+    }
+    return data as StripeCheckoutStatus;
+  } catch {
+    return { success: false, error: "We could not reach the payment service. Please check your connection and try again." };
+  }
+}
