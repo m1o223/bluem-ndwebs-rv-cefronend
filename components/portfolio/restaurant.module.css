@@ -14,7 +14,7 @@
   font-size: 8px;
 }
 .project header > button:first-child {
-  font-family: Georgia, serif !important;
+  font-family: var(--font-body-family) !important;
   font-size: 31px !important;
   letter-spacing: 2px;
   font-weight: 400 !important;
@@ -37,7 +37,7 @@
   line-height: 1.6;
 }
 .hero h1 {
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-size: clamp(60px, 5.8cqw, 83px);
   font-weight: 400;
   line-height: 1.04;
@@ -137,7 +137,7 @@
   gap: 45px;
   padding: 28px 5%;
   border-block: 1px solid #d6c7aa;
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   color: #947a57;
   font-size: 19px;
 }
@@ -159,7 +159,7 @@
 .heading h2,
 .story h2,
 .visit h2 {
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-size: 50px;
   font-weight: 400;
   letter-spacing: -1.5px;
@@ -268,7 +268,7 @@
   color: #815d29;
 }
 .dishCopy h3 {
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-size: 25px;
   font-weight: 400;
   margin: 16px 0 12px;
@@ -327,7 +327,7 @@
   align-items: center;
 }
 .visitDetails h3 {
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-size: 21px;
   font-weight: 400;
   margin: 0 0 20px;
@@ -497,7 +497,7 @@
   gap: 12px;
 }
 .bookingSummary > span {
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-size: 23px;
   color: #896023;
 }
@@ -526,7 +526,7 @@
   color: #b78d39;
 }
 .confirmation h3 {
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-size: 42px;
   font-weight: 400;
   margin: 25px 0;

@@ -33,7 +33,7 @@
   letter-spacing: 2px;
 }
 .hero h1 {
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-weight: 400;
   font-size: clamp(56px, 6cqw, 85px);
   line-height: 1.03;
@@ -125,7 +125,7 @@
   right: 30px;
   bottom: 28px;
   text-align: right;
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-size: 16px;
   line-height: 1.4;
 }
@@ -152,7 +152,7 @@
 .sectionHeading h2,
 .approach h2,
 .newsletter h2 {
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-weight: 400;
   font-size: 43px;
   line-height: 1.1;
@@ -349,7 +349,7 @@
   color: #7b8473;
 }
 .footerNote {
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-style: italic;
   font-size: 17px;
 }
@@ -470,7 +470,7 @@
   text-align: center;
 }
 .empty h3 {
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-size: 31px;
   font-weight: 400;
 }

@@ -37,7 +37,7 @@
 .heroCodeMeta { display: flex; align-items: center; gap: 12px; padding: 12px 16px 0; color: #95a6be; font-size: 8px; }
 .heroCodeMeta span:first-child { color: #b8d2ff; }
 .heroCodeMeta i { margin-left: auto; font-style: normal; color: #adc5ea; font-size: 8px; }
-.heroCodeBlock { flex: 1; margin: 14px 0 10px; padding: 0 16px; overflow: hidden; font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: clamp(10px, 1.8cqw, 12px); line-height: 1.9; }
+.heroCodeBlock { flex: 1; margin: 14px 0 10px; padding: 0 16px; overflow: hidden; font-family: var(--font-body-family); font-size: clamp(10px, 1.8cqw, 12px); line-height: 1.9; }
 .heroCodeBlock code,
 .heroCodeBlock span { display: block; }
 .heroCodeBlock b { display: inline-block; width: 26px; color: #63758f; font-weight: 400; user-select: none; }
@@ -54,7 +54,7 @@
 .codeLanguages { display: flex; align-items: center; gap: 15px; padding: 12px 16px 0; font-size: 8px; color: #94a4ba; }
 .codeLanguages span:first-child { color: #afc9ff; }
 .codeLanguages i { font-style: normal; margin-left: auto; color: #b2caff; font-size: 8px; }
-.codeBody { font-size: clamp(10px, 1.85cqw, 13px); line-height: 1.8; margin: 16px 0 18px; padding: 0 15px; font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-variant-ligatures: none; }
+.codeBody { font-size: clamp(10px, 1.85cqw, 13px); line-height: 1.8; margin: 16px 0 18px; padding: 0 15px; font-family: var(--font-body-family); font-variant-ligatures: none; }
 .codeBody code { font: inherit; }
 .codeLine { display: flex; white-space: pre; }
 .lineNumber { width: 27px; flex-shrink: 0; color: #68778d; font-size: .85em; user-select: none; }
@@ -74,7 +74,7 @@
 .studioHero { display: grid; grid-template-columns: 1.12fr 1fr; align-items: center; gap: 10px; padding: 16px 25px 20px; }
 .studioCopy { min-width: 0; }
 .studioEyebrow { font-size: 6px; line-height: 1.6; letter-spacing: .9px; color: #9298a1; margin: 0 0 10px; }
-.studioHeadline { font-family: Georgia, "Times New Roman", serif; font-size: clamp(32px, 5.4cqw, 38px); line-height: 1.03; font-weight: 400; letter-spacing: -1.5px; margin: 0; color: #242833; }
+.studioHeadline { font-family: var(--font-body-family); font-size: clamp(32px, 5.4cqw, 38px); line-height: 1.03; font-weight: 400; letter-spacing: -1.5px; margin: 0; color: #242833; }
 .studioHeadline em { font-style: normal; color: #2a61df; }
 .studioDescription { font-size: 8px; line-height: 1.5; color: #88909b; margin: 10px 0 12px; }
 .studioButton { display: inline-flex; align-items: center; justify-content: space-between; gap: 26px; padding: 8px 12px; border-radius: 3px; color: #fff; background: #262e3a; font-size: 8px; }

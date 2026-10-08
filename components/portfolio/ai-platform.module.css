@@ -144,7 +144,7 @@
   color: #b5a7d9;
 }
 .sideNote h3 {
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-weight: 400;
   font-size: 17px;
   line-height: 1.4;
@@ -180,7 +180,7 @@
   margin: 17px 0 15px;
 }
 .intro h1 em {
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-weight: 400;
   color: #8673b8;
 }
@@ -333,7 +333,7 @@
   color: #c6b5e5;
 }
 .blank h3 {
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-weight: 400;
   font-size: 22px;
   color: #6f6184;
@@ -509,7 +509,7 @@
   color: #796a89;
 }
 .templateCard h2 {
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-weight: 400;
   font-size: 25px;
   line-height: 1.2;

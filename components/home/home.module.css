@@ -1,8 +1,8 @@
-﻿.home,
+.home,
 .header,
 .projectDialog {
   color: #171c25;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body-family);
   -webkit-font-smoothing: antialiased;
 }
 .home { width: 100%; }
@@ -141,7 +141,7 @@
 .previewNav > span:last-child > span { font-size: 15px; }
 .previewCopy { position: relative; padding: 35px 40px 40px; }
 .previewCopy > span:first-child { font-size: 8px; letter-spacing: 2px; }
-.previewCopy h3 { font-family: Georgia, "Times New Roman", serif; font-size: 53px; font-weight: 400; line-height: 1.04; letter-spacing: -1.4px; margin: 14px 0 23px; }
+.previewCopy h3 { font-family: var(--font-body-family); font-size: 53px; font-weight: 400; line-height: 1.04; letter-spacing: -1.4px; margin: 14px 0 23px; }
 .previewMiniButton { display: inline-flex; gap: 25px; background: #f5f3ed; color: #193139; padding: 11px 14px; font-size: 9px; }
 .exploreBadge { position: absolute; bottom: 30px; right: 30px; display: flex; align-items: center; gap: 30px; padding: 14px 18px; font-size: 11px; border: 1px solid #ffffff50; background: #ffffff12; backdrop-filter: blur(10px); transition: background .25s; }
 .projectCard:hover .exploreBadge { background: #fff; color: #132b3d; }

@@ -46,7 +46,7 @@
   margin-bottom: 28px;
 }
 .hero h1 {
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-weight: 400;
   font-size: clamp(65px, 7cqw, 96px);
   line-height: 1.02;
@@ -86,7 +86,7 @@
 }
 .galleryHeading h2,
 .about h2 {
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-size: 49px;
   font-weight: 400;
   line-height: 1.12;
@@ -164,7 +164,7 @@
   padding: 17px 0;
 }
 .caption h3 {
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-size: 21px;
   font-weight: 400;
   margin: 0 0 7px;
@@ -233,7 +233,7 @@
   align-items: center;
   width: 100%;
   padding: 20px 0;
-  font-family: Georgia, serif !important;
+  font-family: var(--font-body-family) !important;
   font-size: clamp(36px, 5cqw, 70px) !important;
   letter-spacing: -2px;
   font-weight: 400;
@@ -243,7 +243,7 @@
   text-align: left;
 }
 .contactStrip > button span {
-  font-family: Arial, sans-serif;
+  font-family: var(--font-body-family);
   font-size: 40px;
 }
 .contactStrip > span,
@@ -347,7 +347,7 @@
   padding-block: 25px;
 }
 .thanks h3 {
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-size: 35px;
   font-weight: 400;
 }

@@ -146,7 +146,7 @@
   letter-spacing: 1.7px;
 }
 .previewCopy h3 {
-  font-family: Georgia, serif;
+  font-family: var(--font-body-family);
   font-weight: 400;
   font-size: clamp(26px, 8cqw, 36px);
   line-height: 1.08;
@@ -234,7 +234,7 @@
   background: #f9f5e9d9;
 }
 .preview[data-preview="corporate"] .previewCopy h3 {
-  font-family: Arial, sans-serif;
+  font-family: var(--font-body-family);
   font-weight: 500;
 }
 .preview[data-preview="restaurant"] .previewPhoto {
@@ -243,7 +243,7 @@
   overflow: hidden;
 }
 .preview[data-preview="ai-platform"] .previewCopy h3 {
-  font-family: Arial, sans-serif;
+  font-family: var(--font-body-family);
   font-weight: 500;
 }
 .caption {

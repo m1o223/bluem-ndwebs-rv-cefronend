@@ -108,7 +108,7 @@ export default function ProductArt({
         x="180"
         y={type === "cream" ? 243 : 223}
         textAnchor="middle"
-        fontFamily="Georgia,serif"
+        fontFamily="Inter, sans-serif"
         fontSize="21"
         letterSpacing="2"
         fill="#233b2b"

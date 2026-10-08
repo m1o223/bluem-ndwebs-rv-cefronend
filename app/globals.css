@@ -1,6 +1,6 @@
 :root {
   --font-body-family: "Inter", "Segoe UI", Arial, sans-serif;
-  --font-heading-family: "Cormorant Garamond", Georgia, serif;
+  --font-heading-family: "Inter", "Segoe UI", Arial, sans-serif;
   --font-arabic-family: "IBM Plex Sans Arabic", "Tahoma", "Arial", sans-serif;
   --text-readable: clamp(0.95rem, 0.9rem + 0.2vw, 1.05rem);
   --text-small-readable: clamp(0.86rem, 0.82rem + 0.16vw, 0.95rem);
@@ -18,7 +18,7 @@ html {
 
 body {
   --font-body-family: var(--font-sans), "Inter", "Segoe UI", Arial, sans-serif;
-  --font-heading-family: var(--font-heading), "Cormorant Garamond", Georgia, serif;
+  --font-heading-family: var(--font-sans), "Inter", "Segoe UI", Arial, sans-serif;
   --font-arabic-family: var(--font-arabic), "IBM Plex Sans Arabic", "Tahoma", "Arial", sans-serif;
   margin: 0;
   min-height: 100vh;
@@ -36,9 +36,9 @@ body {
 }
 
 body:not([data-locale="ar"]) :where(h1, h2, h3):not([data-no-translate], [data-no-translate] *, [aria-hidden="true"], [aria-hidden="true"] *) {
-  font-family: var(--font-heading-family) !important;
-  font-weight: 600;
-  line-height: 0.98;
+  font-family: var(--font-body-family) !important;
+  font-weight: 750;
+  line-height: 1.02;
   letter-spacing: 0;
 }
 
@@ -153,7 +153,7 @@ a[role="button"] {
   }
 
   body:not([data-locale="ar"]) :where(h1, h2, h3):not([data-no-translate], [data-no-translate] *, [aria-hidden="true"], [aria-hidden="true"] *) {
-    line-height: 1.03;
+    line-height: 1.06;
   }
 }
 
