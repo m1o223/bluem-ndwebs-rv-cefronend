@@ -67,6 +67,10 @@ body :where(button, a[role="button"], a[class*="Button"], a[class*="Cta"], a[cla
 body[data-locale="ar"] :where(button, a[role="button"], a[class*="Button"], a[class*="Cta"], a[class*="navCta"], input, textarea, select, label) {
   font-family: var(--font-arabic-family) !important;
 }
+
+body[data-locale="ar"] :where(h1, h2, h3, h4, h5, h6, p, li, label, legend, summary, dt, dd, figcaption, blockquote, button, a, input, textarea, select, span, small, strong, em) {
+  font-family: var(--font-arabic-family) !important;
+}
 body[data-locale="ar"] {
   font-family: var(--font-arabic-family);
 }
