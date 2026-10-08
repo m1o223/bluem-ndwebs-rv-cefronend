@@ -18,6 +18,7 @@ import DevicePreview, {
   type TabletOrientation,
 } from "./device-preview";
 import styles from "./project-viewer.module.css";
+import { useLocalization } from "../localization-provider";
 import WindowIcon from "./window-icon";
 
 const PANEL_DURATION = 480;
@@ -70,6 +71,7 @@ export default function InteractiveProjectViewer({
   onClose: () => void;
   ref: Ref<ProjectViewerHandle>;
 }) {
+  const { translate } = useLocalization();
   const info = projects.find((item) => item.id === project)!;
   const Project = projectComponents[project];
   const dialog = useRef<HTMLDialogElement>(null);
@@ -400,41 +402,42 @@ export default function InteractiveProjectViewer({
       >
         <div className={styles.shell}>
           <header className={styles.topBar}>
-            <div className={styles.projectTitle}>
-              <strong id="project-viewer-title">{info.brand}</strong>
-              <span id="project-viewer-category">{info.category}</span>
+            <div className={styles.windowIdentity}>
+              <span className={styles.trafficLights} aria-hidden="true">
+                <span className={styles.redLight} />
+                <span className={styles.yellowLight} />
+                <span className={styles.greenLight} />
+              </span>
+              <div className={styles.projectTitle}>
+                <strong id="project-viewer-title">{info.brand}</strong>
+                <span id="project-viewer-category">{info.category}</span>
+              </div>
             </div>
             <div
-              className={styles.windowControls}
+              className={styles.windowActions}
               role="group"
-              aria-label="Preview window controls"
+              aria-label={translate("Preview window actions")}
+              data-no-translate
             >
               <button
                 ref={firstControl}
-                className={styles.trafficButton}
-                aria-label="Minimize project viewer"
-                disabled={exiting}
-                onClick={() => exit("minimizing")}
+                className={styles.backButton}
+                aria-label={translate("Back to Concepts")}
+                onClick={close}
               >
-                <WindowIcon action="minimize" />
+                {translate("Back to Concepts")}
               </button>
               <button
-                className={styles.trafficButton}
+                className={styles.expandButton}
                 aria-label={
-                  expanded ? "Restore viewer size" : "Expand project viewer"
+                  expanded ? translate("Restore viewer size") : translate("Expand project viewer")
                 }
                 aria-pressed={expanded}
                 disabled={exiting}
                 onClick={() => setExpanded((value) => !value)}
               >
                 <WindowIcon action="expand" expanded={expanded} />
-              </button>
-              <button
-                className={styles.trafficButton}
-                aria-label="Close project viewer and return to concepts"
-                onClick={close}
-              >
-                <WindowIcon action="close" />
+                <span>{translate(expanded ? "Restore" : "Expand")}</span>
               </button>
             </div>
           </header>
