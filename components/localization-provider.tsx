@@ -80,6 +80,7 @@ function translateDynamicValue(value: string, locale: Locale) {
     if (value.startsWith("View Website: ")) return value.replace("View Website: ", "Visa webbplats: ");
     if (value.startsWith("Close ")) return `Stäng ${value.slice(6)}`;
     if (value.startsWith("Open ")) return `Öppna ${value.slice(5)}`;
+    if (value.endsWith("All rights reserved.")) return value.replace("All rights reserved.", "Alla rättigheter förbehållna.");
   }
   if (locale === "ar") {
     if (value.startsWith("Pay ") && value.endsWith(" now")) return `ادفع ${value.slice(4, -4)} الآن`;
