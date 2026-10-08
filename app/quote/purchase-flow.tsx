@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { carePlans, priceFor, type Billing, type PlanName } from "../care/care-data";
-import { createStripeCheckout } from "../lib/api-client";
+import { createStripeCheckout, sendEmailVerificationCode, verifyEmailVerificationCode } from "../lib/api-client";
+import { useLocalization } from "../../components/localization-provider";
 import { packages } from "./quote-data";
 import styles from "./quote.module.css";
 
@@ -53,7 +54,6 @@ function detectCardBrand(value: string): "visa" | "mastercard" {
 }
 
 const featureChips = ["Contact Form", "Booking", "Online Store", "Gallery", "Blog", "Payments", "Maps", "Social Media", "Newsletter", "Other"];
-const demoCode = "123456";
 
 function parseSek(price: string) {
   const match = price.match(/([\d\s,]+)\s*SEK/i);
@@ -63,6 +63,11 @@ function parseSek(price: string) {
 
 function formatSek(amount: number) {
   return `${new Intl.NumberFormat("sv-SE").format(amount)} SEK`;
+}
+
+function createCheckoutAttemptId() {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
+  return `attempt-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
 function temporaryOrderNumber(packageId: string) {
@@ -93,6 +98,7 @@ function SuccessMark() {
 }
 
 export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheckoutProps) {
+  const { locale } = useLocalization();
   const [step, setStep] = useState<Step>("review");
   const [paymentPlan, setPaymentPlan] = useState<PaymentPlan>("full");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("visa");
@@ -103,6 +109,10 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
   const [customerEmail, setCustomerEmail] = useState("");
   const [emailSent, setEmailSent] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
+  const [checkoutAttemptId, setCheckoutAttemptId] = useState(createCheckoutAttemptId);
+  const [emailVerificationToken, setEmailVerificationToken] = useState("");
+  const [sendingCode, setSendingCode] = useState(false);
+  const [verifyingCode, setVerifyingCode] = useState(false);
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState("");
   const [resendSeconds, setResendSeconds] = useState(59);
@@ -128,6 +138,10 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
     setCustomerEmail("");
     setEmailSent(false);
     setEmailVerified(false);
+    setCheckoutAttemptId(createCheckoutAttemptId());
+    setEmailVerificationToken("");
+    setSendingCode(false);
+    setVerifyingCode(false);
     setCode("");
     setCodeError("");
     setResendSeconds(59);
@@ -174,25 +188,43 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
     setStep("email");
   }
 
-  function sendCode() {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail.trim())) {
+  async function sendCode() {
+    const email = customerEmail.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setCodeError("Please enter a valid email address.");
       return;
     }
-    setEmailSent(true);
+    if (emailSent && resendSeconds > 0) return;
+    setSendingCode(true);
     setEmailVerified(false);
+    setEmailVerificationToken("");
     setCode("");
     setCodeError("");
-    setResendSeconds(59);
-  }
-
-  function verifyCode() {
-    if (code.replace(/\D/g, "") !== demoCode) {
-      setCodeError("Incorrect code. Please try again. Demo code: 123456.");
+    const result = await sendEmailVerificationCode({ email, checkoutAttemptId, language: locale });
+    setSendingCode(false);
+    if (!result.success) {
+      setCodeError(result.error);
       return;
     }
-    setEmailVerified(true);
+    setCustomerEmail(result.verification.email);
+    setCheckoutAttemptId(result.verification.checkoutAttemptId);
+    setEmailSent(true);
+    setResendSeconds(result.verification.resendAfterSeconds || 59);
+  }
+
+  async function verifyCode() {
+    setVerifyingCode(true);
     setCodeError("");
+    const result = await verifyEmailVerificationCode({ email: customerEmail.trim().toLowerCase(), checkoutAttemptId, code });
+    setVerifyingCode(false);
+    if (!result.success) {
+      setCodeError(result.error);
+      return;
+    }
+    setCustomerEmail(result.verification.email);
+    setCheckoutAttemptId(result.verification.checkoutAttemptId);
+    setEmailVerificationToken(result.verification.verificationToken);
+    setEmailVerified(true);
     window.setTimeout(() => setStep("choice"), 650);
   }
 
@@ -211,6 +243,11 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
 
   async function startStripeCheckout() {
     if (!selectedPackage) return;
+    if (!emailVerified || !emailVerificationToken) {
+      setCodeError("Please verify your email before continuing to payment.");
+      setStep("email");
+      return;
+    }
     setCheckoutError("");
     setProcessingText("Opening secure Stripe Checkout...");
     const result = await createStripeCheckout({
@@ -218,6 +255,8 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
       paymentOption: paymentPlan,
       customerName: projectDetails.projectName || customerEmail,
       verifiedEmail: customerEmail,
+      checkoutAttemptId,
+      emailVerificationToken,
       projectDescription: [
         projectDetails.notes,
         projectDetails.business ? `Business: ${projectDetails.business}` : "",
@@ -312,14 +351,14 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
               <h2 id="checkout-title">Verify your order email</h2>
               <p className={styles.checkoutLead}>This verified email will be linked to your order, payment confirmation, project summary, and future BlueMind Care validation.</p>
               <div className={styles.emailVerify}>
-                <label>Email Address<input type="email" value={customerEmail} onChange={event => { setCustomerEmail(event.target.value); setCodeError(""); }} required /></label>
-                <button type="button" className={styles.checkoutPrimary} onClick={sendCode}>{emailSent ? "Send verification code again" : "Send verification code"}</button>
+                <label>Email Address<input type="email" value={customerEmail} onChange={event => { setCustomerEmail(event.target.value); setCodeError(""); setEmailSent(false); setEmailVerified(false); setEmailVerificationToken(""); setCode(""); setResendSeconds(0); }} required /></label>
+                <button type="button" className={styles.checkoutPrimary} onClick={sendCode} disabled={sendingCode || (emailSent && resendSeconds > 0)}>{sendingCode ? "Sending..." : emailSent ? "Send verification code again" : "Send verification code"}</button>
                 {emailSent && (
                   <div className={styles.verifyPanel}>
                     <label>Enter the 6-digit code we sent to your email.<input inputMode="numeric" maxLength={6} value={code} onChange={event => setCode(event.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="123456" /></label>
                     <div className={styles.verifyActions}>
-                      <button type="button" className={styles.checkoutPrimary} onClick={verifyCode}>Verify Email</button>
-                      {resendSeconds > 0 ? <span>Resend code in {resendSeconds}s</span> : <button type="button" className={styles.checkoutGhost} onClick={sendCode}>Resend Code</button>}
+                      <button type="button" className={styles.checkoutPrimary} onClick={verifyCode} disabled={verifyingCode || code.length !== 6}>{verifyingCode ? "Verifying..." : "Verify Email"}</button>
+                      {resendSeconds > 0 ? <span>Resend code in {resendSeconds}s</span> : <button type="button" className={styles.checkoutGhost} onClick={sendCode} disabled={sendingCode}>{sendingCode ? "Sending..." : "Resend Code"}</button>}
                     </div>
                     {codeError && <p className={styles.verifyError}>{codeError}</p>}
                     {emailVerified && <p className={styles.verifySuccess}><SuccessMark /> Email verified</p>}

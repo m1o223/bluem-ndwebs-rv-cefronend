@@ -33,11 +33,52 @@ export async function postApi(path: "/api/contact" | "/api/quote", payload: Reco
   }
 }
 
+export type EmailVerificationSendResult =
+  | { success: true; message: string; verification: { email: string; checkoutAttemptId: string; expiresInSeconds: number; resendAfterSeconds: number } }
+  | { success: false; error: string; fields?: Record<string, string> };
+
+export type EmailVerificationVerifyResult =
+  | { success: true; message: string; verification: { email: string; checkoutAttemptId: string; verificationToken: string; tokenExpiresInSeconds: number } }
+  | { success: false; error: string; fields?: Record<string, string> };
+
+async function postJson<T>(path: string, payload: Record<string, unknown>, fallback: string): Promise<T | { success: false; error: string; fields?: Record<string, string> }> {
+  if (!API_BASE_URL) return { success: false, error: "Service is not configured yet. Please try again later." };
+
+  try {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || data?.success !== true) {
+      return {
+        success: false,
+        error: typeof data?.error === "string" ? data.error : fallback,
+        fields: data?.fields && typeof data.fields === "object" ? data.fields : undefined,
+      };
+    }
+    return data as T;
+  } catch {
+    return { success: false, error: "We could not reach the service. Please check your connection and try again." };
+  }
+}
+
+export async function sendEmailVerificationCode(payload: { email: string; checkoutAttemptId: string; language: "en" | "sv" | "ar" }): Promise<EmailVerificationSendResult> {
+  return postJson<Extract<EmailVerificationSendResult, { success: true }>>("/api/order-email-verification/send", payload, "We could not send the verification code. Please try again.") as Promise<EmailVerificationSendResult>;
+}
+
+export async function verifyEmailVerificationCode(payload: { email: string; checkoutAttemptId: string; code: string }): Promise<EmailVerificationVerifyResult> {
+  return postJson<Extract<EmailVerificationVerifyResult, { success: true }>>("/api/order-email-verification/verify", payload, "We could not verify the code. Please try again.") as Promise<EmailVerificationVerifyResult>;
+}
+
 export type StripeCheckoutPayload = {
   packageId: string;
   paymentOption: "full" | "deposit";
   customerName: string;
   verifiedEmail: string;
+  checkoutAttemptId: string;
+  emailVerificationToken: string;
   companyName?: string;
   phone?: string;
   projectDescription: string;
