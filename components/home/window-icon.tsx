@@ -22,8 +22,8 @@ export default function WindowIcon({
             : action === "minimize"
               ? "M6 12h12"
               : expanded
-                ? "M3 9h6V3M9 9 3 3M21 15h-6v6m0-6 6 6"
-                : "M9 3H3v6M3 3l7 7M15 21h6v-6m0 6-7-7"
+                ? "M8 8h10v10H8zM6 16H4V4h12v2"
+                : "M6 6h12v12H6z"
         }
       />
     </svg>

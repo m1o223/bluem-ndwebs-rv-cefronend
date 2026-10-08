@@ -73,7 +73,7 @@ export default function InteractiveProjectViewer({
   const info = projects.find((item) => item.id === project)!;
   const Project = projectComponents[project];
   const dialog = useRef<HTMLDialogElement>(null);
-  const back = useRef<HTMLButtonElement>(null);
+  const firstControl = useRef<HTMLButtonElement>(null);
   const frames = useRef<number[]>([]);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const phaseRef = useRef<ViewerPhase>("open");
@@ -152,7 +152,7 @@ export default function InteractiveProjectViewer({
     element.inert = false;
     lockPage();
     if (!element.open) element.showModal();
-    back.current?.focus({ preventScroll: true });
+    firstControl.current?.focus({ preventScroll: true });
     element.getBoundingClientRect();
     frames.current.push(
       requestAnimationFrame(() => {
@@ -400,60 +400,41 @@ export default function InteractiveProjectViewer({
       >
         <div className={styles.shell}>
           <header className={styles.topBar}>
-            <div className={styles.windowTitle}>
-              <div className={styles.windowControls}>
-                <button
-                  className={styles.trafficButton}
-                  aria-label="Close project viewer"
-                  onClick={close}
-                >
-                  <span className={styles.red}>
-                    <WindowIcon action="close" />
-                  </span>
-                </button>
-                <button
-                  className={styles.trafficButton}
-                  aria-label="Minimize project viewer"
-                  disabled={exiting}
-                  onClick={() => exit("minimizing")}
-                >
-                  <span className={styles.yellow}>
-                    <WindowIcon action="minimize" />
-                  </span>
-                </button>
-                <button
-                  className={styles.trafficButton}
-                  aria-label={
-                    expanded ? "Restore viewer size" : "Expand project viewer"
-                  }
-                  aria-pressed={expanded}
-                  disabled={exiting}
-                  onClick={() => setExpanded((value) => !value)}
-                >
-                  <span className={styles.green}>
-                    <WindowIcon action="expand" expanded={expanded} />
-                  </span>
-                </button>
-              </div>
-              <div className={styles.projectTitle}>
-                <strong id="project-viewer-title">{info.brand}</strong>
-                <span id="project-viewer-category">{info.category}</span>
-              </div>
+            <div className={styles.projectTitle}>
+              <strong id="project-viewer-title">{info.brand}</strong>
+              <span id="project-viewer-category">{info.category}</span>
             </div>
-            <div className={styles.viewerActions}>
-              <button ref={back} className={styles.backButton} onClick={close}>
-                Back to Concepts <span aria-hidden="true">×</span>
+            <div
+              className={styles.windowControls}
+              role="group"
+              aria-label="Preview window controls"
+            >
+              <button
+                ref={firstControl}
+                className={styles.trafficButton}
+                aria-label="Minimize project viewer"
+                disabled={exiting}
+                onClick={() => exit("minimizing")}
+              >
+                <WindowIcon action="minimize" />
               </button>
               <button
-                className={styles.expandButton}
+                className={styles.trafficButton}
                 aria-label={
-                  expanded ? "Restore preview window" : "Expand preview window"
+                  expanded ? "Restore viewer size" : "Expand project viewer"
                 }
                 aria-pressed={expanded}
                 disabled={exiting}
                 onClick={() => setExpanded((value) => !value)}
               >
                 <WindowIcon action="expand" expanded={expanded} />
+              </button>
+              <button
+                className={styles.trafficButton}
+                aria-label="Close project viewer and return to concepts"
+                onClick={close}
+              >
+                <WindowIcon action="close" />
               </button>
             </div>
           </header>
