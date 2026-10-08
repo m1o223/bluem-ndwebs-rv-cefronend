@@ -124,6 +124,7 @@ function translateAttributes(root: ParentNode, locale: Locale) {
 function translateDocument(locale: Locale) {
   if (!document.body) return;
   document.documentElement.lang = locale;
+  document.documentElement.dir = "ltr";
   document.body.dataset.locale = locale;
 
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
