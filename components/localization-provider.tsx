@@ -42,6 +42,7 @@ const messages: Record<Locale, MessageMap> = {
 
 const LocalizationContext = createContext<LocalizationContextValue | null>(null);
 const textOriginals = new WeakMap<Text, string>();
+const originalAttributePrefix = "data-i18n-original-";
 
 function normalizeLocale(value: string | null): Locale {
   return value === "sv" || value === "ar" ? value : "en";
@@ -111,9 +112,9 @@ function translateAttributes(root: ParentNode, locale: Locale) {
     attributeNames.forEach((name) => {
       const current = element.getAttribute(name);
       if (!current?.trim()) return;
-      const originalKey = `i18nOriginal${name}`;
-      const original = element.dataset[originalKey] ?? current;
-      element.dataset[originalKey] = original;
+      const originalAttribute = `${originalAttributePrefix}${name.replace(/[^a-z0-9-]/gi, "-")}`;
+      const original = element.getAttribute(originalAttribute) ?? current;
+      element.setAttribute(originalAttribute, original);
       const translated = translateValue(original, locale);
       if (current !== translated) element.setAttribute(name, translated);
     });
@@ -121,6 +122,7 @@ function translateAttributes(root: ParentNode, locale: Locale) {
 }
 
 function translateDocument(locale: Locale) {
+  if (!document.body) return;
   document.documentElement.lang = locale;
   document.body.dataset.locale = locale;
 
@@ -137,22 +139,35 @@ export function LocalizationProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>("en");
 
   useEffect(() => {
-    setLocaleState(normalizeLocale(window.localStorage.getItem(storageKey)));
+    try {
+      setLocaleState(normalizeLocale(window.localStorage.getItem(storageKey)));
+    } catch {
+      setLocaleState("en");
+    }
   }, []);
 
   const value = useMemo<LocalizationContextValue>(() => ({
     locale,
     languages,
     setLocale: (nextLocale) => {
-      window.localStorage.setItem(storageKey, nextLocale);
+      try {
+        window.localStorage.setItem(storageKey, nextLocale);
+      } catch {
+        // Browsers can block storage in private or restricted contexts.
+      }
       setLocaleState(nextLocale);
     },
     translate: (text) => translateValue(text, locale),
   }), [locale]);
 
   useEffect(() => {
+    let frame = 0;
+    const scheduleTranslation = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => translateDocument(locale));
+    };
     translateDocument(locale);
-    const observer = new MutationObserver(() => translateDocument(locale));
+    const observer = new MutationObserver(scheduleTranslation);
     observer.observe(document.body, {
       childList: true,
       subtree: true,
@@ -160,7 +175,10 @@ export function LocalizationProvider({ children }: { children: ReactNode }) {
       attributes: true,
       attributeFilter: ["placeholder", "aria-label", "title"],
     });
-    return () => observer.disconnect();
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
   }, [locale]);
 
   return <LocalizationContext.Provider value={value}>{children}</LocalizationContext.Provider>;
