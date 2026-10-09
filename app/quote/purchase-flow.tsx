@@ -446,11 +446,11 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
           {step === "success" && (
             <div className={styles.successState}>
               <SuccessMark />
-              <h2 id="checkout-title">Payment successful</h2>
-              <p>Your order is ready.</p>
+              <h2 id="checkout-title">Demo checkout preview complete</h2>
+              <p>No real payment was processed and no real order was created.</p>
               <div className={styles.orderNumber}><span>Your Order Number</span><strong>{demoOrderNumber}</strong></div>
               <p className={styles.demoNotice}>Save this number. You will need it for BlueMind Care and future order support. This is a frontend-only demo order number.</p>
-              <div className={styles.emailPreview}><span>Confirmation sent to:</span><strong>{customerEmail}</strong><small>Tomorrow the backend will send the real confirmation email with the order number, package, payment, remaining balance, and project summary.</small></div>
+              <div className={styles.emailPreview}><span>Demo email preview for:</span><strong>{customerEmail}</strong><small>The backend will send a real confirmation only after Stripe confirms an actual payment through a verified webhook.</small></div>
               <section className={styles.careUpsell} aria-labelledby="care-upsell-title">
                 <h3 id="care-upsell-title">Keep your website running smoothly with BlueMind Care.</h3>
                 <div>{carePlans.map(plan => <button key={plan.id} type="button" onClick={() => { setCarePlan(plan.name); setStep("care"); }}><span>{plan.name}</span><strong>{priceFor(plan, "Monthly")} / month</strong></button>)}</div>

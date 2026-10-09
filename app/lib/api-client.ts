@@ -93,7 +93,7 @@ export type StripeCheckoutResult =
   | { success: false; error: string; fields?: Record<string, string> };
 
 export type StripeCheckoutStatus =
-  | { success: true; status: string; sessionId?: string; order?: { orderNumber: string; packageName?: string; email?: string; paymentStatus?: string; projectStatus?: string; amountPaidOre?: number; remainingBalanceOre?: number; totalAmountOre?: number } | null; amounts?: { total: string; paid: string; remaining: string } }
+  | { success: true; status: string; sessionId?: string; paymentMode?: "test" | "live"; stripeLivemode?: boolean; order?: { orderNumber: string; packageName?: string; email?: string; paymentStatus?: string; projectStatus?: string; amountPaidOre?: number; remainingBalanceOre?: number; totalAmountOre?: number; isPaidOrder?: boolean; isSandboxTestOrder?: boolean; testMode?: string; paymentMode?: "test" | "live"; stripeLivemode?: boolean } | null; amounts?: { total: string; paid: string; remaining: string } }
   | { success: false; error: string };
 
 export async function createStripeCheckout(payload: StripeCheckoutPayload): Promise<StripeCheckoutResult> {
