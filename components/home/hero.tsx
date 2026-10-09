@@ -1,5 +1,4 @@
 import Link from "next/link";
-import BlueMindAIExperience from "../ai/blue-mind-ai-overlay";
 import HeroVisual from "./hero-visual";
 import PlanetWatermark from "./planet-watermark";
 import shared from "./home.module.css";
@@ -20,7 +19,7 @@ export default function Hero() {
           <p className={styles.description}>Thoughtfully designed. Expertly developed.<br />Websites that move your business forward.</p>
           <div className={`${shared.actions} ${styles.actions}`}>
             <Link href="/quote" className={`${styles.ctaButton} ${styles.primaryCta}`}>Get Started</Link>
-            <BlueMindAIExperience buttonClassName={styles.ctaButton} />
+            <Link href="#selected-work" className={styles.ctaButton}>Explore Concepts</Link>
           </div>
         </div>
         <HeroVisual />
