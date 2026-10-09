@@ -7,6 +7,7 @@
   padding: clamp(14px, 2vw, 30px);
   color: #171717;
   font-family: var(--font-body-family);
+  overflow: hidden;
 }
 
 .overlayRoot[data-locale="ar"] {
@@ -63,8 +64,7 @@
 .controls button,
 .newButton,
 .summaryActions button,
-.errorCard button,
-.errorButton {
+.errorCard button {
   border: 1px solid #d9dee6;
   background: #fff;
   color: #242a35;
@@ -179,14 +179,16 @@
   gap: 10px;
   padding: 10px 24px 14px;
   overflow-x: auto;
+  max-width: 100%;
+  min-width: 0;
+  contain: layout;
   scrollbar-width: thin;
 }
 
 .quickActions button,
 .suggestions button,
 .summaryActions button,
-.errorCard button,
-.errorButton {
+.errorCard button {
   min-height: 38px;
   padding: 0 14px;
   border: 1px solid #dfe4eb;
@@ -344,19 +346,20 @@
 }
 
 .composerWrap {
-  padding: 12px 20px 18px;
-  border-top: 1px solid #edf0f4;
-  background: rgb(255 255 255 / 86%);
+  padding: 12px 24px 20px;
+  background: linear-gradient(180deg, rgb(255 255 255 / 72%), #fff 42%);
 }
 
 .attachmentRow {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 28px;
+  width: min(760px, 100%);
+  margin: 0 auto 10px;
   overflow-x: auto;
   color: #7a8492;
   font-size: 12px;
+  scrollbar-width: thin;
 }
 
 .attachmentRow strong {
@@ -375,6 +378,7 @@
   background: #fff;
   color: #303846;
   white-space: nowrap;
+  box-shadow: 0 8px 20px rgb(25 44 73 / 5%);
 }
 
 .attachmentPill small {
@@ -392,76 +396,98 @@
   cursor: pointer;
 }
 
-.emptyAttachment {
-  color: #9aa3af;
+.composerBar {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  width: min(760px, 100%);
+  margin: 0 auto;
 }
 
-.composer {
-  display: grid;
-  grid-template-columns: 42px minmax(0, 1fr) 46px;
-  align-items: end;
-  gap: 10px;
+.inputShell {
+  display: flex;
+  align-items: flex-end;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 8px;
   border: 1px solid #d9dee6;
-  border-radius: 18px;
-  background: #fff;
-  padding: 10px;
-  box-shadow: 0 10px 30px rgb(25 44 73 / 7%);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 96%);
+  padding: 7px 8px 7px 18px;
+  box-shadow: 0 14px 36px rgb(25 44 73 / 9%), 0 2px 8px rgb(25 44 73 / 4%);
 }
 
 .attachButton,
 .sendButton {
   display: inline-grid;
   place-items: center;
-  height: 42px;
+  flex: 0 0 auto;
   border: 1px solid #dfe4eb;
-  border-radius: 13px;
   background: #fff;
   color: #171717;
   cursor: pointer;
+  transition: transform 200ms cubic-bezier(.22, 1, .36, 1), border-color 200ms ease, background-color 200ms ease, box-shadow 200ms ease;
+}
+
+.attachButton {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  font-size: 24px;
+  line-height: 1;
+  box-shadow: 0 12px 28px rgb(25 44 73 / 9%), 0 2px 8px rgb(25 44 73 / 5%);
 }
 
 .sendButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   background: #171717;
   color: #fff;
   border-color: #171717;
-  font-size: 20px;
 }
 
-.composer textarea {
-  min-height: 42px;
-  max-height: 140px;
-  resize: vertical;
+.arrowIcon {
+  width: 18px;
+  height: 18px;
+}
+
+.inputShell textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 30px;
+  max-height: 120px;
+  padding: 8px 4px;
+  resize: none;
+  overflow-y: auto;
   border: 0;
   outline: 0;
+  background: transparent;
   color: #1f2937;
   font: inherit;
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.45;
 }
 
+.inputShell textarea::placeholder {
+  color: #8a93a1;
+}
 .fileInput {
   display: none;
 }
 
-.errorButton {
-  margin-top: 10px;
-  min-height: 30px;
-  padding-inline: 12px;
-  color: #687386;
-  font-size: 12px;
-}
-
 .overlayRoot[data-locale="ar"] .header,
-.overlayRoot[data-locale="ar"] .composer {
+.overlayRoot[data-locale="ar"] .composerBar {
   direction: ltr;
 }
 
-.overlayRoot[data-locale="ar"] .composer textarea,
+.overlayRoot[data-locale="ar"] .inputShell textarea,
 .overlayRoot[data-locale="ar"] .summaryCard dl,
 .overlayRoot[data-locale="ar"] .previewCard dl {
   direction: rtl;
 }
 
-.overlayRoot[data-locale="ar"] .composer textarea {
+.overlayRoot[data-locale="ar"] .inputShell textarea {
   text-align: right;
 }
 
@@ -473,8 +499,7 @@
   .summaryActions button:hover,
   .errorCard button:hover,
   .attachButton:hover,
-  .sendButton:hover,
-  .errorButton:hover {
+  .sendButton:hover {
     transform: translateY(-2px);
     border-color: #aab1bc;
     box-shadow: 0 8px 20px rgb(25 44 73 / 8%);
@@ -546,15 +571,27 @@
     padding: 9px 10px 12px;
   }
 
-  .composer {
-    grid-template-columns: 38px minmax(0, 1fr) 42px;
-    border-radius: 15px;
-    padding: 8px;
+  .composerBar {
+    gap: 10px;
+    width: 100%;
   }
 
-  .attachButton,
+  .inputShell {
+    padding: 6px 7px 6px 14px;
+  }
+
+  .attachButton {
+    width: 42px;
+    height: 42px;
+  }
+
   .sendButton {
+    width: 38px;
     height: 38px;
+  }
+
+  .inputShell textarea {
+    font-size: 16px;
   }
 }
 

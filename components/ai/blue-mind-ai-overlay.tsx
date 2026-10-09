@@ -70,9 +70,7 @@ const baseLabels = {
   delivery: "Delivery",
   errorTitle: "Something went wrong",
   errorText: "This is a prepared demo error state. No data was sent anywhere.",
-  showError: "Show error state",
   clearError: "Clear error",
-  emptyAttachment: "No attachments selected",
   removeAttachment: "Remove attachment",
   attachmentTooLarge: "This demo accepts files up to 8 MB.",
   image: "Image",
@@ -80,6 +78,11 @@ const baseLabels = {
   attachmentUploaded: "Attachment uploaded",
   toBeConfirmed: "To be confirmed",
 };
+
+
+function ArrowUpRightIcon() {
+  return <svg aria-hidden="true" viewBox="0 0 20 20" className={styles.arrowIcon} fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M6 14 14 6" /><path d="M8 6h6v6" /></svg>;
+}
 
 function SparkleIcon() {
   return <svg aria-hidden="true" viewBox="0 0 20 20" className={styles.sparkleIcon}><path d="M10 1.8l1.6 4.7 4.8 1.6-4.8 1.6L10 14.4 8.4 9.7 3.6 8.1l4.8-1.6L10 1.8z" fill="currentColor"/><path d="M15.5 12.5l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7.7-2z" fill="currentColor" opacity=".65"/></svg>;
@@ -200,7 +203,7 @@ export default function BlueMindAIExperience({ buttonClassName }: { buttonClassN
             {checkoutPreview && <article className={styles.previewCard}><h3>{labels.checkoutTitle}</h3><p>{labels.checkoutText}</p><dl><div><dt>{labels.packageLabel}</dt><dd>{recommended.title}</dd></div><div><dt>{labels.price}</dt><dd>{recommended.price}</dd></div><div><dt>{labels.delivery}</dt><dd>{recommended.delivery}</dd></div></dl></article>}
             {errorVisible && <article className={styles.errorCard}><h3>{labels.errorTitle}</h3><p>{labels.errorText}</p><button type="button" onClick={() => setErrorVisible(false)}>{labels.clearError}</button></article>}
           </div>
-          <footer className={styles.composerWrap}><div className={styles.attachmentRow}>{attachments.length ? attachments.map((item) => <span key={item.id} className={styles.attachmentPill}>{item.kind === "image" ? "IMG" : "FILE"} {item.name} <small>{item.size}</small><button type="button" aria-label={`${labels.removeAttachment}: ${item.name}`} onClick={() => setAttachments((currentItems) => currentItems.filter((existing) => existing.id !== item.id))}>x</button></span>) : <span className={styles.emptyAttachment}>{labels.emptyAttachment}</span>}{attachmentError && <strong>{attachmentError}</strong>}</div><div className={styles.composer}><button type="button" className={styles.attachButton} aria-label={labels.attach} onClick={() => fileInputRef.current?.click()}>+</button><textarea value={input} rows={2} placeholder={labels.placeholder} onChange={(event) => setInput(event.target.value)} onKeyDown={keyDown} /><button type="button" className={styles.sendButton} aria-label={labels.send} onClick={() => send()}>-&gt;</button><input ref={fileInputRef} className={styles.fileInput} type="file" accept="image/*,.pdf,.doc,.docx,.txt" multiple onChange={chooseFiles} /></div><button type="button" className={styles.errorButton} onClick={() => setErrorVisible(true)}>{labels.showError}</button></footer>
+          <footer className={styles.composerWrap}>{(attachments.length > 0 || attachmentError) && <div className={styles.attachmentRow}>{attachments.map((item) => <span key={item.id} className={styles.attachmentPill}>{item.kind === "image" ? "IMG" : "FILE"} {item.name} <small>{item.size}</small><button type="button" aria-label={labels.removeAttachment + ": " + item.name} onClick={() => setAttachments((currentItems) => currentItems.filter((existing) => existing.id !== item.id))}>x</button></span>)}{attachmentError && <strong>{attachmentError}</strong>}</div>}<div className={styles.composerBar}><button type="button" className={styles.attachButton} aria-label={labels.attach} onClick={() => fileInputRef.current?.click()}>+</button><div className={styles.inputShell}><textarea value={input} rows={1} placeholder={labels.placeholder} onChange={(event) => setInput(event.target.value)} onKeyDown={keyDown} /><button type="button" className={styles.sendButton} aria-label={labels.send} onClick={() => send()}><ArrowUpRightIcon /></button><input ref={fileInputRef} className={styles.fileInput} type="file" accept="image/*,.pdf,.doc,.docx,.txt" multiple onChange={chooseFiles} /></div></div></footer>
         </div>
       </section>
     </div>
