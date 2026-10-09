@@ -75,6 +75,7 @@ export async function verifyEmailVerificationCode(payload: { email: string; chec
 export type StripeCheckoutPayload = {
   packageId: string;
   paymentOption: "full" | "deposit_50" | "deposit_25";
+  paymentMethod: "visa" | "mastercard" | "card" | "klarna" | "paypal";
   customerName: string;
   verifiedEmail: string;
   checkoutAttemptId: string;

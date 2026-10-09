@@ -650,5 +650,13 @@
   "Products, Cart, Checkout, Contact": "Produkter, Varukorg, Checkout, Kontakt",
   "Not Yet": "Inte ännu",
   "Preview window actions": "Förhandsvisningens fönsterkontroller",
-  "Expand": "Expandera"
+  "Expand": "Expandera",
+  "Stripe Checkout will open with card payment only. Use a Visa test card in Stripe Sandbox.": "Stripe Checkout öppnas endast med kortbetalning. Använd ett Visa-testkort i Stripe Sandbox.",
+  "Stripe Checkout will open with card payment only. Use a Mastercard test card in Stripe Sandbox.": "Stripe Checkout öppnas endast med kortbetalning. Använd ett Mastercard-testkort i Stripe Sandbox.",
+  "Stripe Checkout will open with Klarna only, if the Stripe Sandbox account and amount are eligible.": "Stripe Checkout öppnas endast med Klarna om Stripe Sandbox-kontot och beloppet är godkända.",
+  "Klarna is not enabled for BlueMind Stripe Sandbox checkout yet. Please choose Visa or Mastercard.": "Klarna är inte aktiverat för BlueMind Stripe Sandbox-checkout ännu. Välj Visa eller Mastercard.",
+  "Stripe Checkout will open with PayPal only, if PayPal is active in the Stripe Sandbox account.": "Stripe Checkout öppnas endast med PayPal om PayPal är aktivt i Stripe Sandbox-kontot.",
+  "PayPal is not integrated for BlueMind Stripe Sandbox checkout yet. Please choose Visa or Mastercard.": "PayPal är inte integrerat för BlueMind Stripe Sandbox-checkout ännu. Välj Visa eller Mastercard.",
+  "Apple Pay and Google Pay are card wallets in Stripe hosted Checkout. They cannot be forced as the only hosted Checkout method here. Please choose Visa or Mastercard, or use a compatible wallet if Stripe shows it on your device.": "Apple Pay och Google Pay är kortplånböcker i Stripe hosted Checkout. De kan inte tvingas fram som enda betalningsmetod här. Välj Visa eller Mastercard, eller använd en kompatibel plånbok om Stripe visar den på din enhet.",
+  "Unavailable": "Inte tillgängligt"
 }

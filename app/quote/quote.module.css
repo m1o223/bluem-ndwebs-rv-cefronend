@@ -108,6 +108,8 @@
 .methodGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 22px; }
 .methodGrid button { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px; min-height: 78px; padding: 14px; text-align: left; }
 .methodGrid button:disabled { cursor: not-allowed; opacity: .76; }
+.methodGrid button[data-unavailable="true"] { background: #f7f8fa; color: #6b7280; }
+.methodGrid button[data-unavailable="true"] .paymentBrand { opacity: .62; filter: grayscale(.8); }
 .methodGrid button[data-method="klarna"] { background: #fff3f8; border-color: #f0bdd4; }
 .methodGrid button[data-method="klarna"][data-selected="true"] { box-shadow: none; }
 .paymentBrand { display: inline-grid; place-items: center; width: 76px; height: 38px; border: 1px solid #edf0f4; border-radius: 10px; background: #fff; overflow: hidden; }

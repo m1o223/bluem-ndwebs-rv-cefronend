@@ -41,6 +41,25 @@ const methodLabels: Record<PaymentMethod, string> = {
   klarna: "Klarna",
 };
 
+const klarnaCheckoutEnabled = process.env.NEXT_PUBLIC_ENABLE_STRIPE_KLARNA_CHECKOUT === "true";
+const paypalCheckoutEnabled = process.env.NEXT_PUBLIC_ENABLE_STRIPE_PAYPAL_CHECKOUT === "true";
+
+function resolveFrontendPaymentMethod(method: PaymentMethod): { supported: true; apiMethod: "visa" | "mastercard" | "card" | "klarna" | "paypal"; note: string } | { supported: false; note: string } {
+  if (method === "visa") return { supported: true, apiMethod: "visa", note: "Stripe Checkout will open with card payment only. Use a Visa test card in Stripe Sandbox." };
+  if (method === "mastercard") return { supported: true, apiMethod: "mastercard", note: "Stripe Checkout will open with card payment only. Use a Mastercard test card in Stripe Sandbox." };
+  if (method === "klarna") {
+    return klarnaCheckoutEnabled
+      ? { supported: true, apiMethod: "klarna", note: "Stripe Checkout will open with Klarna only, if the Stripe Sandbox account and amount are eligible." }
+      : { supported: false, note: "Klarna is not enabled for BlueMind Stripe Sandbox checkout yet. Please choose Visa or Mastercard." };
+  }
+  if (method === "paypal") {
+    return paypalCheckoutEnabled
+      ? { supported: true, apiMethod: "paypal", note: "Stripe Checkout will open with PayPal only, if PayPal is active in the Stripe Sandbox account." }
+      : { supported: false, note: "PayPal is not integrated for BlueMind Stripe Sandbox checkout yet. Please choose Visa or Mastercard." };
+  }
+  return { supported: false, note: "Apple Pay and Google Pay are card wallets in Stripe hosted Checkout. They cannot be forced as the only hosted Checkout method here. Please choose Visa or Mastercard, or use a compatible wallet if Stripe shows it on your device." };
+}
+
 function PaymentBrand({ method }: { method: PaymentMethod }) {
   if (method === "paypal") return <span className={`${styles.paymentBrand} ${styles.paypalBrand}`} aria-hidden="true">PayPal</span>;
   const asset = method === "visa" ? "/images/footer/visa.png" : method === "mastercard" ? "/images/footer/mastercard.svg" : method === "apple-pay" ? "/images/footer/apple-pay.svg" : method === "google-pay" ? "/images/footer/google-pay.svg" : "/images/footer/klarna.svg";
@@ -133,6 +152,7 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
   const isTestPackage = selectedPackage?.checkoutId === "bluemind-test-package";
   const isFrontendPreviewPackage = Boolean(selectedPackage && "frontendPreview" in selectedPackage && selectedPackage.frontendPreview);
   const supportsDepositPayments = !isTestPackage;
+  const selectedMethodState = resolveFrontendPaymentMethod(paymentMethod);
 
   useEffect(() => {
     if (!selectedPackage) return;
@@ -262,9 +282,15 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
     }
     setCheckoutError("");
     setProcessingText("Opening secure Stripe Checkout...");
+    const methodState = resolveFrontendPaymentMethod(paymentMethod);
+    if (!methodState.supported) {
+      setCheckoutError(methodState.note);
+      return;
+    }
     const result = await createStripeCheckout({
       packageId: selectedPackage.checkoutId,
       paymentOption: paymentPlan,
+      paymentMethod: methodState.apiMethod,
       customerName: projectDetails.projectName || customerEmail,
       verifiedEmail: customerEmail,
       checkoutAttemptId,
@@ -402,14 +428,15 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
               <p className={styles.checkoutEyebrow}>{isFrontendPreviewPackage ? "Frontend checkout preview" : "Stripe Sandbox Checkout"}</p>
               <h2 id="checkout-title">Choose payment method</h2>
               <p className={styles.demoNotice}>{isFrontendPreviewPackage ? "This is a visual payment preview for the new e-commerce package. Backend pricing and Stripe support will be added in the next phase." : "You will continue to secure Stripe Checkout in test mode. BlueMind never receives or stores card numbers or CVC."}</p>
-              <div className={styles.methodGrid}>{(Object.keys(methodLabels) as PaymentMethod[]).map(method => <button key={method} type="button" disabled={method === "klarna"} data-method={method} data-selected={paymentMethod === method} onClick={() => setPaymentMethod(method)}><PaymentBrand method={method} /><span>{methodLabels[method]}</span>{method === "klarna" && <small>Coming Soon</small>}</button>)}</div>
-              {(paymentMethod === "visa" || paymentMethod === "mastercard") && <div className={styles.walletDemo}>Card payment will be completed securely on Stripe.</div>}
-              {paymentMethod === "apple-pay" && <div className={styles.walletDemo}>Apple Pay availability is handled by Stripe Checkout.</div>}
-              {paymentMethod === "google-pay" && <div className={styles.walletDemo}>Google Pay availability is handled by Stripe Checkout.</div>}
-              {paymentMethod === "paypal" && <div className={styles.walletDemo}>PayPal is planned. Continue with Stripe card checkout for this test payment.</div>}
+              <div className={styles.methodGrid}>{(Object.keys(methodLabels) as PaymentMethod[]).map(method => {
+                const methodState = resolveFrontendPaymentMethod(method);
+                return <button key={method} type="button" data-method={method} data-selected={paymentMethod === method} data-unavailable={!methodState.supported || undefined} onClick={() => { setPaymentMethod(method); setCheckoutError(""); }}><PaymentBrand method={method} /><span>{methodLabels[method]}</span>{!methodState.supported && <small>Unavailable</small>}</button>;
+              })}</div>
+              <div className={styles.walletDemo}>{selectedMethodState.note}</div>
+              {checkoutError && <p className={styles.verifyError}>{checkoutError}</p>}
               {paymentSummary}
               <div className={styles.checkoutActions}>
-                <button type="button" className={styles.checkoutPrimary} disabled={paymentMethod === "klarna"} onClick={startStripeCheckout}>{paymentPlan === "full" ? `Pay ${formatSekOre(payNowOre)}` : `Pay ${formatSekOre(payNowOre)} now`}</button>
+                <button type="button" className={styles.checkoutPrimary} disabled={!selectedMethodState.supported} onClick={startStripeCheckout}>{paymentPlan === "full" ? `Pay ${formatSekOre(payNowOre)}` : `Pay ${formatSekOre(payNowOre)} now`}</button>
               </div>
             </>
           )}

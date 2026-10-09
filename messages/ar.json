@@ -621,5 +621,13 @@
   "Preview window actions": "إجراءات نافذة المعاينة",
   "Expand": "تكبير",
   "Not sure how to explain your idea?": "لست متأكدًا من كيفية شرح فكرتك؟",
-  "You can use ChatGPT to help describe what you have in mind, then paste it here.": "يمكنك استخدام ChatGPT لمساعدتك في وصف ما تفكر فيه، ثم لصقه هنا."
+  "You can use ChatGPT to help describe what you have in mind, then paste it here.": "يمكنك استخدام ChatGPT لمساعدتك في وصف ما تفكر فيه، ثم لصقه هنا.",
+  "Stripe Checkout will open with card payment only. Use a Visa test card in Stripe Sandbox.": "سيتم فتح Stripe Checkout ببطاقة الدفع فقط. استخدم بطاقة Visa اختبارية في Stripe Sandbox.",
+  "Stripe Checkout will open with card payment only. Use a Mastercard test card in Stripe Sandbox.": "سيتم فتح Stripe Checkout ببطاقة الدفع فقط. استخدم بطاقة Mastercard اختبارية في Stripe Sandbox.",
+  "Stripe Checkout will open with Klarna only, if the Stripe Sandbox account and amount are eligible.": "سيتم فتح Stripe Checkout باستخدام Klarna فقط إذا كان حساب Stripe Sandbox والمبلغ مؤهلين.",
+  "Klarna is not enabled for BlueMind Stripe Sandbox checkout yet. Please choose Visa or Mastercard.": "Klarna غير مفعلة بعد في دفع BlueMind عبر Stripe Sandbox. يرجى اختيار Visa أو Mastercard.",
+  "Stripe Checkout will open with PayPal only, if PayPal is active in the Stripe Sandbox account.": "سيتم فتح Stripe Checkout باستخدام PayPal فقط إذا كان PayPal مفعلا في حساب Stripe Sandbox.",
+  "PayPal is not integrated for BlueMind Stripe Sandbox checkout yet. Please choose Visa or Mastercard.": "PayPal غير مدمج بعد في دفع BlueMind عبر Stripe Sandbox. يرجى اختيار Visa أو Mastercard.",
+  "Apple Pay and Google Pay are card wallets in Stripe hosted Checkout. They cannot be forced as the only hosted Checkout method here. Please choose Visa or Mastercard, or use a compatible wallet if Stripe shows it on your device.": "Apple Pay وGoogle Pay هما محافظ بطاقات داخل Stripe hosted Checkout. لا يمكن فرض أي منهما كطريقة الدفع الوحيدة هنا. يرجى اختيار Visa أو Mastercard، أو استخدام محفظة متوافقة إذا عرضها Stripe على جهازك.",
+  "Unavailable": "غير متاح"
 }
