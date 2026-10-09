@@ -1,4 +1,4 @@
-﻿.intro { max-width: 700px; }
+.intro { max-width: 700px; }
 .intro .headline { margin-top: 20px; color: #171c25; font-size: clamp(23px, 2.5vw, 30px); font-weight: 500; line-height: 1.3; letter-spacing: -.8px; }
 .intro .headline + p { margin-top: 14px; max-width: 590px; }
 .star { display: block; flex-shrink: 0; width: 11px; height: 11px; color: #171c25; }
@@ -180,8 +180,8 @@
 @keyframes checkout-spin { to { transform: rotate(360deg); } }
 @keyframes success-circle { to { stroke-dashoffset: 0; } }
 @keyframes success-check { to { stroke-dashoffset: 0; } }
-.watermark { position: absolute; z-index: 0; top: -70px; right: -320px; width: 800px; aspect-ratio: 4 / 3; opacity: .075; pointer-events: none; user-select: none; mask-image: linear-gradient(to bottom, #000 20%, transparent 85%); }
-.watermark img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: contain; }
+.watermark { position: absolute; z-index: 0; top: -78px; right: clamp(-120px, -7vw, -64px); width: clamp(420px, 45vw, 660px); aspect-ratio: 1 / 1; opacity: .17; pointer-events: none; user-select: none; }
+.watermark img { display: block; width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: contain; }
 @media (hover: hover) and (pointer: fine) { .package:hover { transform: translateY(-3px); border-color: #aab1bc; box-shadow: 0 8px 24px #192c4909; } .package.popular:hover { border-color: #171c25; } }
 @media (hover: hover) and (pointer: fine) { .checkoutPrimary:hover:not(:disabled), .checkoutGhost:hover, .planGrid button:hover, .methodGrid button:hover:not(:disabled), .featureChips button:hover, .checkoutClose:hover { transform: translateY(-2px); } .methodGrid button:hover:not(:disabled) { box-shadow: 0 12px 28px rgb(25 44 73 / 10%); } }
 @media (hover: hover) and (pointer: fine) { .careUpsell button:hover, .billingMini button:hover { transform: translateY(-2px); border-color: #aab1bc; } }
@@ -189,7 +189,7 @@
   .pricing { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .includedGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
   .notSure { align-items: flex-start; flex-direction: column; gap: 20px; }
-  .watermark { width: 640px; top: -50px; right: -340px; }
+  .watermark { width: clamp(360px, 52vw, 560px); top: -48px; right: clamp(-115px, -9vw, -62px); }
 }
 @media (max-width: 900px) {
   .checkoutModal { width: min(92vw, 820px); }
@@ -223,7 +223,7 @@
   .included > h2, .notSure h2, .formSection > h2 { font-size: 23px; }
   .formSection { padding: 24px 20px; margin-top: 36px; }
   .notSure .button { max-width: 100%; font-size: 15px; padding-inline: 20px; }
-  .watermark { width: 400px; top: -45px; right: -180px; }
+  .watermark { width: min(360px, 86vw); top: -26px; right: -92px; opacity: .13; }
 }
 @media (prefers-reduced-motion: reduce) { .package, .button, .checkoutModal, .checkoutStep, .checkoutPrimary, .checkoutGhost, .planGrid button, .methodGrid button, .featureChips button, .checkoutClose { animation: none; transition: none; } .package:hover, .button:hover, .button:active, .checkoutPrimary:hover, .checkoutGhost:hover, .planGrid button:hover, .methodGrid button:hover, .featureChips button:hover, .checkoutClose:hover { transform: none; } .checkoutSpinner { animation-duration: 1.6s; } .successMark circle, .successMark path { animation: none; stroke-dashoffset: 0; } }
 

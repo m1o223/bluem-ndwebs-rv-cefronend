@@ -16,8 +16,8 @@
   .hero .primaryCta:hover { box-shadow: 0 10px 20px #00000018; }
 }
 .ctaButton:active { transform: translateY(1px); box-shadow: none; transition-duration: 100ms; }
-.planet { position: absolute; z-index: -1; display: block; width: 720px; aspect-ratio: 4 / 3; top: -135px; right: -125px; opacity: .18; pointer-events: none; user-select: none; background: transparent; border: 0; box-shadow: none; mix-blend-mode: multiply; }
-.planetImage { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: contain; background: transparent; }
+.planet { position: absolute; z-index: -1; display: block; width: clamp(460px, 45vw, 680px); aspect-ratio: 1 / 1; top: -86px; right: clamp(-110px, -6vw, -58px); opacity: .22; pointer-events: none; user-select: none; background: transparent; border: 0; box-shadow: none; }
+.planetImage { display: block; width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: contain; background: transparent; }
 .visual { position: relative; width: 100%; min-width: 0; height: 526px; margin: 0; container-type: inline-size; }
 .windows { position: absolute; inset: 0; }
 .websiteWindow, .codeWindow { position: absolute; overflow: hidden; border-radius: 10px; border: 1px solid #dfe4eb; }
@@ -170,7 +170,7 @@
   .typeTile > strong { font-size: 60px; }
   .designCard { display: block; }
   .performanceCard { bottom: 32px; }
-  .planet { top: 86px; width: 600px; right: -105px; opacity: .16; }
+  .planet { top: 52px; width: min(560px, 72vw); right: -96px; opacity: .18; }
 }
 @media (max-width: 620px) {
   .inner { width: calc(100% - 40px); gap: 27px; padding-block: 33px 54px; }
@@ -228,7 +228,7 @@
   .performanceGraph { height: 25px; margin-top: 9px; }
   .miniCard p { font-size: 6px; margin-top: 6px; }
   .visualCaption { bottom: -9px; left: 0; right: auto; font-size: 5px; letter-spacing: .6px; }
-  .planet { width: 410px; top: 283px; right: -82px; opacity: .14; }
+  .planet { width: min(340px, 84vw); top: 264px; right: -78px; opacity: .14; }
   .scrollCue { font-size: 6px; min-height: 24px; bottom: 9px; gap: 10px; }
   .scrollCue > span { font-size: 16px; }
 }

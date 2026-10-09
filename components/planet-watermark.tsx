@@ -1,30 +1,24 @@
 import styles from "./planet-watermark.module.css";
 
-export function PlanetWatermark({ className, sizes, imageClassName = "" }: { className: string; sizes: string; imageClassName?: string }) {
-  const srcSet = [384, 512, 640, 768, 1024].map(width => `/images/hero/bluemind-hero-${width}.webp ${width}w`).join(", ");
-  const imageProps = {
-    src: "/images/hero/bluemind-hero-1024.webp",
-    srcSet,
-    sizes,
-    width: 1024,
-    height: 768,
-    alt: "",
-    decoding: "async" as const,
-  };
+type PlanetWatermarkProps = {
+  className: string;
+  sizes?: string;
+  imageClassName?: string;
+};
 
+export function PlanetWatermark({ className, sizes = "(max-width: 620px) 320px, (max-width: 1050px) 520px, 620px", imageClassName = "" }: PlanetWatermarkProps) {
   return (
-    <span className={`${className} ${styles.planetSpin}`} aria-hidden="true" data-planet-watermark>
+    <span className={`${className} ${styles.planetStatic}`} aria-hidden="true" data-planet-watermark>
       <img
-        {...imageProps}
+        src="/images/brand/bluemind-planet-logo-transparent.png"
+        sizes={sizes}
+        width={1254}
+        height={1254}
+        alt=""
+        decoding="async"
         loading="eager"
-        className={`${styles.planetLight} ${imageClassName}`}
+        className={`${styles.planetImage} ${imageClassName}`}
       />
-      <span className={styles.surfaceMask}>
-        <span className={styles.surfaceTrack}>
-          <img {...imageProps} loading="eager" className={styles.surfaceImage} />
-          <img {...imageProps} loading="eager" className={styles.surfaceImage} />
-        </span>
-      </span>
     </span>
   );
 }

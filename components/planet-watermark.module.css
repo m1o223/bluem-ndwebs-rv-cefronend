@@ -1,45 +1,22 @@
-.planetSpin {
-  overflow: visible;
-  transform: perspective(1200px) rotateX(5deg) rotateY(-10deg);
-  transform-origin: 50% 50%;
-  backface-visibility: hidden;
-  filter: saturate(1) contrast(1.06) brightness(.92);
-}
-
-.planetLight,
-.surfaceImage {
+.planetStatic {
   display: block;
-  backface-visibility: hidden;
+  overflow: visible;
+  aspect-ratio: 1 / 1;
   pointer-events: none;
   user-select: none;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  filter: saturate(1.04) contrast(1.08) brightness(.94);
 }
 
-.planetLight {
-  position: relative;
-  z-index: 1;
-}
-
-.surfaceMask {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  overflow: hidden;
-  clip-path: ellipse(34% 42% at 50% 50%);
-  opacity: .9;
-  mix-blend-mode: multiply;
-  pointer-events: none;
-}
-
-.surfaceTrack {
-  display: flex;
-  width: 200%;
+.planetImage {
+  display: block;
+  width: 100%;
   height: 100%;
-  transform: translate3d(-18%, 0, 0);
-}
-
-.surfaceImage {
-  width: 50%;
-  height: 100%;
-  flex: 0 0 50%;
+  aspect-ratio: 1 / 1;
   object-fit: contain;
+  background: transparent;
+  pointer-events: none;
+  user-select: none;
 }

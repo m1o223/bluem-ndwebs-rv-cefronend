@@ -1,4 +1,4 @@
-﻿/* Transparent original illustrations remain part of their existing animated title groups. */
+/* Transparent original illustrations remain part of their existing animated title groups. */
 .titleGroup { display: flex; align-items: center; align-self: start; gap: 12px; min-width: 0; }
 .titleGroup img { display: block; flex-shrink: 0; height: auto; object-fit: contain; }
 .titleGroup h1, .titleGroup h2 { min-width: 0; }
@@ -15,15 +15,15 @@
 .section ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
 .section li { position: relative; padding-left: 15px; color: #515b69; font-size: 14px; line-height: 1.8; }
 .section li::before { content: ""; position: absolute; left: 0; top: .85em; width: 3px; height: 3px; border-radius: 50%; background: #717b89; }
-.watermark { position: absolute; z-index: 0; top: -150px; right: -220px; width: 720px; aspect-ratio: 4 / 3; opacity: .075; pointer-events: none; user-select: none; mask-image: linear-gradient(to bottom, #000 35%, transparent 85%); }
-.watermark img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: contain; }
+.watermark { position: absolute; z-index: 0; top: -96px; right: clamp(-120px, -7vw, -64px); width: clamp(420px, 43vw, 640px); aspect-ratio: 1 / 1; opacity: .17; pointer-events: none; user-select: none; }
+.watermark img { display: block; width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: contain; }
 
 @media (max-width: 1050px) {
   .sections { grid-template-columns: minmax(0, 1fr); gap: 26px; }
   .section { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.5fr); gap: 28px; }
   .sectionTitle { margin-bottom: 0; }
   .section ul { gap: 12px; }
-  .watermark { width: 600px; top: -120px; right: -300px; }
+  .watermark { width: clamp(360px, 52vw, 540px); top: -74px; right: clamp(-115px, -9vw, -62px); }
 }
 
 @media (max-width: 620px) {
@@ -33,6 +33,6 @@
   .section { grid-template-columns: minmax(0, 1fr); gap: 18px; padding-top: 22px; }
   .section h2 { font-size: 20px; }
   .section ul { gap: 12px; }
-  .watermark { width: 360px; top: -95px; right: -120px; }
+  .watermark { width: min(330px, 82vw); top: -42px; right: -86px; opacity: .13; }
 }
 
