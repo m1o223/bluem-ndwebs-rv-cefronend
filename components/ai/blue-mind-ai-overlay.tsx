@@ -11,7 +11,7 @@ type Message = { id: number; role: "user" | "ai"; text: string; attachments?: At
 type Draft = { websiteType?: string; projectName?: string; description?: string; pages?: string; features?: string; style?: string; domain?: string; logo?: string; details?: string };
 type DraftKey = keyof Draft;
 type Step = DraftKey | "complete" | null;
-type Action = "build" | "package" | "order" | "unsure";
+type Action = "build" | "package" | "order" | "unsure" | "features" | "process";
 
 const fixedPackages = packages.filter((item) => item.cta === "Get Started");
 const maxAttachmentSize = 8 * 1024 * 1024;
@@ -44,11 +44,15 @@ const baseLabels = {
   package: "Help Me Choose a Package",
   order: "Create My Order",
   unsure: "I Don't Know What I Need",
+  featuresAction: "Explore Website Features",
+  processAction: "How Does BlueMind Work?",
   welcomeReply: "Welcome to the BlueMind AI demo. I can help shape your website idea, recommend a package, and prepare an order summary for tomorrow's real backend integration.",
   buildReply: "Great. Let's start with your idea. What kind of website would you like to create?",
   packageReply: "I can compare the current BlueMind packages using the published pricing. Tell me what you need and I will suggest a fit.",
   orderReply: "Let's create a frontend-only order summary. I will ask one question at a time.",
   unsureReply: "No problem. Tell me what your business does, and I will guide the next step.",
+  featuresReply: "BlueMind can help you compare features such as contact forms, booking, galleries, online stores, payments, maps, newsletters, and customer accounts. Tell me what your website should do.",
+  processReply: "BlueMind works step by step: we understand your idea, recommend the right package, collect project details, verify your email, prepare checkout, and hand the order to our team for review.",
   genericReply: "Thanks. For this frontend demo, I can guide you through a sample project order or summarize package options without creating a real order.",
   summaryReady: "I prepared a frontend-only order summary from your answers. Review it below before tomorrow's real backend connection.",
   sending: "BlueMind AI is preparing a demo reply...",
@@ -78,6 +82,15 @@ const baseLabels = {
   attachmentUploaded: "Attachment uploaded",
   toBeConfirmed: "To be confirmed",
 };
+
+const quickActions: { key: Action; labelKey: keyof typeof baseLabels }[] = [
+  { key: "build", labelKey: "build" },
+  { key: "package", labelKey: "package" },
+  { key: "order", labelKey: "order" },
+  { key: "unsure", labelKey: "unsure" },
+  { key: "features", labelKey: "featuresAction" },
+  { key: "process", labelKey: "processAction" },
+];
 
 
 function ArrowUpRightIcon() {
@@ -146,10 +159,14 @@ export default function BlueMindAIExperience({ buttonClassName }: { buttonClassN
   }
   function start(action: Action) {
     setOpen(true); setCheckoutPreview(false); setErrorVisible(false);
-    const actionLabels = { build: labels.build, package: labels.package, order: labels.order, unsure: labels.unsure };
+    setInput(""); setAttachments([]); setAttachmentError(""); setStep(null);
+    const actionLabels = { build: labels.build, package: labels.package, order: labels.order, unsure: labels.unsure, features: labels.featuresAction, process: labels.processAction };
     addMessage("user", actionLabels[action]);
-    if (action === "build" || action === "order") { setStep("websiteType"); reply(action === "build" ? labels.buildReply : labels.orderReply); return; }
-    reply(action === "package" ? labels.packageReply : labels.unsureReply);
+    if (action === "build" || action === "order") { setDraft({}); setStep("websiteType"); reply(action === "build" ? labels.buildReply : labels.orderReply); return; }
+    if (action === "package") { reply(labels.packageReply); return; }
+    if (action === "features") { reply(labels.featuresReply); return; }
+    if (action === "process") { reply(labels.processReply); return; }
+    reply(labels.unsureReply);
   }
   function activeStep() { return steps.find((item) => item.key === step); }
   function nextStep(current: Step): Step { const index = steps.findIndex((item) => item.key === current); return steps[index + 1]?.key ?? "complete"; }
@@ -193,7 +210,6 @@ export default function BlueMindAIExperience({ buttonClassName }: { buttonClassN
         </header>
         <div className={styles.content}>
           <div className={[styles.welcome, hasConversation ? styles.compactWelcome : ""].join(" ")}><img src="/images/brand/bluemind-ai-logo.svg" alt="" className={styles.aiLogo} /><h2>{labels.brand}</h2><p>{labels.welcome}</p><small>{labels.demo}</small></div>
-          <div className={styles.quickActions}><button type="button" onClick={() => start("build")}>{labels.build}</button><button type="button" onClick={() => start("package")}>{labels.package}</button><button type="button" onClick={() => start("order")}>{labels.order}</button><button type="button" onClick={() => start("unsure")}>{labels.unsure}</button></div>
           <div className={styles.messages} ref={messagesRef} aria-live="polite">
             {!messages.length && !sending && <article className={[styles.message, styles.aiMessage].join(" ")}><p>{labels.welcomeReply}</p></article>}
             {messages.map((message) => <article key={message.id} className={[styles.message, message.role === "user" ? styles.userMessage : styles.aiMessage].join(" ")}><p>{message.text}</p>{message.attachments?.length ? <ul className={styles.sentAttachments}>{message.attachments.map((item) => <li key={item.id}>{item.kind === "image" ? labels.image : labels.file}: {item.name}</li>)}</ul> : null}</article>)}
@@ -203,6 +219,7 @@ export default function BlueMindAIExperience({ buttonClassName }: { buttonClassN
             {checkoutPreview && <article className={styles.previewCard}><h3>{labels.checkoutTitle}</h3><p>{labels.checkoutText}</p><dl><div><dt>{labels.packageLabel}</dt><dd>{recommended.title}</dd></div><div><dt>{labels.price}</dt><dd>{recommended.price}</dd></div><div><dt>{labels.delivery}</dt><dd>{recommended.delivery}</dd></div></dl></article>}
             {errorVisible && <article className={styles.errorCard}><h3>{labels.errorTitle}</h3><p>{labels.errorText}</p><button type="button" onClick={() => setErrorVisible(false)}>{labels.clearError}</button></article>}
           </div>
+          <div className={styles.quickActions}>{quickActions.map((item) => <button type="button" key={item.key} onClick={() => start(item.key)}>{labels[item.labelKey]}</button>)}</div>
           <footer className={styles.composerWrap}>{(attachments.length > 0 || attachmentError) && <div className={styles.attachmentRow}>{attachments.map((item) => <span key={item.id} className={styles.attachmentPill}>{item.kind === "image" ? "IMG" : "FILE"} {item.name} <small>{item.size}</small><button type="button" aria-label={labels.removeAttachment + ": " + item.name} onClick={() => setAttachments((currentItems) => currentItems.filter((existing) => existing.id !== item.id))}>x</button></span>)}{attachmentError && <strong>{attachmentError}</strong>}</div>}<div className={styles.composerBar}><button type="button" className={styles.attachButton} aria-label={labels.attach} onClick={() => fileInputRef.current?.click()}>+</button><div className={styles.inputShell}><textarea value={input} rows={1} placeholder={labels.placeholder} onChange={(event) => setInput(event.target.value)} onKeyDown={keyDown} /><button type="button" className={styles.sendButton} aria-label={labels.send} onClick={() => send()}><ArrowUpRightIcon /></button><input ref={fileInputRef} className={styles.fileInput} type="file" accept="image/*,.pdf,.doc,.docx,.txt" multiple onChange={chooseFiles} /></div></div></footer>
         </div>
       </section>
