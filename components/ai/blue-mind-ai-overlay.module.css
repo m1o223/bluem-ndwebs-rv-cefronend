@@ -142,6 +142,12 @@
   width: 86px;
   height: 86px;
   object-fit: contain;
+  display: block;
+  border: 0;
+  opacity: 1;
+  filter: none;
+  box-shadow: none;
+  transform-origin: center center;
   animation: ai-logo-turn 18s linear infinite;
 }
 
