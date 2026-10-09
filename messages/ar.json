@@ -585,7 +585,7 @@
   "Manage Your Subscription": "إدارة اشتراكك",
   "Find My Subscription": "العثور على اشتراكي",
   "Forgot the email you used?": "نسيت البريد الذي استخدمته؟",
-  "Demo lookup only. Type any valid email to show sample data, or include “notfound” to preview the not-found state.": "بحث تجريبي فقط. اكتب أي بريد صالح لعرض بيانات نموذجية، أو أضف “notfound” لمعاينة حالة عدم العثور.",
+  "Frontend preview only. Real subscription lookup will require secure email verification when the backend is connected.": "معاينة للواجهة فقط. سيتطلب البحث الحقيقي عن الاشتراك تحققًا آمنًا من البريد الإلكتروني عند ربط الخلفية.",
   "Subscription not found": "لم يتم العثور على الاشتراك",
   "This is a demo state. We could not find a sample subscription for that email.": "هذه حالة تجريبية. لم نتمكن من العثور على اشتراك نموذجي لهذا البريد.",
   "Demo subscription data": "بيانات اشتراك تجريبية",
@@ -604,7 +604,7 @@
   "Confirming demo cancellation...": "جارٍ تأكيد الإلغاء التجريبي...",
   "No Stripe subscription is being changed in this frontend prototype.": "لا يتم تغيير أي اشتراك في Stripe ضمن هذا النموذج التجريبي للواجهة.",
   "Your subscription cancellation has been confirmed.": "تم تأكيد إلغاء اشتراكك.",
-  "A confirmation email will be sent to your registered email address.": "سيتم إرسال رسالة تأكيد إلى بريدك الإلكتروني المسجل.",
+  "In the real flow, a confirmation email will be sent to your registered email address.": "في التدفق الحقيقي، سيتم إرسال رسالة تأكيد إلى بريدك الإلكتروني المسجل.",
   "Simulated result only. No email was sent. After backend connection, this appears only after Stripe confirms cancellation.": "هذه نتيجة محاكاة فقط. لم يتم إرسال أي بريد إلكتروني. بعد ربط backend، ستظهر هذه الرسالة فقط بعد تأكيد Stripe للإلغاء.",
   "Yearly billing is paid upfront. You save": "تُدفع الفوترة السنوية مقدماً. ستوفر",
   "and receive 12 months of service.": "وتحصل على 12 شهراً من الخدمة.",
@@ -663,5 +663,7 @@
   "Explore Website Features": "استكشف ميزات الموقع",
   "How Does BlueMind Work?": "كيف يعمل BlueMind؟",
   "BlueMind can help you compare features such as contact forms, booking, galleries, online stores, payments, maps, newsletters, and customer accounts. Tell me what your website should do.": "يمكن لـ BlueMind مساعدتك في مقارنة ميزات مثل نماذج التواصل، والحجز، والمعارض، والمتاجر الإلكترونية، والمدفوعات، والخرائط، والنشرات البريدية، وحسابات العملاء. أخبرنا بما يجب أن يفعله موقعك.",
-  "BlueMind works step by step: we understand your idea, recommend the right package, collect project details, verify your email, prepare checkout, and hand the order to our team for review.": "يعمل BlueMind خطوة بخطوة: نفهم فكرتك، ونقترح الباقة المناسبة، ونجمع تفاصيل المشروع، ونتحقق من بريدك الإلكتروني، ونجهز الدفع، ثم نحيل الطلب إلى فريقنا للمراجعة."
+  "BlueMind works step by step: we understand your idea, recommend the right package, collect project details, verify your email, prepare checkout, and hand the order to our team for review.": "يعمل BlueMind خطوة بخطوة: نفهم فكرتك، ونقترح الباقة المناسبة، ونجمع تفاصيل المشروع، ونتحقق من بريدك الإلكتروني، ونجهز الدفع، ثم نحيل الطلب إلى فريقنا للمراجعة.",
+  "Not sure how to explain your idea?": "لست متأكدًا من كيفية شرح فكرتك؟",
+  "You can use ChatGPT to help describe what you have in mind, then paste it here.": "يمكنك استخدام ChatGPT لمساعدتك في وصف ما تفكر فيه، ثم لصقه هنا."
 }

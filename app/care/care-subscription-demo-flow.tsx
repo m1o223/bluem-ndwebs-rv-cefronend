@@ -189,7 +189,7 @@ export default function CareSubscriptionDemoFlow() {
 
     {purchaseOpen && <div className={styles.modalBackdrop} role="presentation">
       <section className={styles.careModal} role="dialog" aria-modal="true" aria-labelledby="care-purchase-title">
-        <button type="button" className={styles.modalClose} onClick={closePurchase} aria-label="Close subscription modal">×</button>
+        <button type="button" className={styles.modalClose} onClick={closePurchase} aria-label="Close subscription modal"><span aria-hidden="true">&times;</span></button>
         {purchaseStep === "details" && <>
           <p className={styles.modalEyebrow}>Frontend demo only</p>
           <h2 id="care-purchase-title">Subscribe to BlueMind Care</h2>
@@ -218,13 +218,13 @@ export default function CareSubscriptionDemoFlow() {
 
     {cancelOpen && <div className={styles.modalBackdrop} role="presentation">
       <section className={styles.careModal} role="dialog" aria-modal="true" aria-labelledby="care-cancel-title">
-        <button type="button" className={styles.modalClose} onClick={closeCancel} aria-label="Close cancellation modal">×</button>
+        <button type="button" className={styles.modalClose} onClick={closeCancel} aria-label="Close cancellation modal"><span aria-hidden="true">&times;</span></button>
         {cancelStep === "email" && <>
           <p className={styles.modalEyebrow}>Frontend demo only</p>
           <h2 id="care-cancel-title">Manage Your Subscription</h2>
           <div className={styles.field}><label htmlFor="manage-demo-email">Email Address</label><input id="manage-demo-email" type="email" value={manageEmail} onChange={event => setManageEmail(event.target.value)} placeholder="customer@email.com" /></div>
           {recoveryOpen ? <div className={styles.field}><label htmlFor="recovery-order">Order Number</label><input id="recovery-order" value={recoveryOrderNumber} onChange={event => setRecoveryOrderNumber(event.target.value)} placeholder="#512" /></div> : <button type="button" className={styles.inlineButton} onClick={() => setRecoveryOpen(true)}>Forgot the email you used?</button>}
-          <p className={styles.demoNotice}>Demo lookup only. Type any valid email to show sample data, or include “notfound” to preview the not-found state.</p>
+          <p className={styles.demoNotice}>Frontend preview only. Real subscription lookup will require secure email verification when the backend is connected.</p>
           <div className={styles.checkoutActions}><button type="button" className={`${buttonClass} ${buttonStyles.primaryCta}`} onClick={findDemoSubscription}>Find My Subscription</button><Link href="/contact" className={buttonClass} onClick={closeCancel}>Contact Us</Link></div>
         </>}
         {cancelStep === "not-found" && <div className={styles.careState}><h2 id="care-cancel-title">Subscription not found</h2><p>This is a demo state. We could not find a sample subscription for that email.</p><div className={styles.checkoutActions}><button type="button" className={buttonClass} onClick={() => setCancelStep("email")}>Try Again</button><Link href="/contact" className={`${buttonClass} ${buttonStyles.primaryCta}`} onClick={closeCancel}>Contact Us</Link></div></div>}
@@ -248,8 +248,9 @@ export default function CareSubscriptionDemoFlow() {
           <div className={styles.checkoutActions}><button type="button" className={buttonClass} onClick={closeCancel}>Keep Subscription</button><button type="button" className={`${buttonClass} ${buttonStyles.primaryCta}`} onClick={confirmCancellation}>Confirm Cancellation</button></div>
         </div>}
         {cancelStep === "processing" && <div className={styles.careState}><Spinner /><h2>Confirming demo cancellation...</h2><p>No Stripe subscription is being changed in this frontend prototype.</p></div>}
-        {cancelStep === "success" && <div className={styles.careState}><SuccessMark /><h2>Your subscription cancellation has been confirmed.</h2><p>A confirmation email will be sent to your registered email address.</p><p className={styles.demoNotice}>Simulated result only. No email was sent. After backend connection, this appears only after Stripe confirms cancellation.</p><button type="button" className={`${buttonClass} ${buttonStyles.primaryCta}`} onClick={closeCancel}>Done</button></div>}
+        {cancelStep === "success" && <div className={styles.careState}><SuccessMark /><h2>Your subscription cancellation has been confirmed.</h2><p>In the real flow, a confirmation email will be sent to your registered email address.</p><p className={styles.demoNotice}>Simulated result only. No email was sent. After backend connection, this appears only after Stripe confirms cancellation.</p><button type="button" className={`${buttonClass} ${buttonStyles.primaryCta}`} onClick={closeCancel}>Done</button></div>}
       </section>
     </div>}
   </>;
 }
+
