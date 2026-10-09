@@ -121,21 +121,16 @@
   background: linear-gradient(180deg, #fff, #f8fafc);
 }
 
+.conversationContent {
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+
 .welcome {
   display: grid;
   justify-items: center;
   gap: 8px;
   padding: 26px 24px 12px;
   text-align: center;
-}
-
-.compactWelcome {
-  grid-template-columns: auto auto 1fr;
-  justify-items: start;
-  align-items: center;
-  gap: 10px 14px;
-  padding: 16px 24px 8px;
-  text-align: start;
 }
 
 .aiLogo {
@@ -149,12 +144,6 @@
   box-shadow: none;
   transform-origin: center center;
   animation: ai-logo-turn 18s linear infinite;
-}
-
-.compactWelcome .aiLogo {
-  width: 42px;
-  height: 42px;
-  grid-row: span 2;
 }
 
 .welcome h2 {
@@ -174,10 +163,6 @@
 .welcome small {
   color: #788391;
   font-size: 12px;
-}
-
-.compactWelcome small {
-  grid-column: 2 / -1;
 }
 
 .quickActions {
@@ -215,18 +200,29 @@
   flex-direction: column;
   gap: 12px;
   min-height: 0;
-  padding: 8px 24px 12px;
+  padding: 8px clamp(18px, 4vw, 46px) 12px;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
 
+.conversationContent .messages {
+  padding-top: clamp(18px, 3vw, 34px);
+  padding-bottom: 16px;
+}
+
 .message {
-  max-width: min(720px, 82%);
+  max-width: min(760px, 78%);
   padding: 13px 15px;
   border: 1px solid #e1e6ee;
   border-radius: 15px;
   background: #fff;
   box-shadow: 0 8px 22px rgb(25 44 73 / 5%);
+}
+
+.welcomeCard {
+  align-self: center;
+  max-width: min(760px, 88%);
+  text-align: center;
 }
 
 .message p {
@@ -240,6 +236,7 @@
   align-self: flex-end;
   background: #171717;
   border-color: #171717;
+  border-bottom-right-radius: 7px;
 }
 
 .userMessage p,
@@ -249,6 +246,16 @@
 
 .aiMessage {
   align-self: flex-start;
+  border-bottom-left-radius: 7px;
+}
+
+.messageLabel {
+  display: block;
+  margin: 0 0 6px;
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .3px;
 }
 
 .sentAttachments {
@@ -355,7 +362,7 @@
 }
 
 .composerWrap {
-  padding: 12px 24px 20px;
+  padding: 12px clamp(16px, 4vw, 46px) 20px;
   background: linear-gradient(180deg, rgb(255 255 255 / 72%), #fff 42%);
 }
 
@@ -363,7 +370,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  width: min(760px, 100%);
+  width: min(1320px, 96%);
   margin: 0 auto 10px;
   overflow-x: auto;
   color: #7a8492;
@@ -409,7 +416,7 @@
   display: flex;
   align-items: flex-end;
   gap: 14px;
-  width: min(760px, 100%);
+  width: min(1320px, 96%);
   margin: 0 auto;
 }
 
@@ -420,7 +427,7 @@
   min-width: 0;
   gap: 8px;
   border: 1px solid #d9dee6;
-  border-radius: 999px;
+  border-radius: 28px;
   background: rgb(255 255 255 / 96%);
   padding: 7px 8px 7px 18px;
   box-shadow: 0 14px 36px rgb(25 44 73 / 9%), 0 2px 8px rgb(25 44 73 / 4%);
@@ -464,8 +471,9 @@
 .inputShell textarea {
   width: 100%;
   min-width: 0;
+  height: 30px;
   min-height: 30px;
-  max-height: 120px;
+  max-height: 156px;
   padding: 8px 4px;
   resize: none;
   overflow-y: auto;

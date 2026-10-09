@@ -132,6 +132,7 @@ export default function BlueMindAIExperience({ buttonClassName }: { buttonClassN
   const nextId = useRef(1);
   const messagesRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const recommended = useMemo(() => recommendPackage(draft), [draft]);
   const hasConversation = messages.length > 0 || step !== null;
   const dir = locale === "ar" ? "rtl" : "ltr";
@@ -146,6 +147,12 @@ export default function BlueMindAIExperience({ buttonClassName }: { buttonClassN
   useEffect(() => {
     messagesRef.current?.scrollTo({ top: messagesRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, sending, checkoutPreview, errorVisible]);
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    textarea.style.height = "auto";
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 156)}px`;
+  }, [input]);
 
   function addMessage(role: Message["role"], text: string, sentAttachments?: AttachmentItem[]) {
     setMessages((current) => [...current, { id: nextId.current++, role, text, attachments: sentAttachments }]);
@@ -189,6 +196,10 @@ export default function BlueMindAIExperience({ buttonClassName }: { buttonClassN
   function keyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); send(); }
   }
+  function resizeTextarea(textarea: HTMLTextAreaElement) {
+    textarea.style.height = "auto";
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 156)}px`;
+  }
   function chooseFiles(event: ChangeEvent<HTMLInputElement>) {
     setAttachmentError("");
     const files = Array.from(event.target.files ?? []);
@@ -208,19 +219,19 @@ export default function BlueMindAIExperience({ buttonClassName }: { buttonClassN
           <div className={styles.headerBrand}><SparkleIcon /><span>{labels.brand}</span></div>
           <button type="button" className={styles.newButton} onClick={resetConversation}>{labels.newConversation}</button>
         </header>
-        <div className={styles.content}>
-          <div className={[styles.welcome, hasConversation ? styles.compactWelcome : ""].join(" ")}><img src="/images/brand/bluemind-ai-logo.svg" alt="" className={styles.aiLogo} /><h2>{labels.brand}</h2><p>{labels.welcome}</p><small>{labels.demo}</small></div>
+        <div className={[styles.content, hasConversation ? styles.conversationContent : ""].join(" ")}>
+          {!hasConversation && <div className={styles.welcome}><img src="/images/brand/bluemind-ai-logo.svg" alt="" className={styles.aiLogo} /><h2>{labels.brand}</h2><p>{labels.welcome}</p><small>{labels.demo}</small></div>}
           <div className={styles.messages} ref={messagesRef} aria-live="polite">
-            {!messages.length && !sending && <article className={[styles.message, styles.aiMessage].join(" ")}><p>{labels.welcomeReply}</p></article>}
-            {messages.map((message) => <article key={message.id} className={[styles.message, message.role === "user" ? styles.userMessage : styles.aiMessage].join(" ")}><p>{message.text}</p>{message.attachments?.length ? <ul className={styles.sentAttachments}>{message.attachments.map((item) => <li key={item.id}>{item.kind === "image" ? labels.image : labels.file}: {item.name}</li>)}</ul> : null}</article>)}
+            {!messages.length && !sending && <article className={[styles.message, styles.aiMessage, styles.welcomeCard].join(" ")}><p>{labels.welcomeReply}</p></article>}
+            {messages.map((message) => <article key={message.id} className={[styles.message, message.role === "user" ? styles.userMessage : styles.aiMessage].join(" ")}>{message.role === "ai" && <span className={styles.messageLabel}>{labels.brand}</span>}<p>{message.text}</p>{message.attachments?.length ? <ul className={styles.sentAttachments}>{message.attachments.map((item) => <li key={item.id}>{item.kind === "image" ? labels.image : labels.file}: {item.name}</li>)}</ul> : null}</article>)}
             {sending && <article className={[styles.message, styles.aiMessage, styles.loading].join(" ")}><span /><span /><span /><p>{labels.sending}</p></article>}
             {current?.suggestions && !sending && <div className={styles.suggestions}>{current.suggestions.map((item) => <button type="button" key={item} onClick={() => { setInput(""); answerFlow(item); }}>{item}</button>)}</div>}
             {step === "complete" && <OrderSummary labels={labels} draft={draft} recommended={recommended} onEdit={() => { setStep("websiteType"); setCheckoutPreview(false); }} onCheckout={() => setCheckoutPreview(true)} />}
             {checkoutPreview && <article className={styles.previewCard}><h3>{labels.checkoutTitle}</h3><p>{labels.checkoutText}</p><dl><div><dt>{labels.packageLabel}</dt><dd>{recommended.title}</dd></div><div><dt>{labels.price}</dt><dd>{recommended.price}</dd></div><div><dt>{labels.delivery}</dt><dd>{recommended.delivery}</dd></div></dl></article>}
             {errorVisible && <article className={styles.errorCard}><h3>{labels.errorTitle}</h3><p>{labels.errorText}</p><button type="button" onClick={() => setErrorVisible(false)}>{labels.clearError}</button></article>}
           </div>
-          <div className={styles.quickActions}>{quickActions.map((item) => <button type="button" key={item.key} onClick={() => start(item.key)}>{labels[item.labelKey]}</button>)}</div>
-          <footer className={styles.composerWrap}>{(attachments.length > 0 || attachmentError) && <div className={styles.attachmentRow}>{attachments.map((item) => <span key={item.id} className={styles.attachmentPill}>{item.kind === "image" ? "IMG" : "FILE"} {item.name} <small>{item.size}</small><button type="button" aria-label={labels.removeAttachment + ": " + item.name} onClick={() => setAttachments((currentItems) => currentItems.filter((existing) => existing.id !== item.id))}>x</button></span>)}{attachmentError && <strong>{attachmentError}</strong>}</div>}<div className={styles.composerBar}><button type="button" className={styles.attachButton} aria-label={labels.attach} onClick={() => fileInputRef.current?.click()}>+</button><div className={styles.inputShell}><textarea value={input} rows={1} placeholder={labels.placeholder} onChange={(event) => setInput(event.target.value)} onKeyDown={keyDown} /><button type="button" className={styles.sendButton} aria-label={labels.send} onClick={() => send()}><ArrowUpRightIcon /></button><input ref={fileInputRef} className={styles.fileInput} type="file" accept="image/*,.pdf,.doc,.docx,.txt" multiple onChange={chooseFiles} /></div></div></footer>
+          {!hasConversation && <div className={styles.quickActions}>{quickActions.map((item) => <button type="button" key={item.key} onClick={() => start(item.key)}>{labels[item.labelKey]}</button>)}</div>}
+          <footer className={styles.composerWrap}>{(attachments.length > 0 || attachmentError) && <div className={styles.attachmentRow}>{attachments.map((item) => <span key={item.id} className={styles.attachmentPill}>{item.kind === "image" ? "IMG" : "FILE"} {item.name} <small>{item.size}</small><button type="button" aria-label={labels.removeAttachment + ": " + item.name} onClick={() => setAttachments((currentItems) => currentItems.filter((existing) => existing.id !== item.id))}>x</button></span>)}{attachmentError && <strong>{attachmentError}</strong>}</div>}<div className={styles.composerBar}><button type="button" className={styles.attachButton} aria-label={labels.attach} onClick={() => fileInputRef.current?.click()}>+</button><div className={styles.inputShell}><textarea ref={textareaRef} value={input} rows={1} placeholder={labels.placeholder} onChange={(event) => { setInput(event.target.value); resizeTextarea(event.currentTarget); }} onInput={(event) => resizeTextarea(event.currentTarget)} onKeyDown={keyDown} /><button type="button" className={styles.sendButton} aria-label={labels.send} onClick={() => send()}><ArrowUpRightIcon /></button><input ref={fileInputRef} className={styles.fileInput} type="file" accept="image/*,.pdf,.doc,.docx,.txt" multiple onChange={chooseFiles} /></div></div></footer>
         </div>
       </section>
     </div>
