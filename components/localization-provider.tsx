@@ -72,6 +72,11 @@ function translateValue(value: string, locale: Locale) {
 function translateDynamicValue(value: string, locale: Locale) {
   if (locale === "sv") {
     if (/^\d[\d\s,.]* SEK$/.test(value)) return value.replace(/,/g, " ");
+    if (value.startsWith("Pay the remaining ") && value.endsWith(" according to the agreed delivery terms.")) {
+      return `Betala resterande ${value.slice(18, -" according to the agreed delivery terms.".length)} enligt \u00f6verenskomna leveransvillkor.`;
+    }
+    if (value.startsWith("Pay the remaining ")) return `Betala resterande ${value.slice(18)}`;
+    if (value.startsWith("Remaining balance: ")) return `\u00c5terst\u00e5ende belopp: ${value.slice(19)}`;
     if (value.startsWith("Pay ") && value.endsWith(" now")) return `Betala ${value.slice(4, -4)} nu`;
     if (value.startsWith("Pay ")) return `Betala ${value.slice(4)}`;
     if (value.startsWith("Choose ")) return `V\u00e4lj ${value.slice(7)}`;
@@ -85,6 +90,11 @@ function translateDynamicValue(value: string, locale: Locale) {
   }
   if (locale === "ar") {
     if (/^\d[\d\s,.]* SEK$/.test(value)) return value.replace("SEK", "\u0643\u0631\u0648\u0646\u0629 \u0633\u0648\u064a\u062f\u064a\u0629");
+    if (value.startsWith("Pay the remaining ") && value.endsWith(" according to the agreed delivery terms.")) {
+      return `\u0627\u062f\u0641\u0639 \u0627\u0644\u0645\u062a\u0628\u0642\u064a ${value.slice(18, -" according to the agreed delivery terms.".length)} \u0648\u0641\u0642\u0627 \u0644\u0634\u0631\u0648\u0637 \u0627\u0644\u062a\u0633\u0644\u064a\u0645 \u0627\u0644\u0645\u062a\u0641\u0642 \u0639\u0644\u064a\u0647\u0627.`;
+    }
+    if (value.startsWith("Pay the remaining ")) return `\u0627\u062f\u0641\u0639 \u0627\u0644\u0645\u062a\u0628\u0642\u064a ${value.slice(18)}`;
+    if (value.startsWith("Remaining balance: ")) return `\u0627\u0644\u0631\u0635\u064a\u062f \u0627\u0644\u0645\u062a\u0628\u0642\u064a: ${value.slice(19)}`;
     if (value.startsWith("Pay ") && value.endsWith(" now")) return `\u0627\u062f\u0641\u0639 ${value.slice(4, -4)} \u0627\u0644\u0622\u0646`;
     if (value.startsWith("Pay ")) return `\u0627\u062f\u0641\u0639 ${value.slice(4)}`;
     if (value.startsWith("Choose ")) return `\u0627\u062e\u062a\u0631 ${value.slice(7)}`;

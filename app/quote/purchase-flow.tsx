@@ -11,7 +11,7 @@ import styles from "./quote.module.css";
 
 type Package = (typeof packages)[number] | typeof testPackage;
 type FixedPackage = Package & { checkoutId: string; price: string };
-type PaymentPlan = "full" | "deposit" | "quarter";
+type PaymentPlan = "full" | "deposit_50" | "deposit_25";
 type PaymentMethod = "visa" | "mastercard" | "apple-pay" | "google-pay" | "paypal" | "klarna";
 type Step = "review" | "details" | "email" | "choice" | "method" | "processing" | "success" | "care" | "final" | "error";
 
@@ -127,12 +127,12 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
 
   const totalOre = useMemo(() => parseSekOre(selectedPackage?.price ?? ""), [selectedPackage]);
   const demoOrderNumber = useMemo(() => selectedPackage ? temporaryOrderNumber(selectedPackage.checkoutId) : "#512", [selectedPackage]);
-  const payNowOre = totalOre ? paymentPlan === "quarter" ? Math.round(totalOre / 4) : paymentPlan === "deposit" ? Math.round(totalOre / 2) : totalOre : 0;
+  const payNowOre = totalOre ? paymentPlan === "deposit_25" ? Math.floor(totalOre / 4) : paymentPlan === "deposit_50" ? Math.floor(totalOre / 2) : totalOre : 0;
   const remainingOre = totalOre ? totalOre - payNowOre : 0;
   const selectedCarePlan = carePlans.find(item => item.name === carePlan);
   const isTestPackage = selectedPackage?.checkoutId === "bluemind-test-package";
   const isFrontendPreviewPackage = Boolean(selectedPackage && "frontendPreview" in selectedPackage && selectedPackage.frontendPreview);
-  const supportsQuarterPayment = selectedPackage?.checkoutId === "online-store-advanced";
+  const supportsDepositPayments = !isTestPackage;
 
   useEffect(() => {
     if (!selectedPackage) return;
@@ -255,11 +255,6 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
       simulatePayment(false, "success");
       return;
     }
-    if (paymentPlan === "quarter") {
-      setCheckoutError("This payment option is a frontend preview only until backend support is added.");
-      setStep("error");
-      return;
-    }
     if (!emailVerified || !emailVerificationToken) {
       setCodeError("Please verify your email before continuing to payment.");
       setStep("email");
@@ -267,10 +262,9 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
     }
     setCheckoutError("");
     setProcessingText("Opening secure Stripe Checkout...");
-    const backendPaymentPlan: "full" | "deposit" = paymentPlan;
     const result = await createStripeCheckout({
       packageId: selectedPackage.checkoutId,
-      paymentOption: backendPaymentPlan,
+      paymentOption: paymentPlan,
       customerName: projectDetails.projectName || customerEmail,
       verifiedEmail: customerEmail,
       checkoutAttemptId,
@@ -393,8 +387,8 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
               <h2 id="checkout-title">How would you like to pay?</h2>
               <div className={styles.planGrid} data-single={isTestPackage ? "true" : undefined}>
                 <button type="button" data-selected={paymentPlan === "full"} onClick={() => setPaymentPlan("full")}><span>Pay in Full</span><strong>{formatSekOre(totalOre)}</strong><small>No remaining balance.</small></button>
-                {!isTestPackage && <button type="button" data-selected={paymentPlan === "deposit"} onClick={() => setPaymentPlan("deposit")}><span>Pay 50% Now</span><strong>{formatSekOre(Math.round(totalOre / 2))}</strong><small>Pay the remaining {formatSekOre(totalOre - Math.round(totalOre / 2))} according to the agreed delivery terms.</small></button>}
-                {supportsQuarterPayment && <button type="button" data-selected={paymentPlan === "quarter"} onClick={() => setPaymentPlan("quarter")}><span>Pay 25% Now</span><strong>{formatSekOre(Math.round(totalOre / 4))}</strong><small>Remaining balance: {formatSekOre(totalOre - Math.round(totalOre / 4))}. Paid later according to the agreed delivery terms.</small></button>}
+                {supportsDepositPayments && <button type="button" data-selected={paymentPlan === "deposit_50"} onClick={() => setPaymentPlan("deposit_50")}><span>Pay 50% Now</span><strong>{formatSekOre(Math.floor(totalOre / 2))}</strong><small>Pay the remaining {formatSekOre(totalOre - Math.floor(totalOre / 2))} according to the agreed delivery terms.</small></button>}
+                {supportsDepositPayments && <button type="button" data-selected={paymentPlan === "deposit_25"} onClick={() => setPaymentPlan("deposit_25")}><span>Pay 25% Now</span><strong>{formatSekOre(Math.floor(totalOre / 4))}</strong><small>Pay the remaining {formatSekOre(totalOre - Math.floor(totalOre / 4))} according to the agreed delivery terms.</small></button>}
               </div>
               {isTestPackage && <p className={styles.demoNotice}>Sandbox Test Only - No real payment will be charged. This package uses full payment only.</p>}
               {isFrontendPreviewPackage && <p className={styles.demoNotice}>Frontend preview only. This e-commerce package is not connected to Stripe yet, so no real checkout session or payment is created today.</p>}
@@ -458,7 +452,7 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
               <div className={styles.orderNumber}><span>Order</span><strong>{demoOrderNumber}</strong></div>
               <p>Our team will contact you shortly to begin your project.</p>
               {carePlan && selectedCarePlan ? <p className={styles.demoNotice}>BlueMind Care selected: {selectedCarePlan.name} · {careBilling}. Tomorrow this will become a real subscription after backend/Stripe connection.</p> : null}
-              <p className={styles.demoNotice}>{paymentPlan === "quarter" ? "25% paid. Remaining balance due according to the agreed delivery terms." : paymentPlan === "deposit" ? "50% paid. Remaining balance due according to the agreed delivery terms." : "Paid in full."}</p>
+              <p className={styles.demoNotice}>{paymentPlan === "deposit_25" ? "25% paid. Remaining balance due according to the agreed delivery terms." : paymentPlan === "deposit_50" ? "50% paid. Remaining balance due according to the agreed delivery terms." : "Paid in full."}</p>
               <button type="button" className={styles.checkoutPrimary} onClick={onClose}>Done</button>
             </div>
           )}

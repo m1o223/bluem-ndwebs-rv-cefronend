@@ -93,13 +93,13 @@
 .checkoutPrimary:disabled { cursor: not-allowed; opacity: .45; transform: none; }
 .checkoutGhost { margin-top: 28px; padding: 0 18px; border: 1px solid #dfe4eb; background: #fff; color: #171c25; }
 .checkoutPrimary:focus-visible, .checkoutGhost:focus-visible, .checkoutClose:focus-visible, .planGrid button:focus-visible, .methodGrid button:focus-visible, .featureChips button:focus-visible { outline: 2px solid #171717; outline-offset: 3px; }
-.planGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
+.planGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
 .planGrid[data-single="true"] { grid-template-columns: minmax(0, 1fr); }
 .planGrid button, .methodGrid button { min-width: 0; border: 1px solid #dfe4eb; border-radius: 14px; background: #fff; color: #171c25; cursor: pointer; font: inherit; text-align: left; transition: transform 200ms cubic-bezier(.22, 1, .36, 1), border-color 180ms ease, background 180ms ease, box-shadow 180ms ease; }
-.planGrid button { padding: 18px; }
+.planGrid button { padding: 16px; }
 .planGrid button[data-selected="true"], .methodGrid button[data-selected="true"] { border-color: #171c25; background: #fafbfc; box-shadow: inset 0 0 0 1px #171c25; }
 .planGrid span, .methodGrid span { display: block; font-weight: 700; }
-.planGrid strong { display: block; margin-top: 10px; font-size: 25px; letter-spacing: -.8px; }
+.planGrid strong { display: block; margin-top: 10px; font-size: clamp(20px, 2.1vw, 25px); letter-spacing: -.8px; }
 .planGrid small, .methodGrid small { display: block; margin-top: 8px; color: #626b78; font-size: 12px; line-height: 1.6; }
 .paymentSummary { display: grid; gap: 10px; margin: 24px 0 0; padding: 18px; border: 1px solid #dfe4eb; border-radius: 14px; background: #fafbfc; }
 .paymentSummary div, .detailsSummary dl div { display: flex; justify-content: space-between; gap: 18px; }
@@ -226,4 +226,3 @@
   .watermark { width: min(360px, 86vw); top: -26px; right: -92px; opacity: .13; }
 }
 @media (prefers-reduced-motion: reduce) { .package, .button, .checkoutModal, .checkoutStep, .checkoutPrimary, .checkoutGhost, .planGrid button, .methodGrid button, .featureChips button, .checkoutClose { animation: none; transition: none; } .package:hover, .button:hover, .button:active, .checkoutPrimary:hover, .checkoutGhost:hover, .planGrid button:hover, .methodGrid button:hover, .featureChips button:hover, .checkoutClose:hover { transform: none; } .checkoutSpinner { animation-duration: 1.6s; } .successMark circle, .successMark path { animation: none; stroke-dashoffset: 0; } }
-
