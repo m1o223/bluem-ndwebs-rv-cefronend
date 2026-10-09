@@ -91,7 +91,7 @@ function fileSize(size: number) {
 
 function recommendPackage(draft: Draft) {
   const text = Object.values(draft).join(" ").toLowerCase();
-  if (text.includes("store") || text.includes("shop") || text.includes("product") || text.includes("payment")) return fixedPackages.find((item) => item.checkoutId === "online-store") ?? fixedPackages[0];
+  if (text.includes("store") || text.includes("shop") || text.includes("product") || text.includes("payment")) return fixedPackages.find((item) => item.checkoutId === "online-store-standard") ?? fixedPackages[0];
   if (text.includes("10") || text.includes("many") || text.includes("advanced")) return fixedPackages.find((item) => item.checkoutId === "business-plus") ?? fixedPackages[0];
   if (text.includes("restaurant") || text.includes("booking") || text.includes("menu")) return fixedPackages.find((item) => item.checkoutId === "business-website") ?? fixedPackages[0];
   if (text.includes("one") || text.includes("landing")) return fixedPackages.find((item) => item.checkoutId === "one-page-website") ?? fixedPackages[0];

@@ -11,7 +11,7 @@ import styles from "./quote.module.css";
 
 type Package = (typeof packages)[number] | typeof testPackage;
 type FixedPackage = Package & { checkoutId: string; price: string };
-type PaymentPlan = "full" | "deposit";
+type PaymentPlan = "full" | "deposit" | "quarter";
 type PaymentMethod = "visa" | "mastercard" | "apple-pay" | "google-pay" | "paypal" | "klarna";
 type Step = "review" | "details" | "email" | "choice" | "method" | "processing" | "success" | "care" | "final" | "error";
 
@@ -55,14 +55,19 @@ function detectCardBrand(value: string): "visa" | "mastercard" {
 
 const featureChips = ["Contact Form", "Booking", "Online Store", "Gallery", "Blog", "Payments", "Maps", "Social Media", "Newsletter", "Other"];
 
-function parseSek(price: string) {
+function parseSekOre(price: string) {
   const match = price.match(/([\d\s,]+)\s*SEK/i);
   if (!match) return null;
-  return Number(match[1].replace(/[^\d]/g, ""));
+  return Number(match[1].replace(/[^\d]/g, "")) * 100;
 }
 
-function formatSek(amount: number) {
-  return `${new Intl.NumberFormat("sv-SE").format(amount)} SEK`;
+function formatSekOre(amountOre: number) {
+  const amount = amountOre / 100;
+  const hasOre = amountOre % 100 !== 0;
+  return `${new Intl.NumberFormat("sv-SE", {
+    minimumFractionDigits: hasOre ? 2 : 0,
+    maximumFractionDigits: hasOre ? 2 : 0,
+  }).format(amount)} SEK`;
 }
 
 function createCheckoutAttemptId() {
@@ -120,12 +125,14 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
   const [carePlan, setCarePlan] = useState<PlanName | "">("");
   const closeRef = useRef<HTMLButtonElement>(null);
 
-  const total = useMemo(() => parseSek(selectedPackage?.price ?? ""), [selectedPackage]);
+  const totalOre = useMemo(() => parseSekOre(selectedPackage?.price ?? ""), [selectedPackage]);
   const demoOrderNumber = useMemo(() => selectedPackage ? temporaryOrderNumber(selectedPackage.checkoutId) : "#512", [selectedPackage]);
-  const payNow = total ? paymentPlan === "deposit" ? total / 2 : total : 0;
-  const remaining = total ? total - payNow : 0;
+  const payNowOre = totalOre ? paymentPlan === "quarter" ? Math.round(totalOre / 4) : paymentPlan === "deposit" ? Math.round(totalOre / 2) : totalOre : 0;
+  const remainingOre = totalOre ? totalOre - payNowOre : 0;
   const selectedCarePlan = carePlans.find(item => item.name === carePlan);
   const isTestPackage = selectedPackage?.checkoutId === "bluemind-test-package";
+  const isFrontendPreviewPackage = Boolean(selectedPackage && "frontendPreview" in selectedPackage && selectedPackage.frontendPreview);
+  const supportsQuarterPayment = selectedPackage?.checkoutId === "online-store-advanced";
 
   useEffect(() => {
     if (!selectedPackage) return;
@@ -171,7 +178,7 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
     return () => window.clearTimeout(timer);
   }, [emailSent, emailVerified, resendSeconds]);
 
-  if (!selectedPackage || total === null) return null;
+  if (!selectedPackage || totalOre === null) return null;
 
   function toggleFeature(feature: string) {
     setProjectDetails(current => ({
@@ -244,6 +251,15 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
 
   async function startStripeCheckout() {
     if (!selectedPackage) return;
+    if (isFrontendPreviewPackage) {
+      simulatePayment(false, "success");
+      return;
+    }
+    if (paymentPlan === "quarter") {
+      setCheckoutError("This payment option is a frontend preview only until backend support is added.");
+      setStep("error");
+      return;
+    }
     if (!emailVerified || !emailVerificationToken) {
       setCodeError("Please verify your email before continuing to payment.");
       setStep("email");
@@ -251,9 +267,10 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
     }
     setCheckoutError("");
     setProcessingText("Opening secure Stripe Checkout...");
+    const backendPaymentPlan: "full" | "deposit" = paymentPlan;
     const result = await createStripeCheckout({
       packageId: selectedPackage.checkoutId,
-      paymentOption: paymentPlan,
+      paymentOption: backendPaymentPlan,
       customerName: projectDetails.projectName || customerEmail,
       verifiedEmail: customerEmail,
       checkoutAttemptId,
@@ -290,9 +307,9 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
   const paymentSummary = (
     <dl className={styles.paymentSummary}>
       <div><dt>Package</dt><dd>{selectedPackage.title}</dd></div>
-      <div><dt>Total</dt><dd>{formatSek(total)}</dd></div>
-      <div><dt>Pay now</dt><dd>{formatSek(payNow)}</dd></div>
-      <div><dt>{paymentPlan === "deposit" ? "Remaining before delivery" : "Remaining"}</dt><dd>{formatSek(remaining)}</dd></div>
+      <div><dt>Total</dt><dd>{formatSekOre(totalOre)}</dd></div>
+      <div><dt>Pay now</dt><dd>{formatSekOre(payNowOre)}</dd></div>
+      <div><dt>{paymentPlan === "full" ? "Remaining" : "Remaining before delivery"}</dt><dd>{formatSekOre(remainingOre)}</dd></div>
     </dl>
   );
 
@@ -310,7 +327,7 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
               <h2 id="checkout-title">{selectedPackage.title}</h2>
               <p className={styles.checkoutLead}>{selectedPackage.description}</p>
               <div className={styles.reviewCard}>
-                <div><span>Price</span><strong>{formatSek(total)}</strong></div>
+                <div><span>Price</span><strong>{formatSekOre(totalOre)}</strong></div>
                 <div><span>Delivery</span><strong>{selectedPackage.delivery.replace("Estimated delivery: ", "")}</strong></div>
                 <div><span>Responsive</span><strong>Desktop / Tablet / Mobile</strong></div>
                 {selectedPackage.scope && <div><span>Pages</span><strong>{selectedPackage.scope}</strong></div>}
@@ -375,10 +392,12 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
               <p className={styles.checkoutEyebrow}>Payment choice</p>
               <h2 id="checkout-title">How would you like to pay?</h2>
               <div className={styles.planGrid} data-single={isTestPackage ? "true" : undefined}>
-                <button type="button" data-selected={paymentPlan === "full"} onClick={() => setPaymentPlan("full")}><span>Pay in Full</span><strong>{formatSek(total)}</strong><small>No remaining balance.</small></button>
-                {!isTestPackage && <button type="button" data-selected={paymentPlan === "deposit"} onClick={() => setPaymentPlan("deposit")}><span>Pay 50% Now</span><strong>{formatSek(total / 2)}</strong><small>Pay the remaining {formatSek(total / 2)} before final delivery.</small></button>}
+                <button type="button" data-selected={paymentPlan === "full"} onClick={() => setPaymentPlan("full")}><span>Pay in Full</span><strong>{formatSekOre(totalOre)}</strong><small>No remaining balance.</small></button>
+                {!isTestPackage && <button type="button" data-selected={paymentPlan === "deposit"} onClick={() => setPaymentPlan("deposit")}><span>Pay 50% Now</span><strong>{formatSekOre(Math.round(totalOre / 2))}</strong><small>Pay the remaining {formatSekOre(totalOre - Math.round(totalOre / 2))} according to the agreed delivery terms.</small></button>}
+                {supportsQuarterPayment && <button type="button" data-selected={paymentPlan === "quarter"} onClick={() => setPaymentPlan("quarter")}><span>Pay 25% Now</span><strong>{formatSekOre(Math.round(totalOre / 4))}</strong><small>Remaining balance: {formatSekOre(totalOre - Math.round(totalOre / 4))}. Paid later according to the agreed delivery terms.</small></button>}
               </div>
               {isTestPackage && <p className={styles.demoNotice}>Sandbox Test Only - No real payment will be charged. This package uses full payment only.</p>}
+              {isFrontendPreviewPackage && <p className={styles.demoNotice}>Frontend preview only. This e-commerce package is not connected to Stripe yet, so no real checkout session or payment is created today.</p>}
               {paymentSummary}
               <button type="button" className={styles.checkoutPrimary} onClick={() => setStep("method")}>Continue to Payment</button>
             </>
@@ -386,9 +405,9 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
 
           {step === "method" && (
             <>
-              <p className={styles.checkoutEyebrow}>Stripe Sandbox Checkout</p>
+              <p className={styles.checkoutEyebrow}>{isFrontendPreviewPackage ? "Frontend checkout preview" : "Stripe Sandbox Checkout"}</p>
               <h2 id="checkout-title">Choose payment method</h2>
-              <p className={styles.demoNotice}>You will continue to secure Stripe Checkout in test mode. BlueMind never receives or stores card numbers or CVC.</p>
+              <p className={styles.demoNotice}>{isFrontendPreviewPackage ? "This is a visual payment preview for the new e-commerce package. Backend pricing and Stripe support will be added in the next phase." : "You will continue to secure Stripe Checkout in test mode. BlueMind never receives or stores card numbers or CVC."}</p>
               <div className={styles.methodGrid}>{(Object.keys(methodLabels) as PaymentMethod[]).map(method => <button key={method} type="button" disabled={method === "klarna"} data-method={method} data-selected={paymentMethod === method} onClick={() => setPaymentMethod(method)}><PaymentBrand method={method} /><span>{methodLabels[method]}</span>{method === "klarna" && <small>Coming Soon</small>}</button>)}</div>
               {(paymentMethod === "visa" || paymentMethod === "mastercard") && <div className={styles.walletDemo}>Card payment will be completed securely on Stripe.</div>}
               {paymentMethod === "apple-pay" && <div className={styles.walletDemo}>Apple Pay availability is handled by Stripe Checkout.</div>}
@@ -396,7 +415,7 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
               {paymentMethod === "paypal" && <div className={styles.walletDemo}>PayPal is planned. Continue with Stripe card checkout for this test payment.</div>}
               {paymentSummary}
               <div className={styles.checkoutActions}>
-                <button type="button" className={styles.checkoutPrimary} disabled={paymentMethod === "klarna"} onClick={startStripeCheckout}>{paymentPlan === "deposit" ? `Pay ${formatSek(payNow)} now` : `Pay ${formatSek(payNow)}`}</button>
+                <button type="button" className={styles.checkoutPrimary} disabled={paymentMethod === "klarna"} onClick={startStripeCheckout}>{paymentPlan === "full" ? `Pay ${formatSekOre(payNowOre)}` : `Pay ${formatSekOre(payNowOre)} now`}</button>
               </div>
             </>
           )}
@@ -439,7 +458,7 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
               <div className={styles.orderNumber}><span>Order</span><strong>{demoOrderNumber}</strong></div>
               <p>Our team will contact you shortly to begin your project.</p>
               {carePlan && selectedCarePlan ? <p className={styles.demoNotice}>BlueMind Care selected: {selectedCarePlan.name} · {careBilling}. Tomorrow this will become a real subscription after backend/Stripe connection.</p> : null}
-              <p className={styles.demoNotice}>{paymentPlan === "deposit" ? "50% paid. 50% due before final delivery." : "Paid in full."}</p>
+              <p className={styles.demoNotice}>{paymentPlan === "quarter" ? "25% paid. Remaining balance due according to the agreed delivery terms." : paymentPlan === "deposit" ? "50% paid. Remaining balance due according to the agreed delivery terms." : "Paid in full."}</p>
               <button type="button" className={styles.checkoutPrimary} onClick={onClose}>Done</button>
             </div>
           )}

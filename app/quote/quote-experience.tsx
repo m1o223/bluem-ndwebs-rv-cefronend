@@ -141,7 +141,7 @@ export default function QuoteExperience() {
       <section className={`${styles.pricing} ${pageStyles.enter}`} aria-label="Website packages and starting prices">
         {packages.map(item => (
           <article key={item.id} className={`${styles.package} ${item.popular ? styles.popular : ""}`} aria-labelledby={`package-${item.id}`}>
-            <div className={styles.packageTop}><span>{item.id}</span>{item.popular && <span className={styles.badge}><StarMark className={styles.star} />MOST POPULAR</span>}</div>
+            <div className={styles.packageTop}><span>{item.id}</span>{item.popular && <span className={styles.badge}><StarMark className={styles.star} />{"badge" in item ? item.badge : "MOST POPULAR"}</span>}</div>
             <div className={styles.summary}>
               <h2 id={`package-${item.id}`}>{item.title}</h2>
               <p className={styles.price}>{item.price.startsWith("From ") ? <><span>From </span>{item.price.slice(5)}</> : item.price}</p>
@@ -150,7 +150,8 @@ export default function QuoteExperience() {
             </div>
             <p className={styles.description}>{item.description}</p>
             <ul className={styles.featureList}>{item.features.map(feature => <li key={feature}><StarMark className={styles.star} /><span>{feature}</span></li>)}</ul>
-            {item.id === "06" && <p className={styles.customNote}>Examples depend on your project. Your quote defines the included features and timeline.</p>}
+            {"note" in item && <p className={styles.customNote}>{item.note}</p>}
+            {item.checkoutId === "custom-website" && <p className={styles.customNote}>Examples depend on your project. Your quote defines the included features and timeline.</p>}
             <button type="button" className={buttonClass} disabled={!interactive || submitting} onClick={() => isFixedPackage(item) ? setCheckoutPackage(item) : choosePackage(item.title)}>{item.cta}</button>
           </article>
         ))}
@@ -213,7 +214,7 @@ export default function QuoteExperience() {
       )}
       <div className={styles.disclaimer}>
         <p>Starting prices. Final price and delivery time depend on your project requirements.</p>
-        <p>Third-party costs such as domains, hosting, paid plugins, payment-provider fees, and external services are not included unless stated otherwise.</p>
+        <p>Third-party costs such as domains, hosting, shipping carrier fees, payment-provider fees, paid plugins, and external service subscriptions are not included unless stated otherwise.</p>
       </div>
       <section className={`${styles.included} ${pageStyles.enter}`} aria-labelledby="included-title">
         <h2 id="included-title">Included with every website</h2>

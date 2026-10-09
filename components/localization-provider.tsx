@@ -71,6 +71,7 @@ function translateValue(value: string, locale: Locale) {
 
 function translateDynamicValue(value: string, locale: Locale) {
   if (locale === "sv") {
+    if (/^\d[\d\s,.]* SEK$/.test(value)) return value.replace(/,/g, " ");
     if (value.startsWith("Pay ") && value.endsWith(" now")) return `Betala ${value.slice(4, -4)} nu`;
     if (value.startsWith("Pay ")) return `Betala ${value.slice(4)}`;
     if (value.startsWith("Choose ")) return `V\u00e4lj ${value.slice(7)}`;
@@ -83,6 +84,7 @@ function translateDynamicValue(value: string, locale: Locale) {
     if (value.endsWith("All rights reserved.")) return value.replace("All rights reserved.", "Alla r\u00e4ttigheter f\u00f6rbeh\u00e5llna.");
   }
   if (locale === "ar") {
+    if (/^\d[\d\s,.]* SEK$/.test(value)) return value.replace("SEK", "\u0643\u0631\u0648\u0646\u0629 \u0633\u0648\u064a\u062f\u064a\u0629");
     if (value.startsWith("Pay ") && value.endsWith(" now")) return `\u0627\u062f\u0641\u0639 ${value.slice(4, -4)} \u0627\u0644\u0622\u0646`;
     if (value.startsWith("Pay ")) return `\u0627\u062f\u0641\u0639 ${value.slice(4)}`;
     if (value.startsWith("Choose ")) return `\u0627\u062e\u062a\u0631 ${value.slice(7)}`;
