@@ -152,20 +152,51 @@ a[class*="Cta"],
 a[class*="navCta"],
 a[role="button"] {
   transition:
-    transform 220ms cubic-bezier(.22, 1, .36, 1),
-    box-shadow 220ms ease,
-    background-color 220ms ease,
-    border-color 220ms ease,
-    color 220ms ease;
+    transform 200ms cubic-bezier(.22, 1, .36, 1),
+    box-shadow 200ms ease,
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  button:not(:disabled):not([aria-disabled="true"]):hover,
-  a[class*="Button"]:hover,
-  a[class*="Cta"]:hover,
-  a[class*="navCta"]:hover,
-  a[role="button"]:hover {
-    transform: translateY(-2px);
+  :where(button, a)[class*="primary"]:not(:disabled):not([aria-disabled="true"]):hover,
+  :where(button, a)[class*="Primary"]:not(:disabled):not([aria-disabled="true"]):hover,
+  :where(button, a)[class*="primaryCta"]:not(:disabled):not([aria-disabled="true"]):hover,
+  :where(button, a)[class*="navCta"]:not(:disabled):not([aria-disabled="true"]):hover,
+  :where(button, a)[class*="checkoutPrimary"]:not(:disabled):not([aria-disabled="true"]):hover,
+  :where(button, a)[class*="sendButton"]:not(:disabled):not([aria-disabled="true"]):hover,
+  :where(button, a)[class*="button"]:not([class*="inlineButton"]):not(:disabled):not([aria-disabled="true"]):hover {
+    background: var(--bluemind-blue) !important;
+    border-color: var(--bluemind-blue) !important;
+    color: #fff !important;
+    transform: scale(0.98) !important;
+  }
+
+  :where(button, a[class*="Button"], a[class*="Cta"], a[class*="navCta"], a[role="button"]):not([class*="primary"]):not([class*="Primary"]):not([class*="primaryCta"]):not([class*="navCta"]):not([class*="checkoutPrimary"]):not([class*="sendButton"]):not([class*="button"]):not(:disabled):not([aria-disabled="true"]):hover,
+  :where(button, a)[class*="checkoutGhost"]:not(:disabled):not([aria-disabled="true"]):hover,
+  :where(button, a)[class*="languageButton"]:not(:disabled):not([aria-disabled="true"]):hover,
+  :where(button, a)[class*="menuToggle"]:not(:disabled):not([aria-disabled="true"]):hover,
+  :where(button, a)[class*="modalClose"]:not(:disabled):not([aria-disabled="true"]):hover,
+  :where(button, a)[class*="closeButton"]:not(:disabled):not([aria-disabled="true"]):hover,
+  :where(button, a)[class*="expandButton"]:not(:disabled):not([aria-disabled="true"]):hover,
+  :where(button, a)[class*="inlineButton"]:not(:disabled):not([aria-disabled="true"]):hover,
+  :where(button, a)[class*="textButton"]:not(:disabled):not([aria-disabled="true"]):hover {
+    background: var(--bluemind-blue-hover) !important;
+    color: var(--bluemind-text) !important;
+  }
+
+  :where(button, a)[class*="primary"]:not(:disabled):not([aria-disabled="true"]):active,
+  :where(button, a)[class*="Primary"]:not(:disabled):not([aria-disabled="true"]):active,
+  :where(button, a)[class*="primaryCta"]:not(:disabled):not([aria-disabled="true"]):active,
+  :where(button, a)[class*="navCta"]:not(:disabled):not([aria-disabled="true"]):active,
+  :where(button, a)[class*="checkoutPrimary"]:not(:disabled):not([aria-disabled="true"]):active,
+  :where(button, a)[class*="sendButton"]:not(:disabled):not([aria-disabled="true"]):active,
+  :where(button, a)[class*="button"]:not([class*="inlineButton"]):not(:disabled):not([aria-disabled="true"]):active {
+    background: var(--bluemind-blue) !important;
+    border-color: var(--bluemind-blue) !important;
+    color: #fff !important;
+    transform: scale(0.97) !important;
   }
 }
 
