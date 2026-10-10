@@ -4,7 +4,6 @@ import Link from "next/link";
 import homeStyles from "../../components/home/home.module.css";
 import buttonStyles from "../../components/home/hero.module.css";
 import pageStyles from "../../components/page-identity.module.css";
-import { PlanetWatermark } from "../../components/planet-watermark";
 import styles from "./services.module.css";
 
 const services = [
@@ -25,7 +24,6 @@ export default function ServicesPage() {
   return (
     <div id="top" className={`${homeStyles.home} ${pageStyles.page}`}>
       <div className={pageStyles.body}>
-        <PlanetWatermark className={styles.watermark} sizes="(max-width: 620px) 400px, (max-width: 1050px) 640px, 800px" />
         <div className={`${homeStyles.container} ${pageStyles.content}`}>
           <div className={`${pageStyles.intro} ${pageStyles.enter} ${styles.intro}`}>
             <div className={`${styles.titleGroup} ${styles.mainTitle}`}><ServiceIcon name="services-hand" className={styles.mainIcon} /><h1>Services</h1></div>

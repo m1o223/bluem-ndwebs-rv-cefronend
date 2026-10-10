@@ -1,9 +1,9 @@
-﻿import { createHash } from "node:crypto";
+import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
-const sourcePath = process.argv[2] || fileURLToPath(new URL("../public/images/brand/bluemind-planet-logo.jpg", import.meta.url));
+const sourcePath = process.argv[2] || fileURLToPath(new URL("../public/images/brand/bluemind-original-logo-transparent.png", import.meta.url));
 const source = await readFile(sourcePath);
 const hash = data => createHash("sha256").update(data).digest("hex");
 const publicDirectory = fileURLToPath(new URL("../public/", import.meta.url));
@@ -25,7 +25,7 @@ const icons = new Map();
 const icoFrames = [];
 
 for (const [size, filename] of iconFiles) {
-  const resized = sharp(source).resize(size, size, { fit: "cover", position: "center", kernel: "lanczos3" });
+  const resized = sharp(source).resize(size, size, { fit: "contain", position: "center", kernel: "lanczos3", background: { r: 0, g: 0, b: 0, alpha: 0 } });
   const png = await resized.clone().png({ compressionLevel: 9, palette: false }).toBuffer();
   await writeFile(`${publicDirectory}icons/${filename}`, png);
   icons.set(size, { url: `/icons/${filename}`, sizes: `${size}x${size}`, type: "image/png" });
@@ -94,3 +94,4 @@ await writeFile(new URL("../app/favicon-metadata.json", import.meta.url), JSON.s
   manifest: "/site.webmanifest",
 }, null, 2) + "\n");
 console.log(JSON.stringify({ source: sourcePath, sourceSha256: hash(source), sizes: [...iconFiles.keys()], icoSizes: icoFrames.map(({ size }) => size) }, null, 2));
+

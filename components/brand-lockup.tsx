@@ -1,4 +1,4 @@
-import { BlueMindPlanetLogo } from "./blue-mind-planet-logo";
+import { BlueMindLogo } from "./blue-mind-logo";
 import styles from "./brand-lockup.module.css";
 
 type BrandLockupProps = {
@@ -16,7 +16,7 @@ export function BrandLockup({
 }: BrandLockupProps) {
   return (
     <span className={`${styles.lockup} ${className}`}>
-      <BlueMindPlanetLogo className={`${styles.logo} ${logoClassName}`} priority={priority} />
+      <BlueMindLogo className={`${styles.logo} ${logoClassName}`} priority={priority} />
       <span className={styles.text}>
         <span className={styles.name}>BlueMind</span>
         <span className={styles.service}>{serviceName}</span>

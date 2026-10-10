@@ -2,7 +2,6 @@ import Image from "next/image";
 import icons from "../../public/images/about/manifest.json";
 import homeStyles from "../../components/home/home.module.css";
 import pageStyles from "../../components/page-identity.module.css";
-import { PlanetWatermark } from "../../components/planet-watermark";
 import styles from "./about.module.css";
 
 const sections = [
@@ -48,7 +47,6 @@ export default function AboutPage() {
   return (
     <div id="top" className={`${homeStyles.home} ${pageStyles.page}`}>
       <div className={pageStyles.body}>
-        <PlanetWatermark className={styles.watermark} sizes="(max-width: 620px) 360px, (max-width: 1050px) 600px, 720px" />
         <div className={`${homeStyles.container} ${pageStyles.content}`}>
           <div className={`${pageStyles.intro} ${pageStyles.enter}`}>
             <div className={`${styles.titleGroup} ${styles.mainTitle}`}>

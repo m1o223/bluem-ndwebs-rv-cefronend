@@ -1,13 +1,11 @@
 import Link from "next/link";
 import HeroVisual from "./hero-visual";
-import PlanetWatermark from "./planet-watermark";
 import shared from "./home.module.css";
 import styles from "./hero.module.css";
 
 export default function Hero() {
   return (
     <section className={styles.hero} aria-labelledby="hero-title" data-hero>
-      <PlanetWatermark />
       <div className={styles.inner}>
         <div className={styles.copy}>
           <p className={`${shared.eyebrow} ${styles.eyebrow}`}><span className={shared.blueDot} /> BLUEMIND WEB SERVICE</p>
