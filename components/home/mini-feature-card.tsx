@@ -13,7 +13,7 @@ export default function MiniFeatureCard({ variant }: { variant: "design" | "perf
   return (
     <div className={`${styles.miniCard} ${styles.performanceCard}`} data-mini-card="performance">
       <div className={styles.miniHeading}><span>Built to perform</span><span className={styles.miniArrow}>↗</span></div>
-      <svg className={styles.performanceGraph} viewBox="0 0 136 40" fill="none"><path d="M0 35h136M0 18h136" stroke="#edf0f5" /><path d="m2 33 23-7 20 3 22-14 22 4 21-12 23-4" stroke="#2a61df" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><circle cx="133" cy="3" r="3" fill="#2a61df" /></svg>
+      <svg className={styles.performanceGraph} viewBox="0 0 136 40" fill="none"><path d="M0 35h136M0 18h136" stroke="#edf0f5" /><path d="m2 33 23-7 20 3 22-14 22 4 21-12 23-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><circle cx="133" cy="3" r="3" fill="currentColor" /></svg>
       <p><span>Fast.</span> Responsive.</p>
     </div>
   );

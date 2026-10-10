@@ -19,7 +19,7 @@
     box-shadow 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .card:focus-visible:not(:disabled) {
-  outline: 2px solid #171717;
+  outline: 2px solid var(--bluemind-blue);
   outline-offset: 5px;
 }
 .card:active {
@@ -73,7 +73,7 @@
 @media (hover: hover) and (pointer: fine) {
   .card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 14px 32px #17171716;
+    box-shadow: 0 14px 32px rgb(17 17 17 / 9%);
   }
   .card:hover .preview {
     filter: blur(8px);

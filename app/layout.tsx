@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
 import { Footer } from "../components/home/sections";
 import { LocalizationProvider } from "../components/localization-provider";
@@ -15,14 +15,6 @@ const inter = Inter({
   display: "swap",
 });
 
-
-const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
-  subsets: ["arabic"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-arabic",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
   title: "BlueMind Web Service",
   icons: faviconMetadata.icons,
@@ -32,7 +24,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${ibmPlexSansArabic.variable}`}>
+      <body className={inter.variable}>
         <LocalizationProvider>
           <Navigation />
           <PageContent>{children}</PageContent>

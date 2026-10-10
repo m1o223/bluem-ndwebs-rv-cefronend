@@ -4,7 +4,7 @@
 .content { position: relative; z-index: 1; }
 .intro { max-width: 650px; margin-bottom: 42px; }
 .intro h1 { margin: 0; font-size: clamp(38px, 4.5vw, 54px); font-weight: 500; letter-spacing: -2px; line-height: 1.09; }
-.intro p { margin: 20px 0 0; color: #515b69; font-size: 14px; line-height: 1.85; }
+.intro p { margin: 20px 0 0; color: var(--bluemind-text); font-size: 14px; line-height: 1.85; }
 .enter { animation: page-enter 420ms cubic-bezier(.22, 1, .36, 1) both; }
 @keyframes page-enter { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 1050px) { .page { min-height: calc(100dvh - 79px); } }

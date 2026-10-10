@@ -1,26 +1,25 @@
 ﻿.footer { background: #fff; border-top: 1px solid #dfe4eb; padding-block: 48px 26px; text-align: left; }
 .columns { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.1fr; gap: 36px; padding-bottom: 36px; }
-.brand { display: inline-flex; align-items: center; gap: 10px; color: #171c25; font-size: 24px; font-weight: 600; letter-spacing: -.7px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--bluemind-text); font-size: 24px; font-weight: 600; letter-spacing: -.7px; }
 .brandLogo { --logo-size: 64px; }
-.brandSub { display: block; margin-top: 3px; font-size: 13px; font-weight: 400; letter-spacing: 1.3px; }
-.brandSection > p { max-width: 240px; margin: 18px 0 0; color: #515b69; font-size: 14px; line-height: 1.8; }
-.footer h2 { margin: 0 0 14px; color: #171c25; font-size: 14px; font-weight: 600; line-height: 1.6; }
+.brandSection > p { max-width: 240px; margin: 18px 0 0; color: var(--bluemind-text); font-size: 14px; line-height: 1.8; }
+.footer h2 { margin: 0 0 14px; color: var(--bluemind-text); font-size: 14px; font-weight: 600; line-height: 1.6; }
 .footer ul { list-style: none; margin: 0; padding: 0; }
-.linkGroup a { display: inline-flex; align-items: center; min-height: 36px; font-size: 13px; line-height: 1.6; color: #515b69; }
-.footer a { transition: color 180ms ease-out; text-underline-offset: 5px; }
-.footer a:hover { color: #171c25; text-decoration: underline; }
-.footer a:focus-visible { outline: 2px solid #171717; outline-offset: 4px; border-radius: 3px; }
+.linkGroup a { display: inline-flex; align-items: center; min-height: 36px; font-size: 13px; line-height: 1.6; color: var(--bluemind-text); }
+.footer a { transition: color 180ms ease-out, background-color 180ms ease-out; text-underline-offset: 5px; border-radius: 4px; }
+.footer a:hover { color: var(--bluemind-blue); background: var(--bluemind-blue-hover); text-decoration: underline; }
+.footer a:focus-visible { outline: 2px solid var(--bluemind-blue); outline-offset: 4px; border-radius: 3px; }
 .footer .brand:hover { text-decoration: none; }
 .contact dl { margin: 0; }
 .contact dl > div + div { margin-top: 16px; }
-.contact dt { color: #171c25; font-size: 12px; font-weight: 500; }
-.contact dd { margin: 7px 0 0; font-size: 13px; line-height: 1.8; color: #515b69; overflow-wrap: anywhere; }
+.contact dt { color: var(--bluemind-text); font-size: 12px; font-weight: 500; }
+.contact dd { margin: 7px 0 0; font-size: 13px; line-height: 1.8; color: var(--bluemind-text); overflow-wrap: anywhere; }
 .contact dd a { display: inline-flex; min-height: 36px; align-items: center; color: inherit; }
-.contactLink { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; margin-top: 10px; color: #171c25; font-size: 13px; font-weight: 500; }
-.footer .note { margin: 12px 0 0; color: #717b89; font-size: 11px; line-height: 1.8; }
+.contactLink { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; margin-top: 10px; color: var(--bluemind-text); font-size: 13px; font-weight: 500; }
+.footer .note { margin: 12px 0 0; color: var(--bluemind-text); font-size: 11px; line-height: 1.8; }
 .middle { display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px; padding-block: 30px; border-block: 1px solid #dfe4eb; }
 .social { display: flex; flex-wrap: wrap; gap: 8px 20px; }
-.social a, .pendingSocial { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; font-size: 12px; color: #171c25; }
+.social a, .pendingSocial { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; font-size: 12px; color: var(--bluemind-text); }
 .social img { width: 18px; height: 18px; object-fit: contain; }
 .social a { transition: opacity 180ms ease-out, transform 180ms ease-out; }
 .social a:hover { opacity: .7; transform: translateY(-2px); }
@@ -30,12 +29,12 @@
 .payments img[alt="Google Pay"] { width: 96px; height: 48px; }
 .payments img[alt="Visa"] { width: 66px; height: 24px; }
 .payments img[alt="Klarna"] { width: 78px; height: 34px; }
-.payments li small { color: #515b69; font-size: 10px; line-height: 1.2; }
+.payments li small { color: var(--bluemind-text); font-size: 10px; line-height: 1.2; }
 .bottom { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; padding-top: 24px; }
-.bottom nav ul { display: flex; flex-wrap: wrap; gap: 10px 22px; font-size: 11px; line-height: 1.8; color: #515b69; }
+.bottom nav ul { display: flex; flex-wrap: wrap; gap: 10px 22px; font-size: 11px; line-height: 1.8; color: var(--bluemind-text); }
 .bottom nav a { color: inherit; display: inline-flex; min-height: 36px; align-items: center; }
 .bottom .note { margin-top: 7px; }
-.copyright { margin: 0; color: #717b89; font-size: 11px; line-height: 1.8; }
+.copyright { margin: 0; color: var(--bluemind-text); font-size: 11px; line-height: 1.8; }
 @media (max-width: 1050px) { .columns { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 48px; } .middle { grid-template-columns: minmax(0, 1fr); gap: 26px; } .bottom { align-items: flex-start; flex-direction: column; gap: 20px; } }
 @media (max-width: 620px) { .footer { padding-block: 34px 24px; } .brandLogo { --logo-size: 56px; } .columns { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-bottom: 28px; } .linkGroup a { min-height: 44px; } .middle { padding-block: 26px; } .bottom nav ul { gap: 12px 20px; } }
 @media (max-width: 620px) { .payments ul { grid-template-columns: repeat(2, 104px); } }

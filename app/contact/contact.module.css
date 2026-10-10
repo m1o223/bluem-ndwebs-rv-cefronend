@@ -29,7 +29,7 @@
   letter-spacing: -2px;
   line-height: 1.09;
 }
-.intro p { margin: 20px 0 0; font-size: 14px; line-height: 1.85; color: #727983; }
+.intro p { margin: 20px 0 0; font-size: 14px; line-height: 1.85; color: var(--bluemind-text); }
 
 .watermark {
   position: absolute;
@@ -47,9 +47,9 @@
 .columns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 48px; align-items: start; }
 .details { padding-top: 24px; }
 .details dl { margin: 0; display: grid; gap: 30px; }
-.details dt { font-size: 12px; color: #727983; margin-bottom: 9px; }
+.details dt { font-size: 12px; color: var(--bluemind-text); margin-bottom: 9px; }
 .details dd { margin: 0; font-size: 17px; line-height: 1.5; overflow-wrap: anywhere; }
-.previewNotice { max-width: 250px; margin: 28px 0 0; font-size: 12px; line-height: 1.8; color: #727983; }
+.previewNotice { max-width: 250px; margin: 28px 0 0; font-size: 12px; line-height: 1.8; color: var(--bluemind-text); }
 .formSpace {
   min-width: 0;
   min-height: 300px;
@@ -60,14 +60,14 @@
   box-shadow: 0 9px 24px #23385a0b;
 }
 .formSpace h2 { margin: 0; font-size: 20px; line-height: 1.4; font-weight: 500; letter-spacing: -.4px; }
-.formSpace p { margin: 12px 0 0; font-size: 13px; line-height: 1.8; color: #727983; }
+.formSpace p { margin: 12px 0 0; font-size: 13px; line-height: 1.8; color: var(--bluemind-text); }
 
 .form { margin-top: 10px; }
 .formSpace .requiredNote { margin: 0 0 22px; font-size: 12px; }
 .formGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 16px; }
 .field { min-width: 0; }
 .field label { display: block; margin-bottom: 8px; font-size: 12px; font-weight: 500; line-height: 1.6; }
-.optional { color: #727983; font-weight: 400; }
+.optional { color: var(--bluemind-text); font-weight: 400; }
 .field input,
 .field select,
 .field textarea {
@@ -79,7 +79,7 @@
   border: 1px solid #dfe4eb;
   border-radius: 8px;
   background: #fff;
-  color: #171c25;
+  color: var(--bluemind-text);
   font: inherit;
   font-size: 16px;
   line-height: 1.5;
@@ -88,9 +88,9 @@
 .field textarea { resize: vertical; min-height: 142px; }
 .field input:focus-visible,
 .field select:focus-visible,
-.field textarea:focus-visible { outline: 2px solid #171717; outline-offset: 3px; border-color: #171717; }
+.field textarea:focus-visible { outline: 2px solid var(--bluemind-blue); outline-offset: 3px; border-color: var(--bluemind-blue); }
 .field [aria-invalid="true"] { border-color: #717b89; }
-.formSpace .fieldError { margin-top: 7px; color: #171c25; font-size: 12px; font-weight: 600; }
+.formSpace .fieldError { margin-top: 7px; color: var(--bluemind-text); font-size: 12px; font-weight: 600; }
 .formSpace .fieldHelp { margin-top: 7px; font-size: 12px; }
 .fullWidth { grid-column: 1 / -1; }
 .form .sendButton {
@@ -100,18 +100,18 @@
   min-height: 54px;
   margin-top: 24px;
   padding: 0 28px;
-  border: 2px solid #171717;
+  border: 2px solid var(--bluemind-blue);
   border-radius: 16px;
-  background: #fff;
-  color: #171717;
+  background: var(--bluemind-blue);
+  color: #fff;
   font-family: inherit;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   touch-action: manipulation;
 }
-.form .sendButton:focus-visible { outline: 2px solid #171717; outline-offset: 4px; }
-.sendButton:active { background: #f5f5f5; }
+.form .sendButton:focus-visible { outline: 2px solid var(--bluemind-blue); outline-offset: 4px; }
+.sendButton:active { background: #1b3a63; }
 .formSpace .formNotice { margin-top: 12px; font-size: 12px; }
 
 @media (max-width: 1120px) {

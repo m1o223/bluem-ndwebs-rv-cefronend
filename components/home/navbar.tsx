@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { BlueMindPlanetLogo } from "../blue-mind-planet-logo";
+import { BrandLockup } from "../brand-lockup";
 import { useLocalization, type Locale } from "../localization-provider";
 import styles from "./home.module.css";
 
@@ -53,7 +53,7 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
       }
     }}>
       <div className={styles.headerInner}>
-        <Link className={styles.brand} href="/" aria-label="BlueMind Web Service home"><BlueMindPlanetLogo className={styles.brandLogo} priority /><span>BlueMind<span className={styles.brandSub}>Web Service</span></span></Link>
+        <Link className={styles.brand} href="/" aria-label="BlueMind Web Service home"><BrandLockup logoClassName={styles.brandLogo} priority /></Link>
         <div className={styles.headerControls}>
           <div className={styles.languageSelector} ref={languageRef} data-no-translate>
             <button className={styles.languageButton} type="button" aria-label={`Selected language: ${selectedLanguage.label}`} aria-haspopup="menu" aria-expanded={languageOpen} onClick={() => setLanguageOpen((open) => !open)}>

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { BlueMindPlanetLogo } from "./blue-mind-planet-logo";
+import { BrandLockup } from "./brand-lockup";
 import Link from "next/link";
 import { footerConfig as config } from "./site-footer-config";
 import homeStyles from "./home/home.module.css";
@@ -13,7 +13,7 @@ export default function SiteFooter() {
     <div className={homeStyles.container}>
       <div className={styles.columns}>
         <div className={styles.brandSection}>
-          <Link href="/" className={styles.brand} aria-label="BlueMind Web Service home"><BlueMindPlanetLogo className={styles.brandLogo} /><span>BlueMind<span className={styles.brandSub}>Web Service</span></span></Link>
+          <Link href="/" className={styles.brand} aria-label="BlueMind Web Service home"><BrandLockup logoClassName={styles.brandLogo} /></Link>
           <p>{config.brandTagline}</p>
         </div>
         <nav aria-label="Footer explore" className={styles.linkGroup}><h2>Explore</h2><ul>{config.explore.map(([href,label]) => <li key={href}><Link href={href}>{label}</Link></li>)}</ul></nav>
