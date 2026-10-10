@@ -20,10 +20,11 @@
 .price > span { font-size: 13px; font-weight: 400; color: var(--bluemind-text); letter-spacing: 0; }
 .delivery, .scope { margin: 0; font-size: 12px; color: var(--bluemind-text); line-height: 1.6; }
 .scope { margin-top: 6px; color: var(--bluemind-text); font-weight: 500; }
-.description { margin: 12px 0 20px; min-height: 66px; font-size: 13px; line-height: 1.7; color: var(--bluemind-text); }
-.featureList { display: grid; gap: 10px; list-style: none; margin: 0 0 24px; padding: 20px 0 0; border-top: 1px solid #dfe4eb; }
-.featureList li { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.6; }
-.featureList .star { margin-top: 4px; }
+.description { margin: 12px 0 18px; min-height: 58px; font-size: 14px; line-height: 1.7; color: var(--bluemind-text); }
+.featureList { display: grid; gap: 12px; list-style: none; margin: 0 0 12px; padding: 20px 0 0; border-top: 1px solid #dfe4eb; }
+.featureList li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.62; }
+.featureList .star { width: 11px; height: 11px; flex: 0 0 auto; margin-top: 6px; color: var(--bluemind-blue); }
+.featureExtra { animation: feature-reveal 220ms cubic-bezier(.22, 1, .36, 1) both; }
 .customNote { margin: 0 0 24px; font-size: 12px; color: var(--bluemind-text); line-height: 1.8; }
 .button { cursor: pointer; font-family: inherit; font-weight: 600; background: var(--bluemind-blue); border-color: var(--bluemind-blue); color: #fff; }
 .button:disabled { cursor: default; }
@@ -204,11 +205,9 @@
   .watermark { width: min(360px, 86vw); top: -26px; right: -92px; opacity: .13; }
 }
 @media (prefers-reduced-motion: reduce) { .package, .button, .checkoutModal, .checkoutStep, .checkoutPrimary, .checkoutGhost, .planGrid button, .methodGrid button, .featureChips button, .checkoutClose { animation: none; transition: none; } .package:hover, .button:hover, .button:active, .checkoutPrimary:hover, .checkoutGhost:hover, .planGrid button:hover, .methodGrid button:hover, .featureChips button:hover, .checkoutClose:hover { transform: none; } .checkoutSpinner { animation-duration: 1.6s; } .successMark circle, .successMark path { animation: none; stroke-dashoffset: 0; } }
-.expandBlock { display: grid; gap: 12px; margin: -8px 0 22px; }
-.expandButton { justify-self: start; min-height: 40px; padding: 0 14px; border: 1px solid #dfe4eb; border-radius: 999px; background: #fff; color: var(--bluemind-text); cursor: pointer; font: inherit; font-size: 12px; font-weight: 700; transition: transform 200ms cubic-bezier(.22, 1, .36, 1), background 180ms ease, border-color 180ms ease; }
-.expandButton:hover { background: var(--bluemind-blue-hover); border-color: #cbd6e2; }
-.featureListExpanded { display: grid; gap: 10px; list-style: none; margin: 0; padding: 14px; border: 1px solid #dfe4eb; border-radius: 10px; background: #fafbfc; }
-.featureListExpanded li { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.6; }
-.featureListExpanded .star { margin-top: 4px; }
+.expandBlock { display: grid; margin: 0 0 22px; }
+.expandButton { justify-self: start; display: inline-flex; align-items: center; gap: 5px; min-height: 34px; padding: 0 6px; border: 0; border-radius: 6px; background: transparent; color: var(--bluemind-blue); cursor: pointer; font: inherit; font-size: 13px; font-weight: 700; transition: transform 200ms cubic-bezier(.22, 1, .36, 1), background 180ms ease, color 180ms ease; }
+.expandButton:hover { background: var(--bluemind-blue-hover); color: var(--bluemind-blue); }
 @media (hover: hover) and (pointer: fine) { .expandButton:hover { transform: translateY(-2px); } }
-@media (prefers-reduced-motion: reduce) { .expandButton { transition: none; } .expandButton:hover { transform: none; } }
+@keyframes feature-reveal { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .expandButton, .featureExtra { animation: none; transition: none; } .expandButton:hover { transform: none; } }

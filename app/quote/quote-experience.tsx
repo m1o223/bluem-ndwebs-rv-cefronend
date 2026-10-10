@@ -87,13 +87,20 @@ export default function QuoteExperience() {
               {item.scope && <p className={styles.scope}>{item.scope}</p>}
             </div>
             <p className={styles.description}>{item.description}</p>
-            <ul className={styles.featureList}>{item.features.slice(0, item.visibleFeatures).map(feature => <li key={feature}><StarMark className={styles.star} /><span>{feature}</span></li>)}</ul>
+            <ul className={styles.featureList}>
+              {item.features.slice(0, expandedPackages[item.checkoutId] ? item.features.length : item.visibleFeatures).map((feature, index) => (
+                <li key={feature} className={index >= item.visibleFeatures ? styles.featureExtra : undefined}>
+                  <StarMark className={styles.star} />
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
             {item.features.length > item.visibleFeatures && (
               <div className={styles.expandBlock}>
                 <button type="button" className={styles.expandButton} aria-expanded={Boolean(expandedPackages[item.checkoutId])} onClick={() => setExpandedPackages(current => ({ ...current, [item.checkoutId]: !current[item.checkoutId] }))}>
-                  {expandedPackages[item.checkoutId] ? "Hide features" : "View all features"}
+                  <span>{expandedPackages[item.checkoutId] ? "Show Less" : "Show More"}</span>
+                  <span aria-hidden="true">{expandedPackages[item.checkoutId] ? "↑" : "↓"}</span>
                 </button>
-                {expandedPackages[item.checkoutId] && <ul className={styles.featureListExpanded}>{item.features.slice(item.visibleFeatures).map(feature => <li key={feature}><StarMark className={styles.star} /><span>{feature}</span></li>)}</ul>}
               </div>
             )}
             {"vatNote" in item && <p className={styles.customNote}>{item.vatNote}</p>}
