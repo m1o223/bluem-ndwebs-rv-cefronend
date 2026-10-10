@@ -33,20 +33,6 @@
 .disclaimer { padding-block: 22px 0; max-width: 900px; }
 .disclaimer p { margin: 0; color: var(--bluemind-text); font-size: 13px; line-height: 1.8; }
 .disclaimer p + p { margin-top: 7px; font-size: 12px; }
-.included { margin-top: 64px; padding-top: 32px; border-top: 1px solid #dfe4eb; background: #fff; }
-.included > h2 { margin: 0; font-size: 26px; font-weight: 500; letter-spacing: -.8px; line-height: 1.35; }
-.deviceValue { display: flex; align-items: center; gap: 48px; padding-block: 32px; margin-bottom: 28px; border-bottom: 1px solid #dfe4eb; }
-.devices { display: flex; gap: 24px; }
-.devices > div { display: grid; justify-items: center; gap: 10px; }
-.devices svg { width: 36px; height: 36px; }
-.devices span { font-size: 9px; letter-spacing: .8px; color: var(--bluemind-text); }
-.deviceValue h3 { margin: 0; font-size: 20px; font-weight: 500; letter-spacing: -.5px; }
-.deviceValue p { margin: 10px 0 0; font-size: 14px; color: var(--bluemind-text); line-height: 1.8; }
-.includedGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px 40px; }
-.includedFeature { display: flex; align-items: flex-start; gap: 12px; }
-.includedFeature > .star { margin-top: 6px; }
-.includedFeature h3 { margin: 0; font-size: 16px; font-weight: 500; line-height: 1.5; }
-.includedFeature p { margin: 10px 0 0; color: var(--bluemind-text); font-size: 13px; line-height: 1.8; }
 .error { margin: 7px 0 0; color: var(--bluemind-text); font-size: 12px; font-weight: 600; line-height: 1.6; }
 .checkoutBackdrop { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 24px; background: rgb(9 14 24 / 38%); backdrop-filter: blur(10px); animation: checkout-fade 180ms ease-out; }
 .checkoutModal { position: relative; width: min(64vw, 840px); max-height: 84dvh; overflow: auto; border: 1px solid rgb(223 228 235 / 90%); border-radius: 18px; background: #fff; box-shadow: 0 30px 120px rgb(8 18 34 / 28%); color: var(--bluemind-text); }
@@ -169,7 +155,6 @@
 @media (hover: hover) and (pointer: fine) { .careUpsell button:hover, .billingMini button:hover { transform: translateY(-2px); border-color: #aab1bc; } }
 @media (max-width: 1050px) {
   .pricing { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .includedGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
   .watermark { width: clamp(360px, 52vw, 560px); top: -48px; right: clamp(-115px, -9vw, -62px); }
 }
 @media (max-width: 900px) {
@@ -178,10 +163,9 @@
   .detailsSummary { position: static; }
 }
 @media (max-width: 700px) {
-  .pricing, .includedGrid { grid-template-columns: minmax(0, 1fr); }
+  .pricing { grid-template-columns: minmax(0, 1fr); }
   .summary, .description { min-height: 0; }
   .description { margin-top: 16px; }
-  .deviceValue { align-items: flex-start; flex-direction: column; gap: 24px; }
   .checkoutBackdrop { padding: 12px; }
   .checkoutModal { width: 100%; max-height: 88dvh; border-radius: 14px; }
   .checkoutProgress { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 22px 66px 0 22px; }
@@ -200,8 +184,6 @@
   .package { padding: 24px; }
   .package.popular { padding: 23px; }
   .package .price { font-size: 32px; }
-  .included { margin-top: 44px; padding-top: 26px; }
-  .included > h2 { font-size: 23px; }
   .watermark { width: min(360px, 86vw); top: -26px; right: -92px; opacity: .13; }
 }
 @media (prefers-reduced-motion: reduce) { .package, .button, .checkoutModal, .checkoutStep, .checkoutPrimary, .checkoutGhost, .planGrid button, .methodGrid button, .featureChips button, .checkoutClose { animation: none; transition: none; } .package:hover, .button:hover, .button:active, .checkoutPrimary:hover, .checkoutGhost:hover, .planGrid button:hover, .methodGrid button:hover, .featureChips button:hover, .checkoutClose:hover { transform: none; } .checkoutSpinner { animation-duration: 1.6s; } .successMark circle, .successMark path { animation: none; stroke-dashoffset: 0; } }

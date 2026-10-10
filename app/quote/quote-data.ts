@@ -15,7 +15,8 @@ export const packages = [
       "Responsive layout for mobile, tablet, and computer.",
       "Basic Google-friendly setup.",
       "Help connecting your own domain.",
-      "Design adjustments before delivery within the agreed plan.",
+      "Launch Assistance - we help you publish your website and make it available online.",
+      "Revisions Included - you can request changes before delivery within the agreed project scope.",
       "Best for businesses that want to be visible online without payments or orders."
     ],
     cta: "Get Started",
@@ -41,6 +42,8 @@ export const packages = [
       "Update services, prices, and available times.",
       "Keep customer requests organized.",
       "Mobile-friendly design.",
+      "Launch Assistance - we help you publish your website and make it available online.",
+      "Revisions Included - you can request changes before delivery within the agreed project scope.",
       "Includes one system: booking or pickup orders.",
       "Online payment and delivery are not included."
     ],
@@ -73,47 +76,14 @@ export const packages = [
       "Up to 10 custom pages.",
       "Product pages generated from product information.",
       "Responsive layout for mobile, tablet, and computer.",
+      "Launch Assistance - we help you publish your website and make it available online.",
+      "Revisions Included - you can request changes before delivery within the agreed project scope.",
       "Advanced shipping integrations, extra languages, and special features may cost extra."
     ],
     cta: "Get Started",
     popular: false,
     visibleFeatures: 6,
     vatNote: "Prices exclude VAT where VAT applies. Final VAT treatment appears on the invoice."
-  }
-] as const;
-
-export const includedFeatures = [
-  {
-    title: "Custom design",
-    text: "Your website is designed around your idea and your project."
-  },
-  {
-    title: "You choose the design direction",
-    text: "You are involved in choosing the look and direction of your website."
-  },
-  {
-    title: "Mobile, Tablet & Desktop",
-    text: "Your website is designed to work across different screen sizes at no extra design charge."
-  },
-  {
-    title: "Responsive Design",
-    text: "The layout automatically adapts to different devices and screen sizes."
-  },
-  {
-    title: "Basic SEO Setup",
-    text: "Essential page titles, descriptions, and technical foundations are prepared where applicable."
-  },
-  {
-    title: "Domain Connection",
-    text: "We help connect your website to your domain."
-  },
-  {
-    title: "Launch Assistance",
-    text: "We help take the website from the finished design to a live website."
-  },
-  {
-    title: "Revisions Included",
-    text: "You can review the work and request revisions within the scope of your package."
   }
 ] as const;
 

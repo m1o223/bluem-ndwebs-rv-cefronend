@@ -5,19 +5,13 @@ import buttonStyles from "../../components/home/hero.module.css";
 import pageStyles from "../../components/page-identity.module.css";
 import { StarMark } from "../../components/star-mark";
 import { getStripeCheckoutStatus, type StripeCheckoutStatus } from "../lib/api-client";
-import { includedFeatures, packages } from "./quote-data";
+import { packages } from "./quote-data";
 import PurchaseFlow from "./purchase-flow";
 import styles from "./quote.module.css";
 
 type Package = (typeof packages)[number];
 type FixedPackage = Package & { checkoutId: string; price: string };
 const buttonClass = `${buttonStyles.ctaButton} ${buttonStyles.primaryCta} ${styles.button}`;
-
-function DeviceMark({ device }: { device: "Desktop" | "Tablet" | "Mobile" }) {
-  return <svg viewBox="0 0 40 40" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    {device === "Desktop" ? <><rect x="4" y="6" width="32" height="23" rx="3" /><path d="M14 35h12m-6-6v6M4 24h32" /></> : <><rect x={device === "Tablet" ? 8 : 12} y="3" width={device === "Tablet" ? 24 : 16} height="34" rx="4" /><path d="M18 32h4" /></>}
-  </svg>;
-}
 
 export default function QuoteExperience() {
   const [interactive, setInteractive] = useState(false);
@@ -159,14 +153,6 @@ export default function QuoteExperience() {
         <p>Starting prices. Final price and delivery time depend on your project requirements.</p>
         <p>Third-party costs such as domains, hosting, shipping carrier fees, payment-provider fees, paid plugins, and external service subscriptions are not included unless stated otherwise.</p>
       </div>
-      <section className={`${styles.included} ${pageStyles.enter}`} aria-labelledby="included-title">
-        <h2 id="included-title">Included with every website</h2>
-        <div className={styles.deviceValue}>
-          <div className={styles.devices}>{(["Desktop", "Tablet", "Mobile"] as const).map(device => <div key={device}><DeviceMark device={device} /><span>{device.toUpperCase()}</span></div>)}</div>
-          <div><h3>Included as standard.</h3><p>No extra design charge for responsive layouts.</p></div>
-        </div>
-        <div className={styles.includedGrid}>{includedFeatures.map(feature => <div key={feature.title} className={styles.includedFeature}><StarMark className={styles.star} /><div><h3>{feature.title}</h3><p>{feature.text}</p></div></div>)}</div>
-      </section>
     </>
   );
 }
