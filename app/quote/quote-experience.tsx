@@ -19,6 +19,7 @@ export default function QuoteExperience() {
   const [returnSessionId, setReturnSessionId] = useState("");
   const [checkoutStatus, setCheckoutStatus] = useState<StripeCheckoutStatus | null>(null);
   const [expandedPackages, setExpandedPackages] = useState<Record<string, boolean>>({});
+  const isPackageExpanded = (packageId: string) => expandedPackages[packageId] === true;
   useEffect(() => {
     setInteractive(true);
   }, []);
@@ -82,7 +83,7 @@ export default function QuoteExperience() {
             </div>
             <p className={styles.description}>{item.description}</p>
             <ul className={styles.featureList}>
-              {item.features.slice(0, expandedPackages[item.checkoutId] ? item.features.length : item.visibleFeatures).map((feature, index) => (
+              {item.features.slice(0, isPackageExpanded(item.checkoutId) ? item.features.length : item.visibleFeatures).map((feature, index) => (
                 <li key={feature} className={index >= item.visibleFeatures ? styles.featureExtra : undefined}>
                   <StarMark className={styles.star} />
                   <span>{feature}</span>
@@ -91,9 +92,9 @@ export default function QuoteExperience() {
             </ul>
             {item.features.length > item.visibleFeatures && (
               <div className={styles.expandBlock}>
-                <button type="button" className={styles.expandButton} aria-expanded={Boolean(expandedPackages[item.checkoutId])} onClick={() => setExpandedPackages(current => ({ ...current, [item.checkoutId]: !current[item.checkoutId] }))}>
-                  <span>{expandedPackages[item.checkoutId] ? "Show Less" : "Show More"}</span>
-                  <span aria-hidden="true">{expandedPackages[item.checkoutId] ? "↑" : "↓"}</span>
+                <button type="button" className={styles.expandButton} aria-expanded={isPackageExpanded(item.checkoutId)} onClick={() => setExpandedPackages(current => ({ ...current, [item.checkoutId]: current[item.checkoutId] !== true }))}>
+                  <span>{isPackageExpanded(item.checkoutId) ? "Show Less" : "Show More"}</span>
+                  <span aria-hidden="true">{isPackageExpanded(item.checkoutId) ? "\u2191" : "\u2193"}</span>
                 </button>
               </div>
             )}
