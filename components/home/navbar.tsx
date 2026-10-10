@@ -53,7 +53,7 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
       }
     }}>
       <div className={styles.headerInner}>
-        <Link className={styles.brand} href="/" aria-label="BlueMind Web Service home"><BrandLockup logoClassName={styles.brandLogo} priority /></Link>
+        <Link className={styles.brand} href="/" aria-label="BlueMind Web Service home"><BrandLockup logoClassName={styles.brandLogo} priority solidLogo /></Link>
         <div className={styles.headerControls}>
           <div className={styles.languageSelector} ref={languageRef} data-no-translate>
             <button className={styles.languageButton} type="button" aria-label={`Selected language: ${selectedLanguage.label}`} aria-haspopup="menu" aria-expanded={languageOpen} onClick={() => setLanguageOpen((open) => !open)}>

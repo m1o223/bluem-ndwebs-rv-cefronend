@@ -15,3 +15,17 @@
   height: 100%;
   object-fit: contain;
 }
+
+.logo[data-solid="true"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  display: block;
+  background: #000;
+  mask: url("/images/brand/bluemind-original-logo-transparent.png") center / contain no-repeat;
+  -webkit-mask: url("/images/brand/bluemind-original-logo-transparent.png") center / contain no-repeat;
+}
+
+.logo[data-solid="true"] .image {
+  opacity: 0;
+}

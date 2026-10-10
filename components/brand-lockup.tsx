@@ -6,6 +6,7 @@ type BrandLockupProps = {
   className?: string;
   logoClassName?: string;
   priority?: boolean;
+  solidLogo?: boolean;
 };
 
 export function BrandLockup({
@@ -13,10 +14,11 @@ export function BrandLockup({
   className = "",
   logoClassName = "",
   priority = false,
+  solidLogo = false,
 }: BrandLockupProps) {
   return (
     <span className={`${styles.lockup} ${className}`}>
-      <BlueMindLogo className={`${styles.logo} ${logoClassName}`} priority={priority} />
+      <BlueMindLogo className={`${styles.logo} ${logoClassName}`} priority={priority} solid={solidLogo} />
       <span className={styles.text}>
         <span className={styles.name}>BlueMind</span>
         <span className={styles.service}>{serviceName}</span>

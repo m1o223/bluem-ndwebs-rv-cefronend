@@ -1,13 +1,13 @@
 .lockup {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   color: var(--bluemind-text);
   font-family: var(--font-body-family);
 }
 
 .logo {
-  --logo-size: 42px;
+  --logo-size: 72px;
 }
 
 .text {
@@ -33,11 +33,11 @@
 
 @media (max-width: 430px) {
   .lockup {
-    gap: 7px;
+    gap: 10px;
   }
 
   .logo {
-    --logo-size: 34px;
+    --logo-size: 52px;
   }
 
   .name {
