@@ -14,8 +14,8 @@ export const footerConfig = {
   ],
   services: [["/services", "Website Design"], ["/quote", "Business Websites"], ["/quote", "Online Stores"], ["/quote", "Custom Websites"], ["/care", "BlueMind Care"]],
   social: [
-    { name: "Instagram", icon: "/images/footer/instagram.svg", url: null },
     { name: "TikTok", icon: "/images/footer/tiktok.svg", url: null },
+    { name: "Instagram", icon: "/images/footer/instagram.svg", url: null },
     { name: "X", icon: "/images/footer/x.svg", url: null },
   ] satisfies Social[],
   paymentMethods: [

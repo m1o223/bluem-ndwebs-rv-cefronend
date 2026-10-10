@@ -1,4 +1,3 @@
-import Link from "next/link";
 import SiteFooter from "../site-footer";
 import styles from "./home.module.css";
 
@@ -11,10 +10,6 @@ export function AboutSummary() {
   </section>;
 }
 
-export function FinalCTA() {
-  return <section className={`${styles.cta} ${styles.container}`} aria-labelledby="cta-title"><div><p className={styles.eyebrow}>YOUR NEXT CHAPTER</p><h2 id="cta-title">Have an idea?<br /><span>Let’s build it.</span></h2></div><div className={styles.actions}><Link className={styles.primaryButton} href="/quote">Start a Project <span aria-hidden="true">↗</span></Link><Link className={styles.textButton} href="/contact">Contact Us <span aria-hidden="true">→</span></Link></div></section>;
-}
-
 export function Footer() {
-  return <><div className={styles.home}><FinalCTA /></div><SiteFooter /></>;
+  return <SiteFooter />;
 }
