@@ -1,260 +1,121 @@
 export const packages = [
   {
-    "id": "01",
-    "checkoutId": "one-page-website",
-    "title": "One Page Website",
-    "price": "From 4,490 SEK",
-    "delivery": "Estimated delivery: 3–5 days",
-    "scope": null,
-    "description": "A focused one-page website for a service, product, personal brand, or small business.",
-    "features": [
-      "Custom design",
-      "You choose the design direction",
-      "One complete page",
-      "Mobile, tablet & desktop included",
-      "Responsive design",
-      "Contact section or form",
-      "Basic SEO setup",
-      "Domain connection",
-      "Launch assistance",
-      "Revisions included"
+    id: "01",
+    checkoutId: "showcase-website",
+    title: "Showcase Website",
+    price: "4,990 SEK",
+    delivery: "Delivery depends on the agreed content and project scope.",
+    scope: "Up to 3 pages of your choice",
+    description: "A simple, professional website to show your work, products, or services.",
+    features: [
+      "Your own design - choose the colors and style you like.",
+      "3 pages - for example: Home, Services, Contact.",
+      "Show your work with photos, information, and examples.",
+      "Easy contact through a form or WhatsApp.",
+      "Works on mobile, tablet, and computer.",
+      "Google-friendly setup.",
+      "Your own website address with domain connection help.",
+      "Changes before delivery within the agreed plan.",
+      "Best for businesses that want to show their work online without taking payments or orders."
     ],
-    "cta": "Get Started",
-    "popular": false
+    cta: "Get Started",
+    popular: false,
+    visibleFeatures: 6,
+    vatNote: "Prices exclude VAT where VAT applies. Final VAT treatment appears on the invoice."
   },
   {
-    "id": "02",
-    "checkoutId": "small-website",
-    "title": "Small Website",
-    "price": "From 5,990 SEK",
-    "delivery": "Estimated delivery: 4–6 days",
-    "scope": "Up to 3 pages",
-    "description": "A complete small website for businesses that need more than a single page.",
-    "features": [
-      "Custom design",
-      "You choose the design direction",
-      "Up to 3 pages",
-      "Mobile, tablet & desktop included",
-      "Responsive design",
-      "Contact form",
-      "Basic SEO setup",
-      "Domain connection",
-      "Launch assistance",
-      "Revisions included"
+    id: "02",
+    checkoutId: "business-website",
+    title: "Business Website",
+    price: "8,990 SEK",
+    delivery: "Delivery depends on whether your project uses booking or pickup orders and the agreed scope.",
+    scope: "Up to 6 pages of your choice",
+    description: "A website where customers can book a time or place an order for pickup.",
+    features: [
+      "Everything in Showcase Website.",
+      "6 pages - choose the pages your business needs.",
+      "Online booking OR pickup orders.",
+      "Customers can book appointments or order products for pickup.",
+      "Manage bookings or orders on your own private page.",
+      "Email notifications when customers book or order.",
+      "Update services, prices, and available times.",
+      "Save customer requests and keep them organized.",
+      "Mobile-friendly design.",
+      "The customer chooses one system: online booking OR pickup orders.",
+      "Online payment and delivery are not included in this package."
     ],
-    "cta": "Get Started",
-    "popular": false
+    cta: "Get Started",
+    popular: true,
+    badge: "MOST POPULAR",
+    visibleFeatures: 6,
+    vatNote: "Prices exclude VAT where VAT applies. Final VAT treatment appears on the invoice."
   },
   {
-    "id": "03",
-    "checkoutId": "business-website",
-    "title": "Business Website",
-    "price": "From 7,490 SEK",
-    "delivery": "Estimated delivery: 5–8 days",
-    "scope": "Up to 5 pages",
-    "description": "A professional website for businesses that need a stronger online presence.",
-    "features": [
-      "Professional custom design",
-      "You choose the design direction",
-      "Up to 5 pages",
-      "Mobile, tablet & desktop included",
-      "Responsive design",
-      "Contact forms",
-      "Basic SEO setup",
-      "Custom sections",
-      "Subtle animations where appropriate",
-      "Domain connection",
-      "Launch assistance",
-      "Revisions included"
+    id: "03",
+    checkoutId: "online-store",
+    title: "Online Store",
+    price: "14,990 SEK",
+    delivery: "Estimated delivery depends on the agreed features and project scope.",
+    scope: "Up to 10 custom pages + product pages",
+    description: "A complete online store where customers can shop, pay, and choose delivery.",
+    features: [
+      "Your own online shop with a design made for your business.",
+      "Add products with photos, descriptions, and prices.",
+      "Shopping cart for multiple products.",
+      "Online payments through supported secure methods.",
+      "Shipping options customers can choose at checkout.",
+      "Manage your store from your own private page.",
+      "See orders and change products.",
+      "Stock tracking to see how many items are left.",
+      "Search and categories to help customers find products.",
+      "Discount codes for special offers.",
+      "Automatic customer order confirmation emails.",
+      "Up to 10 custom pages.",
+      "Product pages generated automatically from product information.",
+      "Works on mobile, tablet, and computer.",
+      "Advanced shipping integrations, additional languages, and special features may cost extra."
     ],
-    "cta": "Get Started",
-    "popular": true
-  },
-  {
-    "id": "04",
-    "checkoutId": "business-plus",
-    "title": "Business Plus",
-    "price": "From 9,990 SEK",
-    "delivery": "Estimated delivery: 7–12 days",
-    "scope": "Up to 10 pages",
-    "description": "For growing businesses that need more content, sections, and functionality.",
-    "features": [
-      "Professional custom design",
-      "You choose the design direction",
-      "Up to 10 pages",
-      "Mobile, tablet & desktop included",
-      "Responsive design",
-      "Multiple forms where needed",
-      "Basic SEO setup",
-      "Custom sections",
-      "Enhanced animations",
-      "More advanced website setup",
-      "Domain connection",
-      "Launch assistance",
-      "Revisions included"
-    ],
-    "cta": "Get Started",
-    "popular": false
-  },
-  {
-    "id": "05",
-    "checkoutId": "online-store-standard",
-    "title": "Online Store Standard",
-    "price": "From 11,990 SEK",
-    "delivery": "Estimated delivery depends on the agreed features and project scope.",
-    "scope": null,
-    "description": "A complete starter e-commerce solution for small businesses that need a professional store with essential selling tools.",
-    "features": [
-      "Custom professional store design",
-      "Mobile, tablet & desktop included",
-      "Responsive design",
-      "Homepage and essential store pages",
-      "Product catalog and categories",
-      "Product images, descriptions, and prices",
-      "Product search",
-      "Shopping cart",
-      "Secure checkout",
-      "Visa and Mastercard payment integration",
-      "Apple Pay and Google Pay where supported",
-      "Basic admin dashboard",
-      "Add, edit, and remove products",
-      "Basic inventory management",
-      "Customer order management",
-      "Shipping method selection",
-      "Manual shipment processing",
-      "Customer order confirmation emails",
-      "Contact page",
-      "Social media links",
-      "Basic SEO setup",
-      "Domain connection",
-      "Launch assistance"
-    ],
-    "cta": "Get Started",
-    "popular": false,
-    "frontendPreview": true
-  },
-  {
-    "id": "06",
-    "checkoutId": "online-store-advanced",
-    "title": "Online Store Advanced",
-    "price": "From 19,990 SEK",
-    "delivery": "Estimated delivery depends on the agreed features and project scope.",
-    "scope": "Most complete e-commerce option",
-    "description": "A more powerful store for businesses that need customer accounts, automation, advanced inventory tools, and shipping integrations.",
-    "features": [
-      "Everything in Online Store Standard",
-      "Advanced custom e-commerce design",
-      "More flexible page layouts",
-      "Customer accounts and secure login",
-      "Customer profile management",
-      "Order history",
-      "Advanced product search and filters",
-      "Product variants, sizes, colors, and options",
-      "Advanced inventory management",
-      "Low-stock alerts",
-      "Discount codes and promotions",
-      "Featured products and special offers",
-      "Automated order status emails",
-      "Shipping status and tracking information",
-      "PostNord or DHL integration where supported",
-      "Automated shipping-label creation where supported by the carrier account and API",
-      "Delivery options at checkout",
-      "Advanced admin dashboard",
-      "Sales overview and basic analytics",
-      "Customer management",
-      "Order management and status updates",
-      "Mobile-optimized checkout",
-      "Enhanced SEO configuration",
-      "Security and performance optimization",
-      "Domain connection",
-      "Launch assistance",
-      "Design revisions within the agreed project scope"
-    ],
-    "note": "Shipping integrations can depend on carrier approval, account access, API availability, and third-party fees.",
-    "cta": "Get Started",
-    "popular": true,
-    "badge": "MOST COMPLETE",
-    "frontendPreview": true
-  },
-  {
-    "id": "07",
-    "checkoutId": "custom-website",
-    "title": "Custom Website",
-    "price": "Custom Quote",
-    "delivery": "Timeline based on your project",
-    "scope": null,
-    "description": "For projects that need custom functionality beyond our standard website packages.",
-    "features": [
-      "Built around your requirements",
-      "Custom functionality",
-      "Custom design",
-      "Responsive across devices",
-      "Advanced forms or workflows",
-      "Booking features where required",
-      "Login or account features where required",
-      "API integrations where required",
-      "Project-specific setup",
-      "Launch assistance"
-    ],
-    "cta": "Request a Quote",
-    "popular": false
+    cta: "Get Started",
+    popular: false,
+    visibleFeatures: 6,
+    vatNote: "Prices exclude VAT where VAT applies. Final VAT treatment appears on the invoice."
   }
 ] as const;
 
-export const testPackage = {
-  "id": "TEST",
-  "checkoutId": "bluemind-test-package",
-  "title": "BlueMind Test Package",
-  "price": "10 SEK - Test Mode",
-  "delivery": "Sandbox checkout verification only",
-  "scope": "Sandbox Test Only - No Real Payment",
-  "description": "A test package created to verify BlueMind's secure checkout, payment confirmation, order processing, and email notification system.",
-  "features": [
-    "Secure checkout test",
-    "Payment confirmation",
-    "Order tracking",
-    "Email notifications",
-    "Admin Dashboard integration"
-  ],
-  "cta": "Test Purchase",
-  "popular": false,
-  "testOnly": true
-} as const;
-
 export const includedFeatures = [
   {
-    "title": "Custom design",
-    "text": "Your website is designed around your idea and your project."
+    title: "Custom design",
+    text: "Your website is designed around your idea and your project."
   },
   {
-    "title": "You choose the design direction",
-    "text": "You’re involved in choosing the look and direction of your website."
+    title: "You choose the design direction",
+    text: "You are involved in choosing the look and direction of your website."
   },
   {
-    "title": "Mobile, Tablet & Desktop",
-    "text": "Your website is designed to work across different screen sizes at no extra design charge."
+    title: "Mobile, Tablet & Desktop",
+    text: "Your website is designed to work across different screen sizes at no extra design charge."
   },
   {
-    "title": "Responsive Design",
-    "text": "The layout automatically adapts to different devices and screen sizes."
+    title: "Responsive Design",
+    text: "The layout automatically adapts to different devices and screen sizes."
   },
   {
-    "title": "Basic SEO Setup",
-    "text": "Essential page titles, descriptions, and technical foundations are prepared where applicable."
+    title: "Basic SEO Setup",
+    text: "Essential page titles, descriptions, and technical foundations are prepared where applicable."
   },
   {
-    "title": "Domain Connection",
-    "text": "We help connect your website to your domain."
+    title: "Domain Connection",
+    text: "We help connect your website to your domain."
   },
   {
-    "title": "Launch Assistance",
-    "text": "We help take the website from the finished design to a live website."
+    title: "Launch Assistance",
+    text: "We help take the website from the finished design to a live website."
   },
   {
-    "title": "Revisions Included",
-    "text": "You can review the work and request revisions within the scope of your package."
+    title: "Revisions Included",
+    text: "You can review the work and request revisions within the scope of your package."
   }
 ] as const;
 
 export const interestOptions = [...packages.map(item => item.title), "Not Sure Yet"];
-export const timelineOptions = ["As soon as possible", "Within 1–2 weeks", "Within 1 month", "Flexible"];
+export const timelineOptions = ["As soon as possible", "Within 1-2 weeks", "Within 1 month", "Flexible"];

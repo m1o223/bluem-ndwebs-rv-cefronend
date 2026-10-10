@@ -6,10 +6,10 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { carePlans, priceFor, type Billing, type PlanName } from "../care/care-data";
 import { createStripeCheckout, sendEmailVerificationCode, verifyEmailVerificationCode } from "../lib/api-client";
 import { useLocalization } from "../../components/localization-provider";
-import { packages, testPackage } from "./quote-data";
+import { packages } from "./quote-data";
 import styles from "./quote.module.css";
 
-type Package = (typeof packages)[number] | typeof testPackage;
+type Package = (typeof packages)[number];
 type FixedPackage = Package & { checkoutId: string; price: string };
 type PaymentPlan = "full" | "deposit_50" | "deposit_25";
 type PaymentMethod = "visa" | "mastercard" | "apple-pay" | "google-pay" | "paypal" | "klarna";
@@ -149,9 +149,7 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
   const payNowOre = totalOre ? paymentPlan === "deposit_25" ? Math.floor(totalOre / 4) : paymentPlan === "deposit_50" ? Math.floor(totalOre / 2) : totalOre : 0;
   const remainingOre = totalOre ? totalOre - payNowOre : 0;
   const selectedCarePlan = carePlans.find(item => item.name === carePlan);
-  const isTestPackage = selectedPackage?.checkoutId === "bluemind-test-package";
-  const isFrontendPreviewPackage = Boolean(selectedPackage && "frontendPreview" in selectedPackage && selectedPackage.frontendPreview);
-  const supportsDepositPayments = !isTestPackage;
+  const supportsDepositPayments = true;
   const selectedMethodState = resolveFrontendPaymentMethod(paymentMethod);
 
   useEffect(() => {
@@ -271,10 +269,6 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
 
   async function startStripeCheckout() {
     if (!selectedPackage) return;
-    if (isFrontendPreviewPackage) {
-      simulatePayment(false, "success");
-      return;
-    }
     if (!emailVerified || !emailVerificationToken) {
       setCodeError("Please verify your email before continuing to payment.");
       setStep("email");
@@ -411,13 +405,11 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
             <>
               <p className={styles.checkoutEyebrow}>Payment choice</p>
               <h2 id="checkout-title">How would you like to pay?</h2>
-              <div className={styles.planGrid} data-single={isTestPackage ? "true" : undefined}>
+              <div className={styles.planGrid}>
                 <button type="button" data-selected={paymentPlan === "full"} onClick={() => setPaymentPlan("full")}><span>Pay in Full</span><strong>{formatSekOre(totalOre)}</strong><small>No remaining balance.</small></button>
                 {supportsDepositPayments && <button type="button" data-selected={paymentPlan === "deposit_50"} onClick={() => setPaymentPlan("deposit_50")}><span>Pay 50% Now</span><strong>{formatSekOre(Math.floor(totalOre / 2))}</strong><small>Pay the remaining {formatSekOre(totalOre - Math.floor(totalOre / 2))} according to the agreed delivery terms.</small></button>}
                 {supportsDepositPayments && <button type="button" data-selected={paymentPlan === "deposit_25"} onClick={() => setPaymentPlan("deposit_25")}><span>Pay 25% Now</span><strong>{formatSekOre(Math.floor(totalOre / 4))}</strong><small>Pay the remaining {formatSekOre(totalOre - Math.floor(totalOre / 4))} according to the agreed delivery terms.</small></button>}
               </div>
-              {isTestPackage && <p className={styles.demoNotice}>Sandbox Test Only - No real payment will be charged. This package uses full payment only.</p>}
-              {isFrontendPreviewPackage && <p className={styles.demoNotice}>Frontend preview only. This e-commerce package is not connected to Stripe yet, so no real checkout session or payment is created today.</p>}
               {paymentSummary}
               <button type="button" className={styles.checkoutPrimary} onClick={() => setStep("method")}>Continue to Payment</button>
             </>
@@ -425,9 +417,9 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
 
           {step === "method" && (
             <>
-              <p className={styles.checkoutEyebrow}>{isFrontendPreviewPackage ? "Frontend checkout preview" : "Stripe Sandbox Checkout"}</p>
+              <p className={styles.checkoutEyebrow}>Stripe Sandbox Checkout</p>
               <h2 id="checkout-title">Choose payment method</h2>
-              <p className={styles.demoNotice}>{isFrontendPreviewPackage ? "This is a visual payment preview for the new e-commerce package. Backend pricing and Stripe support will be added in the next phase." : "You will continue to secure Stripe Checkout in test mode. BlueMind never receives or stores card numbers or CVC."}</p>
+              <p className={styles.demoNotice}>You will continue to secure Stripe Checkout in test mode. BlueMind never receives or stores card numbers or CVC.</p>
               <div className={styles.methodGrid}>{(Object.keys(methodLabels) as PaymentMethod[]).map(method => {
                 const methodState = resolveFrontendPaymentMethod(method);
                 return <button key={method} type="button" data-method={method} data-selected={paymentMethod === method} data-unavailable={!methodState.supported || undefined} onClick={() => { setPaymentMethod(method); setCheckoutError(""); }}><PaymentBrand method={method} /><span>{methodLabels[method]}</span>{!methodState.supported && <small>Unavailable</small>}</button>;
