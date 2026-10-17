@@ -1,0 +1,134 @@
+{
+  "en": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about BlueMind Care.",
+    "questions": [
+      { "question": "What is included in BlueMind Care?", "answers": [
+        { "text": "BlueMind Care helps keep your website maintained, monitored, and running smoothly." },
+        { "text": "All plans include website monitoring, backups, technical checks, and support." },
+        { "text": "Care Plus and Care Pro also include a monthly allowance for small website updates." },
+        { "text": "Hosting, domain registration, and paid third-party services are not included unless explicitly stated in your agreement." }
+      ] },
+      { "question": "Can I cancel my subscription at any time?", "answers": [
+        { "text": "Yes. You can request cancellation of future renewals at any time." },
+        { "label": "Monthly plans:", "text": "Your subscription remains active until the end of your current paid billing period." },
+        { "label": "Annual plans:", "text": "Annual subscriptions are paid upfront. You receive 12 months of service for the price of 10 months. Cancellation stops future renewals, and your service remains active until the end of your paid annual period." },
+        { "text": "Cancellation does not automatically provide a refund for unused time. Any applicable statutory cancellation or refund rights remain unaffected." }
+      ] },
+      { "question": "What counts as a small website change?", "answers": [
+        { "text": "Small changes are updates to existing website content, such as:" },
+        { "items": ["Updating text or contact information.", "Replacing existing images.", "Updating buttons or links.", "Making minor content adjustments.", "Making small layout adjustments within the existing design."] },
+        { "label": "Care Plus:", "text": "Up to 30 minutes of small changes per month." },
+        { "label": "Care Pro:", "text": "Up to 60 minutes of small changes per month." },
+        { "text": "Unused monthly update time does not carry over to the following month." },
+        { "text": "New pages, new features, major redesigns, and custom development are quoted separately." }
+      ] },
+      { "question": "Are hosting and domain fees included?", "answers": [
+        { "text": "No. Hosting, domain registration, and paid third-party services are not included in BlueMind Care unless explicitly stated in your agreement." },
+        { "text": "If your website requires additional services, we will explain the costs before any paid work is approved." }
+      ] },
+      { "question": "Can I upgrade or downgrade my plan?", "answers": [
+        { "text": "Yes. You can contact BlueMind to request a plan change." },
+        { "text": "We will explain the available options, pricing, and when the change can take effect before confirming it." }
+      ] },
+      { "question": "What happens if my payment fails?", "answers": [
+        { "text": "If a subscription payment fails, we may contact you to update your payment method or complete the outstanding payment." },
+        { "text": "If payment remains unresolved, your BlueMind Care services may be paused or discontinued in accordance with the applicable subscription terms." },
+        { "text": "We will not make additional charges without the required authorization." }
+      ] },
+      { "question": "How can I contact BlueMind Care support?", "answers": [
+        { "before": "You can contact our team through the ", "link": "official BlueMind Web Service contact page", "after": "." },
+        { "text": "Please include your name, website address, and a short description of your request." },
+        { "text": "We will review your message and respond according to the support level included in your plan." }
+      ] }
+    ]
+  },
+  "sv": {
+    "title": "Vanliga frågor",
+    "subtitle": "Allt du behöver veta om BlueMind Care.",
+    "questions": [
+      { "question": "Vad ingår i BlueMind Care?", "answers": [
+        { "text": "BlueMind Care hjälper till att underhålla och övervaka din webbplats så att den fungerar smidigt." },
+        { "text": "Alla planer omfattar webbplatsövervakning, säkerhetskopior, tekniska kontroller och support." },
+        { "text": "Care Plus och Care Pro inkluderar även tid varje månad för mindre uppdateringar av webbplatsen." },
+        { "text": "Hosting, domänregistrering och betalda tredjepartstjänster ingår inte om det inte uttryckligen anges i ditt avtal." }
+      ] },
+      { "question": "Kan jag säga upp min prenumeration när som helst?", "answers": [
+        { "text": "Ja. Du kan när som helst begära att framtida förnyelser stoppas." },
+        { "label": "Månadsplaner:", "text": "Din prenumeration förblir aktiv till slutet av den aktuella betalda faktureringsperioden." },
+        { "label": "Årsplaner:", "text": "Årsprenumerationer betalas i förskott. Du får 12 månaders tjänst till priset av 10 månader. Uppsägning stoppar framtida förnyelser, och tjänsten förblir aktiv till slutet av din betalda årsperiod." },
+        { "text": "Uppsägning ger inte automatiskt rätt till återbetalning för oanvänd tid. Eventuella lagstadgade ånger- eller återbetalningsrättigheter påverkas inte." }
+      ] },
+      { "question": "Vad räknas som en mindre ändring av webbplatsen?", "answers": [
+        { "text": "Mindre ändringar är uppdateringar av befintligt innehåll på webbplatsen, till exempel:" },
+        { "items": ["Uppdatera text eller kontaktuppgifter.", "Byta ut befintliga bilder.", "Uppdatera knappar eller länkar.", "Göra mindre innehållsjusteringar.", "Göra små layoutjusteringar inom den befintliga designen."] },
+        { "label": "Care Plus:", "text": "Upp till 30 minuter med mindre ändringar per månad." },
+        { "label": "Care Pro:", "text": "Upp till 60 minuter med mindre ändringar per månad." },
+        { "text": "Oanvänd uppdateringstid förs inte över till nästa månad." },
+        { "text": "Nya sidor, nya funktioner, större omdesign och specialutveckling offereras separat." }
+      ] },
+      { "question": "Ingår hosting och domänavgifter?", "answers": [
+        { "text": "Nej. Hosting, domänregistrering och betalda tredjepartstjänster ingår inte i BlueMind Care om det inte uttryckligen anges i ditt avtal." },
+        { "text": "Om din webbplats behöver ytterligare tjänster förklarar vi kostnaderna innan något betalt arbete godkänns." }
+      ] },
+      { "question": "Kan jag uppgradera eller nedgradera min plan?", "answers": [
+        { "text": "Ja. Du kan kontakta BlueMind för att begära ett planbyte." },
+        { "text": "Vi förklarar tillgängliga alternativ, priser och när ändringen kan träda i kraft innan vi bekräftar den." }
+      ] },
+      { "question": "Vad händer om min betalning misslyckas?", "answers": [
+        { "text": "Om en prenumerationsbetalning misslyckas kan vi kontakta dig för att uppdatera betalningsmetoden eller slutföra den utestående betalningen." },
+        { "text": "Om betalningen förblir olöst kan dina BlueMind Care-tjänster pausas eller avslutas enligt de tillämpliga prenumerationsvillkoren." },
+        { "text": "Vi gör inga ytterligare debiteringar utan det godkännande som krävs." }
+      ] },
+      { "question": "Hur kontaktar jag BlueMind Care-supporten?", "answers": [
+        { "before": "Du kan kontakta vårt team via ", "link": "BlueMind Web Services officiella kontaktsida", "after": "." },
+        { "text": "Ange ditt namn, webbplatsens adress och en kort beskrivning av din förfrågan." },
+        { "text": "Vi granskar ditt meddelande och svarar enligt den supportnivå som ingår i din plan." }
+      ] }
+    ]
+  },
+  "ar": {
+    "title": "الأسئلة الشائعة",
+    "subtitle": "كل ما تحتاج إلى معرفته عن BlueMind Care.",
+    "questions": [
+      { "question": "ماذا تشمل خدمة BlueMind Care؟", "answers": [
+        { "text": "تساعد BlueMind Care في صيانة موقعك ومراقبته والحفاظ على عمله بسلاسة." },
+        { "text": "تشمل جميع الخطط مراقبة الموقع والنسخ الاحتياطي والفحوصات التقنية والدعم." },
+        { "text": "تشمل خطتا Care Plus وCare Pro أيضاً وقتاً شهرياً مخصصاً للتحديثات الصغيرة للموقع." },
+        { "text": "لا تشمل الخدمة الاستضافة أو تسجيل النطاق أو خدمات الجهات الخارجية المدفوعة إلا إذا نُص على ذلك صراحةً في اتفاقك." }
+      ] },
+      { "question": "هل يمكنني إلغاء اشتراكي في أي وقت؟", "answers": [
+        { "text": "نعم. يمكنك طلب إلغاء التجديدات المستقبلية في أي وقت." },
+        { "label": "الخطط الشهرية:", "text": "يبقى اشتراكك نشطاً حتى نهاية فترة الفوترة الحالية المدفوعة." },
+        { "label": "الخطط السنوية:", "text": "تُدفع الاشتراكات السنوية مقدماً. تحصل على 12 شهراً من الخدمة بسعر 10 أشهر. يوقف الإلغاء التجديدات المستقبلية، وتبقى خدمتك نشطة حتى نهاية الفترة السنوية المدفوعة." },
+        { "text": "لا يؤدي الإلغاء تلقائياً إلى استرداد مبالغ عن الوقت غير المستخدم. ولا تتأثر أي حقوق قانونية واجبة التطبيق تتعلق بالإلغاء أو استرداد الأموال." }
+      ] },
+      { "question": "ما الذي يُعد تغييراً صغيراً في الموقع؟", "answers": [
+        { "text": "التغييرات الصغيرة هي تحديثات للمحتوى الموجود في الموقع، مثل:" },
+        { "items": ["تحديث النصوص أو معلومات الاتصال.", "استبدال الصور الموجودة.", "تحديث الأزرار أو الروابط.", "إجراء تعديلات طفيفة على المحتوى.", "إجراء تعديلات صغيرة على التخطيط ضمن التصميم الحالي."] },
+        { "label": "Care Plus:", "text": "حتى 30 دقيقة من التغييرات الصغيرة شهرياً." },
+        { "label": "Care Pro:", "text": "حتى 60 دقيقة من التغييرات الصغيرة شهرياً." },
+        { "text": "لا يُرحّل وقت التحديث الشهري غير المستخدم إلى الشهر التالي." },
+        { "text": "تُقدّم عروض أسعار منفصلة للصفحات الجديدة والميزات الجديدة وإعادة التصميم الكبيرة والتطوير المخصص." }
+      ] },
+      { "question": "هل رسوم الاستضافة والنطاق مشمولة؟", "answers": [
+        { "text": "لا. لا تشمل BlueMind Care الاستضافة أو تسجيل النطاق أو خدمات الجهات الخارجية المدفوعة إلا إذا نُص على ذلك صراحةً في اتفاقك." },
+        { "text": "إذا كان موقعك يحتاج إلى خدمات إضافية، فسنوضح تكاليفها قبل الموافقة على أي عمل مدفوع." }
+      ] },
+      { "question": "هل يمكنني الترقية إلى خطة أعلى أو الانتقال إلى خطة أقل؟", "answers": [
+        { "text": "نعم. يمكنك التواصل مع BlueMind لطلب تغيير خطتك." },
+        { "text": "سنوضح الخيارات المتاحة والأسعار وموعد سريان التغيير قبل تأكيده." }
+      ] },
+      { "question": "ماذا يحدث إذا فشلت عملية الدفع؟", "answers": [
+        { "text": "إذا فشلت دفعة الاشتراك، فقد نتواصل معك لتحديث وسيلة الدفع أو إتمام المبلغ المستحق." },
+        { "text": "إذا لم تُحل مشكلة الدفع، فقد تُعلّق خدمات BlueMind Care أو تُوقف وفقاً لشروط الاشتراك المعمول بها." },
+        { "text": "لن نجري أي خصومات إضافية دون التفويض المطلوب." }
+      ] },
+      { "question": "كيف يمكنني التواصل مع دعم BlueMind Care؟", "answers": [
+        { "before": "يمكنك التواصل مع فريقنا عبر ", "link": "صفحة الاتصال الرسمية لـ BlueMind Web Service", "after": "." },
+        { "text": "يرجى ذكر اسمك وعنوان موقعك ووصف موجز لطلبك." },
+        { "text": "سنراجع رسالتك ونرد وفقاً لمستوى الدعم المشمول في خطتك." }
+      ] }
+    ]
+  }
+}

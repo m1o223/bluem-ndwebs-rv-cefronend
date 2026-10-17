@@ -42,13 +42,13 @@
 .faq { margin-top: 56px; padding-top: 30px; border-top: 1px solid #dfe4eb; }
 .questions { margin-top: 24px; max-width: 900px; }
 .questions details { border-bottom: 1px solid #dfe4eb; }
-.questions summary { position: relative; padding: 18px 32px 18px 0; min-height: 52px; font-size: 15px; font-weight: 500; cursor: pointer; list-style: none; line-height: 1.5; }
+.questions summary { position: relative; padding-block: 18px; padding-inline: 0 32px; min-height: 52px; font-size: 15px; font-weight: 500; cursor: pointer; list-style: none; line-height: 1.5; }
 .questions summary::-webkit-details-marker { display: none; }
-.questions summary::after { content: "+"; position: absolute; right: 5px; font-size: 19px; font-weight: 400; }
+.questions summary::after { content: "+"; position: absolute; inset-inline-end: 5px; font-size: 19px; font-weight: 400; }
 .questions details[open] summary::after { content: "\2212"; }
 .questions summary:focus-visible { outline: 2px solid var(--bluemind-blue); outline-offset: 3px; border-radius: 4px; }
 .questions p, .questions ul { max-width: 730px; margin: 0 0 18px; color: var(--bluemind-text); font-size: 13px; line-height: 1.8; }
-.questions ul { padding-left: 20px; }
+.questions ul { padding-inline-start: 20px; }
 .formSection { scroll-margin-top: 28px; margin-top: 56px; padding: 32px; border: 1px solid #dfe4eb; border-radius: 10px; background: #fff; max-width: 900px; }
 .formNote, .formNotice { color: var(--bluemind-text); font-size: 12px; line-height: 1.8; }
 .formNote { margin: 18px 0 24px; }

@@ -5,7 +5,8 @@ import { useEffect, useMemo, useState } from "react";
 import { StarMark } from "../../components/star-mark";
 import buttonStyles from "../../components/home/hero.module.css";
 import pageStyles from "../../components/page-identity.module.css";
-import { carePlans, carePolicy, hostingNotice, priceFor, smallChanges, type Billing, type PlanName } from "./care-data";
+import { carePlans, hostingNotice, priceFor, type Billing, type PlanName } from "./care-data";
+import CareFaq from "./care-faq";
 import styles from "./care.module.css";
 
 type PurchaseStep = "details" | "payment" | "processing" | "success";
@@ -174,18 +175,11 @@ export default function CareSubscriptionDemoFlow() {
       <div className={styles.planNotes}><p>{hostingNotice}</p><p>Prefer to manage your website yourself? <span>No problem. BlueMind Care is optional.</span></p></div>
     </section>
 
-    <section className={`${styles.faq} ${pageStyles.enter}`} aria-labelledby="care-faq-title">
-      <h2 id="care-faq-title">A few things to know.</h2>
-      <div className={styles.questions}>
-        <details><summary>How can I cancel my subscription?</summary><p>For monthly plans, you can cancel future renewal at any time. Your service remains active until the end of your current paid month.</p><p>For annual plans, you pay once for 12 months of service at the price of 10 months. You can turn off automatic renewal at any time, and your service will remain active until the end of your paid annual period.</p></details>
-        <details><summary>What counts as a small website change?</summary><p>Small website changes may include things like:</p><ul>{smallChanges.map(change => <li key={change}>{change}</li>)}</ul><p>New pages, new features, major redesigns, custom development, and larger changes are quoted separately.</p></details>
-        <details><summary>Are hosting and domain fees included?</summary><p>{hostingNotice}</p></details>
-        <details><summary>Can I switch plans later?</summary><p>{carePolicy.planChanges}</p></details>
-      </div>
+    <CareFaq>
       <div className={styles.cancelEntry}>
         <button type="button" className={buttonClass} onClick={() => setCancelOpen(true)}>Cancel Your Subscription</button>
       </div>
-    </section>
+    </CareFaq>
 
     {purchaseOpen && <div className={styles.modalBackdrop} role="presentation">
       <section className={styles.careModal} role="dialog" aria-modal="true" aria-labelledby="care-purchase-title">

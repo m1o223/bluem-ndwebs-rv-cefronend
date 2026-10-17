@@ -13,7 +13,8 @@ import {
   verifyEmailVerificationCode,
   type CareSubscription,
 } from "../lib/api-client";
-import { carePlans, carePolicy, hostingNotice, priceFor, smallChanges, type Billing, type PlanName } from "./care-data";
+import { carePlans, hostingNotice, priceFor, type Billing, type PlanName } from "./care-data";
+import CareFaq from "./care-faq";
 import styles from "./care.module.css";
 
 type CareStep = "verify" | "code" | "review" | "processing" | "success" | "error";
@@ -291,15 +292,7 @@ export default function CareSubscriptionFlow() {
       <div className={styles.planNotes}><p>{hostingNotice}</p><p>Prefer to manage your website yourself? <span>No problem. BlueMind Care is optional.</span></p></div>
     </section>
 
-    <section className={`${styles.faq} ${pageStyles.enter}`} aria-labelledby="care-faq-title">
-      <h2 id="care-faq-title">A few things to know.</h2>
-      <div className={styles.questions}>
-        <details><summary>How can I cancel my subscription?</summary><p>For monthly plans, you can cancel future renewal at any time. Your service remains active until the end of your current paid month.</p><p>For annual plans, you pay once for 12 months of service at the price of 10 months. You can turn off automatic renewal at any time, and your service will remain active until the end of your paid annual period.</p></details>
-        <details><summary>What counts as a small website change?</summary><p>Small website changes may include things like:</p><ul>{smallChanges.map(change => <li key={change}>{change}</li>)}</ul><p>New pages, new features, major redesigns, custom development, and larger changes are quoted separately.</p></details>
-        <details><summary>Are hosting and domain fees included?</summary><p>{hostingNotice}</p></details>
-        <details><summary>Can I switch plans later?</summary><p>{carePolicy.planChanges}</p></details>
-      </div>
-    </section>
+    <CareFaq />
 
     {returnSessionId && <section className={`${styles.formSection} ${styles.subscriptionPanel} ${pageStyles.enter}`} aria-live="polite">
       {returnStatus ? <div className={styles.careState}><SuccessMark /><h2>BlueMind Care activated</h2><p>Your subscription was confirmed by Stripe and saved by BlueMind.</p><dl><div><dt>Plan</dt><dd>{returnStatus.planName}</dd></div><div><dt>Billing</dt><dd>{returnStatus.billingInterval}</dd></div><div><dt>Paid through</dt><dd>{formatDate(returnStatus.paidThroughDate)}</dd></div></dl></div> : <div className={styles.careState}><Spinner /><h2>Confirming your subscription...</h2><p>Stripe is sending the verified subscription result to BlueMind.</p></div>}
