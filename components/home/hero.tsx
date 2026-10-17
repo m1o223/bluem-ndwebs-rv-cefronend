@@ -1,4 +1,6 @@
 import Link from "next/link";
+import AiPreview from "../ai-preview/ai-preview";
+import { isAiPreviewEnabled } from "../ai-preview/preview-policy";
 import HeroVisual from "./hero-visual";
 import shared from "./home.module.css";
 import styles from "./hero.module.css";
@@ -17,7 +19,7 @@ export default function Hero() {
           <p className={styles.description}>Thoughtfully designed. Expertly developed.<br />Websites that move your business forward.</p>
           <div className={`${shared.actions} ${styles.actions}`}>
             <Link href="/quote" className={`${styles.ctaButton} ${styles.primaryCta}`}>Get Started</Link>
-            <Link href="#selected-work" className={styles.ctaButton}>Explore Concepts</Link>
+            {isAiPreviewEnabled(process.env) ? <AiPreview triggerClassName={styles.ctaButton} /> : <Link href="#selected-work" className={styles.ctaButton}>Explore Concepts</Link>}
           </div>
         </div>
         <HeroVisual />

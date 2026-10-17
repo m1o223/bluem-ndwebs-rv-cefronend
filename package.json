@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
+    "test:ai-preview": "playwright test --config playwright.ai.config.ts",
     "check:encoding": "node scripts/check-translations-encoding.mjs",
     "prebuild": "npm run check:encoding"
   },
@@ -14,11 +15,13 @@
     "node": "22.x"
   },
   "dependencies": {
+    "lucide-react": "^1.59.0",
     "next": "16.3.8",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@types/node": "26.6.3",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
