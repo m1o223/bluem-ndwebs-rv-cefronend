@@ -12,8 +12,8 @@ export default function CarePage() {
         <div className={`${pageStyles.intro} ${pageStyles.enter} ${styles.intro}`}>
           <h1>BlueMind Care</h1>
           <p className={styles.byline}>by BlueMind Web Service</p>
-          <p className={styles.headline}>Your website, looked after.</p>
-          <p>Website care, updates and support — without the technical hassle.</p>
+          <p className={styles.headline}>Your website. Our care.</p>
+          <p>We take care of your website, so you can focus on your business.</p>
         </div>
         <CareSubscriptionDemoFlow />
       </div>

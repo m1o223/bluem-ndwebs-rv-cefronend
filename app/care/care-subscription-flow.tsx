@@ -268,7 +268,7 @@ export default function CareSubscriptionFlow() {
 
   return <>
     <section className={`${styles.plansSection} ${pageStyles.enter}`} aria-labelledby="care-plans-title">
-      <div className={styles.plansIntro}><h2 id="care-plans-title">Choose your BlueMind Care plan.</h2><p>BlueMind Care is available for websites connected to a BlueMind order.</p></div>
+      <div className={styles.plansIntro}><h2 id="care-plans-title">Choose your plan.</h2><p>Simple, reliable website care that fits your needs.</p></div>
       <fieldset className={styles.billingToggle}>
         <legend className={styles.srOnly}>Pricing billing cycle</legend>
         {(["Monthly", "Yearly"] as const).map(cycle => <label key={cycle} className={styles.billingOption}>
