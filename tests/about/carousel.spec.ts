@@ -28,9 +28,18 @@ for (const width of [320, 375, 768, 1024, 1440, 1920]) {
       await page.waitForTimeout(80);
       const box = await card.boundingBox();
       expect(Math.abs(box!.x + box!.width / 2 - width / 2)).toBeLessThan(2);
-      expect(box!.height).toBeCloseTo(width >= 700 ? 410 : 430, 0);
+      expect(box!.height).toBeGreaterThanOrEqual(410);
       expect(await card.evaluate(e => e.scrollHeight <= e.clientHeight + 1)).toBe(true);
       const paragraph = card.locator("p");
+      expect(await paragraph.evaluate(e => e.scrollHeight <= e.clientHeight + 1)).toBe(true);
+      if (width >= 700) {
+        const neighbors = await region.locator('article[data-active="false"]').evaluateAll(elements => elements.map(e => {
+          const r = e.getBoundingClientRect();
+          return { left: r.left, right: r.right, width: r.width };
+        }));
+        expect(neighbors.some(r => r.left < box!.x - 50 && r.width > box!.width * .25)).toBe(true);
+        expect(neighbors.some(r => r.right > box!.x + box!.width + 50 && r.width > box!.width * .25)).toBe(true);
+      }
       await paragraph.focus();
       await paragraph.press("End");
       await expect.poll(() => paragraph.evaluate(e => e.scrollTop + e.clientHeight >= e.scrollHeight - 2)).toBe(true);
@@ -89,7 +98,7 @@ for (const path of ["/how-we-work", "/services", "/about"]) {
   });
 }
 
-test("three-card 120-degree rotation loops without resets or autoplay", async ({ page }) => {
+test("three-card navigation loops without resets or autoplay", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/about");
   const region = page.locator('[aria-roledescription="carousel"]');
@@ -106,12 +115,19 @@ test("three-card 120-degree rotation loops without resets or autoplay", async ({
   await region.getByRole("button", { name: "Previous step" }).click();
   await expect(next).toHaveAttribute("aria-disabled", "false");
   expect(Number(await page.getByTestId("about-stage").getAttribute("data-rotation"))).toBeCloseTo(-5 * Math.PI * 2 / 3, 5);
+  await region.locator('article[data-step="1"] button').click();
+  await expect(next).toHaveAttribute("aria-disabled", "false");
+  await expect(region).toHaveAttribute("data-selected", "0");
+  await region.locator('article[data-step="3"] button').click();
+  await expect(next).toHaveAttribute("aria-disabled", "false");
+  await expect(region).toHaveAttribute("data-selected", "2");
 });
 
-test("all pages use identical card styles, dimensions and independent selection", async ({ page }) => {
+test("shared styles and master side geometry with content-sized About height", async ({ page }, info) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   const appearances = [];
+  const positions = [];
   for (const path of ["/how-we-work", "/services", "/about"]) {
     await page.goto(path);
     const region = page.locator('[aria-roledescription="carousel"]');
@@ -121,13 +137,23 @@ test("all pages use identical card styles, dimensions and independent selection"
       const s = getComputedStyle(e);
       const h = getComputedStyle(e.querySelector("h2")!);
       const p = getComputedStyle(e.querySelector("p")!);
-      return { className: e.className, width: s.width, height: s.height, padding: s.padding, background: s.backgroundColor, color: s.color, border: s.border, radius: s.borderRadius, shadow: s.boxShadow, titleFont: h.font, bodyFont: p.font };
+      return { className: e.className, width: s.width, padding: s.padding, background: s.backgroundColor, color: s.color, border: s.border, radius: s.borderRadius, shadow: s.boxShadow, titleFont: h.font, bodyFont: p.font };
     }));
+    await page.waitForTimeout(100);
+    positions.push(await region.locator('article[data-step="2"]').evaluate(e => {
+      const r = e.getBoundingClientRect();
+      const matrix = new DOMMatrix(getComputedStyle(e.parentElement!).transform);
+      return { x: r.x, width: r.width, yaw: Math.atan2(matrix.m31, matrix.m11) };
+    }));
+    await region.screenshot({ path: info.outputPath(`${path.slice(1)}-comparison.png`) });
     await region.getByRole("button", { name: "Next step", exact: true }).click();
     await expect(region).toHaveAttribute("data-selected", "1");
   }
   expect(appearances[1]).toEqual(appearances[0]);
   expect(appearances[2]).toEqual(appearances[0]);
+  expect(positions[2].x).toBeCloseTo(positions[0].x, 1);
+  expect(positions[2].width).toBeCloseTo(positions[0].width, 1);
+  expect(positions[2].yaw).toBeCloseTo(positions[0].yaw, 5);
 });
 
 test("About mobile swipe and vertical scrolling", async ({ page }) => {
@@ -143,7 +169,7 @@ test("About mobile swipe and vertical scrolling", async ({ page }) => {
 });
 
 for (const locale of ["sv", "ar"]) {
-  test(`About translated text remains scrollable: ${locale}`, async ({ page }) => {
+  test(`About translated text fits without internal scrolling: ${locale}`, async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 1000 });
     await page.addInitScript(value => localStorage.setItem("bluemind-language", value), locale);
     await page.goto("/about");
@@ -151,6 +177,7 @@ for (const locale of ["sv", "ar"]) {
     for (let index = 0; index < 3; index++) {
       const card = region.locator('article[data-active="true"]');
       expect(await card.evaluate(e => e.scrollHeight <= e.clientHeight + 1)).toBe(true);
+      expect(await card.locator("p").evaluate(e => e.scrollHeight <= e.clientHeight + 1)).toBe(true);
       await card.locator("p").focus();
       await card.locator("p").press("End");
       await expect.poll(() => card.locator("p").evaluate(e => e.scrollTop + e.clientHeight >= e.scrollHeight - 2)).toBe(true);

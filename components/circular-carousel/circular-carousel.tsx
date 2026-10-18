@@ -18,9 +18,10 @@ type Props = {
   label: string;
   navigationLabel: string;
   stageTestId: string;
+  contentSized?: boolean;
 };
 
-export default function CircularCarousel({ items, label, navigationLabel, stageTestId }: Props) {
+export default function CircularCarousel({ items, label, navigationLabel, stageTestId, contentSized = false }: Props) {
   const { locale, translate } = useLocalization();
   const count = items.length;
   const total = String(count).padStart(2, "0");
@@ -56,7 +57,7 @@ export default function CircularCarousel({ items, label, navigationLabel, stageT
     let cancelled = false;
     import("./carousel-scene").then(({ createCarouselScene }) => {
       if (cancelled) return;
-      const instance = createCarouselScene(container, styles.face, count);
+      const instance = createCarouselScene(container, styles.face, count, contentSized);
       scene.current = instance;
       instance.select(currentTurn.current, true, () => {});
       setHosts(instance.hosts);
@@ -71,7 +72,14 @@ export default function CircularCarousel({ items, label, navigationLabel, stageT
       lock.current = false;
       setBusy(false);
     };
-  }, [desktop, count]);
+  }, [desktop, count, contentSized]);
+
+  useEffect(() => {
+    if (!contentSized) return;
+    const instance = scene.current;
+    instance?.layout();
+    void document.fonts.ready.then(() => instance?.layout());
+  }, [hosts, locale, contentSized]);
 
   useEffect(() => {
     if (!scene.current) { lock.current = false; setBusy(false); return; }
@@ -122,7 +130,7 @@ export default function CircularCarousel({ items, label, navigationLabel, stageT
     </article>;
   }
 
-  return <div className={styles.carousel} data-no-translate data-renderer={hosts.length ? "css3d" : "flat"} data-selected={active} data-dragging={dragging} tabIndex={0} role="region" aria-roledescription="carousel" aria-label={translate(label)}
+  return <div className={`${styles.carousel}${contentSized ? ` ${styles.contentSized}` : ""}`} data-no-translate data-renderer={hosts.length ? "css3d" : "flat"} data-selected={active} data-dragging={dragging} tabIndex={0} role="region" aria-roledescription="carousel" aria-label={translate(label)}
       onPointerDown={event => {
         suppressClick.current = false;
         if (event.pointerType !== "mouse" || event.button !== 0 || lock.current || !scene.current || !(event.target as Element).closest("article")) return;

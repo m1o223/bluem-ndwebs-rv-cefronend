@@ -14,6 +14,7 @@ export default function AboutPage() {
         label="About BlueMind"
         navigationLabel="About navigation"
         stageTestId="about-stage"
+        contentSized
       />
     </div>
   );

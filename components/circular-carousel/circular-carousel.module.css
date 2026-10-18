@@ -34,6 +34,9 @@
 .indicator { min-width: 68px; text-align: center; font-variant-numeric: tabular-nums; font-size: 14px; font-weight: 600; }
 .indicator span { color: #52657b; }
 .fallback { max-width: 330px; height: 410px; margin: 42px auto 32px; }
+.contentSized .panel { height: auto; min-height: var(--card-min-height, 410px); }
+.contentSized .panel p { flex-shrink: 0; overflow: visible; }
+.contentSized .fallback { height: auto; }
 .carousel[data-renderer="flat"] .stage { position: absolute; visibility: hidden; }
 @media (max-width: 699px) {
   .page { padding: 44px 0 48px; }
