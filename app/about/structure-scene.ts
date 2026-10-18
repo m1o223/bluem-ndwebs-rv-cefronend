@@ -10,7 +10,7 @@ export function createStructureScene(container: HTMLElement, className: string) 
   const scene = new Scene();
   const assembly = new Group();
   const camera = new PerspectiveCamera(38, 1, 1, 5000);
-  camera.position.set(0, 65, 1150);
+  camera.position.set(0, 0, 1150);
   camera.lookAt(0, 0, 0);
   scene.add(assembly);
   container.append(renderer.domElement);
