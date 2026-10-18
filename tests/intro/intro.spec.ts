@@ -92,15 +92,28 @@ for (const width of [375, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     const errors: string[] = [];
     page.on("pageerror", error => errors.push(error.message));
-    await page.addInitScript(key => localStorage.setItem(key, "complete"), INTRO_STORAGE_KEY);
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.addInitScript(key => {
+      localStorage.setItem(key, "complete");
+      // Record first paint in the browser, independent of automation/network latency.
+      const capture = () => {
+        const state = window.__blueMindIntro;
+        const orbit = document.querySelector("[data-intro-orbit]");
+        if (!state?.playing || !orbit) { requestAnimationFrame(capture); return; }
+        const snapshot = { elapsed: Number(document.timeline.currentTime) - state.started, transform: getComputedStyle(orbit).transform };
+        Object.assign(window, { __introFirstFrame: snapshot });
+      };
+      requestAnimationFrame(capture);
+    }, INTRO_STORAGE_KEY);
+    await page.goto("/", { waitUntil: "commit" });
     const intro = page.locator("#bluemind-brand-intro");
     for (let refresh = 0; refresh < 3; refresh++) {
+      await page.waitForFunction(() => "__introFirstFrame" in window);
       await expect(intro).toBeVisible();
-      expect(await page.evaluate(() => performance.now() - window.__blueMindIntro!.started)).toBeLessThan(1400);
-      await expect(intro.locator("[data-intro-orbit]")).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
+      const firstFrame = await page.evaluate(() => (window as typeof window & { __introFirstFrame: { elapsed: number; transform: string } }).__introFirstFrame);
+      expect(firstFrame.elapsed).toBeLessThan(1400);
+      expect(firstFrame.transform).toBe("matrix(1, 0, 0, 1, 0, 0)");
       await page.waitForTimeout(1600);
-      await page.reload({ waitUntil: "domcontentloaded" });
+      await page.reload({ waitUntil: "commit" });
     }
     await page.getByRole("button", { name: "Skip Intro", exact: true }).click();
     await expect(intro).toHaveCount(0);
