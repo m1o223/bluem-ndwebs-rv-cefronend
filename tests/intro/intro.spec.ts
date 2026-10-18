@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
-import { INTRO_STORAGE_KEY } from "../../components/brand-intro/intro-config";
+import { runInNewContext } from "node:vm";
+import { INTRO_STORAGE_KEY, createIntroBootstrap } from "../../components/brand-intro/intro-config";
 
 test.beforeEach(async ({ page, baseURL }) => {
   if (process.env.VERCEL_OIDC_TOKEN && baseURL) {
@@ -8,7 +9,7 @@ test.beforeEach(async ({ page, baseURL }) => {
   }
 });
 
-test("fresh visit completes in four seconds, refresh and return do not replay", async ({ page }) => {
+test("Preview refresh replays after completion while in-app navigation does not", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", e => errors.push(e.message));
   await page.goto("/");
@@ -23,7 +24,8 @@ test("fresh visit completes in four seconds, refresh and return do not replay", 
   expect(await page.locator(".home-page").boundingBox()).toEqual(heroBefore);
   expect(await page.evaluate(key => localStorage.getItem(key), INTRO_STORAGE_KEY)).toBe("complete");
   await page.reload();
-  await expect(intro).toHaveCount(0);
+  await expect(intro).toBeVisible();
+  await expect(intro).toHaveCount(0, { timeout: 6000 });
   await page.getByRole("link", { name: "Get Started", exact: true }).first().click();
   await expect(page).toHaveURL(/\/quote$/);
   await page.getByRole("link", { name: "BlueMind Web Service home", exact: true }).first().click();
@@ -60,8 +62,55 @@ test("no intro when navigating home from another page", async ({ page }) => {
   await expect(page).toHaveURL(/\/$/);
   await expect(page.locator("#bluemind-brand-intro")).toHaveCount(0);
   await page.reload();
-  await expect(page.locator("#bluemind-brand-intro")).toHaveCount(0);
+  await expect(page.locator("#bluemind-brand-intro")).toBeVisible();
+  await page.getByRole("button", { name: "Skip Intro", exact: true }).click();
 });
+
+test("default bootstrap preserves once-per-visitor behavior", () => {
+  const storage = new Map<string, string>();
+  let starts = 0;
+  const visit = (replay = false) => {
+    const window = {} as { __blueMindIntro?: { playing: boolean } };
+    runInNewContext(createIntroBootstrap(replay), {
+      window, location: { pathname: "/" }, performance: { now: () => 0 },
+      matchMedia: () => ({ matches: false }),
+      localStorage: { getItem: (key: string) => storage.get(key), setItem: (key: string, value: string) => storage.set(key, value) },
+      document: { getElementById: () => ({ sheet: { insertRule: () => { starts++; } } }) },
+    });
+    return window.__blueMindIntro?.playing;
+  };
+  expect(visit()).toBe(true);
+  expect(visit()).toBe(false);
+  expect(starts).toBe(1);
+  storage.set(INTRO_STORAGE_KEY, "complete");
+  expect(visit()).toBe(false);
+  expect(visit(true)).toBe(true);
+});
+
+for (const width of [375, 1440]) {
+  test(`repeated mid-animation refresh and Skip reset cleanly at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    const errors: string[] = [];
+    page.on("pageerror", error => errors.push(error.message));
+    await page.addInitScript(key => localStorage.setItem(key, "complete"), INTRO_STORAGE_KEY);
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    const intro = page.locator("#bluemind-brand-intro");
+    for (let refresh = 0; refresh < 3; refresh++) {
+      await expect(intro).toBeVisible();
+      expect(await page.evaluate(() => performance.now() - window.__blueMindIntro!.started)).toBeLessThan(1400);
+      await expect(intro.locator("[data-intro-orbit]")).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
+      await page.waitForTimeout(1600);
+      await page.reload({ waitUntil: "domcontentloaded" });
+    }
+    await page.getByRole("button", { name: "Skip Intro", exact: true }).click();
+    await expect(intro).toHaveCount(0);
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await expect(intro).toBeVisible();
+    await expect(intro).toHaveCount(0, { timeout: 6000 });
+    await expect(page.getByRole("link", { name: "Get Started", exact: true }).first()).toBeVisible();
+    expect(errors).toEqual([]);
+  });
+}
 
 test("storage denied never blocks the homepage", async ({ page }) => {
   await page.addInitScript(() => {

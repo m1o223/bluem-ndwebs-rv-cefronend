@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { BrandLockup } from "../brand-lockup";
 import { useLocalization } from "../localization-provider";
-import { INTRO_DURATION, INTRO_ID, INTRO_STORAGE_KEY, introBootstrap, words } from "./intro-config";
+import { INTRO_DURATION, INTRO_ID, INTRO_STORAGE_KEY, createIntroBootstrap, words } from "./intro-config";
 import styles from "./brand-intro.module.css";
 
 declare global {
@@ -13,7 +13,7 @@ declare global {
 const entrances = [[-80, -65], [80, -65], [-80, 65], [80, 65], [-90, 0], [90, 0], [0, -85], [0, 85]];
 const skipLabels = { en: "Skip Intro", sv: "Hoppa \u00f6ver intro", ar: "\u062a\u062e\u0637\u064a \u0627\u0644\u0645\u0642\u062f\u0645\u0629" };
 
-export default function BrandIntro() {
+export default function BrandIntro({ replayOnRefresh = false }: { replayOnRefresh?: boolean }) {
   const [ended, setEnded] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const { locale } = useLocalization();
@@ -88,6 +88,6 @@ export default function BrandIntro() {
       </div>
       <button type="button" className={styles.skip} onClick={finish}>{skipLabels[locale]}</button>
     </div>
-    <script dangerouslySetInnerHTML={{ __html: introBootstrap }} />
+    <script dangerouslySetInnerHTML={{ __html: createIntroBootstrap(replayOnRefresh) }} />
   </>;
 }
