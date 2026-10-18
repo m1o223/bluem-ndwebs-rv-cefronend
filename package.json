@@ -8,6 +8,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test:coming-soon": "playwright test --config playwright.coming-soon.config.ts",
+    "test:about": "playwright test --config playwright.about.config.ts",
     "check:encoding": "node scripts/check-translations-encoding.mjs",
     "prebuild": "npm run check:encoding"
   },
@@ -18,13 +19,15 @@
     "lucide-react": "^1.59.0",
     "next": "16.3.8",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "three": "^0.186.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",
     "@types/node": "26.6.3",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "@types/three": "^0.186.0",
     "typescript": "7.0.2"
   }
 }
