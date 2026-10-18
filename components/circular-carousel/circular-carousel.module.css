@@ -16,6 +16,11 @@
 .imageIcon { width: 34px; height: 34px; object-fit: contain; }
 .panel h2 { margin: 0 0 16px; max-width: 100%; font-size: 27px; line-height: 1.15; font-weight: 600; letter-spacing: 0; }
 .panel p { margin: 0; color: #111; font-size: 15px; line-height: 1.65; }
+.panel h2, .cardTop, .detail { flex-shrink: 0; }
+.panel p { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.panel p:focus-visible { outline: 2px solid #142d4e; outline-offset: 2px; }
+.carousel[data-renderer="css3d"] .panel { user-select: none; }
+.carousel[data-dragging="true"] .panel, .carousel[data-dragging="true"] .sideTarget { cursor: grabbing; }
 .detail { display: flex; gap: 5px; margin-top: auto; padding-top: 18px; }
 .detail span { width: 15px; height: 3px; background: #dce6f0; border-radius: 2px; }
 .detail span:first-child { background: #142d4e; width: 28px; }

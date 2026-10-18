@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, type LucideIcon } from "lucide-react";
@@ -8,7 +8,7 @@ import { useLocalization } from "../localization-provider";
 import type { CarouselScene } from "./carousel-scene";
 import styles from "./circular-carousel.module.css";
 
-export type CarouselItem = { title: string; text: string } & (
+export type CarouselItem = { title: string; titleSuffix?: string; text: string | readonly string[] } & (
   { icon: LucideIcon; image?: never } |
   { image: { src: string; width: number; height: number }; icon?: never }
 );
@@ -30,11 +30,14 @@ export default function CircularCarousel({ items, label, navigationLabel, stageT
   const [desktop, setDesktop] = useState(false);
   const [reduced, setReduced] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const stage = useRef<HTMLDivElement>(null);
   const scene = useRef<CarouselScene | null>(null);
   const lock = useRef(false);
   const currentTurn = useRef(0);
   const touch = useRef<{ x: number; y: number } | null>(null);
+  const drag = useRef<{ id: number; x: number; y: number; turn: number; position: number; distance: number; moved: boolean } | null>(null);
+  const suppressClick = useRef(false);
   const active = wrap(turn);
 
   useEffect(() => {
@@ -62,6 +65,8 @@ export default function CircularCarousel({ items, label, navigationLabel, stageT
       cancelled = true;
       scene.current?.dispose();
       scene.current = null;
+      drag.current = null;
+      setDragging(false);
       setHosts([]);
       lock.current = false;
       setBusy(false);
@@ -70,15 +75,32 @@ export default function CircularCarousel({ items, label, navigationLabel, stageT
 
   useEffect(() => {
     if (!scene.current) { lock.current = false; setBusy(false); return; }
-    scene.current.select(turn, reduced, () => { lock.current = false; setBusy(false); });
-  }, [turn, reduced]);
+    if (reduced) scene.current.select(currentTurn.current, true, () => { lock.current = false; setBusy(false); });
+  }, [reduced]);
 
-  function move(delta: number) {
-    if (lock.current || !delta) return;
+  function settle(next: number) {
     lock.current = Boolean(scene.current && !reduced);
     setBusy(lock.current);
-    currentTurn.current += delta;
-    setTurn(currentTurn.current);
+    currentTurn.current = next;
+    setTurn(next);
+    scene.current?.select(next, reduced, () => { lock.current = false; setBusy(false); });
+  }
+
+  function move(delta: number) {
+    if (lock.current || drag.current || !delta) return;
+    settle(currentTurn.current + delta);
+  }
+
+  function finishDrag(event: PointerEvent<HTMLDivElement>, cancelled = false) {
+    const gesture = drag.current;
+    if (!gesture || gesture.id !== event.pointerId) return;
+    drag.current = null;
+    setDragging(false);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    if (gesture.moved) {
+      suppressClick.current = true;
+      settle(cancelled ? gesture.turn : Math.round(gesture.position));
+    }
   }
 
   function card(index: number, projected: boolean) {
@@ -91,17 +113,40 @@ export default function CircularCarousel({ items, label, navigationLabel, stageT
       aria-hidden={projected && index !== active} dir={locale === "ar" ? "rtl" : "ltr"}>
       <div className={styles.cardTop}><span>{String(index + 1).padStart(2, "0")} / {total}</span><span className={styles.brand}>BlueMind</span></div>
       {Icon ? <Icon className={styles.stepIcon} size={34} strokeWidth={1.5} aria-hidden="true" /> :
-        <Image src={step.image!.src} width={step.image!.width} height={step.image!.height} alt="" aria-hidden="true" unoptimized className={`${styles.stepIcon} ${styles.imageIcon}`} />}
-      <h2>{translate(step.title)}</h2>
-      <p>{translate(step.text)}</p>
+        <Image src={step.image!.src} width={step.image!.width} height={step.image!.height} alt="" aria-hidden="true" unoptimized draggable={false} className={`${styles.stepIcon} ${styles.imageIcon}`} />}
+      <h2>{translate(step.title)}{step.titleSuffix}</h2>
+      <p tabIndex={Array.isArray(step.text) && index === active ? 0 : undefined}>{typeof step.text === "string" ? translate(step.text) : step.text.map(translate).join(" ")}</p>
       <div className={styles.detail} aria-hidden="true"><span /><span /><span /></div>
       {projected && neighbor && <button type="button" className={styles.sideTarget} tabIndex={-1} disabled={busy}
         aria-label={`${translate("Select step")} ${index + 1}`} onClick={() => move(delta)} />}
     </article>;
   }
 
-  return <div className={styles.carousel} data-no-translate data-renderer={hosts.length ? "css3d" : "flat"} data-selected={active} tabIndex={0} role="region" aria-roledescription="carousel" aria-label={translate(label)}
+  return <div className={styles.carousel} data-no-translate data-renderer={hosts.length ? "css3d" : "flat"} data-selected={active} data-dragging={dragging} tabIndex={0} role="region" aria-roledescription="carousel" aria-label={translate(label)}
+      onPointerDown={event => {
+        suppressClick.current = false;
+        if (event.pointerType !== "mouse" || event.button !== 0 || lock.current || !scene.current || !(event.target as Element).closest("article")) return;
+        // Capture only after the drag threshold so ordinary side-card clicks still work.
+        drag.current = { id: event.pointerId, x: event.clientX, y: event.clientY, turn: currentTurn.current, position: currentTurn.current, distance: stage.current?.querySelector<HTMLElement>('[data-active="true"]')?.offsetWidth || 330, moved: false };
+      }}
+      onPointerMove={event => {
+        const gesture = drag.current;
+        if (!gesture || gesture.id !== event.pointerId) return;
+        if (event.buttons !== 1) { finishDrag(event, true); return; }
+        const dx = gesture.x - event.clientX;
+        if (!gesture.moved && (Math.abs(dx) < 7 || Math.abs(dx) < Math.abs(event.clientY - gesture.y))) return;
+        event.preventDefault();
+        event.currentTarget.setPointerCapture(event.pointerId);
+        if (!gesture.moved) setDragging(true);
+        gesture.moved = true;
+        gesture.position = gesture.turn + Math.max(-1, Math.min(1, dx / gesture.distance));
+        if (!reduced) scene.current?.preview(gesture.position);
+      }}
+      onPointerUp={event => finishDrag(event)} onPointerCancel={event => finishDrag(event, true)} onLostPointerCapture={event => finishDrag(event, true)}
+      onPointerLeave={event => { if (drag.current && !drag.current.moved) finishDrag(event, true); }}
+      onClickCapture={event => { if (suppressClick.current) { event.preventDefault(); event.stopPropagation(); suppressClick.current = false; } }}
       onKeyDown={event => {
+        suppressClick.current = false;
         if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
           event.preventDefault(); move(event.key === "ArrowRight" ? 1 : -1);
         }

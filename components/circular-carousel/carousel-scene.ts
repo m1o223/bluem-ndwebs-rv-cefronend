@@ -43,6 +43,12 @@ export function createCarouselScene(container: HTMLElement, className: string, c
   observer.observe(container);
   return {
     hosts: objects.map(object => object.element),
+    preview(turn: number) {
+      cancelAnimationFrame(frame);
+      ring.rotation.y = -turn * STEP_ANGLE;
+      container.dataset.rotation = String(ring.rotation.y);
+      render();
+    },
     select(turn: number, immediate: boolean, complete: () => void) {
       cancelAnimationFrame(frame);
       const from = ring.rotation.y;
