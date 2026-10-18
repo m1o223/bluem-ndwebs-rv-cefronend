@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { BrandLockup } from "../brand-lockup";
+import { BlueMindLogo } from "../blue-mind-logo";
 import { useLocalization } from "../localization-provider";
-import { INTRO_DURATION, INTRO_ID, INTRO_STORAGE_KEY, createIntroBootstrap, words } from "./intro-config";
+import { INTRO_DURATION, INTRO_ID, INTRO_STORAGE_KEY, createIntroBootstrap, introVariables, timeline, wordRows } from "./intro-config";
 import styles from "./brand-intro.module.css";
 
 declare global {
@@ -16,17 +17,20 @@ const skipLabels = { en: "Skip Intro", sv: "Hoppa \u00f6ver intro", ar: "\u062a\
 export default function BrandIntro({ replayOnRefresh = false }: { replayOnRefresh?: boolean }) {
   const [ended, setEnded] = useState(false);
   const root = useRef<HTMLDivElement>(null);
+  const pageAnimations = useRef<Animation[]>([]);
   const { locale } = useLocalization();
   const finish = useCallback(() => {
     const focused = root.current?.contains(document.activeElement);
     if (window.__blueMindIntro) window.__blueMindIntro.playing = false;
     try { localStorage.setItem(INTRO_STORAGE_KEY, "complete"); } catch { /* Storage may be disabled. */ }
     root.current?.getAnimations({ subtree: true }).forEach(animation => animation.cancel());
+    pageAnimations.current.forEach(animation => animation.cancel());
     setEnded(true);
     if (focused) document.querySelector<HTMLAnchorElement>('header a[href="/"]')?.focus({ preventScroll: true });
   }, []);
 
   useEffect(() => {
+    if (ended) return;
     const element = root.current;
     const state = window.__blueMindIntro;
     if (!state?.playing || !element || getComputedStyle(element).display === "none") {
@@ -35,6 +39,9 @@ export default function BrandIntro({ replayOnRefresh = false }: { replayOnRefres
       return;
     }
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
+    pageAnimations.current = document.getAnimations().filter(animation => animation instanceof CSSAnimation && animation.animationName === "bluemindIntroHome");
+    // Anchor every layer to one document clock, including a late hydration.
+    [...element.getAnimations({ subtree: true }), ...pageAnimations.current].forEach(animation => { animation.startTime = state.started; });
     const onMotion = () => { if (motion.matches) finish(); };
     const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") finish(); };
     // Keyboard and assistive-technology navigation can reach the real page immediately.
@@ -52,38 +59,37 @@ export default function BrandIntro({ replayOnRefresh = false }: { replayOnRefres
       document.removeEventListener("keydown", onKey);
       document.removeEventListener("focusin", onFocus);
       element.removeEventListener("wheel", onWheel);
+      pageAnimations.current.forEach(animation => animation.cancel());
     };
-  }, [finish]);
+  }, [finish, ended]);
 
   if (ended) return null;
 
   return <>
     <link rel="preload" as="image" href="/images/brand/bluemind-original-logo-transparent.png" />
     <style id={`${INTRO_ID}-gate`}>{"/* First-visit animation gate. */"}</style>
-    <div id={INTRO_ID} ref={root} className={styles.root} data-no-translate>
-      <svg className={styles.veil} width="100%" height="100%" aria-hidden="true" focusable="false">
-        <defs><mask id="bluemind-intro-reveal" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%" style={{ maskType: "luminance" }}>
-          <rect width="100%" height="100%" fill="white" />
-          <circle data-intro-reveal className={styles.aperture} cx="50%" cy="50%" r="75%" fill="black" onAnimationEnd={finish} />
-        </mask></defs>
-        <rect width="100%" height="100%" fill="#fff" mask="url(#bluemind-intro-reveal)" />
-      </svg>
+    <div id={INTRO_ID} ref={root} className={styles.root} style={introVariables as CSSProperties} data-no-translate onAnimationEnd={event => { if (event.target === event.currentTarget) finish(); }}>
+      <div className={styles.veil} aria-hidden="true" />
       <div className={styles.art} aria-hidden="true">
-        <div className={styles.contraction}>
-          <div className={styles.orbit} data-intro-orbit>
-            {words.map((word, index) => {
-              const [x, y] = entrances[index % entrances.length];
-              const delay = 40 + index * 18;
-              return <span key={word} className={styles.slot} style={{ "--angle": `${index * 360 / words.length}deg`, "--mobile-angle": `${index * 36}deg` } as CSSProperties}>
-                <span className={styles.arrival} data-intro-word style={{ "--from-x": `${x}vw`, "--from-y": `${y}vh`, "--delay": `${delay}ms`, "--travel": `${1200 - delay}ms` } as CSSProperties}>
-                  <span className={styles.word}>{word}</span>
-                </span>
-              </span>;
-            })}
-          </div>
-        </div>
         <div className={styles.brandGroup} data-intro-brand>
-          <BrandLockup className={styles.lockup} logoClassName={styles.symbol} priority solidLogo />
+          <div className={styles.logoTravel}>
+            <div className={styles.orbit} data-intro-orbit>
+              <div className={styles.wordCloud} data-intro-words>
+                {wordRows.map((row, rowIndex) => <div className={styles.row} key={rowIndex} data-intro-row>
+                  {row.map((word, column) => {
+                    const index = wordRows.slice(0, rowIndex).reduce((sum, entry) => sum + entry.length, 0) + column;
+                    const [x, y] = entrances[index % entrances.length];
+                    const delay = 40 + index * 18;
+                    return <span key={word} className={styles.arrival} data-intro-word style={{ "--from-x": `${x}vw`, "--from-y": `${y}vh`, "--delay": `${delay}ms`, "--travel": `${timeline.formation - delay}ms` } as CSSProperties}>{word}</span>;
+                  })}
+                </div>)}
+              </div>
+              <div className={styles.logoLayer} data-intro-logo>
+                <div className={styles.orientation} data-intro-orientation><BlueMindLogo className={styles.symbol} priority solid /></div>
+              </div>
+            </div>
+          </div>
+          <BrandLockup className={styles.wordmark} logoClassName={styles.hiddenLogo} />
         </div>
       </div>
       <button type="button" className={styles.skip} onClick={finish}>{skipLabels[locale]}</button>

@@ -16,7 +16,7 @@ for (const width of [320, 375, 768, 1440]) {
       page.on("pageerror", error => errors.push(error.message));
       await page.route("**/api/**", route => { apiRequests.push(route.request().url()); return route.abort(); });
       await page.goto("/");
-      await expect(page.locator("#bluemind-brand-intro")).toHaveCount(0, { timeout: 6000 });
+      await expect(page.locator("#bluemind-brand-intro")).toHaveCount(0, { timeout: 7000 });
       await page.evaluate(() => document.fonts.ready);
       const hero = page.locator("[data-hero]");
       const trigger = hero.getByRole("button", { name: locale.trigger, exact: true });

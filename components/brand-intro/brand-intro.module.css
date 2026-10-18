@@ -9,50 +9,57 @@
   touch-action: none;
   color: #142d4e;
   font-family: var(--font-body-family);
-  --radius: clamp(260px, 29vmin, 280px);
   --mark-width: 210px;
   --mark-gap: 20px;
-  animation: retire 1ms 4000ms forwards;
+  --intro-logo-size: 124px;
+  animation: retire 1ms var(--intro-end) forwards;
 }
-.veil { position: absolute; inset: 0; display: block; }
-.aperture { transform-origin: 50% 50%; transform: scale(0); animation: reveal 500ms 3500ms cubic-bezier(.32, 0, .18, 1) forwards; }
+.veil { position: absolute; inset: 0; background: #fff; animation: unveil 150ms var(--intro-revealStart) both; }
 .art { position: absolute; inset: 0; pointer-events: none; }
-.contraction, .orbit, .brandGroup { position: absolute; left: 50%; top: 50%; }
-.contraction { width: 0; height: 0; animation: contract 400ms 2300ms cubic-bezier(.55, .02, .3, 1) both; }
-.orbit { width: 0; height: 0; animation: orbit 900ms 1400ms cubic-bezier(.45, .1, .85, .65) both; }
-.slot { position: absolute; left: 0; top: 0; width: 0; height: 0; transform: rotate(var(--angle)) translateY(calc(-1 * var(--radius))); }
-.arrival { display: block; width: 0; height: 0; animation: arrive var(--travel) var(--delay) cubic-bezier(.22, .65, .22, 1) both; }
-.word { display: block; width: max-content; transform: translate(-50%, -50%); font-size: 10px; line-height: 1; font-weight: 500; letter-spacing: 0; white-space: nowrap; color: #142d4e; }
-.slot:nth-child(3n + 2) .word { color: #627c98; }
-.slot:nth-child(3n) .word { color: #a1adbb; }
-.brandGroup { width: max-content; animation: collapse 300ms 3200ms cubic-bezier(.65, .02, .45, 1) both; }
-.lockup { gap: var(--mark-gap); }
-.lockup .symbol { --logo-size: 124px; animation: emerge 400ms 2300ms ease-out both, makeRoom 400ms 2700ms cubic-bezier(.22, .65, .22, 1) forwards; }
-.lockup > span:last-child { width: var(--mark-width); gap: 5px; animation: wordmark 400ms 2700ms cubic-bezier(.22, .65, .22, 1) both; }
-.lockup > span:last-child > span:first-child { font-size: 42px; letter-spacing: 0; }
-.lockup > span:last-child > span:last-child { display: block; font-size: 18px; letter-spacing: 0; }
+.brandGroup { position: absolute; left: 50%; top: 50%; width: 0; height: 0; animation: collapse calc(var(--intro-collapseEnd) - var(--intro-collapseStart)) var(--intro-collapseStart) cubic-bezier(.65,.02,.45,1) both; }
+.logoTravel, .orbit { position: absolute; width: 0; height: 0; }
+.logoTravel { animation: makeRoom calc(var(--intro-wordmarkEnd) - var(--intro-rotationEnd)) var(--intro-rotationEnd) cubic-bezier(.22,.65,.22,1) both; }
+.orbit { animation: orbit calc(var(--intro-rotationEnd) - var(--intro-rotationStart)) var(--intro-rotationStart) linear both; }
+.wordCloud { position: absolute; width: max-content; transform: translate(-50%,-50%); animation: contract calc(var(--intro-morphEnd) - var(--intro-morphStart)) var(--intro-morphStart) ease-in-out both; }
+.row { display: flex; align-items: center; justify-content: center; gap: 14px; height: 38px; }
+.arrival { display: block; font-size: 14px; line-height: 1; font-weight: 500; letter-spacing: 0; white-space: nowrap; animation: arrive var(--travel) var(--delay) cubic-bezier(.22,.65,.22,1) both; }
+.row:nth-child(3n + 2) .arrival { color: #627c98; }
+.row:nth-child(3n) .arrival { color: #a1adbb; }
+.logoLayer { position: absolute; width: var(--intro-logo-size); height: var(--intro-logo-size); left: calc(var(--intro-logo-size) / -2); top: calc(var(--intro-logo-size) / -2); animation: emerge calc(var(--intro-morphEnd) - var(--intro-morphStart)) var(--intro-morphStart) ease-in-out both; }
+.orientation { width: 100%; height: 100%; animation: settleOrientation calc(var(--intro-rotationEnd) - var(--intro-morphEnd)) var(--intro-morphEnd) cubic-bezier(.2,.1,.4,1) both; }
+.logoLayer .symbol { --logo-size: var(--intro-logo-size); }
+.wordmark { position: absolute; top: 0; left: calc((var(--intro-logo-size) - var(--mark-width) + var(--mark-gap)) / 2); width: var(--mark-width); animation: wordmark calc(var(--intro-wordmarkEnd) - var(--intro-rotationEnd)) var(--intro-rotationEnd) cubic-bezier(.22,.65,.22,1) both; }
+.wordmark .hiddenLogo { display: none; }
+.wordmark > span:last-child { width: var(--mark-width); gap: 5px; }
+.wordmark > span:last-child > span:first-child { font-size: 42px; letter-spacing: 0; }
+.wordmark > span:last-child > span:last-child { display: block; font-size: 18px; letter-spacing: 0; }
 .root .skip { position: absolute; top: max(22px, env(safe-area-inset-top)); right: max(24px, env(safe-area-inset-right)); min-height: 44px; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 6px; background: #fff; color: #142d4e; font: inherit; font-size: 12px; cursor: pointer; transition: background 200ms; }
 .root .skip:hover { background: #edf3fa; }
 .skip:focus-visible { outline: 2px solid #142d4e; outline-offset: 4px; }
-@keyframes arrive { from { opacity: 0; transform: translate(var(--from-x), var(--from-y)); } 18% { opacity: .35; } to { opacity: 1; transform: translate(0, 0); } }
-@keyframes orbit { from { transform: rotate(0deg); } to { transform: rotate(720deg); } }
-@keyframes contract { from { transform: scale(1); opacity: 1; } to { transform: scale(.08); opacity: 0; } }
+@keyframes arrive { from { opacity: 0; transform: translate(var(--from-x),var(--from-y)); } 18% { opacity: .35; } to { opacity: 1; transform: translate(0,0); } }
+/* One accumulated rotation: 1200/1800/2400/2700/3500ms = 0/360/720/810/1260deg. */
+@keyframes orbit {
+  0% { transform: rotate(0deg); animation-timing-function: cubic-bezier(.33,0,.66,.66); }
+  26.0869565217% { transform: rotate(360deg); animation-timing-function: linear; }
+  52.1739130435% { transform: rotate(720deg); animation-timing-function: cubic-bezier(.33,.66,.66,.7); }
+  65.2173913043% { transform: rotate(810deg); animation-timing-function: cubic-bezier(.2,.1,.4,1); }
+  100% { transform: rotate(1260deg); }
+}
+@keyframes contract { from { transform: translate(-50%,-50%) scale(1); opacity: 1; } to { transform: translate(-50%,-50%) scale(.12); opacity: 0; } }
 @keyframes emerge { from { opacity: 0; } to { opacity: 1; } }
-@keyframes makeRoom { from { transform: translateX(calc((var(--mark-width) + var(--mark-gap)) / 2)); } to { transform: translateX(0); } }
-/* Reserve the final lockup width while the symbol alone remains centered. */
-.lockup .symbol { transform: translateX(calc((var(--mark-width) + var(--mark-gap)) / 2)); }
-@keyframes wordmark { from { clip-path: inset(0 100% 0 0); opacity: 0; transform: translateX(-12px); } to { clip-path: inset(0 0 0 0); opacity: 1; transform: translateX(0); } }
-@keyframes collapse { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 99% { opacity: 1; } 100% { transform: translate(-50%, -50%) scale(.002); opacity: 0; } }
-@keyframes reveal { from { transform: scale(0); } to { transform: scale(1); } }
+/* Counter-orient the original asset gradually, without an extra visible revolution. */
+@keyframes settleOrientation { from { transform: rotate(0deg); } to { transform: rotate(-180deg); } }
+@keyframes makeRoom { from { transform: translateX(0); } to { transform: translateX(calc((var(--mark-width) + var(--mark-gap)) / -2)); } }
+@keyframes wordmark { from { clip-path: inset(0 100% 0 0); opacity: 0; transform: translate(-12px,-50%); } to { clip-path: inset(0); opacity: 1; transform: translate(0,-50%); } }
+@keyframes collapse { 0% { transform: scale(1); opacity: 1; } 90% { opacity: 1; } 100% { transform: scale(.002); opacity: 0; } }
+@keyframes unveil { from { opacity: 1; } to { opacity: 0; } }
 @keyframes retire { to { visibility: hidden; pointer-events: none; } }
 @media (max-width: 620px), (max-height: 560px) {
-  .root { --radius: min(31vmin, 150px); --mark-width: 156px; --mark-gap: 16px; }
-  .slot { transform: rotate(var(--mobile-angle)) translateY(calc(-1 * var(--radius))); }
-  .slot:nth-child(n + 11) { display: none; }
-  .word { font-size: 9px; }
-  .lockup .symbol { --logo-size: 94px; }
-  .lockup > span:last-child > span:first-child { font-size: 31px; }
-  .lockup > span:last-child > span:last-child { font-size: 14px; }
+  .root { --mark-width: 156px; --mark-gap: 16px; --intro-logo-size: 94px; }
+  .row { height: 29px; gap: 8px; }
+  .arrival { font-size: 11px; }
+  .wordmark > span:last-child > span:first-child { font-size: 31px; }
+  .wordmark > span:last-child > span:last-child { font-size: 14px; }
   .root .skip { top: max(14px, env(safe-area-inset-top)); right: max(14px, env(safe-area-inset-right)); }
 }
 @media (prefers-reduced-motion: reduce) { .root { display: none !important; } .root * { animation: none !important; transition: none !important; } }
