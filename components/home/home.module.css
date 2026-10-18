@@ -251,6 +251,7 @@
 }
 @media (max-width: 430px) {
   .headerInner { width: calc(100% - 24px); gap: 10px; }
+  :global(body:has(.home-page)) .navPanel { left: -12px; right: -12px; }
   .brand { font-size: 17px; gap: 7px; letter-spacing: -.5px; }
   .brandLogo { --logo-size: 52px; }
   .brandSub { display: none; }

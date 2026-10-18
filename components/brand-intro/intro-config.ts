@@ -21,12 +21,13 @@ export const introVariables = Object.fromEntries(Object.entries(timeline).map(([
 const pageRules = [
   "@keyframes bluemindIntroHome { from { opacity: 0; translate: 0 12px; } to { opacity: 1; translate: 0 0; } }",
   ...[
-    ["[data-hero] h1", timeline.revealStart],
-    ["[data-hero] > div > div:first-child > p", timeline.revealStart + 80],
-    ["[data-hero] > div > div:first-child > div", timeline.revealStart + 160],
-    ["[data-hero-visual], .home-page [data-hero] > div > a", timeline.revealStart + 250],
-    ["> :not([data-hero])", timeline.revealStart + 250],
-  ].map(([selector, delay]) => `.home-page ${selector} { animation: bluemindIntroHome 550ms ${delay}ms cubic-bezier(.22,.65,.22,1) both; }`),
+    ["body:has(.home-page) > header", timeline.revealStart],
+    [".home-page [data-hero] h1", timeline.revealStart + 60],
+    [".home-page [data-hero] > div > div:first-child > p", timeline.revealStart + 120],
+    [".home-page [data-hero] > div > div:first-child > div", timeline.revealStart + 180],
+    [".home-page [data-hero-visual], .home-page [data-hero] > div > a", timeline.revealStart + 250],
+    [".home-page > :not([data-hero])", timeline.revealStart + 250],
+  ].map(([selector, delay]) => `${selector} { animation: bluemindIntroHome 550ms ${delay}ms cubic-bezier(.22,.65,.22,1) both; }`),
 ];
 
 // CSSOM gating runs before paint without changing React-owned markup during hydration.

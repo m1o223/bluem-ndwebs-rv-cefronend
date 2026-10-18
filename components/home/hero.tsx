@@ -11,7 +11,7 @@ export default function Hero() {
         <div className={styles.copy}>
           <p className={`${shared.eyebrow} ${styles.eyebrow}`}><span className={shared.blueDot} /> BLUEMIND WEB SERVICE</p>
           <h1 id="hero-title" className={styles.headline}>
-            <span>We design.</span>
+            <span>We design.</span>{" "}
             <span>We develop.</span>
             <span className={styles.accent}>You move forward.</span>
           </h1>
