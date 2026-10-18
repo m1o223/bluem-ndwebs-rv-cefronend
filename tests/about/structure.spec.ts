@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import sharp from "sharp";
 import { sections } from "../../app/about/sections";
 
 test.beforeEach(async ({ page, baseURL }) => {
@@ -32,6 +33,15 @@ for (const width of [320, 375, 768, 1024, 1440, 1920]) {
       const contentFits = await active.evaluate(element => element.scrollHeight <= element.clientHeight + 1);
       await region.screenshot({ path: info.outputPath(`panel-${index}.png`) });
       expect(contentFits).toBe(true);
+      // DOM bounds can pass while the browser clips a CSS3D painted layer.
+      for (const check of await active.locator("li svg").all()) {
+        const { data, info } = await sharp(await check.screenshot()).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+        let ink = 0;
+        for (let offset = 0; offset < data.length; offset += info.channels) {
+          if (data[offset] < 180 && data[offset + 1] < 180 && data[offset + 3] > 200) ink++;
+        }
+        expect(ink, `Visible checkmark on section ${index + 1}`).toBeGreaterThan(8);
+      }
       if (width >= 1000) {
         expect(bounds!.height).toBeGreaterThanOrEqual(630);
         expect(Math.abs(bounds!.width - await active.evaluate(e => e.clientWidth))).toBeLessThan(3);

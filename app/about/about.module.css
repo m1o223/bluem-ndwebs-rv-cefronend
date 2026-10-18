@@ -9,9 +9,7 @@
 .scene[data-dragging="true"], .scene[data-dragging="true"] .panel { cursor: grabbing; user-select: none; }
 .scene::before { content: ""; position: absolute; width: 64%; height: 55px; left: 18%; bottom: 39px; border-radius: 50%; background: #142d4e06; box-shadow: 0 0 45px 20px #142d4e0b; transform: scaleY(.45); pointer-events: none; }
 .stage { position: absolute; inset: 0; overflow: hidden; }
-.face { backface-visibility: visible; }
-.face[data-back="true"] { border: 1px solid #cfdae7; pointer-events: none !important; }
-.face[data-back="true"] .panel { visibility: hidden; }
+.face { backface-visibility: hidden; }
 /* Flatten each wall's contents into one painted surface to prevent coplanar text artifacts. */
 .face .panel { contain: paint; isolation: isolate; backface-visibility: visible; border: 1px solid #cfdae7; box-shadow: 0 8px 16px #142d4e12; padding: 44px 48px 34px; }
 .face .panel h2 { font-size: 38px; min-height: 90px; margin-block: 32px; }

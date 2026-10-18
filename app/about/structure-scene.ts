@@ -31,19 +31,7 @@ export function createStructureScene(container: HTMLElement, className: string) 
   let disposed = false;
   let position = 0;
   let panelWidth = 520;
-  const normal = new Vector3();
-  const towardCamera = new Vector3();
-  const render = () => {
-    if (disposed) return;
-    assembly.updateMatrixWorld(true);
-    objects.forEach(object => {
-      normal.set(0, 0, 1).transformDirection(object.matrixWorld);
-      towardCamera.setFromMatrixPosition(object.matrixWorld).sub(camera.position).negate();
-      // Outline the reverse on the same surface; overlapping opaque DOM planes obscure text.
-      object.element.dataset.back = String(normal.dot(towardCamera) <= 0);
-    });
-    renderer.render(scene, camera);
-  };
+  const render = () => { if (!disposed) renderer.render(scene, camera); };
   function pose(turn: number) {
     const index = wrap(turn);
     const angle = [0, -FOLD, -(TAU - FOLD)][index] - Math.floor(turn / 3) * TAU;
