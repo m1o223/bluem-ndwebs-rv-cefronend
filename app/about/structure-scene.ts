@@ -56,6 +56,8 @@ export function createStructureScene(container: HTMLElement, className: string) 
     const presentationWidth = width * 0.7;
     // Solve the projected folded-wall width, keeping the front HTML at 1:1 pixel scale.
     panelWidth = presentationWidth * focalLength / (2 * focalLength - Math.sin(FOLD) * presentationWidth);
+    container.parentElement?.style.setProperty("--panel-width", `${panelWidth}px`);
+    container.parentElement?.style.setProperty("--panel-height", `${height - 100}px`);
     const offset = panelWidth * (1 + Math.cos(FOLD)) / 2;
     const depth = -Math.sin(FOLD) * panelWidth / 2;
     faces[1].x = offset;

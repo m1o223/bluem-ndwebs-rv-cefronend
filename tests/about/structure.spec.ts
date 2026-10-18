@@ -31,11 +31,16 @@ for (const width of [320, 375, 768, 1024, 1440, 1920]) {
       expect(bounds!.x).toBeGreaterThanOrEqual(-1);
       expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width + 1);
       const contentFits = await active.evaluate(element => element.scrollHeight <= element.clientHeight + 1);
-      await region.screenshot({ path: info.outputPath(`panel-${index}.png`) });
+      const snapshot = await region.screenshot({ path: info.outputPath(`panel-${index}.png`) });
+      const regionBounds = (await region.boundingBox())!;
       expect(contentFits).toBe(true);
       // DOM bounds can pass while the browser clips a CSS3D painted layer.
       for (const check of await active.locator("li svg").all()) {
-        const { data, info } = await sharp(await check.screenshot()).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+        const checkBounds = (await check.boundingBox())!;
+        const { data, info } = await sharp(snapshot).extract({
+          left: Math.round(checkBounds.x - regionBounds.x), top: Math.round(checkBounds.y - regionBounds.y),
+          width: Math.round(checkBounds.width), height: Math.round(checkBounds.height),
+        }).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
         let ink = 0;
         for (let offset = 0; offset < data.length; offset += info.channels) {
           if (data[offset] < 180 && data[offset + 1] < 180 && data[offset + 3] > 200) ink++;

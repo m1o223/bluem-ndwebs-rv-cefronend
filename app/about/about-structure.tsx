@@ -14,10 +14,10 @@ const controls = {
   ar: { previous: "\u0627\u0644\u0642\u0633\u0645 \u0627\u0644\u0633\u0627\u0628\u0642", next: "\u0627\u0644\u0642\u0633\u0645 \u0627\u0644\u062a\u0627\u0644\u064a", label: "\u0639\u0646 BlueMind" },
 };
 
-function Panel({ index, active }: { index: number; active: boolean }) {
+function Panel({ index, active, concealed = false }: { index: number; active: boolean; concealed?: boolean }) {
   const { locale, translate } = useLocalization();
   const section = sections[index];
-  return <article className={styles.panel} data-active={active} aria-hidden={!active} aria-roledescription="slide" aria-label={`${index + 1} / 3`} data-no-translate>
+  return <article className={styles.panel} style={concealed ? { visibility: "hidden" } : undefined} data-active={active} aria-hidden={!active} aria-roledescription="slide" aria-label={`${index + 1} / 3`} data-no-translate>
     <div className={styles.panelTop}>
       <span className={styles.number}>0{index + 1}</span>
       <img src={section.icon.src} width={section.icon.width} height={section.icon.height} alt="" className={styles.art} draggable={false} />
@@ -43,6 +43,7 @@ export default function AboutStructure() {
   const [reduced, setReduced] = useState(true);
   const [wide, setWide] = useState(false);
   const [hosts, setHosts] = useState<HTMLElement[]>([]);
+  const resting = hosts.length > 0 && !busy && !dragging;
   const stage = useRef<HTMLDivElement>(null);
   const engine = useRef<StructureScene | null>(null);
   const touch = useRef<{ x: number; y: number } | null>(null);
@@ -122,8 +123,9 @@ export default function AboutStructure() {
         touch.current = null;
       }} onTouchCancel={() => { touch.current = null; }}>
       <div className={styles.stage} ref={stage} aria-hidden={hosts.length ? undefined : true} />
-      {hosts.length ? hosts.map((host, index) => createPortal(<Panel index={index} active={selected === index} />, host, sections[index].id)) :
+      {hosts.length ? hosts.map((host, index) => createPortal(<Panel index={index} active={selected === index && !resting} concealed={selected === index && resting} />, host, sections[index].id)) :
         <div className={styles.flat}>{sections.map((section, index) => <div key={section.id} hidden={selected !== index}><Panel index={index} active={selected === index} /></div>)}</div>}
+      {resting && <div className={`${styles.face} ${styles.crisp}`}><Panel index={selected} active /></div>}
     </div>
     <div className={styles.controls} data-no-translate>
       <button type="button" className={styles.control} aria-disabled={busy} aria-label={text.previous} title={text.previous} onClick={() => move(-1)}><ArrowLeft size={20} aria-hidden="true" /></button>
