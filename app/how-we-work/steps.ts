@@ -9,7 +9,3 @@ export const steps = [
   { icon: CreditCard, title: "Payment", text: "Once everything is approved, we complete the agreed payment before the final handover." },
   { icon: PackageCheck, title: "Final Delivery", text: "You receive your completed website, along with the files and access included in your project." },
 ] as const;
-
-export const STEP_ANGLE = Math.PI * 2 / steps.length;
-export const DURATION = 780;
-export const wrap = (value: number) => (value % steps.length + steps.length) % steps.length;

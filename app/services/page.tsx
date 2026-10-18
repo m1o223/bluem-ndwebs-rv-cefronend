@@ -5,6 +5,7 @@ import homeStyles from "../../components/home/home.module.css";
 import buttonStyles from "../../components/home/hero.module.css";
 import pageStyles from "../../components/page-identity.module.css";
 import styles from "./services.module.css";
+import CircularCarousel from "../../components/circular-carousel/circular-carousel";
 
 const services = [
   { icon: "idea-to-ready" as const, title: "Your Idea, Your Website", text: "Any idea you have, we can turn into a website built around your vision." },
@@ -30,17 +31,14 @@ export default function ServicesPage() {
             <p className={`${styles.headline} ${styles.titleGroup}`}><ServiceIcon name="client-to-team" className={styles.headlineIcon} /><span>You bring the idea. We handle the rest.</span></p>
             <p>Tell us what you want, and we’ll turn your idea into a polished, ready-to-use website — without the technical headaches.</p>
           </div>
-          <div className={`${styles.sections} ${pageStyles.enter}`}>
-            {services.map((service, index) => (
-              <section key={service.title} className={styles.section} aria-labelledby={`service-${index + 1}`}>
-                <span className={styles.number} aria-hidden="true">0{index + 1}</span>
-                <div>
-                  <div className={styles.titleGroup}><ServiceIcon name={service.icon} className={service.icon === "no-knowledge" ? styles.compactIcon : service.icon === "no-headaches" ? styles.relaxedIcon : styles.sectionIcon} /><h2 id={`service-${index + 1}`}>{service.title}</h2></div>
-                  <p>{service.text}</p>
-                </div>
-              </section>
-            ))}
-          </div>
+        </div>
+        <CircularCarousel
+          items={services.map(({ icon, ...service }) => ({ ...service, image: icons[icon] }))}
+          label="Our website services"
+          navigationLabel="Services navigation"
+          stageTestId="services-stage"
+        />
+        <div className={`${homeStyles.container} ${pageStyles.content} ${styles.ctaContainer}`}>
           <section className={`${styles.cta} ${pageStyles.enter}`} aria-labelledby="services-cta-title">
             <div>
               <div className={styles.titleGroup}><ServiceIcon name="website-idea" className={styles.ctaIcon} /><h2 id="services-cta-title">Have an idea for your website?</h2></div>

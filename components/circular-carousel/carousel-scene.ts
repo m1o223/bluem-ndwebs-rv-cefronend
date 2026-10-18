@@ -1,15 +1,17 @@
 import { Group, PerspectiveCamera, Scene } from "three";
 import { CSS3DObject, CSS3DRenderer } from "three/addons/renderers/CSS3DRenderer.js";
-import { DURATION, STEP_ANGLE, steps } from "./steps";
 
-export function createCarouselScene(container: HTMLElement, className: string) {
+const DURATION = 780;
+
+export function createCarouselScene(container: HTMLElement, className: string, count: number) {
+  const STEP_ANGLE = Math.PI * 2 / count;
   const renderer = new CSS3DRenderer();
   const scene = new Scene();
   const ring = new Group();
   const camera = new PerspectiveCamera(38, 1, 1, 5000);
   scene.add(ring);
   container.append(renderer.domElement);
-  const objects = steps.map((_, index) => {
+  const objects = Array.from({ length: count }, (_, index) => {
     const element = document.createElement("div");
     element.className = className;
     element.dataset.face = String(index);
