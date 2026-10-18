@@ -30,8 +30,20 @@ for (const width of [320, 375, 768, 1024, 1440, 1920]) {
       expect(bounds!.x).toBeGreaterThanOrEqual(-1);
       expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width + 1);
       const contentFits = await active.evaluate(element => element.scrollHeight <= element.clientHeight + 1);
-      expect(contentFits).toBe(true);
       await region.screenshot({ path: info.outputPath(`panel-${index}.png`) });
+      expect(contentFits).toBe(true);
+      if (width >= 1000) {
+        expect(bounds!.height).toBeGreaterThanOrEqual(630);
+        expect(Math.abs(bounds!.width - await active.evaluate(e => e.clientWidth))).toBeLessThan(3);
+        expect(Math.abs(bounds!.x + bounds!.width / 2 - width / 2)).toBeLessThan(2);
+        if (index === 0) {
+          const spread = await region.locator('[data-face]').evaluateAll(elements => {
+            const boxes = elements.map(e => e.getBoundingClientRect());
+            return Math.max(...boxes.map(b => b.right)) - Math.min(...boxes.map(b => b.left));
+          });
+          expect(spread / Math.min(1800, width)).toBeCloseTo(0.7, 1);
+        }
+      }
       await region.getByRole("button", { name: "Next section", exact: true }).click();
     }
     await expect(region).toHaveAttribute("data-selected", "0");
@@ -46,33 +58,72 @@ for (const width of [320, 375, 768, 1024, 1440, 1920]) {
   });
 }
 
-test("automatic rotation pauses for hover, focus, play/pause, and reduced motion", async ({ page }) => {
+test("manual rotation only, seamless cycles and reduced motion", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1100 });
   await page.goto("/about");
   const region = page.getByRole("region", { name: "About BlueMind" });
   await expect(region).toHaveAttribute("data-renderer", "css3d");
-  await page.mouse.move(1, 1);
-  await expect(region).toHaveAttribute("data-selected", "1", { timeout: 5000 });
-  await region.hover();
-  const hovered = await region.getAttribute("data-selected");
+  await expect(region.getByRole("button")).toHaveCount(2);
   await page.waitForTimeout(3300);
-  await expect(region).toHaveAttribute("data-selected", hovered!);
-  await region.getByRole("button", { name: "Next section", exact: true }).focus();
-  await page.mouse.move(1, 1);
-  await page.waitForTimeout(3300);
-  await expect(region).toHaveAttribute("data-selected", hovered!);
-  await region.getByRole("button", { name: "Pause automatic rotation" }).click();
-  await page.locator("h1").click();
-  await page.waitForTimeout(3300);
-  await expect(region).toHaveAttribute("data-selected", hovered!);
-  await region.getByRole("button", { name: "Play automatic rotation" }).click();
-  await page.locator("h1").click();
-  await expect(region).not.toHaveAttribute("data-selected", hovered!, { timeout: 5000 });
+  await expect(region).toHaveAttribute("data-selected", "0");
+  const next = region.getByRole("button", { name: "Next section", exact: true });
+  for (let turn = 1; turn <= 6; turn++) {
+    await next.click();
+    await expect(next).toHaveAttribute("aria-disabled", "false");
+    await expect(region).toHaveAttribute("data-turn", String(turn));
+    await expect(region).toHaveAttribute("data-selected", String(turn % 3));
+  }
+  expect(Number(await region.locator('[data-rotation]').getAttribute('data-rotation'))).toBeCloseTo(-4 * Math.PI, 4);
+  const previous = region.getByRole("button", { name: "Previous section" });
+  for (let turn = 5; turn >= -3; turn--) {
+    await previous.click();
+    await expect(previous).toHaveAttribute("aria-disabled", "false");
+    await expect(region).toHaveAttribute("data-turn", String(turn));
+  }
+  expect(Number(await region.locator('[data-rotation]').getAttribute('data-rotation'))).toBeCloseTo(2 * Math.PI, 4);
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(region.getByRole("button", { name: "Automatic rotation disabled for reduced motion" })).toBeDisabled();
-  const reduced = await region.getAttribute("data-selected");
-  await page.waitForTimeout(3300);
-  await expect(region).toHaveAttribute("data-selected", reduced!);
+  await next.click();
+  await expect(region).toHaveAttribute("data-turn", "-2");
+  await expect(next).toHaveAttribute("aria-disabled", "false");
+});
+
+test("mouse drag tracks the assembly, settles both ways, ignores clicks and cancels safely", async ({ page }, info) => {
+  await page.setViewportSize({ width: 1440, height: 1200 });
+  await page.goto("/about");
+  const region = page.getByRole("region", { name: "About BlueMind" });
+  await expect(region).toHaveAttribute("data-renderer", "css3d");
+  const panel = region.locator('article[data-active="true"]');
+  await panel.scrollIntoViewIfNeeded();
+  const box = (await panel.boundingBox())!;
+  const x = box.x + box.width / 2;
+  const y = box.y + 180;
+  await page.mouse.click(x, y);
+  await expect(region).toHaveAttribute("data-selected", "0");
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x - 3, y);
+  await page.mouse.up();
+  await expect(region).toHaveAttribute("data-selected", "0");
+  for (const direction of [-1, 1]) {
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.mouse.move(x + direction * box.width * 0.36, y, { steps: 12 });
+    await expect(region.locator('[data-dragging="true"]')).toHaveCount(1);
+    const fractional = Number(await region.locator('[data-position]').getAttribute('data-position'));
+    expect(fractional % 1).not.toBe(0);
+    await region.screenshot({ path: info.outputPath(`drag-${direction}.png`) });
+    await page.mouse.up();
+    await expect(region.getByRole("button").first()).toHaveAttribute("aria-disabled", "false");
+    await expect(region).toHaveAttribute("data-selected", direction === -1 ? "1" : "0");
+    expect(await page.evaluate(() => getSelection()?.toString())).toBe("");
+  }
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x - 90, y, { steps: 4 });
+  await region.locator('[data-dragging]').dispatchEvent("pointercancel", { pointerId: 1, pointerType: "mouse" });
+  await page.mouse.up();
+  await expect(region).toHaveAttribute("data-selected", "0");
+  await expect(region.locator('[data-dragging]')).toHaveAttribute("data-dragging", "false");
 });
 
 test("touch swipes navigate without hijacking vertical scrolling", async ({ page }) => {
