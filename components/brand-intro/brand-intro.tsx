@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState, type CSSProperties } from "re
 import { BrandLockup } from "../brand-lockup";
 import { BlueMindLogo } from "../blue-mind-logo";
 import { useLocalization } from "../localization-provider";
-import { INTRO_DURATION, INTRO_ID, INTRO_STORAGE_KEY, createIntroBootstrap, introVariables, timeline, wordRows } from "./intro-config";
+import { INTRO_DURATION, INTRO_ID, INTRO_STORAGE_KEY, createIntroBootstrap, introVariables, mobileWordCount, timeline, words } from "./intro-config";
 import styles from "./brand-intro.module.css";
 
 declare global {
@@ -74,18 +74,24 @@ export default function BrandIntro({ replayOnRefresh = false }: { replayOnRefres
         <div className={styles.brandGroup} data-intro-brand>
           <div className={styles.logoTravel}>
             <div className={styles.orbit} data-intro-orbit>
-              <div className={styles.wordCloud} data-intro-words>
-                {wordRows.map((row, rowIndex) => <div className={styles.row} key={rowIndex} data-intro-row>
-                  {row.map((word, column) => {
-                    const index = wordRows.slice(0, rowIndex).reduce((sum, entry) => sum + entry.length, 0) + column;
-                    const [x, y] = entrances[index % entrances.length];
-                    const delay = 40 + index * 18;
-                    return <span key={word} className={styles.arrival} data-intro-word style={{ "--from-x": `${x}vw`, "--from-y": `${y}vh`, "--delay": `${delay}ms`, "--travel": `${timeline.formation - delay}ms` } as CSSProperties}>{word}</span>;
-                  })}
-                </div>)}
+              <div className={styles.wordRing} data-intro-words>
+                {words.map((word, index) => {
+                  const [x, y] = entrances[index % entrances.length];
+                  const delay = 40 + index * 28;
+                  const angle = index * 360 / words.length;
+                  const mobileAngle = index * 360 / mobileWordCount;
+                  return <span key={word} className={styles.slot} style={{
+                    "--x": Math.sin(angle * Math.PI / 180), "--y": -Math.cos(angle * Math.PI / 180), "--angle": `${angle}deg`,
+                    "--mobile-x": Math.sin(mobileAngle * Math.PI / 180), "--mobile-y": -Math.cos(mobileAngle * Math.PI / 180), "--mobile-angle": `${mobileAngle}deg`,
+                  } as CSSProperties}>
+                    <span className={styles.arrival} style={{ "--from-x": `${x}vw`, "--from-y": `${y}vh`, "--delay": `${delay}ms`, "--travel": `${timeline.formation - delay}ms` } as CSSProperties}>
+                      <span className={styles.word} data-intro-word>{word}</span>
+                    </span>
+                  </span>;
+                })}
               </div>
               <div className={styles.logoLayer} data-intro-logo>
-                <div className={styles.orientation} data-intro-orientation><BlueMindLogo className={styles.symbol} priority solid /></div>
+                <BlueMindLogo className={styles.symbol} priority solid />
               </div>
             </div>
           </div>

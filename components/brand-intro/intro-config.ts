@@ -2,16 +2,11 @@ export const INTRO_STORAGE_KEY = "bluemind:brand-intro:v1";
 export const INTRO_DURATION = 5350;
 export const INTRO_ID = "bluemind-brand-intro";
 
-export const wordRows = [
-  ["UI/UX", "WEB"], ["HTML", "CSS", "REACT", "APP"], ["DESIGN", "WEBSITE", "DIGITAL"],
-  ["JAVASCRIPT", "TYPESCRIPT", "API"],
-  ["FRONTEND", "CODE", "COMPONENTS", "BACKEND"],
-  ["DEVELOPMENT", "INTERFACE", "BUILD"],
-  ["RESPONSIVE", "ANIMATION", "TEST"], ["CREATIVE", "PERFORMANCE"], ["INNOVATION"],
-];
+export const words = ["CODE", "DESIGN", "HTML", "CSS", "JAVASCRIPT", "REACT", "TYPESCRIPT", "UI/UX", "FRONTEND", "BACKEND", "WEBSITE", "DEVELOPMENT"];
+export const mobileWordCount = 8;
 export const timeline = {
-  formation: 1050, rotationStart: 1200, firstTurn: 1800,
-  morphStart: 2400, morphEnd: 2700, rotationEnd: 3500,
+  formation: 1050, rotationStart: 1200, firstTurn: 2300,
+  morphStart: 2300, morphEnd: 2650, rotationEnd: 3500,
   wordmarkEnd: 3900, collapseStart: 4100, collapseEnd: 4450,
   revealStart: 4550, end: INTRO_DURATION,
 } as const;

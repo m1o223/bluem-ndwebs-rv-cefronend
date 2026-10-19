@@ -9,9 +9,10 @@
   touch-action: none;
   color: #142d4e;
   font-family: var(--font-body-family);
-  --mark-width: 210px;
-  --mark-gap: 20px;
-  --intro-logo-size: 124px;
+  --mark-width: 280px;
+  --mark-gap: 28px;
+  --intro-logo-size: 280px;
+  --ring-radius: min(220px, 36vmin);
   animation: retire 1ms var(--intro-end) forwards;
 }
 .veil { position: absolute; inset: 0; background: #fff; animation: unveil 150ms var(--intro-revealStart) both; }
@@ -19,47 +20,55 @@
 .brandGroup { position: absolute; left: 50%; top: 50%; width: 0; height: 0; animation: collapse calc(var(--intro-collapseEnd) - var(--intro-collapseStart)) var(--intro-collapseStart) cubic-bezier(.65,.02,.45,1) both; }
 .logoTravel, .orbit { position: absolute; width: 0; height: 0; }
 .logoTravel { animation: makeRoom calc(var(--intro-wordmarkEnd) - var(--intro-rotationEnd)) var(--intro-rotationEnd) cubic-bezier(.22,.65,.22,1) both; }
-.orbit { animation: orbit calc(var(--intro-rotationEnd) - var(--intro-rotationStart)) var(--intro-rotationStart) linear both; }
-.wordCloud { position: absolute; width: max-content; transform: translate(-50%,-50%); animation: contract calc(var(--intro-morphEnd) - var(--intro-morphStart)) var(--intro-morphStart) ease-in-out both; }
-.row { display: flex; align-items: center; justify-content: center; gap: 14px; height: 38px; }
-.arrival { display: block; font-size: 14px; line-height: 1; font-weight: 500; letter-spacing: 0; white-space: nowrap; animation: arrive var(--travel) var(--delay) cubic-bezier(.22,.65,.22,1) both; }
-.row:nth-child(3n + 2) .arrival { color: #627c98; }
-.row:nth-child(3n) .arrival { color: #a1adbb; }
+.orbit { transform-origin: 0 0; animation: orbit calc(var(--intro-rotationEnd) - var(--intro-rotationStart)) var(--intro-rotationStart) linear both; }
+.wordRing { position: absolute; width: 0; height: 0; animation: dissolve calc(var(--intro-morphEnd) - var(--intro-morphStart)) var(--intro-morphStart) ease-in-out both; }
+.slot { position: absolute; left: calc(var(--ring-radius) * var(--x)); top: calc(var(--ring-radius) * var(--y)); }
+.arrival { display: block; width: max-content; animation: arrive var(--travel) var(--delay) cubic-bezier(.22,.65,.22,1) both; }
+.word { display: block; transform: translate(-50%,-50%) rotate(var(--angle)); font-size: 14px; line-height: 1; font-weight: 500; letter-spacing: 0; white-space: nowrap; }
+.slot:nth-child(3n + 2) { color: #627c98; }
+.slot:nth-child(3n) { color: #a1adbb; }
 .logoLayer { position: absolute; width: var(--intro-logo-size); height: var(--intro-logo-size); left: calc(var(--intro-logo-size) / -2); top: calc(var(--intro-logo-size) / -2); animation: emerge calc(var(--intro-morphEnd) - var(--intro-morphStart)) var(--intro-morphStart) ease-in-out both; }
-.orientation { width: 100%; height: 100%; animation: settleOrientation calc(var(--intro-rotationEnd) - var(--intro-morphEnd)) var(--intro-morphEnd) cubic-bezier(.2,.1,.4,1) both; }
 .logoLayer .symbol { --logo-size: var(--intro-logo-size); }
+/* Center the original artwork, not its uneven transparent canvas. No asset is altered.
+   Original canvas: 1065x1212; centered 896px square starts at (86, 300). */
+.logoLayer .symbol::before {
+  mask-size: calc(var(--intro-logo-size) * 1065 / 896) calc(var(--intro-logo-size) * 1212 / 896);
+  mask-position: calc(var(--intro-logo-size) * -86 / 896) calc(var(--intro-logo-size) * -300 / 896);
+}
 .wordmark { position: absolute; top: 0; left: calc((var(--intro-logo-size) - var(--mark-width) + var(--mark-gap)) / 2); width: var(--mark-width); animation: wordmark calc(var(--intro-wordmarkEnd) - var(--intro-rotationEnd)) var(--intro-rotationEnd) cubic-bezier(.22,.65,.22,1) both; }
 .wordmark .hiddenLogo { display: none; }
 .wordmark > span:last-child { width: var(--mark-width); gap: 5px; }
-.wordmark > span:last-child > span:first-child { font-size: 42px; letter-spacing: 0; }
-.wordmark > span:last-child > span:last-child { display: block; font-size: 18px; letter-spacing: 0; }
+.wordmark > span:last-child > span:first-child { font-size: 56px; letter-spacing: 0; }
+.wordmark > span:last-child > span:last-child { display: block; font-size: 22px; letter-spacing: 0; }
 .root .skip { position: absolute; top: max(22px, env(safe-area-inset-top)); right: max(24px, env(safe-area-inset-right)); min-height: 44px; padding: 10px 14px; border: 1px solid #e2e8f0; border-radius: 6px; background: #fff; color: #142d4e; font: inherit; font-size: 12px; cursor: pointer; transition: background 200ms; }
 .root .skip:hover { background: #edf3fa; }
 .skip:focus-visible { outline: 2px solid #142d4e; outline-offset: 4px; }
 @keyframes arrive { from { opacity: 0; transform: translate(var(--from-x),var(--from-y)); } 18% { opacity: .35; } to { opacity: 1; transform: translate(0,0); } }
-/* One accumulated rotation: 1200/1800/2400/2700/3500ms = 0/360/720/810/1260deg. */
+/* One fixed-axis rotation: 1200/2300/2650/3500ms = 0/360/450/720deg. */
 @keyframes orbit {
   0% { transform: rotate(0deg); animation-timing-function: cubic-bezier(.33,0,.66,.66); }
-  26.0869565217% { transform: rotate(360deg); animation-timing-function: linear; }
-  52.1739130435% { transform: rotate(720deg); animation-timing-function: cubic-bezier(.33,.66,.66,.7); }
-  65.2173913043% { transform: rotate(810deg); animation-timing-function: cubic-bezier(.2,.1,.4,1); }
-  100% { transform: rotate(1260deg); }
+  47.8260869565% { transform: rotate(360deg); animation-timing-function: cubic-bezier(.33,.42,.66,.57); }
+  63.0434782609% { transform: rotate(450deg); animation-timing-function: cubic-bezier(.33,.34,.66,1); }
+  100% { transform: rotate(720deg); }
 }
-@keyframes contract { from { transform: translate(-50%,-50%) scale(1); opacity: 1; } to { transform: translate(-50%,-50%) scale(.12); opacity: 0; } }
+@keyframes dissolve { from { opacity: 1; } to { opacity: 0; } }
 @keyframes emerge { from { opacity: 0; } to { opacity: 1; } }
-/* Counter-orient the original asset gradually, without an extra visible revolution. */
-@keyframes settleOrientation { from { transform: rotate(0deg); } to { transform: rotate(-180deg); } }
 @keyframes makeRoom { from { transform: translateX(0); } to { transform: translateX(calc((var(--mark-width) + var(--mark-gap)) / -2)); } }
 @keyframes wordmark { from { clip-path: inset(0 100% 0 0); opacity: 0; transform: translate(-12px,-50%); } to { clip-path: inset(0); opacity: 1; transform: translate(0,-50%); } }
 @keyframes collapse { 0% { transform: scale(1); opacity: 1; } 90% { opacity: 1; } 100% { transform: scale(.002); opacity: 0; } }
 @keyframes unveil { from { opacity: 1; } to { opacity: 0; } }
 @keyframes retire { to { visibility: hidden; pointer-events: none; } }
+@media (max-width: 959px) {
+  .root { --intro-logo-size: 240px; --mark-width: 240px; --mark-gap: 24px; }
+  .wordmark > span:last-child > span:first-child { font-size: 48px; }
+}
 @media (max-width: 620px), (max-height: 560px) {
-  .root { --mark-width: 156px; --mark-gap: 16px; --intro-logo-size: 94px; }
-  .row { height: 29px; gap: 8px; }
-  .arrival { font-size: 11px; }
-  .wordmark > span:last-child > span:first-child { font-size: 31px; }
-  .wordmark > span:last-child > span:last-child { font-size: 14px; }
+  .root { --mark-width: 132px; --mark-gap: 12px; --intro-logo-size: clamp(150px, 50vmin, 200px); }
+  .slot { left: calc(var(--ring-radius) * var(--mobile-x)); top: calc(var(--ring-radius) * var(--mobile-y)); }
+  .slot:nth-child(n + 9) { display: none; }
+  .word { transform: translate(-50%,-50%) rotate(var(--mobile-angle)); font-size: 11px; }
+  .wordmark > span:last-child > span:first-child { font-size: 26px; }
+  .wordmark > span:last-child > span:last-child { font-size: 13px; }
   .root .skip { top: max(14px, env(safe-area-inset-top)); right: max(14px, env(safe-area-inset-right)); }
 }
 @media (prefers-reduced-motion: reduce) { .root { display: none !important; } .root * { animation: none !important; transition: none !important; } }
