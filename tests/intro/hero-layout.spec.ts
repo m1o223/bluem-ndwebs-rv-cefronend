@@ -17,7 +17,9 @@ for (const [width, height] of [[320, 568], [375, 812], [620, 900], [768, 1024], 
     await page.evaluate(() => document.fonts.ready);
     const hero = page.locator("[data-hero]");
     const heading = hero.locator("h1");
-    const description = hero.getByText("Thoughtfully designed. Expertly developed.", { exact: false });
+    const description = hero.getByText("Websites built around your ideas, designed to move your business forward.", { exact: true });
+    await expect(heading.locator("span")).toHaveText(["We design & develop", "You move forward"]);
+    await expect(hero.getByText("BLUEMIND WEB SERVICE", { exact: true })).toHaveCount(0);
     const actions = hero.locator('a[href="/quote"]').locator("..");
     const visual = hero.locator("[data-hero-visual]");
     const cue = hero.locator('a[href="#selected-work"]');
@@ -40,6 +42,18 @@ for (const [width, height] of [[320, 568], [375, 812], [620, 900], [768, 1024], 
       expect(first.height).toBe(second.height);
     }
     const scene = rects[3]!;
+    const website = (await visual.locator("[data-website-preview]").boundingBox())!;
+    const code = (await visual.locator("[data-code-preview]").boundingBox())!;
+    expect(website.x + website.width / 2).toBeCloseTo(width / 2, 0);
+    expect(code.x).toBeLessThan(website.x);
+    expect(code.y).toBeLessThan(website.y);
+    if (width > 620) {
+      expect(website.width).toBeGreaterThan(code.width);
+      for (const card of await visual.locator('[class*="miniCard"]').all()) {
+        const box = (await card.boundingBox())!;
+        expect(box.x + box.width / 2).toBeGreaterThan(website.x + website.width / 2);
+      }
+    }
     for (const card of await visual.locator('[data-website-preview], [data-code-preview], [class*="miniCard"]').all()) {
       if (!await card.isVisible()) continue;
       const box = (await card.boundingBox())!;
@@ -66,6 +80,20 @@ for (const [width, height] of [[320, 568], [375, 812], [620, 900], [768, 1024], 
     expect(errors).toEqual([]);
   });
 }
+
+test("hero actions retain their existing modal and quote destinations", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  const hero = page.locator("[data-hero]");
+  await hero.getByRole("button", { name: "Ask BlueMind AI", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "BlueMind AI" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText(/BlueMind AI is coming soon/)).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await hero.getByRole("link", { name: "Get Started", exact: true }).click();
+  await expect(page).toHaveURL(/\/quote$/);
+});
 
 test("homepage reveal follows header, headline, description, actions, visuals without changing intro timing", async ({ page }) => {
   await page.clock.install();

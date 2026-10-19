@@ -23,21 +23,26 @@ for (const width of [320, 375, 768, 1440]) {
       await expect(trigger).toBeVisible();
       await expect(hero.locator('a[href="/quote"]')).toHaveCount(1);
       await expect(hero.locator('a[href="#selected-work"]')).toHaveCount(1);
-      await expect(hero.locator("h1 > span")).toHaveCount(3);
-      // Compare against the original link using the unchanged hero class and translated label.
+      await expect(hero.locator("h1 > span")).toHaveCount(2);
+      if (locale.code !== "en") {
+        await expect(hero.locator("h1 > span").first()).not.toHaveText("We design & develop");
+        await expect(hero.locator("h1 > span").last()).not.toHaveText("You move forward");
+        await expect(hero.getByText("Websites built around your ideas, designed to move your business forward.", { exact: true })).toHaveCount(0);
+      }
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+      await hero.screenshot({ path: testInfo.outputPath("hero.png") });
+      await expect(hero.locator("h1")).toHaveCSS("text-align", "center");
+      await expect(hero.locator('p[class*="description"]')).toHaveCSS("text-align", "center");
       const sizes = await trigger.evaluate(button => {
-        const link = document.createElement("a");
-        link.className = button.classList[0];
-        link.textContent = button.children[0].textContent;
-        link.style.position = "absolute";
-        button.parentElement!.append(link);
-        const original = link.getBoundingClientRect();
+        const range = document.createRange();
+        range.selectNodeContents(button.children[1]);
+        const label = range.getBoundingClientRect();
         const actual = button.getBoundingClientRect();
-        link.remove();
-        return { originalWidth: original.width, originalHeight: original.height, width: actual.width, height: actual.height };
+        return { left: actual.left, right: actual.right, labelLeft: label.left, labelRight: label.right, height: actual.height };
       });
-      expect(sizes.width).toBeCloseTo(sizes.originalWidth, 0);
-      expect(sizes.height).toBe(sizes.originalHeight);
+      expect(sizes.labelLeft).toBeGreaterThanOrEqual(sizes.left + 8);
+      expect(sizes.labelRight).toBeLessThanOrEqual(sizes.right - 8);
+      expect(sizes.height).toBe((await hero.locator('a[href="/quote"]').boundingBox())!.height);
       await trigger.scrollIntoViewIfNeeded();
       const scrollBefore = await page.evaluate(() => window.scrollY);
       await trigger.click();
