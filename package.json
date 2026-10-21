@@ -8,6 +8,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test:ask-ai": "playwright test --config playwright.ask-ai.config.ts",
+    "test:ai-server": "node --conditions=react-server --import tsx --test tests/ai/*.test.ts",
     "test:about": "playwright test --config playwright.about.config.ts",
     "check:encoding": "node scripts/check-translations-encoding.mjs",
     "prebuild": "npm run check:encoding"
@@ -18,8 +19,10 @@
   "dependencies": {
     "lucide-react": "^1.59.0",
     "next": "16.3.8",
+    "openai": "^7.41.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
     "three": "^0.186.1"
   },
   "devDependencies": {
@@ -28,6 +31,7 @@
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@types/three": "^0.186.0",
+    "tsx": "^4.23.15",
     "typescript": "7.0.2"
   }
 }

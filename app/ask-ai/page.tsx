@@ -1,5 +1,8 @@
 import ChatWorkspace from "./chat-workspace";
+import { aiAvailable } from "../lib/ai/server";
+
+export const dynamic = "force-dynamic";
 
 export default function AskAiPage() {
-  return <ChatWorkspace preview={process.env.VERCEL_ENV !== "production"} />;
+  return <ChatWorkspace available={aiAvailable()} />;
 }

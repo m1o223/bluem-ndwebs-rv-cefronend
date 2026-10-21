@@ -5,6 +5,8 @@ test.beforeEach(async ({ page, baseURL }) => {
     const origin = new URL(baseURL).origin;
     await page.route(`${origin}/**`, route => route.continue({ headers: { ...route.request().headers(), "x-vercel-trusted-oidc-idp-token": process.env.VERCEL_OIDC_TOKEN! } }));
   }
+  // Layout tests never spend API credits; real-provider smoke tests are separate and opt-in.
+  await page.route("**/api/ai/chat", route => route.fulfill({ contentType: "application/x-ndjson", body: '{"type":"error","code":"unavailable"}\n' }));
 });
 
 for (const width of [320, 375, 768, 1440]) {
@@ -14,14 +16,14 @@ for (const width of [320, 375, 768, 1440]) {
     const requests: string[] = [];
     page.on("pageerror", error => errors.push(error.message));
     page.on("console", message => { if (message.type() === "error") errors.push(message.text()); });
-    page.on("request", request => { if (request.url().includes("/api/") || request.method() !== "GET") requests.push(request.url()); });
+    page.on("request", request => { if (!request.url().endsWith("/api/ai/chat") && (request.url().includes("/api/") || request.method() !== "GET")) requests.push(request.url()); });
     await page.goto("/ask-ai");
     await expect(page.locator("header, footer")).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "BlueMind AI" })).toBeVisible();
     await expect(page.getByText("What can I help you create?")).toBeVisible();
     await expect(page.locator("img")).toHaveAttribute("src", /bluemind-original-logo-transparent/);
     await expect(page.getByRole("button", { name: "Send message" })).toBeDisabled();
-    await expect(page.getByRole("status")).toHaveText("AI responses are not connected");
+    await expect(page.getByRole("status")).toHaveText(/AI responses are not connected|Messages are sent to OpenAI/);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
     await page.screenshot({ path: info.outputPath("empty.png") });
     for (const suggestion of ["Create a website", "Design a page", "Improve my website", "Business ideas", "Help me get started", "Explore our services"]) {

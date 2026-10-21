@@ -31,6 +31,12 @@
 .messages { display: flex; flex-direction: column; gap: 20px; width: min(100%, 800px); margin: 0 auto; }
 .message { align-self: flex-end; max-width: 85%; padding: 14px 18px; border-radius: 8px; background: #edf3fa; animation: message-enter 180ms ease-out both; }
 .chat .message p { margin: 0; font-size: 15px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
+.assistant { align-self: flex-start; background: #fff; border: 1px solid #e0e5eb; }
+.assistant small { display: block; margin-top: 8px; color: #697482; }
+.chat .replyStatus { margin: 0; font-size: 13px; color: #697482; }
+.replyError { font-size: 14px; color: #9c3030; }
+.replyError p { margin: 0 0 8px; }
+.replyError button { padding: 8px 12px; background: #fff; color: #142d4e; border: 1px solid #e0e5eb; border-radius: 6px; cursor: pointer; }
 .composerArea { width: min(100%, 1016px); min-width: 0; justify-self: center; padding: 16px 28px max(clamp(36px, 6dvh, 64px), env(safe-area-inset-bottom)); }
 .suggestionReveal { display: grid; grid-template-rows: 1fr; opacity: 1; transition: grid-template-rows 180ms ease, opacity 180ms ease, visibility 180ms; }
 .suggestionReveal[data-hidden="true"] { grid-template-rows: 0fr; opacity: 0; visibility: hidden; }
