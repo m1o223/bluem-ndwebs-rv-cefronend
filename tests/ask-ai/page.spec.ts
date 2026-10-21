@@ -185,3 +185,53 @@ test("English preview keeps its layout after entering from the Arabic homepage",
   const close = (await page.getByRole("link", { name: "Close", exact: true }).boundingBox())!;
   expect(close.x).toBeGreaterThan(page.viewportSize()!.width - 80);
 });
+
+for (const width of [320, 375, 768, 1024, 1440, 1920]) {
+  test(`refined input styling and single-row prompts at ${width}px`, async ({ page }, info) => {
+    await page.setViewportSize({ width, height: width < 768 ? 812 : 900 });
+    await page.goto("/ask-ai");
+    await expect(page.getByRole("heading", { name: "BlueMind AI" })).toHaveCSS("color", "rgb(0, 0, 0)");
+    const chips = page.locator('button').filter({ hasText: /^(Create a website|Design a page|Improve my website|Business ideas|Help me get started|Explore our services)$/ });
+    await expect(chips).toHaveCount(6);
+    const bounds = await chips.evaluateAll(elements => elements.map(element => {
+      const rect = element.getBoundingClientRect();
+      return { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
+    }));
+    for (let i = 0; i < bounds.length; i++) {
+      expect(bounds[i].y).toBe(bounds[0].y);
+      if (i) expect(bounds[i].x).toBeGreaterThan(bounds[i - 1].x + bounds[i - 1].width);
+      await expect(chips.nth(i)).toHaveCSS("border-radius", "90px");
+      await expect(chips.nth(i)).toHaveCSS("font-weight", "400");
+    }
+    const strip = chips.first().locator('..');
+    if (width >= 1440) {
+      expect(await strip.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+    } else {
+      expect(await strip.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true);
+      await chips.last().click();
+      await expect(page.getByRole("textbox", { name: "Message", exact: true })).toHaveValue("Explore our services");
+      expect(await strip.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
+      await chips.first().click();
+    }
+    const input = page.getByRole("textbox", { name: "Message", exact: true });
+    await input.fill("");
+    const send = page.getByRole("button", { name: "Send message" });
+    await expect(send).toHaveCSS("border-radius", "50%");
+    const sendBox = (await send.boundingBox())!;
+    expect(sendBox.width).toBe(sendBox.height);
+    const form = page.locator("form");
+    await expect(form).toHaveCSS("border-radius", "28px");
+    const formBox = (await form.boundingBox())!;
+    expect(page.viewportSize()!.height - formBox.y - formBox.height).toBeGreaterThan(width < 768 ? 40 : 60);
+    const mainBox = (await page.locator("main").boundingBox())!;
+    expect(formBox.x + formBox.width / 2).toBeCloseTo(mainBox.x + mainBox.width / 2, 0);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
+    await page.screenshot({ path: info.outputPath("refined-empty.png") });
+    await input.fill("First line\nSecond line\nThird line");
+    await send.hover();
+    await expect(send).toHaveCSS("background-color", "rgb(20, 45, 78)");
+    await expect(send).toHaveCSS("color", "rgb(255, 255, 255)");
+    expect((await input.boundingBox())!.height).toBeGreaterThan(44);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
+  });
+}
