@@ -7,7 +7,7 @@
 .hero .copy .headline, .hero .copy .description { text-align: center; }
 .hero .actions { justify-content: center; gap: 14px; }
 .ctaButton { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; height: 54px; padding: 0 28px; border: 1px solid var(--bluemind-blue); border-radius: 16px; background: #fff; color: var(--bluemind-blue); font-size: 16px; font-weight: 500; line-height: 1.25; white-space: nowrap; touch-action: manipulation; transition: transform 200ms cubic-bezier(.22, 1, .36, 1), box-shadow 200ms ease-out, background 200ms ease-out, color 200ms ease-out; }
-.hero .ctaButton[aria-haspopup="dialog"] { min-width: 190px; }
+.hero .ctaButton[href="/ask-ai"] { min-width: 190px; }
 .primaryCta { border-width: 2px; font-weight: 600; }
 .hero .primaryCta { background: var(--bluemind-blue); color: #fff; border-color: var(--bluemind-blue); box-shadow: 0 8px 18px #142d4e24; }
 .hero .ctaButton:focus-visible { outline: 2px solid var(--bluemind-blue); outline-offset: 4px; }

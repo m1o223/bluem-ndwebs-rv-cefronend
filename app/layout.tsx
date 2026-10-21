@@ -26,9 +26,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body className={inter.variable}>
         <LocalizationProvider>
-          <Navigation />
-          <PageContent>{children}</PageContent>
-          <Footer />
+          <PageContent header={<Navigation />} footer={<Footer />}>{children}</PageContent>
         </LocalizationProvider>
       </body>
     </html>

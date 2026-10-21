@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test:coming-soon": "playwright test --config playwright.coming-soon.config.ts",
+    "test:ask-ai": "playwright test --config playwright.ask-ai.config.ts",
     "test:about": "playwright test --config playwright.about.config.ts",
     "check:encoding": "node scripts/check-translations-encoding.mjs",
     "prebuild": "npm run check:encoding"

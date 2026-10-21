@@ -35,7 +35,7 @@ for (const [width, height] of [[320, 568], [375, 812], [620, 900], [768, 1024], 
     await expect(description).toHaveCSS("text-align", "center");
     if (width >= 768) {
       expect(await heading.evaluate(e => e.getBoundingClientRect().height / parseFloat(getComputedStyle(e).lineHeight))).toBeCloseTo(2, 0);
-      const buttons = await actions.locator('a[href="/quote"], button').all();
+      const buttons = await actions.locator('a[href="/quote"], a[href="/ask-ai"]').all();
       const first = (await buttons[0].boundingBox())!;
       const second = (await buttons[1].boundingBox())!;
       expect(first.y).toBe(second.y);
@@ -81,16 +81,14 @@ for (const [width, height] of [[320, 568], [375, 812], [620, 900], [768, 1024], 
   });
 }
 
-test("hero actions retain their existing modal and quote destinations", async ({ page }) => {
+test("hero actions open the blank AI page and existing quote destination", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   const hero = page.locator("[data-hero]");
-  await hero.getByRole("button", { name: "Ask BlueMind AI", exact: true }).click();
-  const dialog = page.getByRole("dialog", { name: "BlueMind AI" });
-  await expect(dialog).toBeVisible();
-  await expect(dialog.getByText(/BlueMind AI is coming soon/)).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(dialog).toHaveCount(0);
+  await hero.getByRole("link", { name: "Ask BlueMind AI", exact: true }).click();
+  await expect(page).toHaveURL(/\/ask-ai$/);
+  await page.getByRole("link", { name: "Close", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
   await hero.getByRole("link", { name: "Get Started", exact: true }).click();
   await expect(page).toHaveURL(/\/quote$/);
 });

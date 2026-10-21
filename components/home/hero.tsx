@@ -1,5 +1,5 @@
 import Link from "next/link";
-import AiComingSoon from "./ai-coming-soon";
+import AiPageLink from "./ai-page-link";
 import HeroVisual from "./hero-visual";
 import shared from "./home.module.css";
 import styles from "./hero.module.css";
@@ -16,7 +16,7 @@ export default function Hero() {
           <p className={styles.description}>Websites built around your ideas, designed to move your business forward.</p>
           <div className={`${shared.actions} ${styles.actions}`}>
             <Link href="/quote" className={`${styles.ctaButton} ${styles.primaryCta}`}>Get Started</Link>
-            <AiComingSoon triggerClassName={styles.ctaButton} />
+            <AiPageLink triggerClassName={styles.ctaButton} />
           </div>
         </div>
         <HeroVisual />
