@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { AI_LIMITS, boundedContext, validateTurns } from "../../app/lib/ai/contract";
-import { aiAvailable, createChatHandler, createLimiter } from "../../app/lib/ai/server";
+import { aiAvailable, classifyFailure, configurationIssue, createChatHandler, createLimiter } from "../../app/lib/ai/server";
 import { instructions, openAIProvider, type Provider } from "../../app/lib/ai/provider";
 
 const env: NodeJS.ProcessEnv = { NODE_ENV: "test", VERCEL_ENV: "preview", AI_ENABLED: "true", OPENAI_API_KEY: "unit-test-not-a-real-key" };
@@ -71,12 +71,73 @@ test("stream returns only allowlisted events and logs numeric usage, not prompts
 });
 
 test("provider failures are sanitized and rate limits expose a retry interval", async () => {
-  for (const status of [401, 429, 500]) {
+  for (const status of [400, 401, 403, 404, 422, 429, 500]) {
     const response = await handler({ provider: async () => { throw Object.assign(new Error("internal secret detail"), { status }); } })(makeRequest());
     const text = await response.text();
     assert.ok(!text.includes("internal secret"));
     assert.equal(response.status, status === 429 ? 429 : 502);
     if (status === 429) assert.equal(response.headers.get("retry-after"), "60");
+  }
+});
+
+test("configuration diagnostics identify missing keys without exposing settings or repeating logs", async () => {
+  const logs: unknown[] = [];
+  const run = handler({ env: { ...env, OPENAI_API_KEY: " " }, log: entry => logs.push(entry) });
+  for (let i = 0; i < 3; i++) {
+    const response = await run(makeRequest());
+    assert.deepEqual(await response.json(), { code: "unavailable" });
+  }
+  assert.equal(logs.length, 1);
+  assert.equal((logs[0] as { diagnostic: string }).diagnostic, "missing_api_key");
+  assert.equal(configurationIssue({ ...env, VERCEL_ENV: "production" }), "production_disabled");
+  assert.equal(configurationIssue({ ...env, AI_ENABLED: "false" }), "feature_disabled");
+  assert.equal(configurationIssue(env), null);
+});
+
+test("diagnostics distinguish credentials, model, quota, network and request failures without raw errors", async () => {
+  const cases = [
+    [401, undefined, "provider_authentication", "unavailable"],
+    [403, undefined, "provider_permission", "unavailable"],
+    [404, "model_not_found", "provider_model_unavailable", "unavailable"],
+    [429, "insufficient_quota", "provider_quota", "unavailable"],
+    [429, "rate_limit_exceeded", "provider_rate_limit", "rate"],
+    [400, undefined, "provider_request_invalid", "failed"],
+    [500, "private unknown code", "provider_failure", "failed"],
+  ] as const;
+  for (const [status, code, diagnostic, publicCode] of cases) {
+    const error = Object.assign(new Error("sensitive provider message"), { status, code });
+    assert.deepEqual(classifyFailure(error, false), { code: publicCode, diagnostic, providerStatus: status });
+    const logs: unknown[] = [];
+    const response = await handler({ provider: async () => { throw error; }, log: entry => logs.push(entry) })(makeRequest());
+    assert.deepEqual(await response.json(), { code: publicCode });
+    assert.equal((logs[0] as { diagnostic: string }).diagnostic, diagnostic);
+    assert.doesNotMatch(JSON.stringify(logs), /sensitive provider message|private unknown code|Help plan|unit-test-not/);
+  }
+  assert.equal(classifyFailure({ name: "APIConnectionError" }, false).diagnostic, "provider_connection");
+  assert.equal(classifyFailure({ name: "APIConnectionTimeoutError" }, false).code, "timeout");
+});
+
+test("identity instructions cover truthful branding, languages, general help and text-only capabilities", () => {
+  for (const phrase of ["developed by BlueMind", "OpenAI foundation model", "not the foundation model",
+    "Arabic, Swedish and English", "Do not turn unrelated questions", "Image generation is not currently",
+    "restaurant and business websites", "rather than pressure", "Never invent a price"]) {
+    assert.ok(instructions.includes(phrase), `Missing instruction: ${phrase}`);
+  }
+});
+
+test("SDK stream failures preserve only categorized diagnostics and never send done", async () => {
+  for (const event of [
+    { type: "response.failed", response: { error: { code: "insufficient_quota", message: "secret details" } } },
+    { type: "error", code: "rate_limit_exceeded", message: "secret details" },
+    { type: "response.incomplete", response: {} },
+  ]) {
+    const provider = openAIProvider("unit-test-not-a-key", "gpt-5.4-mini", async () => new Response(`data: ${JSON.stringify(event)}\n\n`, { headers: { "Content-Type": "text/event-stream" } }));
+    const logs: unknown[] = [];
+    const response = await handler({ provider, log: entry => logs.push(entry) })(makeRequest());
+    const body = await response.text();
+    assert.match(body, /"type":"error"/);
+    assert.doesNotMatch(body, /secret details|"done"|insufficient_quota|rate_limit_exceeded/);
+    assert.doesNotMatch(JSON.stringify(logs), /secret details/);
   }
 });
 

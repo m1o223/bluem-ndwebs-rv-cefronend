@@ -47,7 +47,7 @@ Production release and security review. Do not promote this Preview automaticall
 - Company grounding is imported from existing package, Care plan and Care FAQ
   sources. No guarantee that a model is hallucination-free; review company answers.
 - Requests may consume tokens before cancellation/failure. Logs emit only request
-  ID, outcome, duration and completed-response token counts. Use OpenAI project
+  ID, outcome, duration, allowlisted failure category/status and completed-response token counts. Use OpenAI project
   usage reporting for full billing, including interrupted/failed requests.
 
 ## Verification
@@ -59,13 +59,33 @@ fixtures. No runtime mock mode or fallback assistant responses ship in the app.
 
 After configuring a replacement key, run the existing Playwright config against
 the exact protected Preview URL with `AI_LIVE_TEST=true` and filter `REAL OpenAI`.
-It sends two billed requests and verifies a real reply plus follow-up context.
+The smoke test sends two billed requests and verifies a real reply plus follow-up context.
+The acceptance test adds 11 paced real requests for introductions, BlueMind identity,
+website/restaurant planning, memory, general knowledge, Swedish, Arabic, text-only
+capabilities and truthful model attribution. Review its response artifact for quality;
+keyword assertions alone do not establish personality quality or factual accuracy.
 Use scoped Vercel OIDC headers; never record secret-bearing traces. Do not claim
 live functionality until this real-provider test succeeds.
 
 History is session-memory only. New Chat starts with no old context. Older context
 is bounded; incomplete responses are labeled and excluded from follow-ups.
 Switching chats cancels in-flight work; retry requires an explicit user click.
+
+## Operational diagnosis
+
+Missing configuration returns HTTP 503 before any OpenAI call. Once per server
+instance, a safe `bluemind_ai` log identifies `missing_api_key`, `feature_disabled`
+or `production_disabled`. No secret values are logged or returned to the browser.
+Provider failures have allowlisted diagnostics: authentication (401), permission
+(403), unavailable model (404), invalid request (400/422), rate limit (429), quota,
+connection, timeout or incomplete response. Quota exhaustion is not described as
+a one-minute rate limit. Raw provider messages, headers and request bodies are never
+logged. An enabled flag is not proof of successful API authentication or available
+billing; verify with the opt-in real tests after saving and redeploying credentials.
+
+The assistant is general-purpose with website design/development expertise. Its
+server instructions keep BlueMind branding, multilingual friendly responses,
+non-pushy customer help, honest underlying-model attribution and text-only limits.
 
 Official implementation references:
 - https://developers.openai.com/api/docs/guides/streaming-responses

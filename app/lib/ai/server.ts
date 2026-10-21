@@ -3,8 +3,15 @@ import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { AI_LIMITS, validateTurns, type AiErrorCode, type ChatEvent } from "./contract";
 import { openAIProvider, type Provider } from "./provider";
 
+export function configurationIssue(env: NodeJS.ProcessEnv = process.env) {
+  if (env.VERCEL_ENV === "production") return "production_disabled";
+  if (env.AI_ENABLED !== "true") return "feature_disabled";
+  if (!env.OPENAI_API_KEY?.trim()) return "missing_api_key";
+  return null;
+}
+
 export function aiAvailable(env: NodeJS.ProcessEnv = process.env) {
-  return env.VERCEL_ENV !== "production" && env.AI_ENABLED === "true" && Boolean(env.OPENAI_API_KEY?.trim());
+  return configurationIssue(env) === null;
 }
 
 // Bounded process-local protection for authenticated Preview testing, not a global quota.
@@ -53,20 +60,40 @@ async function readBody(request: Request) {
   } finally { clearTimeout(timeout); reader.releaseLock(); }
 }
 
-function errorCode(error: unknown, aborted: boolean): AiErrorCode {
-  if (aborted || (error instanceof Error && error.name === "APIConnectionTimeoutError")) return "timeout";
-  const status = typeof error === "object" && error !== null && "status" in error ? error.status : undefined;
-  return status === 429 ? "rate" : status === 401 || status === 403 ? "unavailable" : "failed";
+export function classifyFailure(error: unknown, aborted: boolean): { code: AiErrorCode; diagnostic: string; providerStatus?: number } {
+  const detail = typeof error === "object" && error !== null ? error as { status?: unknown; code?: unknown; name?: unknown } : {};
+  const providerStatus = typeof detail.status === "number" && Number.isInteger(detail.status) && detail.status >= 400 && detail.status <= 599 ? detail.status : undefined;
+  let code: AiErrorCode = "failed";
+  let diagnostic = "provider_failure";
+  if (aborted || detail.name === "APIConnectionTimeoutError") { code = "timeout"; diagnostic = "timeout"; }
+  else if (detail.code === "insufficient_quota" || detail.code === "billing_hard_limit_reached") { code = "unavailable"; diagnostic = "provider_quota"; }
+  else if (providerStatus === 401 || detail.code === "invalid_api_key") { code = "unavailable"; diagnostic = "provider_authentication"; }
+  else if (providerStatus === 403) { code = "unavailable"; diagnostic = "provider_permission"; }
+  else if (providerStatus === 404 || detail.code === "model_not_found") { code = "unavailable"; diagnostic = "provider_model_unavailable"; }
+  else if (providerStatus === 429 || detail.code === "rate_limit_exceeded") { code = "rate"; diagnostic = "provider_rate_limit"; }
+  else if (providerStatus === 400 || providerStatus === 422) diagnostic = "provider_request_invalid";
+  else if (detail.name === "APIConnectionError") diagnostic = "provider_connection";
+  else if (detail.code === "incomplete_response") diagnostic = "provider_incomplete";
+  return { code, diagnostic, ...(providerStatus ? { providerStatus } : {}) };
 }
 
-type Usage = { event: "bluemind_ai"; requestId: string; outcome: string; durationMs: number; inputTokens: number; outputTokens: number };
+type Usage = { event: "bluemind_ai"; requestId: string; outcome: string; durationMs: number; inputTokens: number; outputTokens: number; diagnostic?: string; providerStatus?: number };
 export function createChatHandler(options: {
   env?: NodeJS.ProcessEnv; provider?: Provider; limiter?: ReturnType<typeof createLimiter>;
   timeoutMs?: number; log?: (entry: Usage) => void;
 } = {}) {
+  let reportedConfiguration: string | null = null;
   return async (request: Request) => {
     const env = options.env ?? process.env;
-    if (!aiAvailable(env)) return jsonError("unavailable", 503);
+    const log = options.log ?? (entry => console.info(JSON.stringify(entry)));
+    const issue = configurationIssue(env);
+    if (issue) {
+      // Report each configuration failure once per instance, never its secret values.
+      if (reportedConfiguration !== issue) log({ event: "bluemind_ai", requestId: randomUUID(), outcome: "unavailable", diagnostic: issue, durationMs: 0, inputTokens: 0, outputTokens: 0 });
+      reportedConfiguration = issue;
+      return jsonError("unavailable", 503);
+    }
+    reportedConfiguration = null;
     const origin = new URL(request.url).origin;
     if (request.headers.get("origin") !== origin || request.headers.get("sec-fetch-site") === "cross-site") return jsonError("invalid", 403);
     if (request.headers.get("content-type")?.split(";")[0].trim() !== "application/json") return jsonError("invalid", 415);
@@ -86,16 +113,15 @@ export function createChatHandler(options: {
     request.signal.addEventListener("abort", abort, { once: true });
     if (request.signal.aborted) abort();
     const timeout = setTimeout(abort, options.timeoutMs ?? 55000);
-    const log = options.log ?? (entry => console.info(JSON.stringify(entry)));
     let logged = false;
-    const finish = (outcome: string, inputTokens = 0, outputTokens = 0) => {
+    const finish = (outcome: string, inputTokens = 0, outputTokens = 0, failure?: ReturnType<typeof classifyFailure>) => {
       clearTimeout(timeout);
       request.signal.removeEventListener("abort", abort);
       release();
-      if (!logged) { logged = true; log({ event: "bluemind_ai", requestId, outcome, durationMs: Date.now() - started, inputTokens, outputTokens }); }
+      if (!logged) { logged = true; log({ event: "bluemind_ai", requestId, outcome, durationMs: Date.now() - started, inputTokens, outputTokens, ...(failure ? { diagnostic: failure.diagnostic, providerStatus: failure.providerStatus } : {}) }); }
     };
     try {
-      const provider = options.provider ?? openAIProvider(env.OPENAI_API_KEY!, env.OPENAI_MODEL || "gpt-5.4-mini");
+      const provider = options.provider ?? openAIProvider(env.OPENAI_API_KEY!.trim(), env.OPENAI_MODEL?.trim() || "gpt-5.4-mini");
       const events = await provider(messages, controller.signal);
       const encoder = new TextEncoder();
       let cancelled = false;
@@ -121,9 +147,10 @@ export function createChatHandler(options: {
             }
             if (!completed) throw new Error("incomplete stream");
           } catch (error) {
-            const code = errorCode(error, controller.signal.aborted);
+            const failure = classifyFailure(error, controller.signal.aborted);
+            const { code } = failure;
             emit({ type: "error", code });
-            finish(request.signal.aborted || cancelled ? "cancelled" : code);
+            finish(request.signal.aborted || cancelled ? "cancelled" : code, 0, 0, failure);
           } finally {
             abort();
             if (!cancelled) stream.close();
@@ -133,8 +160,9 @@ export function createChatHandler(options: {
       });
       return new Response(body, { headers: { "Content-Type": "application/x-ndjson; charset=utf-8", "Cache-Control": "no-store, no-transform", "X-Content-Type-Options": "nosniff" } });
     } catch (error) {
-      const code = errorCode(error, controller.signal.aborted);
-      finish(code);
+      const failure = classifyFailure(error, controller.signal.aborted);
+      const { code } = failure;
+      finish(code, 0, 0, failure);
       return jsonError(code, code === "rate" ? 429 : code === "timeout" ? 504 : 502);
     }
   };
