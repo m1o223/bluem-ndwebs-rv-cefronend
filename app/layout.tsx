@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
-import { Footer } from "../components/home/sections";
 import { LocalizationProvider } from "../components/localization-provider";
-import Navigation from "../components/navigation";
-import PageContent from "../components/page-content";
+import WebsiteShell from "../components/website-shell";
 import faviconMetadata from "./favicon-metadata.json";
 import "./globals.css";
 
@@ -26,9 +24,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body className={inter.variable}>
         <LocalizationProvider>
-          <Navigation />
-          <PageContent>{children}</PageContent>
-          <Footer />
+          <WebsiteShell>{children}</WebsiteShell>
         </LocalizationProvider>
       </body>
     </html>
