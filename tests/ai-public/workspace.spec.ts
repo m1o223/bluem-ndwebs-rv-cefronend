@@ -1,25 +1,20 @@
 import { expect, test } from "@playwright/test";
 
-for (const width of [320, 375, 768, 1440]) test(`private chat interactions at ${width}px (fixtures)`, async ({ page }, testInfo) => {
+for (const width of [320, 375, 768, 1440]) test(`customer chat without login at ${width}px (fixtures)`, async ({ page }, testInfo) => {
   await page.setViewportSize({ width, height: 900 });
   const errors: string[] = [];
   page.on("pageerror", error => errors.push(error.message));
-  let authenticated = false;
   let fail = false;
   const contexts: { role: string; content: string }[][] = [];
-  await page.route("**/api/ai/session", route => {
-    if (route.request().method() === "POST") authenticated = true;
-    if (route.request().method() === "DELETE") authenticated = false;
-    return route.fulfill({ status: authenticated || route.request().method() === "DELETE" ? 200 : 401, json: { authenticated } });
-  });
+  const sessionRequests: string[] = [];
+  page.on("request", request => { if (request.url().includes("/api/ai/session")) sessionRequests.push(request.url()); });
   await page.route("**/api/ai/chat", route => {
     contexts.push(route.request().postDataJSON().messages);
     return fail ? route.fulfill({ status: 502, json: { code: "failed" } }) : route.fulfill({ contentType: "application/x-ndjson", body: '{"type":"delta","text":"Browser test fixture response"}\n{"type":"done"}\n' });
   });
   await page.goto("/ask-ai");
-  await page.getByLabel("Workspace email").fill("owner@example.test");
-  await page.getByLabel("Owner password").fill("fixture-only");
-  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await expect(page.locator('input[type="email"], input[type="password"]')).toHaveCount(0);
+  await expect(page.getByText(/Private owner testing|Public access is not available|Workspace email|Owner password/)).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "BlueMind AI" })).toBeVisible();
   await page.getByRole("button", { name: "Create a website", exact: true }).click();
   const input = page.getByRole("textbox", { name: "Message", exact: true });
@@ -48,13 +43,13 @@ for (const width of [320, 375, 768, 1440]) test(`private chat interactions at ${
   if (width < 768) await page.getByRole("button", { name: "Open sidebar", exact: true }).click();
   await page.getByRole("button", { name: "Create a website a", exact: true }).filter({ visible: true }).click();
   await expect(page.getByLabel("BlueMind AI response", { exact: true })).toHaveCount(2);
-  await page.getByRole("button", { name: "Sign out of AI testing", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
+  await page.getByRole("link", { name: "Close", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+  expect(sessionRequests).toEqual([]);
   expect(errors).toEqual([]);
 });
 
-test("production API rejects public access and cross-site login", async ({ request }) => {
-  expect((await request.get("/api/ai/session")).status()).toBe(401);
-  expect((await request.post("/api/ai/chat", { headers: { Origin: "https://bluemind-web-service.vercel.app" }, data: { messages: [{ role: "user", content: "hello" }] } })).status()).toBe(401);
-  expect((await request.post("/api/ai/session", { headers: { Origin: "https://evil.example" }, data: {} })).status()).toBe(403);
+test("AI login endpoint is removed and cross-site chat is blocked", async ({ request }) => {
+  expect((await request.get("/api/ai/session")).status()).toBe(404);
+  expect((await request.post("/api/ai/chat", { headers: { Origin: "https://evil.example" }, data: {} })).status()).toBe(403);
 });

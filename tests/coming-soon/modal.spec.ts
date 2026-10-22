@@ -8,10 +8,9 @@ const locales = [
 
 for (const width of [320, 375, 768, 1440]) {
   for (const locale of locales) {
-    test(`${locale.code} owner entry at ${width}px`, async ({ page }, testInfo) => {
+    test(`${locale.code} direct chat entry at ${width}px`, async ({ page }, testInfo) => {
       await page.setViewportSize({ width, height: 900 });
       await page.addInitScript(code => localStorage.setItem("bluemind-language", code), locale.code);
-      await page.route("**/api/ai/session", route => route.fulfill({ status: 401, json: { code: "unauthorized" } }));
       const errors: string[] = [];
       page.on("pageerror", error => errors.push(error.message));
       await page.goto("/");
@@ -23,10 +22,10 @@ for (const width of [320, 375, 768, 1440]) {
       await trigger.click();
       await expect(page).toHaveURL(/\/ask-ai$/);
       await expect(page.getByRole("heading", { name: "BlueMind AI" })).toBeVisible();
-      await expect(page.getByText("Private owner testing. Public access is not available.")).toBeVisible();
-      await expect(page.locator("header, footer, textarea")).toHaveCount(0);
+      await expect(page.getByRole("textbox", { name: "Message", exact: true })).toBeVisible();
+      await expect(page.locator('header, footer, input[type="email"], input[type="password"]')).toHaveCount(0);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-      await page.screenshot({ path: testInfo.outputPath("owner-entry.png") });
+      await page.screenshot({ path: testInfo.outputPath("customer-chat.png") });
       await page.getByRole("link", { name: "Close", exact: true }).click();
       await expect(page).toHaveURL(/\/$/);
       expect(errors).toEqual([]);

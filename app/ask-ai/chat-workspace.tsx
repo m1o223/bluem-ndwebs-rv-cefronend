@@ -31,7 +31,7 @@ function History({ conversations, activeId, compact = false, onSelect, onNew }: 
   </>;
 }
 
-export default function ChatWorkspace({ available, onUnauthorized }: { available: boolean; onUnauthorized?: () => void }) {
+export default function ChatWorkspace({ available }: { available: boolean }) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
@@ -142,7 +142,6 @@ export default function ChatWorkspace({ available, onUnauthorized }: { available
     } catch (error) {
       if (request.current === running) {
         const code = running.controller.signal.aborted ? "timeout" : error instanceof ChatRequestError ? error.code : "failed";
-        if (code === "unauthorized") onUnauthorized?.();
         setConversations(current => current.map(conversation => conversation.id === id ? { ...conversation, error: code } : conversation));
       }
     } finally {

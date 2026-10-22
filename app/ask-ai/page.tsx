@@ -1,4 +1,4 @@
-import OwnerAccess from "./owner-access";
+import ChatWorkspace from "./chat-workspace";
 
-export const metadata = { title: "BlueMind AI | Private Testing", robots: { index: false, follow: false } };
-export default function AskAiPage() { return <OwnerAccess />; }
+export const metadata = { title: "BlueMind AI", robots: { index: false, follow: false } };
+export default function AskAiPage() { return <ChatWorkspace available />; }

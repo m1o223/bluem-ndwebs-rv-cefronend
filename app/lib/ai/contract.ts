@@ -1,7 +1,6 @@
 export type ChatTurn = { role: "user" | "assistant"; content: string };
 export const AI_LIMITS = { messageChars: 4000, assistantChars: 12000, contextChars: 18000, turns: 20, bodyBytes: 80000, outputTokens: 2000 } as const;
 export const AI_ERRORS = {
-  unauthorized: "Your private testing session expired. Please sign in again.",
   unavailable: "BlueMind AI is temporarily unavailable. Please try again later.",
   invalid: "Please shorten your message and try again.",
   rate: "Too many requests. Please wait a minute before trying again.",

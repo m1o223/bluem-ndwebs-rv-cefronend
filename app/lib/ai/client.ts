@@ -6,7 +6,7 @@ export class ChatRequestError extends Error {
 
 export async function requestReply(messages: ChatTurn[], signal: AbortSignal, onDelta: (text: string) => void) {
   const response = await fetch("/api/ai/chat", {
-    method: "POST", credentials: "same-origin", redirect: "error", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages }), signal,
+    method: "POST", credentials: "omit", redirect: "error", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages }), signal,
   });
   if (!response.ok) {
     const body = await response.json().catch(() => null);
