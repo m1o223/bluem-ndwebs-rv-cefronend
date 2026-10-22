@@ -6,6 +6,8 @@ import { ArrowUp, File, ImageIcon, Menu, MessageSquare, PanelLeftClose, PanelLef
 import { BlueMindLogo } from "../../components/blue-mind-logo";
 import { AI_ERRORS, AI_LIMITS, boundedContext, type AiErrorCode } from "../lib/ai/contract";
 import { ChatRequestError, requestReply } from "../lib/ai/client";
+import { AssistantMessage } from "./assistant-message";
+import { useChatScroll } from "./use-chat-scroll";
 import styles from "./chat-workspace.module.css";
 
 type Message = { id: string; text: string; role: "user" | "assistant"; complete: boolean };
@@ -38,10 +40,11 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   const [collapsed, setCollapsed] = useState(false);
   const [attachmentsOpen, setAttachmentsOpen] = useState(false);
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const [animatedId, setAnimatedId] = useState<string | null>(null);
   const request = useRef<{ conversationId: string; controller: AbortController } | null>(null);
   const root = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLTextAreaElement>(null);
-  const history = useRef<HTMLDivElement>(null);
+  const { viewport: history, content: messageList, followBottom } = useChatScroll(activeId);
   const drawer = useRef<HTMLDialogElement>(null);
   const attachmentArea = useRef<HTMLDivElement>(null);
   const attachmentTrigger = useRef<HTMLButtonElement>(null);
@@ -77,10 +80,6 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
     input.current.style.height = `${Math.min(input.current.scrollHeight, 180)}px`;
   }, [draft]);
 
-  useLayoutEffect(() => {
-    if (history.current) history.current.scrollTop = history.current.scrollHeight;
-  }, [activeId, messages.length, messages.at(-1)?.text]);
-
   useEffect(() => {
     const media = matchMedia("(min-width: 768px)");
     const closeOnDesktop = () => { if (media.matches) drawer.current?.close(); };
@@ -105,6 +104,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   }, [attachmentsOpen]);
 
   function chooseConversation(id: string | null) {
+    setAnimatedId(null);
     const running = request.current;
     if (running) {
       request.current = null;
@@ -123,6 +123,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
     request.current = running;
     setPendingId(id);
     const assistantId = crypto.randomUUID();
+    setAnimatedId(assistantId);
     const timeout = window.setTimeout(() => running.controller.abort(), 65000);
     setConversations(current => current.map(conversation => conversation.id === id ? { ...conversation, error: undefined } : conversation));
     try {
@@ -153,6 +154,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   function send() {
     const text = draft.trim();
     if (!text || text.length > AI_LIMITS.messageChars || request.current) return;
+    followBottom();
     const message: Message = { id: crypto.randomUUID(), text, role: "user", complete: true };
     const id = activeId ?? crypto.randomUUID();
     const conversationMessages = [...messages, message];
@@ -171,6 +173,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
 
   function retry() {
     if (!active || request.current) return;
+    followBottom();
     const completeMessages = active.messages.filter(message => message.complete);
     setConversations(current => current.map(conversation => conversation.id === active.id ? { ...conversation, messages: completeMessages } : conversation));
     void reply(active.id, completeMessages);
@@ -213,11 +216,12 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
           <h1>BlueMind AI</h1>
           <p>What can I help you create?</p>
         </div>
-        <div ref={history} className={styles.messageScroll} data-active={hasMessages}>
-          <div className={styles.messages} role="log" aria-label="Conversation" aria-live="polite" aria-relevant="additions">
-            {messages.map(message => <article key={message.id} className={`${styles.message} ${message.role === "assistant" ? styles.assistant : ""}`} aria-label={message.role === "user" ? "Your message" : "BlueMind AI response"}>
+        <div ref={history} className={styles.messageScroll} data-active={hasMessages} tabIndex={hasMessages ? 0 : -1} aria-label="Chat messages">
+          <div ref={messageList} className={styles.messages} role="log" aria-label="Conversation" aria-live="polite" aria-relevant="additions text">
+            {messages.map(message => message.role === "assistant" ? <AssistantMessage key={message.id}
+              text={message.text} complete={message.complete} animate={message.id === animatedId} pending={pending} />
+              : <article key={message.id} className={styles.message} aria-label="Your message">
               <p dir="auto">{message.text}</p>
-              {message.role === "assistant" && !message.complete && !pending && <small>Incomplete response</small>}
             </article>)}
             {pending && <p className={styles.replyStatus} role="status">BlueMind AI is responding...</p>}
             {active?.error && <div className={styles.replyError} role="alert"><p>{AI_ERRORS[active.error]}</p><button type="button" onClick={retry} disabled={pending}>Retry</button></div>}
