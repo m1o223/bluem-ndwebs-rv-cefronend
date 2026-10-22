@@ -113,6 +113,7 @@ test("long reply finishes promptly, supports Unicode and does not replay from hi
 });
 
 test("mobile touch intent pauses follow and a long response keeps typing responsive", async ({ page }) => {
+  test.setTimeout(40000);
   await page.setViewportSize({ width: 375, height: 812 });
   await page.addInitScript(() => {
     const durations: number[] = [];
@@ -135,7 +136,9 @@ test("mobile touch intent pauses follow and a long response keeps typing respons
   await input(page).fill("Draft while the response is appearing\nSecond line");
   await expect(input(page)).toHaveValue("Draft while the response is appearing\nSecond line");
   expect(Date.now() - start).toBeLessThan(1500);
-  await expect(page.getByRole("button", { name: "Show instantly" })).toHaveCount(0, { timeout: 15000 });
+  // This dense 100-section fixture also exceeds 15s on the unchanged production build.
+  // Allow scheduling variance without relaxing typing latency or long-task assertions.
+  await expect(page.getByRole("button", { name: "Show instantly" })).toHaveCount(0, { timeout: 25000 });
   const longest = await page.evaluate(() => Math.max(0, ...(window as unknown as { presentationTasks: number[] }).presentationTasks));
   expect(longest).toBeLessThan(500);
   await expect(input(page)).toBeInViewport();

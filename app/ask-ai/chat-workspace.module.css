@@ -52,6 +52,15 @@
 .chat .markdown > :last-child { margin-bottom: 0; }
 .chat .revealResponse { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; margin-top: 12px; padding: 4px 8px; border: 0; border-radius: 6px; background: transparent; color: #142d4e; font: inherit; font-size: 12px; cursor: pointer; }
 .chat .revealResponse:hover { background: #edf3fa; }
+.responseActions { margin-top: 12px; }
+.actionButtons { display: flex; align-items: center; gap: 3px; }
+.chat .actionButtons button { position: relative; display: grid; place-items: center; flex: 0 0 36px; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: #667486; cursor: pointer; transition: background 160ms ease, color 160ms ease; }
+.chat .actionButtons button:hover:not(:disabled), .chat .actionButtons button[aria-pressed="true"] { background: #edf3fa; color: #142d4e; }
+.chat .actionButtons button:disabled { opacity: .4; cursor: not-allowed; }
+.actionButtons button::after { content: attr(data-tooltip); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); z-index: 2; width: max-content; max-width: 150px; padding: 6px 8px; border: 1px solid #e0e5eb; border-radius: 5px; background: #fff; color: #142d4e; font-size: 12px; font-weight: 400; line-height: 1.4; text-align: center; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 120ms ease; }
+.actionButtons button:is(:hover, :focus-visible)::after { opacity: 1; visibility: visible; }
+.actionNotice { display: block; color: #526479; font-size: 12px; line-height: 1.5; }
+.actionNotice:not(:empty) { margin-top: 4px; }
 .assistant small { display: block; margin-top: 8px; color: #697482; }
 .chat .replyStatus { margin: 0; font-size: 13px; color: #697482; }
 .replyError { font-size: 14px; color: #9c3030; }
@@ -99,6 +108,7 @@
   .messageScroll { padding: 12px 16px 20px; }
   .message { max-width: 94%; padding: 12px 14px; }
   .assistant { max-width: 100%; padding: 16px; }
+  .chat .actionButtons button { flex-basis: 40px; width: 40px; height: 40px; }
   .composerArea { padding: 12px max(12px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
   .composer { gap: 4px; padding: 10px; }
   .chat .status { font-size: 11px; margin-top: 8px; }

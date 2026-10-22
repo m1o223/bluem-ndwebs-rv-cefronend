@@ -3,6 +3,7 @@
 import { memo, useEffect, useRef, useState } from "react";
 import Markdown, { type Components } from "react-markdown";
 import { FastForward } from "lucide-react";
+import { MessageActions, type Feedback } from "./message-actions";
 import styles from "./chat-workspace.module.css";
 
 const markdownComponents: Components = {
@@ -57,8 +58,9 @@ function usePresentedText(text: string, animate: boolean, instant: boolean) {
   return !animate || instant || reduced ? text : text.slice(0, count);
 }
 
-export const AssistantMessage = memo(function AssistantMessage({ text, complete, animate, pending }: {
-  text: string; complete: boolean; animate: boolean; pending: boolean;
+export const AssistantMessage = memo(function AssistantMessage({ id, text, complete, animate, pending, feedback, generating, onFeedback, onRegenerate }: {
+  id: string; text: string; complete: boolean; animate: boolean; pending: boolean;
+  feedback: Feedback; generating: boolean; onFeedback: (id: string, feedback: Feedback) => void; onRegenerate: (id: string) => void;
 }) {
   const [instant, setInstant] = useState(false);
   const visible = usePresentedText(text, animate, instant);
@@ -72,5 +74,7 @@ export const AssistantMessage = memo(function AssistantMessage({ text, complete,
       <FastForward size={15} aria-hidden="true" />Show instantly
     </button>}
     {!complete && !pending && <small>Incomplete response</small>}
+    {complete && !revealing && <MessageActions text={text} feedback={feedback} generating={generating}
+      onFeedback={value => onFeedback(id, value)} onRegenerate={() => onRegenerate(id)} />}
   </article>;
 });

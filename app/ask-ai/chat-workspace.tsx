@@ -1,17 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { ArrowUp, File, ImageIcon, Menu, MessageSquare, PanelLeftClose, PanelLeftOpen, Plus, SquarePen, X } from "lucide-react";
 import { BlueMindLogo } from "../../components/blue-mind-logo";
 import { AI_ERRORS, AI_LIMITS, boundedContext, type AiErrorCode } from "../lib/ai/contract";
 import { ChatRequestError, requestReply } from "../lib/ai/client";
 import { AssistantMessage } from "./assistant-message";
 import { useChatScroll } from "./use-chat-scroll";
+import type { Feedback } from "./message-actions";
 import styles from "./chat-workspace.module.css";
 
-type Message = { id: string; text: string; role: "user" | "assistant"; complete: boolean };
-type Conversation = { id: string; title: string; messages: Message[]; error?: AiErrorCode };
+type Message = { id: string; text: string; role: "user" | "assistant"; complete: boolean; feedback?: Feedback };
+type Conversation = { id: string; title: string; messages: Message[]; error?: AiErrorCode; retryMessageId?: string };
+type RunningReply = { conversationId: string; controller: AbortController; assistantId: string; replaced?: Message };
 const suggestions = ["Create a website", "Design a page", "Improve my website", "Business ideas", "Help me get started", "Explore our services"];
 
 function History({ conversations, activeId, compact = false, onSelect, onNew }: {
@@ -41,7 +43,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   const [attachmentsOpen, setAttachmentsOpen] = useState(false);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [animatedId, setAnimatedId] = useState<string | null>(null);
-  const request = useRef<{ conversationId: string; controller: AbortController } | null>(null);
+  const request = useRef<RunningReply | null>(null);
   const root = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLTextAreaElement>(null);
   const { viewport: history, content: messageList, followBottom } = useChatScroll(activeId);
@@ -53,6 +55,10 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   const messages = active?.messages ?? [];
   const hasMessages = messages.length > 0;
   const pending = pendingId === activeId && pendingId !== null;
+  const actionHandlers = useRef({ regenerate, setFeedback });
+  useLayoutEffect(() => { actionHandlers.current = { regenerate, setFeedback }; });
+  const onRegenerate = useCallback((id: string) => actionHandlers.current.regenerate(id), []);
+  const onFeedback = useCallback((id: string, feedback: Feedback) => actionHandlers.current.setFeedback(id, feedback), []);
 
   useEffect(() => () => { request.current?.controller.abort(); request.current = null; }, []);
 
@@ -110,7 +116,8 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
       request.current = null;
       running.controller.abort();
       setPendingId(null);
-      setConversations(current => current.map(conversation => conversation.id === running.conversationId ? { ...conversation, error: "stopped" } : conversation));
+      setConversations(current => current.map(conversation => conversation.id === running.conversationId
+        ? restoreReply(conversation, running, "stopped") : conversation));
     }
     setActiveId(id);
     setDraft("");
@@ -118,14 +125,20 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
     drawer.current?.close();
   }
 
-  async function reply(id: string, conversationMessages: Message[]) {
-    const running = { conversationId: id, controller: new AbortController() };
+  function restoreReply(conversation: Conversation, running: RunningReply, error: AiErrorCode): Conversation {
+    return { ...conversation, error, retryMessageId: running.replaced?.id,
+      messages: running.replaced ? conversation.messages.map(message => message.id === running.assistantId ? running.replaced! : message) : conversation.messages };
+  }
+
+  async function reply(id: string, conversationMessages: Message[], replaced?: Message) {
+    if (request.current) return;
+    const assistantId = crypto.randomUUID();
+    const running: RunningReply = { conversationId: id, controller: new AbortController(), assistantId, replaced };
     request.current = running;
     setPendingId(id);
-    const assistantId = crypto.randomUUID();
     setAnimatedId(assistantId);
     const timeout = window.setTimeout(() => running.controller.abort(), 65000);
-    setConversations(current => current.map(conversation => conversation.id === id ? { ...conversation, error: undefined } : conversation));
+    setConversations(current => current.map(conversation => conversation.id === id ? { ...conversation, error: undefined, retryMessageId: undefined } : conversation));
     try {
       const context = boundedContext(conversationMessages.filter(message => message.complete).map(message => ({ role: message.role, content: message.text })));
       await requestReply(context, running.controller.signal, delta => {
@@ -133,9 +146,11 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
         setConversations(current => current.map(conversation => {
           if (conversation.id !== id) return conversation;
           const exists = conversation.messages.some(message => message.id === assistantId);
+          const next: Message = { id: assistantId, role: "assistant", text: delta, complete: false };
           return { ...conversation, messages: exists
             ? conversation.messages.map(message => message.id === assistantId ? { ...message, text: message.text + delta } : message)
-            : [...conversation.messages, { id: assistantId, role: "assistant", text: delta, complete: false }] };
+            : replaced ? conversation.messages.map(message => message.id === replaced.id ? next : message)
+            : [...conversation.messages, next] };
         }));
       });
       if (request.current === running) setConversations(current => current.map(conversation => conversation.id === id
@@ -143,7 +158,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
     } catch (error) {
       if (request.current === running) {
         const code = running.controller.signal.aborted ? "timeout" : error instanceof ChatRequestError ? error.code : "failed";
-        setConversations(current => current.map(conversation => conversation.id === id ? { ...conversation, error: code } : conversation));
+        setConversations(current => current.map(conversation => conversation.id === id ? restoreReply(conversation, running, code) : conversation));
       }
     } finally {
       window.clearTimeout(timeout);
@@ -173,10 +188,25 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
 
   function retry() {
     if (!active || request.current) return;
+    if (active.retryMessageId) { regenerate(active.retryMessageId); return; }
     followBottom();
     const completeMessages = active.messages.filter(message => message.complete);
     setConversations(current => current.map(conversation => conversation.id === active.id ? { ...conversation, messages: completeMessages } : conversation));
     void reply(active.id, completeMessages);
+  }
+
+  function regenerate(messageId: string) {
+    if (!active || request.current) return;
+    const index = active.messages.findIndex(message => message.id === messageId);
+    const previous = active.messages[index];
+    if (!previous?.complete || previous.role !== "assistant" || active.messages[index - 1]?.role !== "user") return;
+    // Exclude the old answer and all later turns from this request; retain them in the UI.
+    void reply(active.id, active.messages.slice(0, index), previous);
+  }
+
+  function setFeedback(messageId: string, feedback: Feedback) {
+    setConversations(current => current.map(conversation => conversation.id === activeId
+      ? { ...conversation, messages: conversation.messages.map(message => message.id === messageId ? { ...message, feedback } : message) } : conversation));
   }
 
   const historyProps = { conversations, activeId, onSelect: chooseConversation, onNew: () => chooseConversation(null) };
@@ -218,8 +248,10 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
         </div>
         <div ref={history} className={styles.messageScroll} data-active={hasMessages} tabIndex={hasMessages ? 0 : -1} aria-label="Chat messages">
           <div ref={messageList} className={styles.messages} role="log" aria-label="Conversation" aria-live="polite" aria-relevant="additions text">
-            {messages.map(message => message.role === "assistant" ? <AssistantMessage key={message.id}
-              text={message.text} complete={message.complete} animate={message.id === animatedId} pending={pending} />
+            {messages.map(message => message.role === "assistant" ? <AssistantMessage key={message.id} id={message.id}
+              text={message.text} complete={message.complete} animate={message.id === animatedId} pending={pending}
+              feedback={message.feedback} generating={pendingId !== null}
+              onFeedback={onFeedback} onRegenerate={onRegenerate} />
               : <article key={message.id} className={styles.message} aria-label="Your message">
               <p dir="auto">{message.text}</p>
             </article>)}
