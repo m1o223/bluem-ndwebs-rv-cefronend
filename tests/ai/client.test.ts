@@ -1,6 +1,36 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { ChatRequestError, requestReply } from "../../app/lib/ai/client";
+import { renderAiEndpoint } from "../../app/lib/ai/endpoint";
+
+test("Render destination is explicit and cannot contain credentials, paths or unsafe protocols", () => {
+  assert.equal(renderAiEndpoint("https://bluemind-web-service-backend.onrender.com"), "https://bluemind-web-service-backend.onrender.com/api/ai/chat");
+  assert.equal(renderAiEndpoint("http://localhost:4198/"), "http://localhost:4198/api/ai/chat");
+  for (const value of ["", "javascript:alert(1)", "http://remote.example.com", "https://user:secret@example.com", "https://example.com/private", "https://example.com?token=secret"]) assert.equal(renderAiEndpoint(value), null);
+});
+
+test("client sends to Render without cookies or automatic Vercel fallback", async () => {
+  const original = globalThis.fetch;
+  const old = process.env.NEXT_PUBLIC_AI_API_BASE_URL;
+  process.env.NEXT_PUBLIC_AI_API_BASE_URL = "https://backend.example.com";
+  let calls = 0;
+  globalThis.fetch = async (url, options) => {
+    calls++;
+    assert.equal(url, "https://backend.example.com/api/ai/chat");
+    assert.equal(options?.credentials, "omit");
+    assert.equal(options?.redirect, "error");
+    assert.equal(new Headers(options?.headers).has("authorization"), false);
+    return Response.json({ code: "unavailable" }, { status: 503 });
+  };
+  try {
+    await assert.rejects(requestReply([{ role: "user", content: "Hello" }], new AbortController().signal, () => {}), ChatRequestError);
+    assert.equal(calls, 1);
+  } finally {
+    globalThis.fetch = original;
+    if (old === undefined) delete process.env.NEXT_PUBLIC_AI_API_BASE_URL;
+    else process.env.NEXT_PUBLIC_AI_API_BASE_URL = old;
+  }
+});
 
 test("client reconstructs split UTF-8 and NDJSON chunks in the original language", async () => {
   const original = globalThis.fetch;

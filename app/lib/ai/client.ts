@@ -1,12 +1,16 @@
 import { AI_ERRORS, AI_LIMITS, type AiErrorCode, type ChatTurn } from "./contract";
+import { renderAiEndpoint } from "./endpoint";
 
 export class ChatRequestError extends Error {
   constructor(public code: AiErrorCode) { super(AI_ERRORS[code]); }
 }
 
 export async function requestReply(messages: ChatTurn[], signal: AbortSignal, onDelta: (text: string) => void) {
-  const response = await fetch("/api/ai/chat", {
-    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages }), signal,
+  const endpoint = renderAiEndpoint();
+  if (process.env.NEXT_PUBLIC_AI_API_BASE_URL?.trim() && !endpoint) throw new ChatRequestError("unavailable");
+  // Unconfigured builds reach only the disabled legacy route. Never fail over after a Render error.
+  const response = await fetch(endpoint ?? "/api/ai/chat", {
+    method: "POST", credentials: "omit", redirect: "error", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages }), signal,
   });
   if (!response.ok) {
     const body = await response.json().catch(() => null);

@@ -1,8 +1,8 @@
 import ChatWorkspace from "./chat-workspace";
-import { aiAvailable } from "../lib/ai/server";
+import { renderAiEndpoint } from "../lib/ai/endpoint";
 
 export const dynamic = "force-dynamic";
 
 export default function AskAiPage() {
-  return <ChatWorkspace available={aiAvailable()} />;
+  return <ChatWorkspace available={Boolean(renderAiEndpoint())} />;
 }

@@ -4,7 +4,7 @@ import { AI_LIMITS, boundedContext, validateTurns } from "../../app/lib/ai/contr
 import { aiAvailable, classifyFailure, configurationIssue, createChatHandler, createLimiter } from "../../app/lib/ai/server";
 import { instructions, openAIProvider, type Provider } from "../../app/lib/ai/provider";
 
-const env: NodeJS.ProcessEnv = { NODE_ENV: "test", VERCEL_ENV: "preview", AI_ENABLED: "true", OPENAI_API_KEY: "unit-test-not-a-real-key" };
+const env: NodeJS.ProcessEnv = { NODE_ENV: "test", VERCEL_ENV: "preview", AI_ENABLED: "true", AI_LEGACY_VERCEL_ENABLED: "true", OPENAI_API_KEY: "unit-test-not-a-real-key" };
 const messages = [{ role: "user" as const, content: "Help plan a website" }];
 const makeRequest = (body: unknown = { messages }, headers: Record<string, string> = {}) => new Request("https://website.test/api/ai/chat", {
   method: "POST", headers: { Origin: "https://website.test", "Content-Type": "application/json", ...headers }, body: JSON.stringify(body),
@@ -17,7 +17,7 @@ const handler = (extra: Parameters<typeof createChatHandler>[0] = {}) => createC
 
 test("configuration fails closed without a key, enable flag, or on Production", async () => {
   assert.equal(aiAvailable(env), true);
-  for (const overrides of [{ OPENAI_API_KEY: "" }, { AI_ENABLED: "false" }, { VERCEL_ENV: "production" }]) {
+  for (const overrides of [{ OPENAI_API_KEY: "" }, { AI_ENABLED: "false" }, { VERCEL_ENV: "production" }, { AI_LEGACY_VERCEL_ENABLED: "false" }, { NEXT_PUBLIC_AI_API_BASE_URL: "https://backend.example.com" }]) {
     let called = false;
     const response = await handler({ env: { ...env, ...overrides }, provider: async () => { called = true; throw Error(); } })(makeRequest());
     assert.equal(response.status, 503);

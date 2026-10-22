@@ -5,6 +5,7 @@ import { openAIProvider, type Provider } from "./provider";
 
 export function configurationIssue(env: NodeJS.ProcessEnv = process.env) {
   if (env.VERCEL_ENV === "production") return "production_disabled";
+  if (env.NEXT_PUBLIC_AI_API_BASE_URL?.trim() || env.AI_LEGACY_VERCEL_ENABLED !== "true") return "legacy_disabled";
   if (env.AI_ENABLED !== "true") return "feature_disabled";
   if (!env.OPENAI_API_KEY?.trim()) return "missing_api_key";
   return null;

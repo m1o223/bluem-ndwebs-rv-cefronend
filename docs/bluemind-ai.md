@@ -1,92 +1,77 @@
-# BlueMind AI: protected Preview integration
+# BlueMind AI: Render integration preparation
 
-The website's Next.js Node route `/api/ai/chat` calls the official OpenAI SDK and
-Responses API. The browser calls only that same-origin route. The existing Render
-order/payment API, mobile app backend, authentication and database are untouched.
+The website sends JSON directly to the existing Render service
+`bluemind-web-service-backend` at `/api/ai/chat`. Render calls the OpenAI Responses
+API and streams normalized events back to the browser. Existing design, local
+conversation history, context, cancellation and explicit retry behavior remain.
+This implementation is prepared locally; it is not evidence of a live deployment.
 
-## Configuration
+## Frontend configuration
 
-Revoke any key previously posted in chat. Create a dedicated replacement project
-key and configure it directly in Vercel, never in source code or chat:
+Set Vercel Preview `NEXT_PUBLIC_AI_API_BASE_URL` to
+`https://bluemind-web-service-backend.onrender.com` and rebuild the Preview.
+The public variable contains only the origin, never a key. Keep the existing
+general `NEXT_PUBLIC_API_BASE_URL` unchanged. Requests omit cookies and reject
+redirects. They never fall back to Vercel after a Render error.
 
-- Project: `bluemind-web-service`
-- Environment: Preview only
-- Git branch: `preview/about-exterior-3d`
-- `OPENAI_API_KEY`: replacement key, Secret/Sensitive type
-- `AI_ENABLED`: `true`
-- `OPENAI_MODEL`: optional, defaults to `gpt-5.4-mini`
+A configured URL is not proof that Render credentials or billing work. Missing or
+invalid configuration produces a safe error, not a fabricated assistant response.
 
-Redeploy that Preview after changing its environment. Do not set a public-prefixed
-key. For local development put these values in `.env.local`, which is gitignored.
-`.env.example` intentionally contains no key and disables AI by default.
+The Vercel implementation is retained dormant until real Render verification.
+It requires explicit `AI_LEGACY_VERCEL_ENABLED=true`, is disabled in Production,
+and is disabled whenever the Render URL is set. Leave the opt-in off. Do not
+configure OpenAI secrets on Vercel for this migration. Remove the legacy path only
+after a successful real Render request and separately reviewed cleanup.
 
-The endpoint is hard-disabled whenever `VERCEL_ENV=production`, regardless of
-credentials or enable flag. Removing that guard requires a separately approved
-Production release and security review. Do not promote this Preview automatically.
+## Backend configuration
 
-## Security and limitations
+Use the existing service's Environment editor to securely configure:
 
-- Protected Vercel Preview is required. Do not disable Deployment Protection.
-- Strict same-origin JSON POSTs; no permissive CORS and no user-selected model,
-  system prompt, response ID, tool or provider URL.
-- 80 KB streamed body limit and five-second body-read timeout.
-- User messages: 4,000 characters; context: 20 turns / 18,000 characters.
-- Output: 2,000 tokens, additionally capped at 12,000 displayed characters.
-- 55-second server deadline; disconnect and navigation abort the provider request.
-- SDK retries are disabled to avoid automatic repeated paid requests.
-- Per-instance limits: 10 requests/minute/client, one concurrent request/client,
-  four concurrent requests total, 200 requests/day; bounded temporary hashed-IP map.
-  These reset on process restart and are NOT distributed rate limits or a hard
-  spending cap. A shared limiter and provider project budgets/spend controls are
-  required before public Production use. Origin validation is not authentication.
-- No tools, browsing, uploads or private database access. Model text is rendered as
-  React text, never HTML. Messages are not written to app logs or a database.
-- `store:false` disables Responses application-state storage. This is not a claim
-  of zero provider retention; OpenAI account data policies still apply.
-- The UI informs users that messages go to OpenAI and discourages sensitive input.
-- Company grounding is imported from existing package, Care plan and Care FAQ
-  sources. No guarantee that a model is hallucination-free; review company answers.
-- Requests may consume tokens before cancellation/failure. Logs emit only request
-  ID, outcome, duration, allowlisted failure category/status and completed-response token counts. Use OpenAI project
-  usage reporting for full billing, including interrupted/failed requests.
+- `OPENAI_API_KEY`: a new private project key, never the previously exposed key.
+- `OPENAI_MODEL`: `gpt-5.4-mini`, subject to project access verification.
+- `AI_ENABLED`: `false` until approved activation, then `true`.
+- `AI_ALLOWED_ORIGINS`: exact approved Preview origins, comma-separated, with
+  HTTPS and no trailing slash, path or wildcard.
+
+Do not change general backend CORS to accommodate AI. The new route has its own
+allowlist. No production origin, service deployment or environment change is
+approved by these files. The backend repository's `docs/ai-integration.md`
+describes staged activation, limits, monitoring and rollback.
+
+CORS is not authentication. Protected Vercel Preview does not protect a public
+Render endpoint from scripts. Current quotas are bounded, in-process, reset on
+restart and may group clients behind a Render proxy. They are not a distributed
+limiter or hard spending cap. Public activation needs a separate abuse-control
+and provider usage review.
 
 ## Verification
 
-`npm run test:ai-server`: isolated SDK/endpoint/security tests, no billed calls.
-`npm run test:ask-ai`: layout and client tests with explicitly labeled test-only
-fixtures. No runtime mock mode or fallback assistant responses ship in the app.
-`npm run typecheck` and `npm run build`: frontend/server compilation.
+Run `npm run test:ai-server`, `npm run typecheck`, `npm run build` and
+`npm run test:ask-ai` with no Render URL for the existing isolated UI regressions.
+The additional separate-process browser suite exercises a real cross-origin Node
+HTTP connection, with a clearly labeled injected test provider:
 
-After configuring a replacement key, run the existing Playwright config against
-the exact protected Preview URL with `AI_LIVE_TEST=true` and filter `REAL OpenAI`.
-The smoke test sends two billed requests and verifies a real reply plus follow-up context.
-The acceptance test adds 11 paced real requests for introductions, BlueMind identity,
-website/restaurant planning, memory, general knowledge, Swedish, Arabic, text-only
-capabilities and truthful model attribution. Review its response artifact for quality;
-keyword assertions alone do not establish personality quality or factual accuracy.
-Use scoped Vercel OIDC headers; never record secret-bearing traces. Do not claim
-live functionality until this real-provider test succeeds.
+```powershell
+$env:NEXT_PUBLIC_AI_API_BASE_URL='http://127.0.0.1:4198'
+npm.cmd run build
+$env:AI_TEST_BACKEND_DIR='<absolute path to the prepared backend>'
+npm.cmd run test:render-ai
+Remove-Item Env:NEXT_PUBLIC_AI_API_BASE_URL
+Remove-Item Env:AI_TEST_BACKEND_DIR
+```
 
-History is session-memory only. New Chat starts with no old context. Older context
-is bounded; incomplete responses are labeled and excluded from follow-ups.
-Switching chats cancels in-flight work; retry requires an explicit user click.
+The fixture binds loopback only and refuses Render/Vercel execution. It does not
+call OpenAI. Restore the intended environment and rebuild after fixture testing.
+Backend tests independently cover provider errors, validation, streaming,
+cancellation, upload limits, rate limits and unchanged existing routes.
 
-## Operational diagnosis
+After an approved Render deployment and fresh credential configuration, run the
+existing Playwright suite against the protected Preview with `AI_LIVE_TEST=true`,
+filtering `REAL OpenAI`. The smoke test sends two billed requests. The acceptance
+test adds 11 paced requests covering identity, website planning, memory, general
+knowledge, Swedish, Arabic, text-only capabilities and truthful model attribution.
+Review actual answers, not just keyword assertions. Keep scoped Vercel protection
+headers restricted to the Preview origin; never forward them to Render.
 
-Missing configuration returns HTTP 503 before any OpenAI call. Once per server
-instance, a safe `bluemind_ai` log identifies `missing_api_key`, `feature_disabled`
-or `production_disabled`. No secret values are logged or returned to the browser.
-Provider failures have allowlisted diagnostics: authentication (401), permission
-(403), unavailable model (404), invalid request (400/422), rate limit (429), quota,
-connection, timeout or incomplete response. Quota exhaustion is not described as
-a one-minute rate limit. Raw provider messages, headers and request bodies are never
-logged. An enabled flag is not proof of successful API authentication or available
-billing; verify with the opt-in real tests after saving and redeploying credentials.
-
-The assistant is general-purpose with website design/development expertise. Its
-server instructions keep BlueMind branding, multilingual friendly responses,
-non-pushy customer help, honest underlying-model attribution and text-only limits.
-
-Official implementation references:
-- https://developers.openai.com/api/docs/guides/streaming-responses
-- https://developers.openai.com/api/docs/models/gpt-5.4-mini
+No real-provider success is claimed until those tests pass. API errors never show
+raw private diagnostics, and no runtime mock fallback exists in the application.
