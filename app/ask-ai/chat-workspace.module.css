@@ -31,7 +31,7 @@
 .messages { display: flex; flex-direction: column; gap: 20px; width: min(100%, 800px); margin: 0 auto; }
 .message { align-self: flex-end; min-width: 0; max-width: 85%; padding: 14px 18px; border-radius: 8px; background: #edf3fa; animation: message-enter 180ms ease-out both; }
 .chat .message p { margin: 0; font-size: 15px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
-.assistant { align-self: flex-start; width: 100%; max-width: 100%; padding: 20px 24px; background: #fff; border: 1px solid #e0e5eb; }
+.assistant { align-self: flex-start; width: 100%; max-width: 100%; padding: 20px 24px; background: transparent; border: 0; border-radius: 0; box-shadow: none; outline: none; }
 .markdown { min-width: 0; font-size: 15px; line-height: 1.75; overflow-wrap: anywhere; }
 .chat .markdown p { white-space: normal; line-height: 1.75; margin: 0 0 14px; }
 .chat .markdown :is(h1, h2, h3, h4, h5, h6) { color: #142d4e; font-family: inherit; font-weight: 600; font-size: 18px; line-height: 1.4; letter-spacing: 0; margin: 24px 0 12px; }
