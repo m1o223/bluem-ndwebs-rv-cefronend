@@ -1,3 +1,5 @@
+import { MESSAGE_CARD_FORMAT, type MessageCardContent } from "./message-card";
+
 export type ChatTurn = { role: "user" | "assistant"; content: string };
 export const AI_LIMITS = { messageChars: 4000, assistantChars: 12000, contextChars: 18000, turns: 20, bodyBytes: 80000, outputTokens: 2000 } as const;
 export const AI_ERRORS = {
@@ -9,7 +11,7 @@ export const AI_ERRORS = {
   stopped: "The response was stopped before it finished.",
 } as const;
 export type AiErrorCode = keyof typeof AI_ERRORS;
-export type ChatEvent = { type: "delta"; text: string } | { type: "done" } | { type: "error"; code: AiErrorCode };
+export type ChatEvent = { type: "delta"; text: string } | { type: "message_card"; card: MessageCardContent } | { type: "done" } | { type: "error"; code: AiErrorCode };
 
 export function boundedContext(turns: ChatTurn[]): ChatTurn[] {
   const result: ChatTurn[] = [];
@@ -24,7 +26,8 @@ export function boundedContext(turns: ChatTurn[]): ChatTurn[] {
 }
 
 export function validateTurns(body: unknown): ChatTurn[] | null {
-  if (!body || typeof body !== "object" || Object.keys(body).some(key => key !== "messages")) return null;
+  if (!body || typeof body !== "object" || Object.keys(body).some(key => !["messages", "responseFormat"].includes(key))) return null;
+  if (Object.hasOwn(body, "responseFormat") && (body as { responseFormat?: unknown }).responseFormat !== MESSAGE_CARD_FORMAT) return null;
   const messages = (body as { messages?: unknown }).messages;
   if (!Array.isArray(messages) || !messages.length || messages.length > AI_LIMITS.turns) return null;
   let chars = 0;

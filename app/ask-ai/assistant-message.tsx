@@ -4,6 +4,8 @@ import { memo, useEffect, useRef, useState } from "react";
 import Markdown, { type Components } from "react-markdown";
 import { FastForward } from "lucide-react";
 import { MessageActions, type Feedback } from "./message-actions";
+import { MessageCard } from "./message-card";
+import type { MessageCardContent } from "../lib/ai/message-card";
 import styles from "./chat-workspace.module.css";
 
 const markdownComponents: Components = {
@@ -58,23 +60,25 @@ function usePresentedText(text: string, animate: boolean, instant: boolean) {
   return !animate || instant || reduced ? text : text.slice(0, count);
 }
 
-export const AssistantMessage = memo(function AssistantMessage({ id, text, complete, animate, pending, feedback, generating, onFeedback, onRegenerate }: {
+export const AssistantMessage = memo(function AssistantMessage({ id, text, card, complete, animate, pending, feedback, generating, onFeedback, onRegenerate, onSaveCard }: {
   id: string; text: string; complete: boolean; animate: boolean; pending: boolean;
+  card?: MessageCardContent; onSaveCard: (id: string, card: MessageCardContent) => void;
   feedback: Feedback; generating: boolean; onFeedback: (id: string, feedback: Feedback) => void; onRegenerate: (id: string) => void;
 }) {
   const [instant, setInstant] = useState(false);
   const visible = usePresentedText(text, animate, instant);
   const revealing = visible.length < text.length;
   return <article className={`${styles.message} ${styles.assistant}`} aria-label="BlueMind AI response" aria-busy={revealing || (!complete && pending)}>
-    <div className={styles.markdown} dir="auto">
+    {visible && <div className={styles.markdown} dir="auto">
       <Markdown skipHtml components={markdownComponents}>{visible}</Markdown>
-    </div>
+    </div>}
+    {complete && card && !revealing && <MessageCard value={card} maxBodyLength={Math.min(11000, 12000 - text.length - 204)} onSave={value => onSaveCard(id, value)} />}
     {revealing && <button type="button" className={styles.revealResponse} onClick={() => setInstant(true)}
       title="Show all received text immediately and display incoming text without animation">
       <FastForward size={15} aria-hidden="true" />Show instantly
     </button>}
     {!complete && !pending && <small>Incomplete response</small>}
-    {complete && !revealing && <MessageActions text={text} feedback={feedback} generating={generating}
+    {complete && !card && !revealing && <MessageActions text={text} feedback={feedback} generating={generating}
       onFeedback={value => onFeedback(id, value)} onRegenerate={() => onRegenerate(id)} />}
   </article>;
 });

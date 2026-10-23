@@ -9,9 +9,10 @@ import { ChatRequestError, requestReply } from "../lib/ai/client";
 import { AssistantMessage } from "./assistant-message";
 import { useChatScroll } from "./use-chat-scroll";
 import type { Feedback } from "./message-actions";
+import { messageCardText, validateMessageCard, type MessageCardContent } from "../lib/ai/message-card";
 import styles from "./chat-workspace.module.css";
 
-type Message = { id: string; text: string; role: "user" | "assistant"; complete: boolean; feedback?: Feedback };
+type Message = { id: string; text: string; role: "user" | "assistant"; complete: boolean; feedback?: Feedback; card?: MessageCardContent };
 type Conversation = { id: string; title: string; messages: Message[]; error?: AiErrorCode; retryMessageId?: string };
 type RunningReply = { conversationId: string; controller: AbortController; assistantId: string; replaced?: Message };
 const suggestions = ["Create a website", "Design a page", "Improve my website", "Business ideas", "Help me get started", "Explore our services"];
@@ -55,10 +56,11 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   const messages = active?.messages ?? [];
   const hasMessages = messages.length > 0;
   const pending = pendingId === activeId && pendingId !== null;
-  const actionHandlers = useRef({ regenerate, setFeedback });
-  useLayoutEffect(() => { actionHandlers.current = { regenerate, setFeedback }; });
+  const actionHandlers = useRef({ regenerate, setFeedback, saveCard });
+  useLayoutEffect(() => { actionHandlers.current = { regenerate, setFeedback, saveCard }; });
   const onRegenerate = useCallback((id: string) => actionHandlers.current.regenerate(id), []);
   const onFeedback = useCallback((id: string, feedback: Feedback) => actionHandlers.current.setFeedback(id, feedback), []);
+  const onSaveCard = useCallback((id: string, card: MessageCardContent) => actionHandlers.current.saveCard(id, card), []);
 
   useEffect(() => () => { request.current?.controller.abort(); request.current = null; }, []);
 
@@ -140,7 +142,8 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
     const timeout = window.setTimeout(() => running.controller.abort(), 65000);
     setConversations(current => current.map(conversation => conversation.id === id ? { ...conversation, error: undefined, retryMessageId: undefined } : conversation));
     try {
-      const context = boundedContext(conversationMessages.filter(message => message.complete).map(message => ({ role: message.role, content: message.text })));
+      const context = boundedContext(conversationMessages.filter(message => message.complete).map(message => ({ role: message.role,
+        content: message.card ? [message.text, messageCardText(message.card)].filter(Boolean).join("\n\n") : message.text })));
       await requestReply(context, running.controller.signal, delta => {
         if (request.current !== running) return;
         setConversations(current => current.map(conversation => {
@@ -149,6 +152,17 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
           const next: Message = { id: assistantId, role: "assistant", text: delta, complete: false };
           return { ...conversation, messages: exists
             ? conversation.messages.map(message => message.id === assistantId ? { ...message, text: message.text + delta } : message)
+            : replaced ? conversation.messages.map(message => message.id === replaced.id ? next : message)
+            : [...conversation.messages, next] };
+        }));
+      }, card => {
+        if (request.current !== running) return;
+        setConversations(current => current.map(conversation => {
+          if (conversation.id !== id) return conversation;
+          const exists = conversation.messages.some(message => message.id === assistantId);
+          const next: Message = { id: assistantId, role: "assistant", text: "", card, complete: false };
+          return { ...conversation, messages: exists
+            ? conversation.messages.map(message => message.id === assistantId ? { ...message, card } : message)
             : replaced ? conversation.messages.map(message => message.id === replaced.id ? next : message)
             : [...conversation.messages, next] };
         }));
@@ -209,6 +223,14 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
       ? { ...conversation, messages: conversation.messages.map(message => message.id === messageId ? { ...message, feedback } : message) } : conversation));
   }
 
+  function saveCard(messageId: string, value: MessageCardContent) {
+    const card = validateMessageCard(value);
+    if (!card) return;
+    setConversations(current => current.map(conversation => conversation.id === activeId
+      ? { ...conversation, messages: conversation.messages.map(message => message.id === messageId && message.card && message.complete
+        && message.text.length + messageCardText(card).length + 2 <= AI_LIMITS.assistantChars ? { ...message, card } : message) } : conversation));
+  }
+
   const historyProps = { conversations, activeId, onSelect: chooseConversation, onNew: () => chooseConversation(null) };
 
   return <div ref={root} className={styles.chat} data-collapsed={collapsed} data-no-translate dir="ltr">
@@ -249,9 +271,9 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
         <div ref={history} className={styles.messageScroll} data-active={hasMessages} tabIndex={hasMessages ? 0 : -1} aria-label="Chat messages">
           <div ref={messageList} className={styles.messages} role="log" aria-label="Conversation" aria-live="polite" aria-relevant="additions text">
             {messages.map(message => message.role === "assistant" ? <AssistantMessage key={message.id} id={message.id}
-              text={message.text} complete={message.complete} animate={message.id === animatedId} pending={pending}
+              text={message.text} card={message.card} complete={message.complete} animate={message.id === animatedId} pending={pending}
               feedback={message.feedback} generating={pendingId !== null}
-              onFeedback={onFeedback} onRegenerate={onRegenerate} />
+              onFeedback={onFeedback} onRegenerate={onRegenerate} onSaveCard={onSaveCard} />
               : <article key={message.id} className={styles.message} aria-label="Your message">
               <p dir="auto">{message.text}</p>
             </article>)}

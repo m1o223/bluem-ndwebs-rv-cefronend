@@ -1,12 +1,13 @@
 import { AI_ERRORS, AI_LIMITS, type AiErrorCode, type ChatTurn } from "./contract";
+import { MESSAGE_CARD_FORMAT, validateMessageCard, messageCardText, type MessageCardContent } from "./message-card";
 
 export class ChatRequestError extends Error {
   constructor(public code: AiErrorCode) { super(AI_ERRORS[code]); }
 }
 
-export async function requestReply(messages: ChatTurn[], signal: AbortSignal, onDelta: (text: string) => void) {
+export async function requestReply(messages: ChatTurn[], signal: AbortSignal, onDelta: (text: string) => void, onCard?: (card: MessageCardContent) => void) {
   const response = await fetch("/api/ai/chat", {
-    method: "POST", credentials: "omit", redirect: "error", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages }), signal,
+    method: "POST", credentials: "omit", redirect: "error", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages, ...(onCard ? { responseFormat: MESSAGE_CARD_FORMAT } : {}) }), signal,
   });
   if (!response.ok) {
     const body = await response.json().catch(() => null);
@@ -19,6 +20,7 @@ export async function requestReply(messages: ChatTurn[], signal: AbortSignal, on
   let buffer = "";
   let chars = 0;
   let complete = false;
+  let card: MessageCardContent | null = null;
   try {
     while (!complete) {
       const chunk = await reader.read();
@@ -34,6 +36,12 @@ export async function requestReply(messages: ChatTurn[], signal: AbortSignal, on
           chars += event.text.length;
           if (chars > AI_LIMITS.assistantChars) throw new ChatRequestError("failed");
           onDelta(event.text);
+        } else if (event.type === "message_card") {
+          if (!onCard || card) throw new ChatRequestError("failed");
+          card = validateMessageCard(event.card);
+          if (!card) throw new ChatRequestError("failed");
+          chars += messageCardText(card).length + (chars ? 2 : 0);
+          if (chars > AI_LIMITS.assistantChars) throw new ChatRequestError("failed");
         } else if (event.type === "done") { complete = true; break; }
         else if (event.type === "error") throw new ChatRequestError(Object.hasOwn(AI_ERRORS, event.code) ? event.code : "failed");
         else throw new ChatRequestError("failed");
@@ -41,5 +49,6 @@ export async function requestReply(messages: ChatTurn[], signal: AbortSignal, on
       if (chunk.done) break;
     }
     if (!complete || !chars) throw new ChatRequestError("failed");
+    if (card) onCard?.(card);
   } finally { await reader.cancel().catch(() => {}); reader.releaseLock(); }
 }
