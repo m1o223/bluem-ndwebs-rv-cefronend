@@ -3,6 +3,7 @@
 .sidebar, .drawerInner { display: flex; flex-direction: column; min-height: 0; background: #f7f8fa; padding: 12px; }
 .sidebar { border-right: 1px solid #e8ecf1; overflow: hidden; }
 .sidebarTop { display: flex; align-items: center; min-height: 44px; margin-bottom: 16px; }
+.sidebarTitle, .sidebarToggle .toggleLogo { display: none; }
 .chat .iconControl, .drawer .iconControl { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex: 0 0 44px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: #142d4e; cursor: pointer; text-decoration: none; transition: background 160ms ease; }
 .chat .iconControl:hover, .drawer .iconControl:hover { background: #edf3fa; }
 .chat :is(button, a):focus-visible, .drawer button:focus-visible { outline: 2px solid #142d4e; outline-offset: 3px; }
@@ -125,6 +126,24 @@
   .empty .brandSymbol { margin-bottom: 8px; }
   .empty { padding-block: 8px; }
   .suggestions { gap: 6px; padding-bottom: 10px; }
+}
+/* Pointer desktops only: touch devices retain the existing sidebar controls. */
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .chat { transition-duration: 225ms; }
+  .sidebar, .chat[data-collapsed="true"] .sidebar { padding-inline: 13.5px; }
+  .sidebar .sidebarTop { position: relative; flex: 0 0 44px; }
+  .sidebarTitle { display: block; padding-left: 10px; padding-right: 44px; overflow: hidden; white-space: nowrap; color: #142d4e; font-size: 16px; font-weight: 600; opacity: 1; transition: opacity 150ms ease; }
+  .chat[data-collapsed="true"] .sidebarTitle { opacity: 0; visibility: hidden; }
+  .chat .sidebarToggle { position: absolute; right: 0; top: 0; background: transparent; color: #59636f; transition: color 150ms ease; }
+  /* Override the site's global important hover colors only for these sidebar controls. */
+  :global(#ai-chat-sidebar) .sidebarToggle:hover { background: transparent !important; color: var(--bluemind-blue) !important; }
+  .sidebarToggle .toggleLogo { --logo-size: 30px; display: inline-grid; position: absolute; opacity: 1; transition: opacity 150ms ease; pointer-events: none; }
+  .sidebarToggle .toggleLogo::before { background: var(--bluemind-blue); mask-size: calc(30px * 1065 / 896) calc(30px * 1212 / 896); mask-position: calc(30px * -86 / 896) calc(30px * -300 / 896); }
+  .sidebarToggle .toggleGlyph { opacity: 0; transition: opacity 150ms ease; }
+  .sidebarToggle:is(:hover, :focus-visible) .toggleLogo { opacity: 0; }
+  .sidebarToggle:is(:hover, :focus-visible) .toggleGlyph { opacity: 1; }
+  .chat .sidebar .newChat { border: 0; background: transparent; box-shadow: none; color: #414852; transition: color 150ms ease; }
+  :global(#ai-chat-sidebar) .newChat:is(:hover, :active, [data-activated="true"]) { background: transparent !important; color: var(--bluemind-blue) !important; }
 }
 /* Desktop welcome only: tablets, phones and active conversations retain the base layout. */
 @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {

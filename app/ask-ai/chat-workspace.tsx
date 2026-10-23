@@ -27,8 +27,17 @@ function History({ conversations, activeId, compact = false, onSelect, onNew }: 
   conversations: Conversation[]; activeId: string | null; compact?: boolean;
   onSelect: (id: string) => void; onNew: () => void;
 }) {
+  const [activated, setActivated] = useState(false);
+  const activationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (activationTimer.current) clearTimeout(activationTimer.current); }, []);
+  function startChat() {
+    if (activationTimer.current) clearTimeout(activationTimer.current);
+    setActivated(true);
+    activationTimer.current = setTimeout(() => setActivated(false), 350);
+    onNew();
+  }
   return <>
-    <button className={styles.newChat} type="button" onClick={onNew} title="New chat" aria-label="New chat">
+    <button className={styles.newChat} data-activated={activated} type="button" onClick={startChat} title="New chat" aria-label="New chat">
       <SquarePen size={20} aria-hidden="true" /><span hidden={compact}>New chat</span>
     </button>
     <nav className={styles.history} aria-label="Conversation history">
@@ -358,10 +367,13 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   </div>;
 
   return <div ref={root} className={styles.chat} data-collapsed={collapsed} data-welcome={!hasMessages} data-no-translate dir="ltr">
-    <aside className={styles.sidebar} aria-label="Chat sidebar">
-      <div className={styles.sidebarTop}><button className={styles.iconControl} type="button" onClick={() => setCollapsed(value => !value)}
-        aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"} title={collapsed ? "Expand sidebar" : "Collapse sidebar"} aria-expanded={!collapsed}>
-        {collapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
+    <aside id="ai-chat-sidebar" className={styles.sidebar} aria-label="Chat sidebar">
+      <div className={styles.sidebarTop}>
+        <span className={styles.sidebarTitle}>BlueMind AI</span>
+        <button className={`${styles.iconControl} ${styles.sidebarToggle}`} type="button" onClick={() => setCollapsed(value => !value)}
+        aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"} title={collapsed ? "Expand sidebar" : "Collapse sidebar"} aria-expanded={!collapsed} aria-controls="ai-chat-sidebar">
+        {collapsed && <BlueMindLogo className={styles.toggleLogo} solid />}
+        {collapsed ? <PanelLeftOpen className={styles.toggleGlyph} size={20} aria-hidden="true" /> : <PanelLeftClose size={20} aria-hidden="true" />}
       </button></div>
       <History {...historyProps} compact={collapsed} />
     </aside>
