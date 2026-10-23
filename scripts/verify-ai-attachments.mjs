@@ -22,14 +22,15 @@ async function send(text, expected, number = 1) {
   await page.getByRole("button", { name: "Send message", exact: true }).click();
   const response = await network;
   if (response.status() !== 200) throw new Error(`AI request returned HTTP ${response.status()}`);
-  const wire = await response.text();
-  if (!wire.includes('"type":"done"') || wire.includes('"type":"error"')) throw new Error("AI stream did not complete successfully");
-  const reveal = page.getByRole("button", { name: "Show instantly", exact: true });
-  if (await reveal.isVisible()) await reveal.click();
+  // The client deliberately cancels its reader after `done`, so Chromium may discard
+  // the DevTools response body. Verify the completed UI instead of requesting it again.
+  await expect(page.getByLabel("BlueMind AI response", { exact: true })).toHaveCount(number, { timeout: 70000 });
   await expect(page.getByRole("button", { name: "Stop response", exact: true })).toHaveCount(0, { timeout: 70000 });
+  await expect(page.getByLabel("BlueMind AI response", { exact: true }).nth(number - 1).getByRole("group", { name: "Response actions" })).toBeVisible();
   const answer = await page.getByLabel("BlueMind AI response", { exact: true }).nth(number - 1).innerText();
   if (!expected.test(answer)) throw new Error(`Real analysis did not match the synthetic fixture: ${answer.slice(0, 500)}`);
   results.push({ check: text || "image-only message", status: response.status(), answer });
+  await writeFile(path.join(output, "results.json"), JSON.stringify({ results, pageErrors: errors }, null, 2));
   console.log(JSON.stringify({ check: results.at(-1).check, status: 200, verified: true, excerpt: answer.slice(0, 250) }));
 }
 async function fresh() {
@@ -76,4 +77,7 @@ try {
   expect(errors).toEqual([]);
   await writeFile(path.join(output, "results.json"), JSON.stringify({ results, pageErrors: errors }, null, 2));
   console.log(`Verified ${results.length} real production responses through the website.`);
+} catch (error) {
+  await page.screenshot({ path: path.join(output, "failure.png") }).catch(() => {});
+  throw error;
 } finally { await browser.close(); }
