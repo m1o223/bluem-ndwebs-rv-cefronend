@@ -45,3 +45,35 @@ test("rate limits and sanitized failures survive the public proxy", async () => 
   expect(limited.status).toBe(429);
   expect(limited.headers.get("retry-after")).toBe("60");
 });
+
+test("attachment proxy authorizes privately, preserves files and does not leak capability", async () => {
+  const token = "a".repeat(24) + "." + "1".repeat(13) + "." + "b".repeat(43);
+  const body = { messages: [{ role: "user", content: "", attachments: [{ name: "notes.txt", type: "text/plain", data: "dGVzdA==" }] }] };
+  const calls: string[] = [];
+  globalThis.fetch = async (url, options) => {
+    calls.push(String(url));
+    const headers = new Headers(options?.headers);
+    expect(headers.get("origin")).toBe(origin);
+    expect(headers.get("cookie")).toBeNull();
+    if (String(url).endsWith("attachment-session")) return Response.json({ token });
+    expect(headers.get("x-ai-attachment-session")).toBe(token);
+    expect(JSON.parse(String(options?.body))).toEqual(body);
+    return new Response('{"type":"delta","text":"fixture"}\n{"type":"done"}\n', { headers: { "Content-Type": "application/x-ndjson" } });
+  };
+  const response = await proxyAi(req(body));
+  expect(response.status).toBe(200);
+  expect(await response.text()).not.toContain(token);
+  expect(response.headers.get("x-ai-attachment-session")).toBeNull();
+  expect(calls.map(url => url.split("/").at(-1))).toEqual(["attachment-session", "chat"]);
+});
+
+test("failed upload authorization stops forwarding and oversized uploads are rejected", async () => {
+  let calls = 0;
+  globalThis.fetch = async () => { calls++; return Response.json({ private: "detail" }, { status: 503 }); };
+  const message = { role: "user", content: "", attachments: [{ name: "x.txt", type: "text/plain", data: "dGVzdA==" }] };
+  expect(await (await proxyAi(req({ messages: [message] }))).json()).toEqual({ code: "unavailable" });
+  expect(calls).toBe(1);
+  message.attachments[0].data = "A".repeat(3700000);
+  expect((await proxyAi(req({ messages: [message] }))).status).toBe(400);
+  expect(calls).toBe(1);
+});

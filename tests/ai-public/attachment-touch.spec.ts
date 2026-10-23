@@ -1,0 +1,31 @@
+import { expect, test } from "@playwright/test";
+import path from "node:path";
+
+test("touch pinch, zoom and pan work in the full-screen image viewer", async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  const page = await context.newPage();
+  await page.goto("http://localhost:3198/ask-ai");
+  await page.getByLabel("Upload images", { exact: true }).setInputFiles(path.join(__dirname, "fixtures", "sample.png"));
+  await page.getByRole("button", { name: "Open image sample.png", exact: true }).tap();
+  const viewer = page.getByRole("dialog");
+  const content = viewer.locator(".react-transform-component");
+  const scale = () => content.evaluate(element => new DOMMatrixReadOnly(getComputedStyle(element).transform).a);
+  await expect.poll(scale).toBe(1);
+  const cdp = await context.newCDPSession(page);
+  const touch = (type: "touchStart" | "touchMove" | "touchEnd", points: { x: number; y: number; id: number }[]) => cdp.send("Input.dispatchTouchEvent", { type, touchPoints: points });
+  await touch("touchStart", [{ x: 155, y: 410, id: 1 }, { x: 235, y: 410, id: 2 }]);
+  for (let i = 1; i <= 6; i++) await touch("touchMove", [{ x: 155 - i * 15, y: 410, id: 1 }, { x: 235 + i * 15, y: 410, id: 2 }]);
+  await touch("touchEnd", []);
+  await expect.poll(scale).toBeGreaterThan(1.5);
+  const before = await content.getAttribute("style");
+  await touch("touchStart", [{ x: 195, y: 400, id: 1 }]);
+  await touch("touchMove", [{ x: 230, y: 460, id: 1 }]);
+  await touch("touchEnd", []);
+  await expect(content).not.toHaveAttribute("style", before!);
+  await page.getByRole("button", { name: "Reset zoom", exact: true }).tap();
+  await expect.poll(scale).toBe(1);
+  await page.getByRole("button", { name: "Close image", exact: true }).tap();
+  await expect(viewer).toHaveCount(0);
+  await expect(page.getByLabel("Selected attachments")).toBeVisible();
+  await context.close();
+});

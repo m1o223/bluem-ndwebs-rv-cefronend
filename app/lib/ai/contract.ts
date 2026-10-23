@@ -1,6 +1,7 @@
 import { MESSAGE_CARD_FORMAT, type MessageCardContent } from "./message-card";
+import type { Attachment } from "./attachments";
 
-export type ChatTurn = { role: "user" | "assistant"; content: string };
+export type ChatTurn = { role: "user" | "assistant"; content: string; attachments?: Attachment[] };
 export const AI_LIMITS = { messageChars: 4000, assistantChars: 12000, contextChars: 18000, turns: 20, bodyBytes: 80000, outputTokens: 2000 } as const;
 export const AI_ERRORS = {
   unavailable: "BlueMind AI is temporarily unavailable. Please try again later.",
@@ -9,6 +10,10 @@ export const AI_ERRORS = {
   timeout: "The response took too long. Please try again.",
   failed: "We could not complete the response. Please try again.",
   stopped: "The response was stopped before it finished.",
+  attachment_invalid: "This file could not be processed. Use a valid JPEG, PNG, WebP, PDF, DOCX, UTF-8 TXT or XLSX file without encryption or active content.",
+  attachment_limit: "This document exceeds analysis limits. Use up to 10 PDF pages, 40,000 text characters, or 2,000 spreadsheet cells (500 rows per sheet). No content was silently omitted.",
+  attachment_session: "Your upload session expired. Please try again.",
+  attachment_context: "This chat is too long to include all its attachments. Start a new chat and attach the relevant files again.",
 } as const;
 export type AiErrorCode = keyof typeof AI_ERRORS;
 export type ChatEvent = { type: "delta"; text: string } | { type: "message_card"; card: MessageCardContent } | { type: "done" } | { type: "error"; code: AiErrorCode };

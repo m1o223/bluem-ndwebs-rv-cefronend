@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
-import { ArrowUp, File, ImageIcon, Menu, MessageSquare, PanelLeftClose, PanelLeftOpen, Plus, Square, SquarePen, X } from "lucide-react";
+import { ArrowUp, Camera, File, ImageIcon, Menu, MessageSquare, PanelLeftClose, PanelLeftOpen, Plus, Square, SquarePen, X } from "lucide-react";
 import { BlueMindLogo } from "../../components/blue-mind-logo";
 import { AI_ERRORS, AI_LIMITS, boundedContext, type AiErrorCode } from "../lib/ai/contract";
 import { ChatRequestError, requestReply } from "../lib/ai/client";
@@ -11,8 +11,10 @@ import { useChatScroll } from "./use-chat-scroll";
 import type { Feedback } from "./message-actions";
 import { messageCardText, validateMessageCard, type MessageCardContent } from "../lib/ai/message-card";
 import styles from "./chat-workspace.module.css";
+import { AttachmentList, ImageViewer } from "./attachments";
+import { FILE_LIMITS, documentAccept, imageAccept, readAttachment, wireAttachment, type LocalAttachment } from "../lib/ai/attachments";
 
-type Message = { id: string; text: string; role: "user" | "assistant"; complete: boolean; stopped?: boolean; feedback?: Feedback; card?: MessageCardContent };
+type Message = { id: string; text: string; role: "user" | "assistant"; complete: boolean; stopped?: boolean; feedback?: Feedback; card?: MessageCardContent; attachments?: LocalAttachment[] };
 type Conversation = { id: string; title: string; messages: Message[]; error?: AiErrorCode; retryMessageId?: string };
 type RunningReply = {
   conversationId: string; controller: AbortController; assistantId: string; replaced?: Message;
@@ -46,6 +48,14 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   const [draft, setDraft] = useState("");
   const [collapsed, setCollapsed] = useState(false);
   const [attachmentsOpen, setAttachmentsOpen] = useState(false);
+  const [files, setFiles] = useState<LocalAttachment[]>([]);
+  const [fileError, setFileError] = useState("");
+  const [preparing, setPreparing] = useState<number | null>(null);
+  const [viewing, setViewing] = useState<LocalAttachment | null>(null);
+  const fileRead = useRef<AbortController | null>(null);
+  const imagePicker = useRef<HTMLInputElement>(null);
+  const documentPicker = useRef<HTMLInputElement>(null);
+  const cameraPicker = useRef<HTMLInputElement>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [animatedId, setAnimatedId] = useState<string | null>(null);
   const [thinkingReply, setThinkingReply] = useState<{ id: string; replacedId?: string; ready: boolean } | null>(null);
@@ -99,6 +109,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
     window.clearTimeout(running?.timeout);
     window.clearTimeout(running?.thinkingTimer);
     running?.controller.abort();
+    fileRead.current?.abort();
   }, []);
 
   useEffect(() => {
@@ -149,6 +160,8 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   }, [attachmentsOpen]);
 
   function chooseConversation(id: string | null) {
+    fileRead.current?.abort(); fileRead.current = null;
+    setFiles([]); setFileError(""); setPreparing(null); setViewing(null);
     setAnimatedId(null);
     setThinkingReply(null);
     const running = request.current;
@@ -211,8 +224,11 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
     running.timeout = window.setTimeout(() => running.controller.abort(), 65000);
     setConversations(current => current.map(conversation => conversation.id === id ? { ...conversation, error: undefined, retryMessageId: undefined } : conversation));
     try {
-      const context = boundedContext(conversationMessages.filter(message => message.complete || (message.stopped && message.text.trim())).map(message => ({ role: message.role,
-        content: message.card ? [message.text, messageCardText(message.card)].filter(Boolean).join("\n\n") : message.text })));
+      const turns = conversationMessages.filter(message => message.complete || (message.stopped && message.text.trim())).map(message => ({ role: message.role,
+        content: message.card ? [message.text, messageCardText(message.card)].filter(Boolean).join("\n\n") : message.text,
+        ...(message.attachments?.length ? { attachments: message.attachments.map(wireAttachment) } : {}) }));
+      const context = boundedContext(turns);
+      if (turns.some(turn => turn.attachments?.length && !context.includes(turn))) throw new ChatRequestError("attachment_context");
       await requestReply(context, running.controller.signal, delta => {
         if (request.current !== running || running.controller.signal.aborted) return;
         setConversations(current => current.map(conversation => {
@@ -260,22 +276,49 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
 
   function send() {
     const text = draft.trim();
-    if (!text || text.length > AI_LIMITS.messageChars || request.current) return;
+    if ((!text && !files.length) || text.length > AI_LIMITS.messageChars || request.current || fileRead.current) return;
     followBottom();
-    const message: Message = { id: crypto.randomUUID(), text, role: "user", complete: true };
+    const message: Message = { id: crypto.randomUUID(), text, role: "user", complete: true, ...(files.length ? { attachments: files } : {}) };
     const id = activeId ?? crypto.randomUUID();
     const conversationMessages = [...messages, message];
     if (activeId) {
       setConversations(current => current.map(conversation => conversation.id === activeId
         ? { ...conversation, messages: [...conversation.messages, message] } : conversation));
     } else {
-      setConversations(current => [{ id, title: text.replace(/\s+/g, " ").slice(0, 80), messages: [message] }, ...current]);
+      setConversations(current => [{ id, title: (text || files[0]?.name || "Attachments").replace(/\s+/g, " ").slice(0, 80), messages: [message] }, ...current]);
       setActiveId(id);
     }
     setDraft("");
+    setFiles([]); setFileError("");
     setAttachmentsOpen(false);
     input.current?.focus();
     void reply(id, conversationMessages);
+  }
+
+  async function selectFiles(selected: FileList | null) {
+    if (!selected?.length || fileRead.current) return;
+    setAttachmentsOpen(false); setFileError("");
+    const incoming = Array.from(selected);
+    const existing = messages.flatMap(message => message.attachments || []).concat(files);
+    if (existing.length + incoming.length > FILE_LIMITS.count || existing.reduce((sum, file) => sum + file.size, 0) + incoming.reduce((sum, file) => sum + file.size, 0) > FILE_LIMITS.totalBytes) {
+      setFileError("Use up to 4 attachments and 2.5 MB total per conversation (2 MB per file). Start a new chat for more files."); return;
+    }
+    const stored = conversations.flatMap(conversation => conversation.messages.flatMap(message => message.attachments || [])).reduce((sum, file) => sum + file.size, 0);
+    if (stored + files.reduce((sum, file) => sum + file.size, 0) + incoming.reduce((sum, file) => sum + file.size, 0) > 20 * 1024 * 1024) {
+      setFileError("This temporary session has reached its attachment memory limit. Refresh to clear it before adding more files."); return;
+    }
+    const controller = new AbortController(); fileRead.current = controller; setPreparing(0);
+    try {
+      const loaded: LocalAttachment[] = [];
+      for (let i = 0; i < incoming.length; i++) loaded.push(await readAttachment(incoming[i], controller.signal, progress => {
+        if (fileRead.current === controller) setPreparing(Math.round((i + progress / 100) / incoming.length * 100));
+      }));
+      if (fileRead.current === controller && !controller.signal.aborted) setFiles(current => [...current, ...loaded]);
+    } catch (error) {
+      if (fileRead.current === controller && !controller.signal.aborted) setFileError(error instanceof Error ? error.message : "Unable to prepare attachments.");
+    } finally {
+      if (fileRead.current === controller) { fileRead.current = null; setPreparing(null); }
+    }
   }
 
   function retry() {
@@ -339,7 +382,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
       <div className={styles.topbar}>
         <button className={`${styles.iconControl} ${styles.mobileMenu}`} type="button" aria-label="Open sidebar" title="Open sidebar" onClick={() => drawer.current?.showModal()}><Menu size={22} /></button>
         <Link href="/" className={styles.iconControl} aria-label="Close" title="Close" onNavigate={event => {
-          if (draft.trim() && !window.confirm("Discard your unsent message and return to the homepage?")) event.preventDefault();
+          if ((draft.trim() || files.length || preparing !== null) && !window.confirm("Discard your unsent message and return to the homepage?")) event.preventDefault();
         }}><X size={22} aria-hidden="true" /></Link>
       </div>
 
@@ -358,7 +401,8 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
               feedback={message.feedback} generating={pendingId !== null}
               onFeedback={onFeedback} onRegenerate={onRegenerate} onSaveCard={onSaveCard} />
               : <article key={message.id} className={styles.message} aria-label="Your message">
-              <p dir="auto">{message.text}</p>
+              {message.attachments?.length ? <AttachmentList files={message.attachments} onOpen={setViewing} /> : null}
+              {message.text && <p dir="auto">{message.text}</p>}
             </article>)}
             {active?.error && <div className={styles.replyError} role="alert"><p>{AI_ERRORS[active.error]}</p><button type="button" onClick={retry} disabled={pending}>Retry</button></div>}
           </div>
@@ -371,13 +415,18 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
             {suggestions.map(suggestion => <button className={styles.chip} key={suggestion} type="button" onClick={() => { setDraft(suggestion); input.current?.focus(); }}>{suggestion}</button>)}
           </div></div>
         </div>
-        <form className={styles.composer} onSubmit={event => { event.preventDefault(); send(); }}>
+        <form className={styles.composer} data-files={files.length > 0} onSubmit={event => { event.preventDefault(); send(); }}>
+          {files.length > 0 && <div className={styles.attachmentTray}><AttachmentList files={files} onRemove={id => setFiles(current => current.filter(file => file.id !== id))} onOpen={setViewing} /></div>}
+          <input ref={imagePicker} type="file" accept={imageAccept} multiple hidden aria-label="Upload images" onChange={event => { void selectFiles(event.target.files); event.target.value = ""; }} />
+          <input ref={documentPicker} type="file" accept={documentAccept} multiple hidden aria-label="Upload documents" onChange={event => { void selectFiles(event.target.files); event.target.value = ""; }} />
+          <input ref={cameraPicker} type="file" accept="image/jpeg,image/png,image/webp" capture="environment" hidden aria-label="Take a photo" onChange={event => { void selectFiles(event.target.files); event.target.value = ""; }} />
           <div className={styles.attachmentArea} ref={attachmentArea}>
             <button ref={attachmentTrigger} className={styles.iconControl} type="button" aria-label="Add attachment" title="Add attachment" aria-expanded={attachmentsOpen} aria-controls={menuId} onClick={() => setAttachmentsOpen(value => !value)}><Plus size={22} /></button>
             {attachmentsOpen && <div className={styles.attachmentMenu} id={menuId} role="group" aria-label="Attachments">
-              <button type="button" disabled><ImageIcon size={18} />Add image</button>
-              <button type="button" disabled><File size={18} />Add file</button>
-              <p>Uploads are not available yet.</p>
+              <button type="button" disabled={preparing !== null} onClick={() => imagePicker.current?.click()}><ImageIcon size={18} />Add image</button>
+              <button type="button" disabled={preparing !== null} onClick={() => documentPicker.current?.click()}><File size={18} />Add file</button>
+              <button type="button" disabled={preparing !== null} onClick={() => cameraPicker.current?.click()}><Camera size={18} />Take a photo</button>
+              <p>Up to 4 files, 2 MB each; 2.5 MB per chat. Files stay in this browser session and are sent privately to OpenAI for analysis.</p>
             </div>}
           </div>
           <textarea ref={input} className={styles.input} rows={1} aria-label="Message" placeholder="Ask BlueMind anything…" value={draft}
@@ -387,10 +436,13 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
             }} />
           {pendingId !== null
             ? <button key="stop" className={styles.primarySend} type="button" onClick={stopReply} aria-label="Stop response" title="Stop response"><Square size={16} fill="currentColor" aria-hidden="true" /></button>
-            : <button key="send" className={styles.primarySend} type="submit" disabled={!draft.trim()} aria-label="Send message" title="Send message"><ArrowUp size={21} aria-hidden="true" /></button>}
+            : <button key="send" className={styles.primarySend} type="submit" disabled={(!draft.trim() && !files.length) || preparing !== null} aria-label="Send message" title="Send message"><ArrowUp size={21} aria-hidden="true" /></button>}
         </form>
+        {preparing !== null && <div className={styles.fileStatus} role="status">Preparing attachments: {preparing}% <button type="button" onClick={() => { fileRead.current?.abort(); fileRead.current = null; setPreparing(null); }}>Cancel</button></div>}
+        {fileError && <div className={styles.fileStatus} role="alert">{fileError}</div>}
         <p className={styles.status} role="status">{available ? "Messages are sent to OpenAI. Avoid sharing sensitive information." : "AI responses are not connected"}</p>
       </div>
     </main>
+    {viewing && <ImageViewer file={viewing} onClose={() => setViewing(null)} />}
   </div>;
 }
