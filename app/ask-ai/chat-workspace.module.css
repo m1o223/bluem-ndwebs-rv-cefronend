@@ -123,6 +123,20 @@
   .empty { padding-block: 8px; }
   .suggestions { gap: 6px; padding-bottom: 10px; }
 }
+/* Desktop welcome only: tablets, phones and active conversations retain the base layout. */
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .chat[data-welcome="true"] .main { grid-template-rows: 68px minmax(240px, 1fr) auto minmax(24px, .65fr); overflow-y: auto; }
+  .chat[data-welcome="true"] .empty { justify-content: flex-end; padding-bottom: 28px; }
+  .chat[data-welcome="true"] .composerArea { display: flex; flex-direction: column; align-self: start; width: 60%; max-width: 1040px; padding: 0; }
+  .chat[data-welcome="true"] .composer { order: 0; grid-template-rows: minmax(44px, auto) 44px; min-height: 122px; padding: 12px 16px; border-radius: 24px; background: #f7f8fa; }
+  .chat[data-welcome="true"] .input { grid-column: 1 / -1; grid-row: 1; padding: 8px 0; }
+  .chat[data-welcome="true"] .attachmentArea { grid-column: 1; grid-row: 2; }
+  .chat[data-welcome="true"] .primarySend { grid-column: 3; grid-row: 2; }
+  .chat[data-welcome="true"] .suggestionReveal { order: 1; margin-top: 14px; }
+  .chat[data-welcome="true"] .suggestions { flex-wrap: wrap; justify-content: center; overflow: visible; padding: 4px 0; }
+  .chat[data-welcome="true"] .chip { margin-inline: 0; }
+  .chat[data-welcome="true"] .status { order: 2; }
+}
 @media (prefers-reduced-motion: reduce) {
   .chat, .chat *, .drawer, .drawer * { animation: none !important; transition: none !important; }
 }

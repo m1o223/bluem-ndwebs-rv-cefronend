@@ -273,7 +273,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
     <div className={styles.thinkingIndicator} data-ready={contentArrived} aria-hidden="true"><span className={styles.thinkingDot} /></div>
   </div>;
 
-  return <div ref={root} className={styles.chat} data-collapsed={collapsed} data-no-translate dir="ltr">
+  return <div ref={root} className={styles.chat} data-collapsed={collapsed} data-welcome={!hasMessages} data-no-translate dir="ltr">
     <aside className={styles.sidebar} aria-label="Chat sidebar">
       <div className={styles.sidebarTop}><button className={styles.iconControl} type="button" onClick={() => setCollapsed(value => !value)}
         aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"} title={collapsed ? "Expand sidebar" : "Collapse sidebar"} aria-expanded={!collapsed}>
