@@ -48,7 +48,7 @@ test("delayed stream keeps receiving after instant reveal without restarting ani
         setTimeout(() => {
           controller.enqueue(encoder.encode(JSON.stringify({ type: "delta", text: "\n\n**Final streamed words**" }) + '\n{"type":"done"}\n'));
           controller.close();
-        }, 1800);
+        }, 7000);
       } });
       return new Response(body, { headers: { "Content-Type": "application/x-ndjson" } });
     };

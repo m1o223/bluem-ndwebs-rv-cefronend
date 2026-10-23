@@ -59,9 +59,6 @@
 .chat .actionButtons button:disabled { opacity: .4; cursor: not-allowed; }
 .actionButtons button::after { content: attr(data-tooltip); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); z-index: 2; width: max-content; max-width: 150px; padding: 6px 8px; border: 1px solid #e0e5eb; border-radius: 5px; background: #fff; color: #142d4e; font-size: 12px; font-weight: 400; line-height: 1.4; text-align: center; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 120ms ease; }
 .actionButtons button:is(:hover, :focus-visible)::after { opacity: 1; visibility: visible; }
-.actionNotice { display: block; color: #526479; font-size: 12px; line-height: 1.5; }
-.actionNotice:not(:empty) { margin-top: 4px; }
-.assistant small { display: block; margin-top: 8px; color: #697482; }
 .thinkingIndicator { display: flex; align-items: center; height: 26.25px; opacity: 1; transition: opacity 120ms ease-out; }
 .thinkingIndicator[data-ready="true"] { opacity: 0; }
 .thinkingDot { display: block; flex: 0 0 18px; width: 18px; height: 18px; border-radius: 50%; background: #000; transform-origin: center; animation: thinking-pulse 1.2s ease-in-out infinite; }

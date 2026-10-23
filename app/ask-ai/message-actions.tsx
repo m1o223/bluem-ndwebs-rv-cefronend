@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Check, Copy, RefreshCw, Share2, ThumbsDown, ThumbsUp } from "lucide-react";
 import styles from "./chat-workspace.module.css";
+import cardStyles from "./message-card.module.css";
 
 export type Feedback = "like" | "dislike" | undefined;
 
@@ -66,6 +68,6 @@ export function MessageActions({ text, feedback, generating, onFeedback, onRegen
       <button type="button" aria-label="Regenerate response" data-tooltip={generating ? "Wait for the current response" : "Regenerate"}
         disabled={generating} onClick={onRegenerate}><RefreshCw size={17} aria-hidden="true" /></button>
     </div>
-    <span className={styles.actionNotice} role="status">{notice}</span>
+    {notice && createPortal(<div className={cardStyles.toast} role="status" data-no-translate>{notice}</div>, document.body)}
   </div>;
 }

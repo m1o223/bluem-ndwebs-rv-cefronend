@@ -98,16 +98,22 @@ for (const width of [320, 375, 768, 1440]) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
 
-  test(`Stop freezes received text, preserves the draft and allows a new request at ${width}px`, async ({ page }) => {
+  test(`Stop freezes only visible text, preserves the draft and allows a new request at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await open(page); await send(page); await calls(page, 1);
-    const partial = "## Received response\n\n" + "Keep this paragraph. ".repeat(40);
+    const partial = "Keep this paragraph. ".repeat(400);
     await emit(page, 0, partial);
     await expect(instant(page)).toBeVisible();
     await input(page).fill("Continue with a new answer");
-    await stop(page).evaluate(button => { (button as HTMLButtonElement).click(); (button as HTMLButtonElement).click(); });
-    await expect(answer(page)).toContainText("Response stopped");
-    await expect(answer(page).locator("p")).toHaveText("Keep this paragraph. ".repeat(40).trim());
+    await expect.poll(() => answer(page).locator("p").textContent()).not.toBe("");
+    const visible = await stop(page).evaluate(button => {
+      const text = document.querySelector('[aria-label="BlueMind AI response"] p')!.textContent!;
+      (button as HTMLButtonElement).click(); (button as HTMLButtonElement).click();
+      return text;
+    });
+    expect(visible.length).toBeLessThan(partial.length);
+    await expect(answer(page)).toHaveText(visible.trim());
+    await expect(answer(page).locator("small, [role=status]")).toHaveCount(0);
     await expect(instant(page)).toHaveCount(0);
     await expect(sendButton(page)).toBeEnabled();
     await expect(input(page)).toHaveValue("Continue with a new answer");
@@ -121,7 +127,7 @@ for (const width of [320, 375, 768, 1440]) {
     await sendButton(page).click();
     await calls(page, 2);
     await expect(stop(page)).toBeEnabled();
-    expect(await page.evaluate(() => window.controlTest.streams[1].messages[1])).toEqual({ role: "assistant", content: partial });
+    expect(await page.evaluate(() => window.controlTest.streams[1].messages[1])).toEqual({ role: "assistant", content: visible.trim() });
     await expect(answer(page).first()).toHaveAttribute("aria-busy", "false");
     await emit(page, 1, "New response succeeds.", true);
     await expect(answer(page).last()).toContainText("New response succeeds.");
@@ -158,7 +164,7 @@ test("Stop keeps partial regeneration instead of restoring the old response", as
   await expect(answer(page)).toHaveCount(1);
   await expect(answer(page)).toContainText("Partial regenerated response.");
   await expect(answer(page)).not.toContainText("Original complete response.");
-  await expect(answer(page)).toContainText("Response stopped");
+  await expect(answer(page).locator("small, [role=status]")).toHaveCount(0);
 });
 
 test("switching conversations aborts the active stream without contaminating the new conversation", async ({ page }) => {
@@ -309,4 +315,67 @@ test("reduced motion keeps a static black dot and displays the first content wit
   await expect(thinking(page)).toHaveCount(0);
   await expect(answer(page)).toHaveText("First accessible response.");
   await stop(page).click();
+});
+
+test("fast completed responses stay buffered behind the dot for 5.5 seconds without delaying the API", async ({ page }) => {
+  await page.clock.install();
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await open(page); await send(page); await calls(page, 1);
+  await emit(page, 0, "A fast, complete response.", true);
+  await expect.poll(() => page.evaluate(() => window.controlTest.streams[0].closed)).toBe(true);
+  await page.clock.runFor(4800);
+  await expect(thinking(page)).toBeVisible();
+  await expect(answer(page)).toHaveCount(0);
+  await expect(stop(page)).toBeEnabled();
+  expect(await page.evaluate(() => window.controlTest.streams[0].aborts)).toBe(0);
+  await page.clock.runFor(900);
+  await expect(answer(page)).toHaveText("A fast, complete response.");
+  await expect(stop(page)).toHaveCount(0);
+  await expect(answer(page).locator("small, [role=status]")).toHaveCount(0);
+});
+
+for (const done of [false, true]) test(`Stop during thinking discards all hidden buffered text (network complete: ${done})`, async ({ page }) => {
+  await page.clock.install();
+  await open(page); await send(page); await calls(page, 1);
+  await emit(page, 0, "This hidden answer must never appear.", done);
+  await expect(thinking(page)).toBeVisible();
+  await expect(answer(page)).toHaveCount(0);
+  await stop(page).click();
+  await expect(stop(page)).toHaveCount(0);
+  await expect(thinking(page)).toHaveCount(0);
+  expect(await page.evaluate(() => window.controlTest.streams[0].signal?.aborted)).toBe(true);
+  await page.clock.runFor(8000);
+  await expect(answer(page)).toHaveCount(0);
+  await send(page, "A fresh question"); await calls(page, 2);
+  expect(await page.evaluate(() => window.controlTest.streams[1].messages.some(message => message.role === "assistant"))).toBe(false);
+  await emit(page, 1, "A fresh answer.", true);
+  await page.clock.runFor(5800);
+  await page.clock.runFor(1000);
+  await expect(answer(page)).toHaveText("A fresh answer.");
+});
+
+test("Stop remains available after the network ends and cancels queued visual rendering exactly", async ({ page }) => {
+  await page.clock.install();
+  await open(page); await send(page); await calls(page, 1);
+  const full = "A useful recommendation. ".repeat(400);
+  await emit(page, 0, full, true);
+  await page.clock.runFor(5700);
+  await page.clock.runFor(300);
+  await expect(instant(page)).toBeVisible();
+  await expect(answer(page).locator("p")).toBeVisible();
+  const visible = await stop(page).evaluate(button => {
+    const text = document.querySelector('[aria-label="BlueMind AI response"] p')!.textContent!;
+    (button as HTMLButtonElement).click();
+    return text;
+  });
+  expect(visible.length).toBeGreaterThan(0);
+  expect(visible.length).toBeLessThan(full.length);
+  await expect(answer(page)).toHaveText(visible.trim());
+  await expect(sendButton(page)).toBeVisible();
+  await page.clock.runFor(20000);
+  await expect(answer(page)).toHaveText(visible.trim());
+  await expect(instant(page)).toHaveCount(0);
+  await page.getByRole("button", { name: "New chat", exact: true }).click();
+  await page.getByRole("button", { name: "Make a plan", exact: true }).click();
+  await expect(answer(page)).toHaveText(visible.trim());
 });

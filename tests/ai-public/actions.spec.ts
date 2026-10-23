@@ -35,11 +35,12 @@ for (const width of [320, 375, 768, 1440]) test(`five accessible actions and exc
   await expect(like).toHaveAttribute("aria-pressed", "true");
   expect(await like.evaluate(el => getComputedStyle(el, "::after").content)).toBe('"Like"');
   await actions(page).getByRole("button", { name: "Copy response" }).click();
-  await expect(answers(page).getByRole("status")).toHaveText("Copied!");
+  await expect(page.getByRole("status").filter({ hasText: /Copied!|Response copied|Could not copy/ })).toHaveText("Copied!");
   expect((await page.evaluate(() => navigator.clipboard.readText())).replace(/\r\n/g, "\n")).toBe(response);
-  await expect(answers(page).getByRole("status")).toBeEmpty({ timeout: 4000 });
+  await expect(page.getByRole("status").filter({ hasText: "Copied!" })).toHaveCount(0, { timeout: 4000 });
+  await expect(answers(page).getByRole("status")).toHaveCount(0);
   await actions(page).getByRole("button", { name: "Share response" }).click();
-  await expect(answers(page).getByRole("status")).toHaveText("Response copied for sharing.");
+  await expect(page.getByRole("status").filter({ hasText: /Copied!|Response copied|Could not copy/ })).toHaveText("Response copied for sharing.");
   expect((await page.evaluate(() => navigator.clipboard.readText())).replace(/\r\n/g, "\n")).toBe(response);
   if (width < 768) await page.getByRole("button", { name: "Open sidebar", exact: true }).click();
   await page.getByRole("button", { name: "New chat", exact: true }).filter({ visible: true }).click();
@@ -70,7 +71,7 @@ test("native share receives only the full answer; cancellation never copies", as
   await page.evaluate(() => { (window as unknown as { cancelShare: boolean }).cancelShare = true; });
   await actions(page).getByRole("button", { name: "Share response" }).click();
   expect(await page.evaluate(() => (window as unknown as { copied: string[] }).copied)).toEqual([]);
-  await expect(answers(page).getByRole("status")).toBeEmpty();
+  await expect(answers(page).getByRole("status")).toHaveCount(0);
 });
 
 test("share permission failure falls back to clipboard and clipboard errors are honest", async ({ page }) => {
@@ -89,7 +90,7 @@ test("share permission failure falls back to clipboard and clipboard errors are 
   expect(await page.evaluate(() => (window as unknown as { copied: string }).copied)).toBe(response);
   await page.evaluate(() => { (window as unknown as { denyCopy: boolean }).denyCopy = true; });
   await actions(page).getByRole("button", { name: "Copy response" }).click();
-  await expect(answers(page).getByRole("status")).toHaveText("Could not copy. Please select and copy the response.");
+  await expect(page.getByRole("status").filter({ hasText: /Copied!|Response copied|Could not copy/ })).toHaveText("Could not copy. Please select and copy the response.");
   await expect(actions(page).getByRole("button", { name: "Copy response" })).toBeEnabled();
 });
 

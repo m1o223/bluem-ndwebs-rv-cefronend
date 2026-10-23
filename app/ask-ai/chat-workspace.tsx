@@ -14,7 +14,11 @@ import styles from "./chat-workspace.module.css";
 
 type Message = { id: string; text: string; role: "user" | "assistant"; complete: boolean; stopped?: boolean; feedback?: Feedback; card?: MessageCardContent };
 type Conversation = { id: string; title: string; messages: Message[]; error?: AiErrorCode; retryMessageId?: string };
-type RunningReply = { conversationId: string; controller: AbortController; assistantId: string; replaced?: Message; timeout?: number };
+type RunningReply = {
+  conversationId: string; controller: AbortController; assistantId: string; replaced?: Message;
+  timeout?: number; thinkingTimer?: number; networkDone: boolean; visible: string;
+};
+const THINKING_MIN_MS = 5500;
 const suggestions = ["Create a website", "Design a page", "Improve my website", "Business ideas", "Help me get started", "Explore our services"];
 
 function History({ conversations, activeId, compact = false, onSelect, onNew }: {
@@ -44,7 +48,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   const [attachmentsOpen, setAttachmentsOpen] = useState(false);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [animatedId, setAnimatedId] = useState<string | null>(null);
-  const [thinkingReply, setThinkingReply] = useState<{ id: string; replacedId?: string } | null>(null);
+  const [thinkingReply, setThinkingReply] = useState<{ id: string; replacedId?: string; ready: boolean } | null>(null);
   const request = useRef<RunningReply | null>(null);
   const root = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLTextAreaElement>(null);
@@ -69,18 +73,31 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   const onRegenerate = useCallback((id: string) => actionHandlers.current.regenerate(id), []);
   const onFeedback = useCallback((id: string, feedback: Feedback) => actionHandlers.current.setFeedback(id, feedback), []);
   const onSaveCard = useCallback((id: string, card: MessageCardContent) => actionHandlers.current.saveCard(id, card), []);
+  const onPresented = useCallback((id: string, visible: string, finished: boolean) => {
+    const running = request.current;
+    if (!running || running.assistantId !== id || running.controller.signal.aborted) return;
+    // Track committed text, not buffered chunks or a scheduled typing frame.
+    running.visible = visible;
+    if (finished && running.networkDone) {
+      request.current = null;
+      window.clearTimeout(running.thinkingTimer);
+      setPendingId(null);
+    }
+  }, []);
 
   useEffect(() => {
-    if (!thinking || !contentArrived) return;
+    if (!thinking || !contentArrived || !thinkingReply?.ready) return;
     // Finish the dot's fade before mounting text; the network keeps streaming normally.
-    const timer = window.setTimeout(() => setThinkingReply(null), matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 120);
+    const timer = window.setTimeout(() => setThinkingReply(current => current?.id === animatedId ? null : current),
+      matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 120);
     return () => window.clearTimeout(timer);
-  }, [thinking, contentArrived, animatedId]);
+  }, [thinking, contentArrived, animatedId, thinkingReply?.ready]);
 
   useEffect(() => () => {
     const running = request.current;
     request.current = null;
     window.clearTimeout(running?.timeout);
+    window.clearTimeout(running?.thinkingTimer);
     running?.controller.abort();
   }, []);
 
@@ -133,14 +150,16 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
 
   function chooseConversation(id: string | null) {
     setAnimatedId(null);
+    setThinkingReply(null);
     const running = request.current;
     if (running) {
       request.current = null;
       window.clearTimeout(running.timeout);
+      window.clearTimeout(running.thinkingTimer);
       running.controller.abort();
       setPendingId(null);
       setConversations(current => current.map(conversation => conversation.id === running.conversationId
-        ? restoreReply(conversation, running, "stopped") : conversation));
+        ? freezeReply(conversation, running, true) : conversation));
     }
     setActiveId(id);
     setDraft("");
@@ -149,8 +168,16 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   }
 
   function restoreReply(conversation: Conversation, running: RunningReply, error: AiErrorCode): Conversation {
-    return { ...conversation, error, retryMessageId: running.replaced?.id,
-      messages: running.replaced ? conversation.messages.map(message => message.id === running.assistantId ? running.replaced! : message) : conversation.messages };
+    return { ...freezeReply(conversation, running, true), error, retryMessageId: running.replaced?.id };
+  }
+
+  function freezeReply(conversation: Conversation, running: RunningReply, restoreReplaced = false): Conversation {
+    return { ...conversation, error: undefined, retryMessageId: undefined,
+      messages: conversation.messages.flatMap(message => {
+        if (message.id !== running.assistantId) return [message];
+        if (running.replaced && (restoreReplaced || !running.visible)) return [running.replaced];
+        return running.visible ? [{ ...message, text: running.visible, card: undefined, stopped: true, complete: false }] : [];
+      }) };
   }
 
   function stopReply() {
@@ -159,23 +186,28 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
     // Invalidate first: late chunks/finalizers must not affect this or the next request.
     request.current = null;
     window.clearTimeout(running.timeout);
+    window.clearTimeout(running.thinkingTimer);
     running.controller.abort();
     setPendingId(null);
     setAnimatedId(null);
+    setThinkingReply(null);
     setConversations(current => current.map(conversation => conversation.id === running.conversationId
-      ? { ...conversation, error: undefined, retryMessageId: undefined,
-        messages: conversation.messages.map(message => message.id === running.assistantId
-          ? { ...message, stopped: true, complete: false } : message) } : conversation));
+      ? freezeReply(conversation, running) : conversation));
   }
 
   async function reply(id: string, conversationMessages: Message[], replaced?: Message) {
     if (request.current) return;
     const assistantId = crypto.randomUUID();
-    const running: RunningReply = { conversationId: id, controller: new AbortController(), assistantId, replaced };
+    const running: RunningReply = { conversationId: id, controller: new AbortController(), assistantId, replaced, networkDone: false, visible: "" };
     request.current = running;
     setPendingId(id);
     setAnimatedId(assistantId);
-    setThinkingReply({ id: assistantId, replacedId: replaced?.id });
+    setThinkingReply({ id: assistantId, replacedId: replaced?.id, ready: false });
+    running.thinkingTimer = window.setTimeout(() => {
+      if (request.current === running && !running.controller.signal.aborted) {
+        setThinkingReply(current => current?.id === assistantId ? { ...current, ready: true } : current);
+      }
+    }, THINKING_MIN_MS);
     running.timeout = window.setTimeout(() => running.controller.abort(), 65000);
     setConversations(current => current.map(conversation => conversation.id === id ? { ...conversation, error: undefined, retryMessageId: undefined } : conversation));
     try {
@@ -204,16 +236,25 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
             : [...conversation.messages, next] };
         }));
       });
-      if (request.current === running) setConversations(current => current.map(conversation => conversation.id === id
-        ? { ...conversation, messages: conversation.messages.map(message => message.id === assistantId ? { ...message, complete: true } : message) } : conversation));
+      if (request.current === running) {
+        running.networkDone = true;
+        setConversations(current => current.map(conversation => conversation.id === id
+          ? { ...conversation, messages: conversation.messages.map(message => message.id === assistantId ? { ...message, complete: true } : message) } : conversation));
+      }
     } catch (error) {
       if (request.current === running) {
         const code = running.controller.signal.aborted ? "timeout" : error instanceof ChatRequestError ? error.code : "failed";
+        request.current = null;
+        running.controller.abort();
+        window.clearTimeout(running.thinkingTimer);
+        setPendingId(null);
+        setAnimatedId(null);
+        setThinkingReply(null);
         setConversations(current => current.map(conversation => conversation.id === id ? restoreReply(conversation, running, code) : conversation));
       }
     } finally {
       window.clearTimeout(running.timeout);
-      if (request.current === running) { request.current = null; setPendingId(null); }
+      // Successful requests remain cancellable until the buffered presentation finishes.
     }
   }
 
@@ -270,7 +311,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
 
   const historyProps = { conversations, activeId, onSelect: chooseConversation, onNew: () => chooseConversation(null) };
   const thinkingIndicator = <div key={`thinking-${animatedId}`} className={styles.assistant} role="status" aria-label="BlueMind AI is preparing a response">
-    <div className={styles.thinkingIndicator} data-ready={contentArrived} aria-hidden="true"><span className={styles.thinkingDot} /></div>
+    <div className={styles.thinkingIndicator} data-ready={contentArrived && thinkingReply?.ready} aria-hidden="true"><span className={styles.thinkingDot} /></div>
   </div>;
 
   return <div ref={root} className={styles.chat} data-collapsed={collapsed} data-welcome={!hasMessages} data-no-translate dir="ltr">
@@ -313,6 +354,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
             {visibleMessages.map(message => message.id === thinkingTarget ? thinkingIndicator : message.role === "assistant" ? <AssistantMessage key={message.id} id={message.id}
               text={message.text} card={message.card} complete={message.complete} stopped={message.stopped}
               animate={message.id === animatedId} pending={pending && message.id === animatedId}
+              signal={message.id === animatedId ? request.current?.controller.signal : undefined} onPresented={onPresented}
               feedback={message.feedback} generating={pendingId !== null}
               onFeedback={onFeedback} onRegenerate={onRegenerate} onSaveCard={onSaveCard} />
               : <article key={message.id} className={styles.message} aria-label="Your message">

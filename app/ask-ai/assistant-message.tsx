@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Markdown, { type Components } from "react-markdown";
 import { FastForward } from "lucide-react";
 import { MessageActions, type Feedback } from "./message-actions";
@@ -15,7 +15,7 @@ const markdownComponents: Components = {
   pre: ({ children }) => <pre tabIndex={0} aria-label="Code block">{children}</pre>,
 };
 
-function usePresentedText(text: string, animate: boolean) {
+function usePresentedText(text: string, animate: boolean, signal?: AbortSignal) {
   const [instant, setInstant] = useState(false);
   const instantRef = useRef(false);
   const [count, setCount] = useState(animate ? 0 : text.length);
@@ -23,6 +23,13 @@ function usePresentedText(text: string, animate: boolean) {
   const progress = useRef(count);
   const target = useRef(text);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useLayoutEffect(() => {
+    const cancel = () => { if (timer.current) clearTimeout(timer.current); timer.current = null; };
+    signal?.addEventListener("abort", cancel, { once: true });
+    if (signal?.aborted) cancel();
+    return () => { cancel(); signal?.removeEventListener("abort", cancel); };
+  }, [signal]);
 
   useEffect(() => {
     const media = matchMedia("(prefers-reduced-motion: reduce)");
@@ -44,7 +51,7 @@ function usePresentedText(text: string, animate: boolean) {
     // Consume the presentation buffer independently of the network reader.
     // Adapt to large bursts so long replies don't take minutes to reveal.
     function tick() {
-      if (instantRef.current) { timer.current = null; return; }
+      if (instantRef.current || signal?.aborted) { timer.current = null; return; }
       const value = target.current;
       const remaining = value.length - progress.current;
       let next = Math.min(value.length, progress.current + Math.max(4, Math.ceil(remaining / 45)));
@@ -53,14 +60,15 @@ function usePresentedText(text: string, animate: boolean) {
       setCount(next);
       timer.current = next < value.length ? setTimeout(tick, 40) : null;
     }
-    if (!timer.current && progress.current < text.length) timer.current = setTimeout(tick, 40);
-  }, [text, animate, instant, reduced]);
+    if (!signal?.aborted && !timer.current && progress.current < text.length) timer.current = setTimeout(tick, 40);
+  }, [text, animate, instant, reduced, signal]);
 
   useEffect(() => () => {
     if (timer.current) clearTimeout(timer.current);
     timer.current = null;
   }, []);
   function showInstantly() {
+    if (signal?.aborted) return;
     // This affects presentation only. The network reader continues independently.
     instantRef.current = true;
     if (timer.current) clearTimeout(timer.current);
@@ -70,14 +78,18 @@ function usePresentedText(text: string, animate: boolean) {
   return { visible: !animate || instant || reduced ? text : text.slice(0, count), showInstantly };
 }
 
-export const AssistantMessage = memo(function AssistantMessage({ id, text, card, complete, stopped, animate, pending, feedback, generating, onFeedback, onRegenerate, onSaveCard }: {
+export const AssistantMessage = memo(function AssistantMessage({ id, text, card, complete, stopped, animate, pending, feedback, generating, signal, onPresented, onFeedback, onRegenerate, onSaveCard }: {
   id: string; text: string; complete: boolean; animate: boolean; pending: boolean;
   stopped?: boolean;
+  signal?: AbortSignal; onPresented: (id: string, visible: string, finished: boolean) => void;
   card?: MessageCardContent; onSaveCard: (id: string, card: MessageCardContent) => void;
   feedback: Feedback; generating: boolean; onFeedback: (id: string, feedback: Feedback) => void; onRegenerate: (id: string) => void;
 }) {
-  const { visible, showInstantly } = usePresentedText(text, animate && !stopped);
+  const { visible, showInstantly } = usePresentedText(text, animate && !stopped, signal);
   const revealing = visible.length < text.length;
+  useLayoutEffect(() => {
+    onPresented(id, visible, complete && !revealing);
+  }, [id, visible, complete, revealing, onPresented]);
   return <article className={`${styles.message} ${styles.assistant}`} aria-label="BlueMind AI response" aria-busy={revealing || (!complete && pending)}>
     {visible && <div className={styles.markdown} dir="auto">
       <Markdown skipHtml components={markdownComponents}>{visible}</Markdown>
@@ -87,7 +99,6 @@ export const AssistantMessage = memo(function AssistantMessage({ id, text, card,
       title="Show all received text immediately and display incoming text without animation">
       <FastForward size={15} aria-hidden="true" />Show instantly
     </button>}
-    {!complete && !pending && <small>{stopped ? "Response stopped" : "Incomplete response"}</small>}
     {complete && !card && !revealing && <MessageActions text={text} feedback={feedback} generating={generating}
       onFeedback={value => onFeedback(id, value)} onRegenerate={() => onRegenerate(id)} />}
   </article>;
