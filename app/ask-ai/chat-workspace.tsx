@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
-import { ArrowUp, File, ImageIcon, Menu, MessageSquare, PanelLeftClose, PanelLeftOpen, Plus, SquarePen, X } from "lucide-react";
+import { ArrowUp, File, ImageIcon, Menu, MessageSquare, PanelLeftClose, PanelLeftOpen, Plus, Square, SquarePen, X } from "lucide-react";
 import { BlueMindLogo } from "../../components/blue-mind-logo";
 import { AI_ERRORS, AI_LIMITS, boundedContext, type AiErrorCode } from "../lib/ai/contract";
 import { ChatRequestError, requestReply } from "../lib/ai/client";
@@ -12,9 +12,9 @@ import type { Feedback } from "./message-actions";
 import { messageCardText, validateMessageCard, type MessageCardContent } from "../lib/ai/message-card";
 import styles from "./chat-workspace.module.css";
 
-type Message = { id: string; text: string; role: "user" | "assistant"; complete: boolean; feedback?: Feedback; card?: MessageCardContent };
+type Message = { id: string; text: string; role: "user" | "assistant"; complete: boolean; stopped?: boolean; feedback?: Feedback; card?: MessageCardContent };
 type Conversation = { id: string; title: string; messages: Message[]; error?: AiErrorCode; retryMessageId?: string };
-type RunningReply = { conversationId: string; controller: AbortController; assistantId: string; replaced?: Message };
+type RunningReply = { conversationId: string; controller: AbortController; assistantId: string; replaced?: Message; timeout?: number };
 const suggestions = ["Create a website", "Design a page", "Improve my website", "Business ideas", "Help me get started", "Explore our services"];
 
 function History({ conversations, activeId, compact = false, onSelect, onNew }: {
@@ -62,7 +62,12 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   const onFeedback = useCallback((id: string, feedback: Feedback) => actionHandlers.current.setFeedback(id, feedback), []);
   const onSaveCard = useCallback((id: string, card: MessageCardContent) => actionHandlers.current.saveCard(id, card), []);
 
-  useEffect(() => () => { request.current?.controller.abort(); request.current = null; }, []);
+  useEffect(() => () => {
+    const running = request.current;
+    request.current = null;
+    window.clearTimeout(running?.timeout);
+    running?.controller.abort();
+  }, []);
 
   useEffect(() => {
     const viewport = window.visualViewport;
@@ -116,6 +121,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
     const running = request.current;
     if (running) {
       request.current = null;
+      window.clearTimeout(running.timeout);
       running.controller.abort();
       setPendingId(null);
       setConversations(current => current.map(conversation => conversation.id === running.conversationId
@@ -132,6 +138,21 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
       messages: running.replaced ? conversation.messages.map(message => message.id === running.assistantId ? running.replaced! : message) : conversation.messages };
   }
 
+  function stopReply() {
+    const running = request.current;
+    if (!running) return;
+    // Invalidate first: late chunks/finalizers must not affect this or the next request.
+    request.current = null;
+    window.clearTimeout(running.timeout);
+    running.controller.abort();
+    setPendingId(null);
+    setAnimatedId(null);
+    setConversations(current => current.map(conversation => conversation.id === running.conversationId
+      ? { ...conversation, error: undefined, retryMessageId: undefined,
+        messages: conversation.messages.map(message => message.id === running.assistantId
+          ? { ...message, stopped: true, complete: false } : message) } : conversation));
+  }
+
   async function reply(id: string, conversationMessages: Message[], replaced?: Message) {
     if (request.current) return;
     const assistantId = crypto.randomUUID();
@@ -139,13 +160,13 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
     request.current = running;
     setPendingId(id);
     setAnimatedId(assistantId);
-    const timeout = window.setTimeout(() => running.controller.abort(), 65000);
+    running.timeout = window.setTimeout(() => running.controller.abort(), 65000);
     setConversations(current => current.map(conversation => conversation.id === id ? { ...conversation, error: undefined, retryMessageId: undefined } : conversation));
     try {
-      const context = boundedContext(conversationMessages.filter(message => message.complete).map(message => ({ role: message.role,
+      const context = boundedContext(conversationMessages.filter(message => message.complete || (message.stopped && message.text.trim())).map(message => ({ role: message.role,
         content: message.card ? [message.text, messageCardText(message.card)].filter(Boolean).join("\n\n") : message.text })));
       await requestReply(context, running.controller.signal, delta => {
-        if (request.current !== running) return;
+        if (request.current !== running || running.controller.signal.aborted) return;
         setConversations(current => current.map(conversation => {
           if (conversation.id !== id) return conversation;
           const exists = conversation.messages.some(message => message.id === assistantId);
@@ -156,7 +177,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
             : [...conversation.messages, next] };
         }));
       }, card => {
-        if (request.current !== running) return;
+        if (request.current !== running || running.controller.signal.aborted) return;
         setConversations(current => current.map(conversation => {
           if (conversation.id !== id) return conversation;
           const exists = conversation.messages.some(message => message.id === assistantId);
@@ -175,7 +196,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
         setConversations(current => current.map(conversation => conversation.id === id ? restoreReply(conversation, running, code) : conversation));
       }
     } finally {
-      window.clearTimeout(timeout);
+      window.clearTimeout(running.timeout);
       if (request.current === running) { request.current = null; setPendingId(null); }
     }
   }
@@ -204,7 +225,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
     if (!active || request.current) return;
     if (active.retryMessageId) { regenerate(active.retryMessageId); return; }
     followBottom();
-    const completeMessages = active.messages.filter(message => message.complete);
+    const completeMessages = active.messages.filter(message => message.complete || (message.stopped && message.text.trim()));
     setConversations(current => current.map(conversation => conversation.id === active.id ? { ...conversation, messages: completeMessages } : conversation));
     void reply(active.id, completeMessages);
   }
@@ -271,7 +292,8 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
         <div ref={history} className={styles.messageScroll} data-active={hasMessages} tabIndex={hasMessages ? 0 : -1} aria-label="Chat messages">
           <div ref={messageList} className={styles.messages} role="log" aria-label="Conversation" aria-live="polite" aria-relevant="additions text">
             {messages.map(message => message.role === "assistant" ? <AssistantMessage key={message.id} id={message.id}
-              text={message.text} card={message.card} complete={message.complete} animate={message.id === animatedId} pending={pending}
+              text={message.text} card={message.card} complete={message.complete} stopped={message.stopped}
+              animate={message.id === animatedId} pending={pending && message.id === animatedId}
               feedback={message.feedback} generating={pendingId !== null}
               onFeedback={onFeedback} onRegenerate={onRegenerate} onSaveCard={onSaveCard} />
               : <article key={message.id} className={styles.message} aria-label="Your message">
@@ -303,7 +325,9 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
             onChange={event => setDraft(event.target.value)} onKeyDown={event => {
               if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); send(); }
             }} />
-          <button className={styles.primarySend} type="submit" disabled={!draft.trim() || pendingId !== null} aria-label="Send message" title="Send message"><ArrowUp size={21} aria-hidden="true" /></button>
+          {pendingId !== null
+            ? <button key="stop" className={styles.primarySend} type="button" onClick={stopReply} aria-label="Stop response" title="Stop response"><Square size={16} fill="currentColor" aria-hidden="true" /></button>
+            : <button key="send" className={styles.primarySend} type="submit" disabled={!draft.trim()} aria-label="Send message" title="Send message"><ArrowUp size={21} aria-hidden="true" /></button>}
         </form>
         <p className={styles.status} role="status">{available ? "Messages are sent to OpenAI. Avoid sharing sensitive information." : "AI responses are not connected"}</p>
       </div>
