@@ -127,7 +127,10 @@ for (const width of [320, 375, 768, 1440]) {
     await sendButton(page).click();
     await calls(page, 2);
     await expect(stop(page)).toBeEnabled();
-    expect(await page.evaluate(() => window.controlTest.streams[1].messages[1])).toEqual({ role: "assistant", content: visible.trim() });
+    const context = await page.evaluate(() => window.controlTest.streams[1].messages[1]);
+    expect(context.role).toBe("assistant");
+    // Markdown omits trailing whitespace; the request preserves the raw visible prefix.
+    expect(context.content.trim()).toBe(visible.trim());
     await expect(answer(page).first()).toHaveAttribute("aria-busy", "false");
     await emit(page, 1, "New response succeeds.", true);
     await expect(answer(page).last()).toContainText("New response succeeds.");
