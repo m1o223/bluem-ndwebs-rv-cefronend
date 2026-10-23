@@ -317,18 +317,21 @@ test("reduced motion keeps a static black dot and displays the first content wit
   await stop(page).click();
 });
 
-test("fast completed responses stay buffered behind the dot for 5.5 seconds without delaying the API", async ({ page }) => {
+for (const motion of ["reduce", "no-preference"] as const) test(`fast completed responses stay buffered behind the dot for 2 seconds without delaying the API (${motion})`, async ({ page }) => {
   await page.clock.install();
-  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.emulateMedia({ reducedMotion: motion });
   await open(page); await send(page); await calls(page, 1);
   await emit(page, 0, "A fast, complete response.", true);
   await expect.poll(() => page.evaluate(() => window.controlTest.streams[0].closed)).toBe(true);
-  await page.clock.runFor(4800);
+  await page.clock.runFor(1500);
   await expect(thinking(page)).toBeVisible();
   await expect(answer(page)).toHaveCount(0);
   await expect(stop(page)).toBeEnabled();
   expect(await page.evaluate(() => window.controlTest.streams[0].aborts)).toBe(0);
   await page.clock.runFor(900);
+  await expect(answer(page).locator("p")).toBeVisible({ timeout: 500 });
+  await expect(thinking(page)).toHaveCount(0);
+  await page.clock.runFor(1000);
   await expect(answer(page)).toHaveText("A fast, complete response.");
   await expect(stop(page)).toHaveCount(0);
   await expect(answer(page).locator("small, [role=status]")).toHaveCount(0);
@@ -349,7 +352,7 @@ for (const done of [false, true]) test(`Stop during thinking discards all hidden
   await send(page, "A fresh question"); await calls(page, 2);
   expect(await page.evaluate(() => window.controlTest.streams[1].messages.some(message => message.role === "assistant"))).toBe(false);
   await emit(page, 1, "A fresh answer.", true);
-  await page.clock.runFor(5800);
+  await page.clock.runFor(2300);
   await page.clock.runFor(1000);
   await expect(answer(page)).toHaveText("A fresh answer.");
 });
@@ -359,7 +362,7 @@ test("Stop remains available after the network ends and cancels queued visual re
   await open(page); await send(page); await calls(page, 1);
   const full = "A useful recommendation. ".repeat(400);
   await emit(page, 0, full, true);
-  await page.clock.runFor(5700);
+  await page.clock.runFor(2200);
   await page.clock.runFor(300);
   await expect(instant(page)).toBeVisible();
   await expect(answer(page).locator("p")).toBeVisible();
@@ -378,4 +381,24 @@ test("Stop remains available after the network ends and cancels queued visual re
   await page.getByRole("button", { name: "New chat", exact: true }).click();
   await page.getByRole("button", { name: "Make a plan", exact: true }).click();
   await expect(answer(page)).toHaveText(visible.trim());
+});
+
+for (const width of [375, 768, 1440]) test(`slow backend keeps the dot visible without adding another wait at ${width}px`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 900 });
+  await page.clock.install();
+  await open(page); await send(page); await calls(page, 1);
+  await page.clock.runFor(6000);
+  await expect(thinking(page)).toBeVisible();
+  await expect(answer(page)).toHaveCount(0);
+  await expect(stop(page)).toBeEnabled();
+  await emit(page, 0, "First content after a slow backend. ".repeat(30));
+  await page.clock.runFor(200);
+  await page.clock.runFor(100);
+  await expect(answer(page).locator("p")).toBeVisible({ timeout: 500 });
+  await expect(thinking(page)).toHaveCount(0);
+  await instant(page).click();
+  await emit(page, 0, "\n\nLater chunks arrive without another thinking delay.", true);
+  await expect(answer(page)).toContainText("Later chunks arrive without another thinking delay.", { timeout: 500 });
+  await expect(stop(page)).toHaveCount(0);
+  expect(await page.evaluate(() => window.controlTest.streams[0].aborts)).toBe(0);
 });

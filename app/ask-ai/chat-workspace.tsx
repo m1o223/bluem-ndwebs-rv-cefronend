@@ -18,7 +18,7 @@ type RunningReply = {
   conversationId: string; controller: AbortController; assistantId: string; replaced?: Message;
   timeout?: number; thinkingTimer?: number; networkDone: boolean; visible: string;
 };
-const THINKING_MIN_MS = 5500;
+const THINKING_MIN_MS = 2000;
 const suggestions = ["Create a website", "Design a page", "Improve my website", "Business ideas", "Help me get started", "Explore our services"];
 
 function History({ conversations, activeId, compact = false, onSelect, onNew }: {
