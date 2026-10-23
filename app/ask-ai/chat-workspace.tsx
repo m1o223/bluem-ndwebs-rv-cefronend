@@ -44,6 +44,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   const [attachmentsOpen, setAttachmentsOpen] = useState(false);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [animatedId, setAnimatedId] = useState<string | null>(null);
+  const [thinkingReply, setThinkingReply] = useState<{ id: string; replacedId?: string } | null>(null);
   const request = useRef<RunningReply | null>(null);
   const root = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLTextAreaElement>(null);
@@ -56,11 +57,25 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   const messages = active?.messages ?? [];
   const hasMessages = messages.length > 0;
   const pending = pendingId === activeId && pendingId !== null;
+  const incoming = messages.find(message => message.id === animatedId);
+  const thinking = thinkingReply?.id === animatedId && (pending || incoming?.complete === true);
+  const contentArrived = Boolean(incoming?.text || incoming?.card);
+  const thinkingTarget = thinking ? incoming?.id ?? thinkingReply?.replacedId ?? animatedId : null;
+  // Keep the waiting placeholder in the same keyed slot when the first chunk arrives.
+  const visibleMessages: Message[] = thinking && thinkingTarget && !messages.some(message => message.id === thinkingTarget)
+    ? [...messages, { id: thinkingTarget, role: "assistant", text: "", complete: false }] : messages;
   const actionHandlers = useRef({ regenerate, setFeedback, saveCard });
   useLayoutEffect(() => { actionHandlers.current = { regenerate, setFeedback, saveCard }; });
   const onRegenerate = useCallback((id: string) => actionHandlers.current.regenerate(id), []);
   const onFeedback = useCallback((id: string, feedback: Feedback) => actionHandlers.current.setFeedback(id, feedback), []);
   const onSaveCard = useCallback((id: string, card: MessageCardContent) => actionHandlers.current.saveCard(id, card), []);
+
+  useEffect(() => {
+    if (!thinking || !contentArrived) return;
+    // Finish the dot's fade before mounting text; the network keeps streaming normally.
+    const timer = window.setTimeout(() => setThinkingReply(null), matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 120);
+    return () => window.clearTimeout(timer);
+  }, [thinking, contentArrived, animatedId]);
 
   useEffect(() => () => {
     const running = request.current;
@@ -160,6 +175,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
     request.current = running;
     setPendingId(id);
     setAnimatedId(assistantId);
+    setThinkingReply({ id: assistantId, replacedId: replaced?.id });
     running.timeout = window.setTimeout(() => running.controller.abort(), 65000);
     setConversations(current => current.map(conversation => conversation.id === id ? { ...conversation, error: undefined, retryMessageId: undefined } : conversation));
     try {
@@ -253,6 +269,9 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   }
 
   const historyProps = { conversations, activeId, onSelect: chooseConversation, onNew: () => chooseConversation(null) };
+  const thinkingIndicator = <div key={`thinking-${animatedId}`} className={styles.assistant} role="status" aria-label="BlueMind AI is preparing a response">
+    <div className={styles.thinkingIndicator} data-ready={contentArrived} aria-hidden="true"><span className={styles.thinkingDot} /></div>
+  </div>;
 
   return <div ref={root} className={styles.chat} data-collapsed={collapsed} data-no-translate dir="ltr">
     <aside className={styles.sidebar} aria-label="Chat sidebar">
@@ -291,7 +310,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
         </div>
         <div ref={history} className={styles.messageScroll} data-active={hasMessages} tabIndex={hasMessages ? 0 : -1} aria-label="Chat messages">
           <div ref={messageList} className={styles.messages} role="log" aria-label="Conversation" aria-live="polite" aria-relevant="additions text">
-            {messages.map(message => message.role === "assistant" ? <AssistantMessage key={message.id} id={message.id}
+            {visibleMessages.map(message => message.id === thinkingTarget ? thinkingIndicator : message.role === "assistant" ? <AssistantMessage key={message.id} id={message.id}
               text={message.text} card={message.card} complete={message.complete} stopped={message.stopped}
               animate={message.id === animatedId} pending={pending && message.id === animatedId}
               feedback={message.feedback} generating={pendingId !== null}
@@ -299,7 +318,6 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
               : <article key={message.id} className={styles.message} aria-label="Your message">
               <p dir="auto">{message.text}</p>
             </article>)}
-            {pending && <p className={styles.replyStatus} role="status">BlueMind AI is responding...</p>}
             {active?.error && <div className={styles.replyError} role="alert"><p>{AI_ERRORS[active.error]}</p><button type="button" onClick={retry} disabled={pending}>Retry</button></div>}
           </div>
         </div>

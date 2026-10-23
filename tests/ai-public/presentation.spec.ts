@@ -55,7 +55,8 @@ test("delayed stream keeps receiving after instant reveal without restarting ani
   });
   await page.goto("/ask-ai");
   await input(page).fill("Stream"); await input(page).press("Enter");
-  await expect(page.getByText("BlueMind AI is responding...")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Stop response", exact: true })).toBeVisible();
+  await expect(page.getByText("BlueMind AI is responding...")).toHaveCount(0);
   await page.getByRole("button", { name: "Show instantly" }).click();
   await expect(answer(page).locator("strong")).toHaveText("Final streamed words");
   await expect(page.getByText("BlueMind AI is responding...")).toHaveCount(0);
@@ -72,7 +73,8 @@ test("scroll follows presentation, stops on upward intent and resumes at the bot
   const top = await scroller.evaluate(el => el.scrollTop);
   await page.waitForTimeout(500);
   expect(Math.abs(await scroller.evaluate(el => el.scrollTop) - top)).toBeLessThan(3);
-  await scroller.evaluate(el => { el.scrollTop = el.scrollHeight; });
+  // Dispatch the programmatic scroll before a new typing frame changes the bottom.
+  await scroller.evaluate(el => { el.scrollTop = el.scrollHeight; el.dispatchEvent(new Event("scroll")); });
   await expect.poll(() => scroller.evaluate(el => el.scrollHeight - el.scrollTop - el.clientHeight)).toBeLessThan(80);
   await page.getByRole("button", { name: "Show instantly" }).click();
   await expect.poll(() => scroller.evaluate(el => el.scrollHeight - el.scrollTop - el.clientHeight)).toBeLessThan(3);

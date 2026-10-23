@@ -67,7 +67,7 @@ function usePresentedText(text: string, animate: boolean) {
     timer.current = null;
     setInstant(true);
   }
-  return { visible: !animate || instant || reduced ? text : text.slice(0, count), instant, showInstantly };
+  return { visible: !animate || instant || reduced ? text : text.slice(0, count), showInstantly };
 }
 
 export const AssistantMessage = memo(function AssistantMessage({ id, text, card, complete, stopped, animate, pending, feedback, generating, onFeedback, onRegenerate, onSaveCard }: {
@@ -76,7 +76,7 @@ export const AssistantMessage = memo(function AssistantMessage({ id, text, card,
   card?: MessageCardContent; onSaveCard: (id: string, card: MessageCardContent) => void;
   feedback: Feedback; generating: boolean; onFeedback: (id: string, feedback: Feedback) => void; onRegenerate: (id: string) => void;
 }) {
-  const { visible, instant, showInstantly } = usePresentedText(text, animate && !stopped);
+  const { visible, showInstantly } = usePresentedText(text, animate && !stopped);
   const revealing = visible.length < text.length;
   return <article className={`${styles.message} ${styles.assistant}`} aria-label="BlueMind AI response" aria-busy={revealing || (!complete && pending)}>
     {visible && <div className={styles.markdown} dir="auto">
@@ -87,7 +87,6 @@ export const AssistantMessage = memo(function AssistantMessage({ id, text, card,
       title="Show all received text immediately and display incoming text without animation">
       <FastForward size={15} aria-hidden="true" />Show instantly
     </button>}
-    {instant && pending && !complete && <small aria-live="polite">Showing new text as it arrives...</small>}
     {!complete && !pending && <small>{stopped ? "Response stopped" : "Incomplete response"}</small>}
     {complete && !card && !revealing && <MessageActions text={text} feedback={feedback} generating={generating}
       onFeedback={value => onFeedback(id, value)} onRegenerate={() => onRegenerate(id)} />}

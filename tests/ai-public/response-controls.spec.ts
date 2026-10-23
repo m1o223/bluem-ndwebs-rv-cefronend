@@ -77,7 +77,7 @@ for (const width of [320, 375, 768, 1440]) {
     await instant(page).evaluate(button => { (button as HTMLButtonElement).click(); (button as HTMLButtonElement).click(); });
     await expect(answer(page).getByRole("heading")).toHaveText("Website plan");
     await expect(answer(page).locator("p")).toHaveText("Clear requirements. ".repeat(50).trim());
-    await expect(answer(page)).toContainText("Showing new text as it arrives...");
+    await expect(answer(page)).not.toContainText("Showing new text as it arrives...");
     await expect(stop(page)).toBeEnabled();
     expect(await page.evaluate(() => window.controlTest.streams[0].aborts)).toBe(0);
     expect(await page.evaluate(() => window.controlTest.streams[0].cancels)).toBe(0);
@@ -163,7 +163,7 @@ test("Stop keeps partial regeneration instead of restoring the old response", as
 
 test("switching conversations aborts the active stream without contaminating the new conversation", async ({ page }) => {
   await open(page); await send(page, "First conversation"); await calls(page, 1);
-  await emit(page, 0, "Partial first answer.");
+  await emit(page, 0, "Partial first answer. ".repeat(30));
   await instant(page).click();
   await page.getByRole("button", { name: "New chat", exact: true }).click();
   expect(await page.evaluate(() => window.controlTest.streams[0].signal?.aborted)).toBe(true);
@@ -199,4 +199,114 @@ test("timeout cancels the reader and does not leave Stop stuck", async ({ page }
   await expect(stop(page)).toHaveCount(0);
   expect(await page.evaluate(() => window.controlTest.streams[0].signal?.aborted)).toBe(true);
   expect(await page.evaluate(() => window.controlTest.streams[0].cancels)).toBe(1);
+});
+
+const thinking = (page: Page) => page.getByRole("status", { name: "BlueMind AI is preparing a response", exact: true });
+
+for (const width of [320, 375, 768, 1440]) {
+  test(`one stationary black thinking dot hands off to text at ${width}px`, async ({ page }, testInfo) => {
+    await page.setViewportSize({ width, height: 900 });
+    await open(page);
+    await page.evaluate(() => {
+      Object.assign(window, { thinkingOverlap: false });
+      new MutationObserver(() => {
+        if (document.querySelector('[aria-label="BlueMind AI is preparing a response"]')
+          && document.querySelector('[aria-label="BlueMind AI response"]')) Object.assign(window, { thinkingOverlap: true });
+      }).observe(document.body, { childList: true, subtree: true });
+    });
+    await send(page); await calls(page, 1);
+    await expect(thinking(page)).toHaveCount(1);
+    await expect(thinking(page)).toBeInViewport();
+    await expect(thinking(page)).toHaveText("");
+    await expect(thinking(page)).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    await expect(thinking(page)).toHaveCSS("border-top-width", "0px");
+    await expect(thinking(page)).toHaveCSS("box-shadow", "none");
+    await expect(thinking(page)).toHaveCSS("animation-name", "none");
+    await expect(answer(page)).toHaveCount(0);
+    const dot = thinking(page).locator("span");
+    await expect(dot).toHaveCount(1);
+    const size = width < 768 ? "15px" : "18px";
+    await expect(dot).toHaveCSS("width", size);
+    await expect(dot).toHaveCSS("height", size);
+    await expect(dot).toHaveCSS("border-radius", "50%");
+    await expect(dot).toHaveCSS("background-color", "rgb(0, 0, 0)");
+    await expect(dot).toHaveCSS("animation-duration", "1.2s");
+    await expect(dot).toHaveCSS("animation-iteration-count", "infinite");
+    const frames = await dot.evaluate(element => (element.getAnimations()[0].effect as KeyframeEffect).getKeyframes().map(frame => frame.transform));
+    expect(frames).toEqual(["scale(0.9)", "scale(1)", "scale(0.9)"]);
+    const left = await thinking(page).evaluate(element => element.getBoundingClientRect().left + parseFloat(getComputedStyle(element).paddingLeft));
+    await page.screenshot({ path: testInfo.outputPath("thinking-dot.png") });
+    await expect(stop(page)).toBeEnabled();
+    await emit(page, 0, "First content. ".repeat(30));
+    await expect(thinking(page)).toHaveCount(0);
+    await expect(instant(page)).toBeVisible();
+    expect(await answer(page).locator("p").evaluate(element => element.getBoundingClientRect().left)).toBeCloseTo(left, 1);
+    expect(await page.evaluate(() => (window as unknown as { thinkingOverlap: boolean }).thinkingOverlap)).toBe(false);
+    await instant(page).click();
+    await expect(page.getByText(/BlueMind AI is (thinking|responding)|Generating response|Showing new text as it arrives/)).toHaveCount(0);
+    await page.waitForTimeout(200);
+    await expect(thinking(page)).toHaveCount(0);
+    await emit(page, 0, "\n\n**Last content.**", true);
+    await expect(answer(page).locator("strong")).toHaveText("Last content.");
+    await expect(stop(page)).toHaveCount(0);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  });
+}
+
+test("thinking dot clears on Stop and errors, reappears for Retry and handles instant completion", async ({ page }) => {
+  await open(page); await send(page); await calls(page, 1);
+  await expect(thinking(page)).toBeVisible();
+  await stop(page).click();
+  await expect(thinking(page)).toHaveCount(0);
+  await expect(answer(page)).toHaveCount(0);
+  await send(page, "Try again"); await calls(page, 2);
+  await expect(thinking(page)).toBeVisible();
+  await page.evaluate(() => window.controlTest.fail(1));
+  await expect(thinking(page)).toHaveCount(0);
+  await page.getByRole("button", { name: "Retry", exact: true }).click(); await calls(page, 3);
+  await expect(thinking(page)).toBeVisible();
+  await emit(page, 2, "Completed without delay.", true);
+  await expect(answer(page)).toContainText("Completed without delay.");
+  await expect(thinking(page)).toHaveCount(0);
+});
+
+test("regeneration uses the same response position and Stop restores the unchanged answer", async ({ page }) => {
+  await open(page); await send(page); await calls(page, 1);
+  await emit(page, 0, "Original complete answer.", true);
+  await answer(page).getByRole("button", { name: "Regenerate response" }).click(); await calls(page, 2);
+  await expect(thinking(page)).toBeVisible();
+  await expect(answer(page)).toHaveCount(0);
+  await stop(page).click();
+  await expect(thinking(page)).toHaveCount(0);
+  await expect(answer(page)).toContainText("Original complete answer.");
+  await answer(page).getByRole("button", { name: "Regenerate response" }).click(); await calls(page, 3);
+  await expect(thinking(page)).toBeVisible();
+  await emit(page, 2, "Regenerated answer.", true);
+  await expect(answer(page)).toContainText("Regenerated answer.");
+  await expect(thinking(page)).toHaveCount(0);
+});
+
+test("switching conversations removes the dot and cancels its handoff timer", async ({ page }) => {
+  await open(page); await send(page, "First chat"); await calls(page, 1);
+  await emit(page, 0, "First partial content.");
+  await page.getByRole("button", { name: "New chat", exact: true }).click();
+  await expect(thinking(page)).toHaveCount(0);
+  await send(page, "Second chat"); await calls(page, 2);
+  await page.waitForTimeout(250);
+  await expect(thinking(page)).toBeVisible();
+  await expect(answer(page)).toHaveCount(0);
+  await emit(page, 1, "Second conversation answer.", true);
+  await expect(thinking(page)).toHaveCount(0);
+  await expect(answer(page)).toContainText("Second conversation answer.");
+});
+
+test("reduced motion keeps a static black dot and displays the first content without animation", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await open(page); await send(page); await calls(page, 1);
+  await expect(thinking(page).locator("span")).toHaveCSS("animation-name", "none");
+  await expect(thinking(page).locator("span")).toHaveCSS("opacity", "1");
+  await emit(page, 0, "First accessible response.");
+  await expect(thinking(page)).toHaveCount(0);
+  await expect(answer(page)).toHaveText("First accessible response.");
+  await stop(page).click();
 });

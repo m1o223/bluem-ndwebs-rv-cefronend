@@ -62,7 +62,9 @@
 .actionNotice { display: block; color: #526479; font-size: 12px; line-height: 1.5; }
 .actionNotice:not(:empty) { margin-top: 4px; }
 .assistant small { display: block; margin-top: 8px; color: #697482; }
-.chat .replyStatus { margin: 0; font-size: 13px; color: #697482; }
+.thinkingIndicator { display: flex; align-items: center; height: 26.25px; opacity: 1; transition: opacity 120ms ease-out; }
+.thinkingIndicator[data-ready="true"] { opacity: 0; }
+.thinkingDot { display: block; flex: 0 0 18px; width: 18px; height: 18px; border-radius: 50%; background: #000; transform-origin: center; animation: thinking-pulse 1.2s ease-in-out infinite; }
 .replyError { font-size: 14px; color: #9c3030; }
 .replyError p { margin: 0 0 8px; }
 .replyError button { padding: 8px 12px; background: #fff; color: #142d4e; border: 1px solid #e0e5eb; border-radius: 6px; cursor: pointer; }
@@ -94,6 +96,7 @@
 .drawerInner { height: 100%; padding-top: max(12px, env(safe-area-inset-top)); padding-bottom: max(12px, env(safe-area-inset-bottom)); }
 @keyframes message-enter { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes drawer-enter { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+@keyframes thinking-pulse { 0%, 100% { opacity: .3; transform: scale(.9); } 50% { opacity: 1; transform: scale(1); } }
 @media (max-width: 767px) {
   .chat, .chat[data-collapsed="true"] { grid-template-columns: minmax(0, 1fr); }
   .sidebar { display: none; }
@@ -108,6 +111,7 @@
   .messageScroll { padding: 12px 16px 20px; }
   .message { max-width: 94%; padding: 12px 14px; }
   .assistant { max-width: 100%; padding: 16px; }
+  .thinkingDot { flex-basis: 15px; width: 15px; height: 15px; }
   .chat .actionButtons button { flex-basis: 40px; width: 40px; height: 40px; }
   .composerArea { padding: 12px max(12px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
   .composer { gap: 4px; padding: 10px; }
