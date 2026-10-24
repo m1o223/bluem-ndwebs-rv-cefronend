@@ -412,9 +412,9 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
               signal={message.id === animatedId ? request.current?.controller.signal : undefined} onPresented={onPresented}
               feedback={message.feedback} generating={pendingId !== null}
               onFeedback={onFeedback} onRegenerate={onRegenerate} onSaveCard={onSaveCard} />
-              : <article key={message.id} className={styles.message} aria-label="Your message">
+              : <article key={message.id} className={styles.message} data-attachments={Boolean(message.attachments?.length)} aria-label="Your message">
               {message.attachments?.length ? <AttachmentList files={message.attachments} onOpen={setViewing} /> : null}
-              {message.text && <p dir="auto">{message.text}</p>}
+              {message.text && <div className={styles.messageText}><p dir="auto">{message.text}</p></div>}
             </article>)}
             {active?.error && <div className={styles.replyError} role="alert"><p>{AI_ERRORS[active.error]}</p><button type="button" onClick={retry} disabled={pending}>Retry</button></div>}
           </div>

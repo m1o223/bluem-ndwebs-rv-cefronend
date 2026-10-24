@@ -1,8 +1,9 @@
 .list { display: flex; flex-wrap: wrap; align-items: start; gap: 12px; max-width: 100%; margin-bottom: 12px; }
 .list[data-draft="true"] { flex-wrap: nowrap; overflow-x: auto; padding: 6px 4px; margin: 0; overscroll-behavior-x: contain; }
+.list[data-draft="false"] { justify-content: flex-end; margin-bottom: 0; }
 .item { position: relative; min-width: 0; max-width: 100%; }
 .list[data-draft="true"] .item { flex: 0 0 auto; }
-.imageButton { display: block; padding: 0; border: 0; border-radius: 8px; background: transparent; overflow: hidden; cursor: zoom-in; }
+.imageButton { display: block; max-width: 100%; padding: 0; border: 0; border-radius: 8px; background: transparent; overflow: hidden; cursor: zoom-in; }
 .imageButton img { display: block; width: auto; height: auto; max-width: min(100%, 440px); max-height: 420px; object-fit: contain; }
 .list[data-draft="true"] .imageButton img { width: 76px; height: 76px; object-fit: cover; }
 .file { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid #dce3eb; background: #fff; color: #142d4e; border-radius: 8px; max-width: 290px; min-height: 76px; }
@@ -10,8 +11,8 @@
 .file strong { display: block; font-size: 13px; font-weight: 500; overflow-wrap: anywhere; }
 .file small { display: block; font-size: 11px; color: #697482; }
 .file svg { flex-shrink: 0; }
-.list[data-draft="true"] .file { width: 216px; padding-right: 34px; }
-.item .remove { position: absolute; top: 0; right: 0; display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid #dce3eb; border-radius: 50%; background: #fff; color: #142d4e; cursor: pointer; }
+.list[data-draft="true"] .file { width: 216px; padding-right: 50px; }
+.item .remove { position: absolute; top: 6px; right: 6px; display: grid; place-items: center; width: 32px; height: 32px; padding: 6px; border: 1px solid #dce3eb; border-radius: 50%; background: #fff; color: #142d4e; cursor: pointer; }
 .item .remove:hover { background: #edf3fa; }
 .viewer { position: fixed; inset: 0; width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: #101827f5; color: #fff; overflow: hidden; }
 .viewer::backdrop { background: #000b; }
