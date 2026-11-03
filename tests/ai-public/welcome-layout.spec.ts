@@ -31,15 +31,15 @@ for (const { width, height } of viewports) {
     await expect(page).toHaveScreenshot(`welcome-preserved-${width}.png`, { animations: "disabled", maxDiffPixels: 0 });
   });
 
-  test(`unchanged conversation layout at ${width}px`, async ({ page }) => {
+  test(`conversation composer retains its welcome design at ${width}px`, async ({ page }) => {
     await open(page, width, height);
     await input(page).fill("Help me plan my website");
     await input(page).press("Enter");
     await expect(answer(page).getByRole("group", { name: "Response actions" })).toBeVisible();
     await input(page).blur();
     await expect(page.getByRole("heading", { name: "BlueMind AI", exact: true })).not.toBeVisible();
-    await expect(composer(page)).toHaveCSS("background-color", "rgb(255, 255, 255)");
-    await expect(page).toHaveScreenshot(`conversation-preserved-${width}.png`, { animations: "disabled", maxDiffPixels: 0 });
+    await expect(composer(page)).toHaveCSS("background-color", width < 1024 ? "rgb(255, 255, 255)" : "rgb(247, 248, 250)");
+    if (width < 1024) await expect(page).toHaveScreenshot(`conversation-preserved-${width}.png`, { animations: "disabled", maxDiffPixels: 0 });
   });
 }
 
@@ -81,8 +81,8 @@ for (const { width, height } of [{ width: 1024, height: 768 }, { width: 1280, he
     await input(page).fill("A first message");
     await input(page).press("Enter");
     await expect(answer(page).getByRole("group", { name: "Response actions" })).toBeVisible();
-    await expect(composer(page)).toHaveCSS("background-color", "rgb(255, 255, 255)");
-    expect((await composer(page).boundingBox())!.height).toBeLessThan(90);
+    await expect(composer(page)).toHaveCSS("background-color", "rgb(247, 248, 250)");
+    expect((await composer(page).boundingBox())!.height).toBe(form!.height);
     await page.getByRole("button", { name: "New chat", exact: true }).click();
     await expect(composer(page)).toHaveCSS("background-color", "rgb(247, 248, 250)");
     await expect(input(page)).toHaveValue("");

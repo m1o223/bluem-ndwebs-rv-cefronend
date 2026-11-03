@@ -149,21 +149,23 @@
   .chat .sidebar .newChat { border: 0; background: transparent; box-shadow: none; color: #414852; transition: color 150ms ease; }
   :global(#ai-chat-sidebar) .newChat:is(:hover, :active, [data-activated="true"]) { background: transparent !important; color: var(--bluemind-blue) !important; }
 }
-/* Desktop welcome only: tablets, phones and active conversations retain the base layout. */
+/* Desktop: keep the welcome composer design identical after sending; only its position changes. */
 @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
   .chat[data-welcome="true"] .main { grid-template-rows: 68px minmax(240px, 1fr) auto minmax(24px, .65fr); overflow-y: auto; }
   .chat[data-welcome="true"] .empty { justify-content: flex-end; padding-bottom: 28px; }
-  .chat[data-welcome="true"] .composerArea { display: flex; flex-direction: column; align-self: start; width: 60%; max-width: 1040px; padding: 0; }
-  .chat[data-welcome="true"] .composer { order: 0; grid-template-rows: minmax(44px, auto) 44px; min-height: 122px; padding: 12px 16px; border-radius: 24px; background: #f7f8fa; }
-  .chat[data-welcome="true"] .input { grid-column: 1 / -1; grid-row: 1; padding: 8px 0; }
-  .chat[data-welcome="true"] .attachmentArea { grid-column: 1; grid-row: 2; }
-  .chat[data-welcome="true"] .primarySend { grid-column: 3; grid-row: 2; }
-  .chat[data-welcome="true"] .composer[data-files="true"] { grid-template-rows: auto minmax(44px, auto) 44px; }
-  .chat[data-welcome="true"] .composer[data-files="true"] .attachmentTray { grid-row: 1; }
-  .chat[data-welcome="true"] .composer[data-files="true"] .input { grid-row: 2; }
-  .chat[data-welcome="true"] .composer[data-files="true"] .attachmentArea,
-  .chat[data-welcome="true"] .composer[data-files="true"] .primarySend { grid-row: 3; }
-  .chat[data-welcome="true"] .suggestionReveal { order: 1; margin-top: 14px; }
+  .chat .composerArea { display: flex; flex-direction: column; align-self: start; width: 60%; max-width: 1040px; padding: 0; }
+  .chat[data-welcome="false"] .composerArea { padding-bottom: max(clamp(36px, 6dvh, 64px), env(safe-area-inset-bottom)); }
+  .chat .composer { order: 0; grid-template-rows: minmax(44px, auto) 44px; min-height: 122px; padding: 12px 16px; border-radius: 24px; background: #f7f8fa; }
+  .chat .input { grid-column: 1 / -1; grid-row: 1; padding: 8px 0; }
+  .chat .attachmentArea { grid-column: 1; grid-row: 2; }
+  .chat .primarySend { grid-column: 3; grid-row: 2; }
+  .chat .composer[data-files="true"] { grid-template-rows: auto minmax(44px, auto) 44px; }
+  .chat .composer[data-files="true"] .attachmentTray { grid-row: 1; }
+  .chat .composer[data-files="true"] .input { grid-row: 2; }
+  .chat .composer[data-files="true"] .attachmentArea,
+  .chat .composer[data-files="true"] .primarySend { grid-row: 3; }
+  .chat .suggestionReveal { order: 1; margin-top: 14px; }
+  .chat .suggestionReveal[data-hidden="true"] { position: absolute; margin-top: 0; }
   .chat[data-welcome="true"] .suggestions { flex-wrap: wrap; justify-content: center; overflow: visible; padding: 4px 0; }
   .chat[data-welcome="true"] .chip { margin-inline: 0; }
   .chat[data-welcome="true"] .status { order: 2; }

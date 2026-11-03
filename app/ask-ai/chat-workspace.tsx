@@ -71,6 +71,9 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   const request = useRef<RunningReply | null>(null);
   const root = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLTextAreaElement>(null);
+  const composer = useRef<HTMLFormElement>(null);
+  const composerStartTop = useRef<number | null>(null);
+  const composerMotion = useRef<Animation | null>(null);
   const { viewport: history, content: messageList, followBottom } = useChatScroll(activeId);
   const drawer = useRef<HTMLDialogElement>(null);
   const attachmentArea = useRef<HTMLDivElement>(null);
@@ -145,6 +148,28 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
     input.current.style.height = `${Math.min(input.current.scrollHeight, 180)}px`;
   }, [draft]);
 
+  useLayoutEffect(() => {
+    const form = composer.current;
+    const startTop = composerStartTop.current;
+    composerStartTop.current = null;
+    if (!form || startTop === null || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // Move the existing form from its old position without scaling or remounting it.
+    const distance = startTop - form.getBoundingClientRect().top;
+    if (Math.abs(distance) < 1) return;
+    const animation = form.animate([
+      { transform: `translateY(${distance}px)` },
+      { transform: "translateY(0)" },
+    ], { duration: 380, easing: "cubic-bezier(.22, 1, .36, 1)" });
+    composerMotion.current = animation;
+    const cancel = () => animation.cancel();
+    window.addEventListener("resize", cancel);
+    return () => {
+      animation.cancel();
+      window.removeEventListener("resize", cancel);
+      if (composerMotion.current === animation) composerMotion.current = null;
+    };
+  }, [hasMessages]);
+
   useEffect(() => {
     const media = matchMedia("(min-width: 768px)");
     const closeOnDesktop = () => { if (media.matches) drawer.current?.close(); };
@@ -168,7 +193,14 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
     };
   }, [attachmentsOpen]);
 
+  function captureComposerPosition() {
+    if (!matchMedia("(min-width: 1024px) and (hover: hover) and (pointer: fine)").matches) return;
+    composerStartTop.current = composer.current?.getBoundingClientRect().top ?? null;
+    composerMotion.current?.cancel();
+  }
+
   function chooseConversation(id: string | null) {
+    if (hasMessages !== Boolean(conversations.find(conversation => conversation.id === id)?.messages.length)) captureComposerPosition();
     fileRead.current?.abort(); fileRead.current = null;
     setFiles([]); setFileError(""); setPreparing(null); setViewing(null);
     setAnimatedId(null);
@@ -286,6 +318,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   function send() {
     const text = draft.trim();
     if ((!text && !files.length) || text.length > AI_LIMITS.messageChars || request.current || fileRead.current) return;
+    if (!hasMessages) captureComposerPosition();
     followBottom();
     const message: Message = { id: crypto.randomUUID(), text, role: "user", complete: true, ...(files.length ? { attachments: files } : {}) };
     const id = activeId ?? crypto.randomUUID();
@@ -427,7 +460,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
             {suggestions.map(suggestion => <button className={styles.chip} key={suggestion} type="button" onClick={() => { setDraft(suggestion); input.current?.focus(); }}>{suggestion}</button>)}
           </div></div>
         </div>
-        <form className={styles.composer} data-files={files.length > 0} onSubmit={event => { event.preventDefault(); send(); }}>
+        <form ref={composer} className={styles.composer} data-files={files.length > 0} onSubmit={event => { event.preventDefault(); send(); }}>
           {files.length > 0 && <div className={styles.attachmentTray}><AttachmentList files={files} onRemove={id => setFiles(current => current.filter(file => file.id !== id))} onOpen={setViewing} /></div>}
           <input ref={imagePicker} type="file" accept={imageAccept} multiple hidden aria-label="Upload images" onChange={event => { void selectFiles(event.target.files); event.target.value = ""; }} />
           <input ref={documentPicker} type="file" accept={documentAccept} multiple hidden aria-label="Upload documents" onChange={event => { void selectFiles(event.target.files); event.target.value = ""; }} />
