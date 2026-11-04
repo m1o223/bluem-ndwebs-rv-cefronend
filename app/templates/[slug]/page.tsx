@@ -38,24 +38,24 @@ export default async function TemplateDemoPage({
 
   if (!template) {
     return (
-      <main className={styles.notFound}>
+      <section className={styles.notFound}>
         <div>
           <h1>Template not found</h1>
           <p>This BlueMind concept is not available.</p>
         </div>
-      </main>
+      </section>
     );
   }
 
   const Project = projectComponents[template.projectId];
 
   return (
-    <main className={styles.page}>
+    <div className={styles.page}>
       <div className={styles.frame}>
         <ProjectViewport>
           <Project />
         </ProjectViewport>
       </div>
-    </main>
+    </div>
   );
 }

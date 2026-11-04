@@ -40,6 +40,7 @@ for (const width of viewports) {
       await page.goto("/ask-ai");
       for (const target of [baseline, page]) {
         await expect(target.getByRole("heading", { name: "BlueMind AI", exact: true })).toBeVisible();
+        await expect(input(target)).toHaveValue("");
         await target.evaluate(() => document.fonts.ready);
         await target.waitForFunction(() => Boolean(document.querySelector("textarea")?.style.height) && [...document.images].every(image => image.complete && image.naturalWidth > 0));
         await target.waitForTimeout(250);

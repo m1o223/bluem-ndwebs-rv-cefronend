@@ -1,19 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
-import InteractiveProjectViewer, {
-  type ProjectViewerHandle,
-} from "./project-viewer";
-import { projects, type ProjectId } from "../portfolio/registry";
+import Link from "next/link";
+import { templateConceptByProject } from "./template-concept-data";
+import { projects } from "../portfolio/registry";
 import ProductArt from "../portfolio/product-art";
 import ConceptReveal from "./concept-reveal";
 import portfolio from "../portfolio/showcase.module.css";
 import styles from "./home.module.css";
 
 export default function ProjectShowcase() {
-  const viewer = useRef<ProjectViewerHandle>(null);
-  const [selected, setSelected] = useState<ProjectId | null>(null);
   return (
     <section
       id="selected-work"
@@ -45,15 +41,10 @@ export default function ProjectShowcase() {
               direction={index % 2 === 0 ? "right" : "left"}
               stagger={index % 2 === 1}
             >
-              <button
+              <Link
                 className={portfolio.card}
                 data-project-card={project.id}
-                onClick={(event) => {
-                  event.currentTarget.focus({ preventScroll: true });
-                  if (selected === project.id) viewer.current?.restore();
-                  else setSelected(project.id);
-                }}
-                aria-haspopup="dialog"
+                href={templateConceptByProject[project.id].liveUrl}
                 aria-label={`View Website: ${project.brand}, ${project.category}`}
               >
                 <div className={portfolio.toolbar}>
@@ -127,19 +118,11 @@ export default function ProjectShowcase() {
                     <p>{project.description}</p>
                   </div>
                 </div>
-              </button>
+              </Link>
             </ConceptReveal>
           ))}
         </div>
       </div>
-      {selected && (
-        <InteractiveProjectViewer
-          ref={viewer}
-          key={selected}
-          project={selected}
-          onClose={() => setSelected(null)}
-        />
-      )}
     </section>
   );
 }
