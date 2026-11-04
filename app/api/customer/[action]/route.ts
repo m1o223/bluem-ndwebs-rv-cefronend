@@ -6,18 +6,20 @@ const result = (body: object, status = 200) => NextResponse.json(body, { status,
 const cookie = { httpOnly: true, secure: true, sameSite: "lax" as const, path: "/" };
 async function handler(request: NextRequest, context: { params: Promise<{ action: string }> }) {
   const { action } = await context.params;
-  if (action !== "login" && action !== "logout" && action !== "session") return result({ code: "missing" }, 404);
-  if (request.method !== (action === "session" ? "GET" : "POST")) return result({ code: "method" }, 405);
-  if (action !== "session") {
+  if (action !== "login" && action !== "logout" && action !== "session" && action !== "overview" && action !== "profile" && action !== "contact") return result({ code: "missing" }, 404);
+  const readOnly = action === "session" || action === "overview";
+  if (request.method !== (readOnly ? "GET" : "POST")) return result({ code: "method" }, 405);
+  if (!readOnly) {
     const origin = request.headers.get("origin");
     const allowed = process.env.VERCEL ? ["https://bluemind-web-service.vercel.app", "https://bluemindwebservice.com", "https://www.bluemindwebservice.com"] : [new URL(request.url).origin];
     if (!origin || !allowed.includes(origin) || request.headers.get("sec-fetch-site") === "cross-site") return result({ code: "forbidden" }, 403);
   }
   const token = request.cookies.get(CUSTOMER_COOKIE)?.value;
-  if (action === "session" && !token) return result({ user: null }, 401);
+  if (action !== "login" && action !== "logout" && !token) return result({ code: "credentials" }, 401);
   let body: string | undefined;
-  if (action === "login") {
-    if (request.headers.get("content-type")?.split(";")[0] !== "application/json" || Number(request.headers.get("content-length")) > 2048) return result({ code: "invalid" }, 400);
+  if (action === "login" || action === "profile" || action === "contact") {
+    const maximum = action === "login" ? 2048 : 20000;
+    if (request.headers.get("content-type")?.split(";")[0] !== "application/json" || Number(request.headers.get("content-length")) > maximum) return result({ code: "invalid" }, 400);
     const reader = request.body?.getReader();
     if (!reader) return result({ code: "invalid" }, 400);
     const chunks: Uint8Array[] = [];
@@ -29,12 +31,14 @@ async function handler(request: NextRequest, context: { params: Promise<{ action
         if (expired) throw new Error("timeout");
         if (done) break;
         size += value.length;
-        if (size > 2048) throw new Error("size");
+        if (size > maximum) throw new Error("size");
         chunks.push(value);
       }
       const parsed = JSON.parse(Buffer.concat(chunks).toString("utf8"));
-      if (typeof parsed.email !== "string" || typeof parsed.password !== "string" || parsed.email.length > 254 || Buffer.byteLength(parsed.password) > 72) throw new Error("invalid");
-      body = JSON.stringify({ email: parsed.email, password: parsed.password });
+      if (action === "login") {
+        if (typeof parsed.email !== "string" || typeof parsed.password !== "string" || parsed.email.length > 254 || Buffer.byteLength(parsed.password) > 72) throw new Error("invalid");
+        body = JSON.stringify({ email: parsed.email, password: parsed.password, ...(["private", "company"].includes(parsed.customerType) ? { customerType: parsed.customerType } : {}) });
+      } else body = JSON.stringify(parsed);
     } catch { return result({ code: "invalid" }, 400); }
     finally { clearTimeout(timer); await reader.cancel().catch(() => {}); reader.releaseLock(); }
   }
@@ -53,6 +57,8 @@ async function handler(request: NextRequest, context: { params: Promise<{ action
       return response;
     }
     const data = await upstream.json();
+    if (action === "overview") return result({ profile: data.profile, project: data.project, notifications: data.notifications });
+    if (action === "profile" || action === "contact") return result({ success: data.success === true, ...(action === "contact" ? { emailNotified: data.emailNotified === true } : {}) });
     if (!isCustomer(data.user)) return result({ code: "unavailable" }, 503);
     const response = result({ user: data.user });
     if (action === "login") {

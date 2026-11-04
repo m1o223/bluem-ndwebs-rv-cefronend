@@ -44,7 +44,9 @@ for (const [index, width] of [390, 768, 1440].entries()) {
       await expect(page).toHaveURL(new RegExp(path + "$"));
       await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
       await expect(page.getByRole("dialog")).not.toBeVisible();
-      await expect(page.locator("main input, main textarea, main form")).toHaveCount(0);
+      await expect(page.locator("main")).not.toContainText("Unable to load");
+      if (path === "/account") await expect(page.getByLabel("Customer type (optional)")).toBeVisible();
+      if (path === "/dashboard/contact") await expect(page.getByLabel("Message", { exact: true })).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
     }
     await page.screenshot({ path: info.outputPath("customer-home.png") });
@@ -83,6 +85,81 @@ test("invalid login, CSRF, unavailable providers and duplicate submits", async (
   await expect(page).toHaveURL(/\/dashboard$/);
   expect(calls).toBe(1);
 });
+
+test("optional customer type, account persistence, contact receipt and notification empty state", async ({ page }, info) => {
+  await login(page, 6);
+  await expect(page.getByText("No project linked to your account yet.")).toBeVisible();
+  await page.getByRole("button", { name: "Notifications", exact: true }).click();
+  await expect(page.getByText("No notifications yet.")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await page.goto("/account");
+  await page.getByLabel("Full name", { exact: true }).fill("Customer Six");
+  await page.getByLabel("Customer type (optional)").selectOption("company");
+  await page.getByLabel("Company name", { exact: true }).fill("Example Company");
+  await page.getByRole("switch", { name: "Project updates" }).check();
+  await page.getByRole("button", { name: "Save changes" }).click();
+  await expect(page.getByText("Changes saved to your account.")).toBeVisible();
+  await page.screenshot({ path: info.outputPath("account-desktop.png"), fullPage: true });
+  await page.getByRole("button", { name: "Sign out", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await login(page, 6);
+  await expect(page.getByText("Welcome, Customer Six", { exact: true })).toBeVisible();
+  await page.goto("/account");
+  await expect(page.getByLabel("Company name", { exact: true })).toHaveValue("Example Company");
+  await expect(page.getByRole("switch", { name: "Project updates" })).toBeChecked();
+  await expect(page.getByRole("button", { name: "Delete account", exact: true })).toBeDisabled();
+  await page.goto("/dashboard/contact");
+  await expect(page.getByLabel("Full name", { exact: true })).toHaveValue("Customer Six");
+  await page.getByLabel("Customer type (optional)").selectOption("");
+  await expect(page.getByLabel("Company name", { exact: true })).toHaveCount(0);
+  await page.getByLabel("Message", { exact: true }).fill("Please review this test-only idea.");
+  await page.getByRole("button", { name: "Send message", exact: true }).click();
+  await expect(page.getByText("Your message has been received by the team.")).toBeVisible();
+  await page.goto("/account");
+  await page.getByLabel("Customer type (optional)").selectOption("");
+  await page.getByRole("button", { name: "Save changes" }).click();
+  await expect(page.getByText("Changes saved to your account.")).toBeVisible();
+  await page.reload();
+  await expect(page.getByLabel("Customer type (optional)")).toHaveValue("");
+});
+
+test("real project projection, seven stages, amounts, notifications and responsive layouts", async ({ page }, info) => {
+  test.setTimeout(120000);
+  await login(page, 8);
+  await expect(page.locator("progress")).toHaveAttribute("value", "29");
+  await expect(page.getByText("5 steps remaining until your website is ready.")).toBeVisible();
+  await page.getByRole("button", { name: "Notifications", exact: true }).click();
+  await expect(page.getByText("Fixture project updated")).toBeVisible();
+  await page.keyboard.press("Escape");
+  for (const width of [1440, 768, 390, 320]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const path of ["/dashboard", "/my-project", "/dashboard/contact", "/account", "/blue-mind-ai"]) {
+      await page.goto(path);
+      await expect(page.locator("main h1")).toBeVisible();
+      await expect(page.getByText("Loading account information", { exact: true })).toHaveCount(0);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
+      await page.screenshot({ path: info.outputPath(`${path.replaceAll("/", "-")}-${width}.png`), fullPage: true });
+    }
+  }
+  await page.goto("/my-project");
+  await expect(page.getByText("TEST-8", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "View invoice" })).toBeDisabled();
+  await expect(page.getByText("Fixture review completed")).toBeVisible();
+});
+
+test("account errors are not empty states; write failures do not show success", async ({ page }) => {
+  await login(page, 9);
+  await page.route("**/api/customer/overview", route => route.fulfill({ status: 503, json: { code: "unavailable" } }));
+  await page.goto("/account");
+  await expect(page.locator("main").getByText("Unable to load your account information.")).toBeVisible();
+  await page.unroute("**/api/customer/overview");
+  await page.getByRole("button", { name: "Try again" }).click();
+  await page.getByLabel("Full name", { exact: true }).fill("Unsaved");
+  await page.route("**/api/customer/profile", route => route.fulfill({ status: 503, json: { code: "unavailable" } }));
+  await page.getByRole("button", { name: "Save changes" }).click();
+  await expect(page.getByText("Unable to complete this request. Please try again.")).toBeVisible();
+  await expect(page.getByText("Changes saved to your account.")).toHaveCount(0);
+});
 test("Arabic customer shell preserves RTL and only the approved items", async ({ page }, info) => {
   await page.addInitScript(() => localStorage.setItem("bluemind-language", "ar"));
   await page.setViewportSize({ width: 390, height: 844 });
@@ -98,4 +175,31 @@ test("Arabic customer shell preserves RTL and only the approved items", async ({
   expect(drawer.x + drawer.width).toBeLessThanOrEqual(390);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
   await page.screenshot({ path: info.outputPath("customer-arabic.png") });
+  await page.keyboard.press("Escape");
+  await page.goto("/account");
+  await expect(page.getByLabel("نوع العميل (اختياري)")).toBeVisible();
+  await page.getByLabel("نوع العميل (اختياري)").selectOption("company");
+  await expect(page.getByLabel("اسم الشركة", { exact: true })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
+  await page.screenshot({ path: info.outputPath("account-arabic.png"), fullPage: true });
+});
+
+test("Swedish account labels, optional login choice and contact failure", async ({ page }, info) => {
+  await page.addInitScript(() => localStorage.setItem("bluemind-language", "sv"));
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await page.goto("/sign-in");
+  await page.locator("#sign-in-email").fill("customer-10@example.invalid");
+  await page.locator("#sign-in-password").fill("Isolated-browser-test-123!");
+  await page.locator("#sign-in-customer-type").selectOption("private");
+  await page.locator('button[type="submit"]').click();
+  await expect(page).toHaveURL(/\/dashboard$/);
+  await page.goto("/account");
+  await expect(page.getByLabel("Kundtyp (valfritt)")).toHaveValue("private");
+  await page.screenshot({ path: info.outputPath("account-swedish.png"), fullPage: true });
+  await page.goto("/dashboard/contact");
+  await page.getByLabel("Meddelande", { exact: true }).fill("A test-only message which must not be sent.");
+  await page.route("**/api/customer/contact", route => route.fulfill({ status: 503, json: { code: "unavailable" } }));
+  await page.getByRole("button", { name: "Skicka meddelande" }).click();
+  await expect(page.locator("main").getByRole("alert")).toContainText("Det gick inte att slutföra begäran.");
+  await expect(page.getByRole("textbox", { name: "Meddelande", exact: true })).toHaveValue("A test-only message which must not be sent.");
 });

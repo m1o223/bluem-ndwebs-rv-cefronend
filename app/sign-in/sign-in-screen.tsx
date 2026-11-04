@@ -32,8 +32,9 @@ export default function SignInScreen() {
     const form = event.currentTarget;
     const email = form.querySelector<HTMLInputElement>("#sign-in-email")!.value;
     const password = form.querySelector<HTMLInputElement>("#sign-in-password")!.value;
+    const customerType = form.querySelector<HTMLSelectElement>("#sign-in-customer-type")!.value;
     try {
-      const response = await fetch("/api/customer/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password }), signal: AbortSignal.timeout(20000) });
+      const response = await fetch("/api/customer/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password, ...(customerType ? { customerType } : {}) }), signal: AbortSignal.timeout(20000) });
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
         setError(data.code === "credentials" ? errors.credentials : data.code === "rate" ? errors.rate : data.code === "invalid" ? errors.invalid : errors.unavailable);
@@ -57,6 +58,8 @@ export default function SignInScreen() {
           <label htmlFor="sign-in-password">{text.password}</label>
           <input id="sign-in-password" type="password" autoComplete="current-password" required />
           <button type="button" className={styles.forgot} onClick={() => setNotice("recovery")}>{text.forgot}</button>
+          <label htmlFor="sign-in-customer-type">{locale === "ar" ? "نوع العميل (اختياري)" : locale === "sv" ? "Kundtyp (valfritt)" : "Customer type (optional)"}</label>
+          <select id="sign-in-customer-type" className={styles.customerType} defaultValue=""><option value="">{locale === "ar" ? "غير محدد" : locale === "sv" ? "Inte valt" : "Not selected"}</option><option value="private">{locale === "ar" ? "فرد" : locale === "sv" ? "Privatperson" : "Private person"}</option><option value="company">{locale === "ar" ? "شركة" : locale === "sv" ? "Företag" : "Company"}</option></select>
           <button type="submit" className={styles.primary} disabled={busy}>{busy ? errors.busy : text.title}</button>
         </form>
         <div className={styles.divider}><span>{text.divider}</span></div>
