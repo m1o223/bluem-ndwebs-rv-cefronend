@@ -11,6 +11,7 @@ import styles from "./customer.module.css";
 import WorkspaceContent from "./workspace-content";
 import { workspaceCopy } from "./workspace-copy";
 import type { Overview } from "./workspace-types";
+import TextActionLabel from "../text-action-label";
 
 const icons = [Home, Folder, Sparkles, MessageCircle, Settings];
 export default function CustomerShell({ user, page }: { user: Customer; page: CustomerPage }) {
@@ -111,7 +112,7 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
     <main className={styles.main}>
       <Image className={styles.watermark} src="/images/brand/bluemind-original-logo-transparent.png" width={1065} height={1212} alt="" aria-hidden="true" />
       <h1>{text[page]}</h1>
-      {loadError ? <div role="alert"><p>{workspaceText.loadError}</p><button className={styles.secondary} onClick={() => setReload(value => value + 1)}>{workspaceText.retry}</button></div> : !overview ? <p role="status">{workspaceText.loading}</p> : <WorkspaceContent key={page} page={page} overview={overview} user={user} locale={locale} signOut={() => void signOut()} signingOut={busy} />}
+      {loadError ? <div role="alert"><p>{workspaceText.loadError}</p><button className={styles.secondary} onClick={() => setReload(value => value + 1)}><TextActionLabel>{workspaceText.retry}</TextActionLabel></button></div> : !overview ? <p role="status">{workspaceText.loading}</p> : <WorkspaceContent key={page} page={page} overview={overview} user={user} locale={locale} signOut={() => void signOut()} signingOut={busy} />}
       {notice && <p className={styles.error} role="alert">{text.error}</p>}
     </main>
     <dialog ref={dialog} id="customer-menu" className={styles.drawer} data-open={open} aria-label={text.menu} onCancel={event => { event.preventDefault(); closeMenu(); }} onClick={event => {
@@ -124,10 +125,10 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
       <nav aria-label={text.menu}>
         {customerRoutes.map((route, index) => {
           const Icon = icons[index];
-          return <Link href={route.href} key={route.href} prefetch={false} aria-current={page === route.key ? "page" : undefined} onClick={closeMenu}><Icon size={19} aria-hidden="true" /><span>{text[route.key]}</span></Link>;
+          return <Link href={route.href} key={route.href} prefetch={false} aria-current={page === route.key ? "page" : undefined} onClick={closeMenu}><Icon size={19} aria-hidden="true" /><TextActionLabel>{text[route.key]}</TextActionLabel></Link>;
         })}
       </nav>
-      <button type="button" className={styles.signOut} disabled={busy} onClick={signOut}><LogOut size={19} aria-hidden="true" />{busy ? text.signingOut : text.signout}</button>
+      <button type="button" className={styles.signOut} disabled={busy} onClick={signOut}><LogOut size={19} aria-hidden="true" /><TextActionLabel>{busy ? text.signingOut : text.signout}</TextActionLabel></button>
       {notice && <p className={styles.error} role="alert">{text.error}</p>}
     </dialog>
   </div>;

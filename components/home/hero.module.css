@@ -123,7 +123,7 @@
 .visualCaption { position: absolute; bottom: 0; inset-inline: 0; display: flex; justify-content: center; align-items: center; gap: 7px; font-size: 6px; letter-spacing: 0; color: #99a2af; margin: 0; }
 .visualCaption > span { width: 3px; height: 3px; background: #7292cc; border-radius: 50%; }
 .scrollCue { display: inline-flex; align-items: center; justify-content: center; gap: 12px; font-size: 10px; letter-spacing: 0; color: var(--bluemind-text); min-height: 44px; }
-.scrollCue > span { color: #445269; font-size: 19px; letter-spacing: 0; }
+.scrollCue > span[aria-hidden="true"] { color: #445269; font-size: 19px; letter-spacing: 0; }
 @keyframes copy-enter { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
 @keyframes window-enter { from { opacity: 0; translate: 0 9px; } to { opacity: 1; translate: 0 0; } }
 @keyframes mini-enter { from { opacity: 0; translate: 0 5px; } to { opacity: 1; translate: 0 0; } }
@@ -224,7 +224,7 @@
   .visualCaption { bottom: 4px; font-size: 6px; }
   .planet { width: min(340px, 84vw); top: 264px; right: -78px; opacity: .14; }
   .scrollCue { font-size: 9px; gap: 10px; }
-  .scrollCue > span { font-size: 16px; }
+  .scrollCue > span[aria-hidden="true"] { font-size: 16px; }
 }
 @media (max-width: 380px) {
   .hero .headline { font-size: 26px; }

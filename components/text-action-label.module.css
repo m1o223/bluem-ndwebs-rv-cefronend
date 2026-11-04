@@ -1,0 +1,43 @@
+.label {
+  position: relative;
+  display: inline-block;
+}
+
+.light { --text-action-color: #b8d8fa; }
+
+.label::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -3px;
+  height: 1px;
+  background: var(--text-action-color, var(--bluemind-blue, #142d4e));
+  box-shadow: 0 0 4px #568ac533;
+  pointer-events: none;
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 220ms ease, opacity 220ms ease;
+}
+
+/* Only opted-in text gets an underline; icons and control geometry stay untouched. */
+:global(:is(a, button)):has(.label) {
+  text-decoration: none !important;
+}
+
+:global(:is(a, button):not(:disabled):not([aria-disabled="true"]):is(:focus-visible, :active)) .label::after,
+:global(button[data-active="true"]) .label::after {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :global(:is(a, button):not(:disabled):not([aria-disabled="true"]):hover) .label::after {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .label::after { transition: none; }
+}

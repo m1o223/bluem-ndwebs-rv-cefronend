@@ -10,6 +10,6 @@ export function AboutSummary() {
   </section>;
 }
 
-export function Footer() {
-  return <SiteFooter />;
+export function Footer({ textEffects = false }: { textEffects?: boolean }) {
+  return <SiteFooter textEffects={textEffects} />;
 }

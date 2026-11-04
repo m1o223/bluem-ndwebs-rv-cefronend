@@ -3,6 +3,7 @@ import AiPageLink from "./ai-page-link";
 import HeroVisual from "./hero-visual";
 import shared from "./home.module.css";
 import styles from "./hero.module.css";
+import TextActionLabel from "../text-action-label";
 
 export default function Hero() {
   return (
@@ -15,12 +16,12 @@ export default function Hero() {
           </h1>
           <p className={styles.description}>Websites built around your ideas, designed to move your business forward.</p>
           <div className={`${shared.actions} ${styles.actions}`}>
-            <Link href="/quote" className={`${styles.ctaButton} ${styles.primaryCta}`}>Get Started</Link>
+            <Link href="/quote" className={`${styles.ctaButton} ${styles.primaryCta}`}><TextActionLabel light>Get Started</TextActionLabel></Link>
             <AiPageLink triggerClassName={styles.ctaButton} />
           </div>
         </div>
         <HeroVisual />
-        <a className={styles.scrollCue} href="#selected-work"><span aria-hidden="true">↓</span> SCROLL TO EXPLORE</a>
+        <a className={styles.scrollCue} href="#selected-work"><span aria-hidden="true">↓</span> <TextActionLabel>SCROLL TO EXPLORE</TextActionLabel></a>
       </div>
     </section>
   );

@@ -11,5 +11,5 @@ export default function WebsiteShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   if (pathname === "/ask-ai" || isCustomerPath(pathname)) return children;
   if (pathname === "/sign-in") return <><Navigation /><main>{children}</main></>;
-  return <><Navigation /><PageContent>{children}</PageContent><Footer /></>;
+  return <><Navigation /><PageContent>{children}</PageContent><Footer textEffects={pathname === "/"} /></>;
 }

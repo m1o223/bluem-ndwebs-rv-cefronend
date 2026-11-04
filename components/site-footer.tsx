@@ -3,8 +3,9 @@ import Link from "next/link";
 import { footerConfig as config } from "./site-footer-config";
 import homeStyles from "./home/home.module.css";
 import styles from "./site-footer.module.css";
+import TextActionLabel from "./text-action-label";
 
-export default function SiteFooter() {
+export default function SiteFooter({ textEffects = false }: { textEffects?: boolean }) {
   const activeLegalLinks = config.legalLinks.filter((item) => item.href);
 
   return <footer className={`${homeStyles.home} ${styles.footer}`} aria-label="BlueMind Web Service footer">
@@ -14,11 +15,11 @@ export default function SiteFooter() {
           <Link href="/" className={styles.brand} aria-label="BlueMind Web Service home"><span>BlueMind Web Service</span></Link>
           <p>{config.brandTagline}</p>
         </div>
-        <nav aria-label="Footer explore" className={styles.linkGroup}><h2>Explore</h2><ul>{config.explore.map(([href,label]) => <li key={href}><Link href={href}>{label}</Link></li>)}</ul></nav>
-        <nav aria-label="Footer services" className={styles.linkGroup}><h2>Services</h2><ul>{config.services.map(([href,label]) => <li key={label}><Link href={href}>{label}</Link></li>)}</ul></nav>
+        <nav aria-label="Footer explore" className={styles.linkGroup}><h2>Explore</h2><ul>{config.explore.map(([href,label]) => <li key={href}><Link href={href}><TextActionLabel enabled={textEffects}>{label}</TextActionLabel></Link></li>)}</ul></nav>
+        <nav aria-label="Footer services" className={styles.linkGroup}><h2>Services</h2><ul>{config.services.map(([href,label]) => <li key={label}><Link href={href}><TextActionLabel enabled={textEffects}>{label}</TextActionLabel></Link></li>)}</ul></nav>
         <section className={styles.contact} aria-labelledby="footer-contact-title"><h2 id="footer-contact-title">Contact</h2>
-          <dl><div><dt>Email</dt><dd><a href={`mailto:${config.contact.email}`}>{config.contact.email}</a></dd></div></dl>
-          <Link href="/contact" className={styles.contactLink}>Contact Us <span aria-hidden="true">→</span></Link>
+          <dl><div><dt>Email</dt><dd><a href={`mailto:${config.contact.email}`}><TextActionLabel enabled={textEffects}>{config.contact.email}</TextActionLabel></a></dd></div></dl>
+          <Link href="/contact" className={styles.contactLink}><TextActionLabel enabled={textEffects}>Contact Us</TextActionLabel> <span aria-hidden="true">→</span></Link>
         </section>
       </div>
       <div className={styles.middle}>
@@ -26,7 +27,7 @@ export default function SiteFooter() {
         <section aria-labelledby="footer-payments-title" className={styles.payments}><h2 id="footer-payments-title">Payment methods we plan to support</h2><ul>{config.paymentMethods.map(method => <li key={method.name}>{method.asset ? <Image src={method.asset} width={92} height={32} alt={method.name} /> : <span>{method.name}</span>}{method.note ? <small>{method.note}</small> : null}</li>)}</ul><p className={styles.note}>Planned support. Online payments are not enabled yet.</p></section>
       </div>
       <div className={styles.bottom}>
-        {activeLegalLinks.length > 0 && <nav aria-label="Footer legal"><ul>{activeLegalLinks.map(item => <li key={item.label}><Link href={item.href ?? "#"}>{item.label}</Link></li>)}</ul></nav>}
+        {activeLegalLinks.length > 0 && <nav aria-label="Footer legal"><ul>{activeLegalLinks.map(item => <li key={item.label}><Link href={item.href ?? "#"}><TextActionLabel enabled={textEffects}>{item.label}</TextActionLabel></Link></li>)}</ul></nav>}
         <p className={styles.copyright}>© {new Date().getFullYear()} {config.brandName}. All rights reserved.</p>
       </div>
     </div>

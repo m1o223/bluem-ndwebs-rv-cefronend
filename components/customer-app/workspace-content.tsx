@@ -6,6 +6,7 @@ import type { Customer, CustomerPage } from "../../app/lib/customer/routes";
 import type { Overview, Profile, Project } from "./workspace-types";
 import { workspaceCopy, type WorkspaceCopy } from "./workspace-copy";
 import styles from "./customer.module.css";
+import TextActionLabel from "../text-action-label";
 
 type Locale = keyof typeof workspaceCopy;
 function Field({ label, children }: { label: string; children: ReactNode }) { return <label className={styles.field}><span>{label}</span>{children}</label>; }
@@ -31,7 +32,7 @@ function ProjectProgress({ project, locale }: { project: Project; locale: Locale
 function ProjectContent({ overview, locale, home }: { overview: Overview; locale: Locale; home: boolean }) {
   const t = workspaceCopy[locale];
   const project = overview.project;
-  if (!project) return <section className={styles.section}><h2>{t.current}</h2><Empty>{t.noProject}</Empty><Link className={styles.textLink} href={home ? "/my-project" : "/dashboard/contact"}>{home ? t.view : t.contactTeam}<ArrowRight size={17} aria-hidden="true" /></Link></section>;
+  if (!project) return <section className={styles.section}><h2>{t.current}</h2><Empty>{t.noProject}</Empty><Link className={styles.textLink} href={home ? "/my-project" : "/dashboard/contact"}><TextActionLabel>{home ? t.view : t.contactTeam}</TextActionLabel><ArrowRight size={17} aria-hidden="true" /></Link></section>;
   function money(amount: number | null) {
     if (amount === null || !project?.currency) return t.notProvided;
     try { const format = new Intl.NumberFormat(locale, { style: "currency", currency: project.currency }); return format.format(amount / 10 ** (format.resolvedOptions().maximumFractionDigits ?? 2)); } catch { return t.notProvided; }
@@ -50,8 +51,8 @@ function ProjectContent({ overview, locale, home }: { overview: Overview; locale
       </>}
       <ProjectProgress project={project} locale={locale} />
       <p className={styles.muted}>{t.updated}: {dateLabel(project.updatedAt, locale, t.noUpdates)}</p>
-      {home ? <Link className={styles.textLink} href="/my-project">{t.view}<ArrowRight size={17} aria-hidden="true" /></Link> : <div className={styles.actions}>
-        <button disabled title={t.noInvoice}><FileText size={17} />{t.invoice}</button><button disabled title={t.noPayment}><CreditCard size={17} />{t.payment}</button><Link href="/dashboard/contact"><MessageCircle size={17} />{t.contactTeam}</Link>
+      {home ? <Link className={styles.textLink} href="/my-project"><TextActionLabel>{t.view}</TextActionLabel><ArrowRight size={17} aria-hidden="true" /></Link> : <div className={styles.actions}>
+        <button disabled title={t.noInvoice}><FileText size={17} />{t.invoice}</button><button disabled title={t.noPayment}><CreditCard size={17} />{t.payment}</button><Link href="/dashboard/contact"><MessageCircle size={17} /><TextActionLabel>{t.contactTeam}</TextActionLabel></Link>
       </div>}
     </section>
     {!home && <section className={styles.section}><h2>{t.timeline}</h2>{project.timeline.length ? <ol className={styles.timeline}>{project.timeline.map((entry, index) => <li key={index}><time dateTime={entry.date || undefined}>{dateLabel(entry.date, locale, t.notProvided)}</time><p>{entry.text}</p></li>)}</ol> : <p className={styles.muted}>{t.noUpdates}</p>}</section>}
@@ -90,9 +91,9 @@ function Account({ overview, user, locale, signOut, signingOut }: { overview: Ov
       </section>
       <section className={styles.section}><h2>{t.methods}</h2>{[["email", t.email], ["google", "Google"], ["bankid", "BankID"]].map(([key, title]) => <div className={styles.settingRow} key={key}><span>{title}</span><span className={styles.muted}>{profile.loginMethods.includes(key) ? t.linked : t.notLinked}</span></div>)}{profile.loginMethods.includes("email") && <button className={styles.secondary} type="button" disabled title={t.later}>{t.password}</button>}<p className={styles.muted}>{t.later}</p></section>
       <section className={styles.section}><h2>{t.notifications}</h2>{([['project', 'projectNotices'], ['team', 'teamNotices'], ['billing', 'billingNotices'], ['email', 'emailNotices']] as const).map(([key, label]) => <label key={key} className={styles.settingRow}><span>{t[label]}</span><input type="checkbox" role="switch" checked={profile.preferences[key]} onChange={event => patch({ preferences: { ...profile.preferences, [key]: event.target.checked } })} /></label>)}<p className={styles.muted}>{t.preferencesNote}</p></section>
-      <div className={styles.saveRow}><button type="submit" className={styles.primary} disabled={busy}><Save size={17} />{busy ? t.saving : t.save}</button><p role={notice === "failure" ? "alert" : "status"}>{notice ? t[notice] : ""}</p></div>
+      <div className={styles.saveRow}><button type="submit" className={styles.primary} disabled={busy}><Save size={17} /><TextActionLabel light>{busy ? t.saving : t.save}</TextActionLabel></button><p role={notice === "failure" ? "alert" : "status"}>{notice ? t[notice] : ""}</p></div>
     </form>
-    <section className={styles.section}><h2>{t.actions}</h2><div className={styles.actions}><button disabled title={t.deletionNote}><Trash2 size={17} />{t.delete}</button><button type="button" onClick={signOut} disabled={signingOut}><LogOut size={17} />{locale === "ar" ? "تسجيل الخروج" : locale === "sv" ? "Logga ut" : "Sign out"}</button></div><p className={styles.muted}>{t.deletionNote}</p></section>
+    <section className={styles.section}><h2>{t.actions}</h2><div className={styles.actions}><button disabled title={t.deletionNote}><Trash2 size={17} />{t.delete}</button><button type="button" onClick={signOut} disabled={signingOut}><LogOut size={17} /><TextActionLabel>{locale === "ar" ? "تسجيل الخروج" : locale === "sv" ? "Logga ut" : "Sign out"}</TextActionLabel></button></div><p className={styles.muted}>{t.deletionNote}</p></section>
   </>;
 }
 function Contact({ overview, user, locale }: { overview: Overview; user: Customer; locale: Locale }) {
@@ -114,7 +115,7 @@ function Contact({ overview, user, locale }: { overview: Overview; user: Custome
     <CustomerType t={t} value={form.customerType} onChange={customerType => setForm({ ...form, customerType })} />
     {form.customerType === "company" && <Field label={t.companyName}><input autoComplete="organization" maxLength={180} value={form.companyName} onChange={event => setForm({ ...form, companyName: event.target.value })} /></Field>}
     <Field label={`${t.order} (${t.optional})`}><input maxLength={100} value={form.orderNumber} onChange={event => setForm({ ...form, orderNumber: event.target.value })} /></Field>
-  </div><Field label={t.message}><textarea required minLength={3} maxLength={4000} rows={7} value={form.message} onChange={event => setForm({ ...form, message: event.target.value })} /></Field></fieldset><button className={styles.primary} disabled={busy}><Send size={17} />{busy ? t.sending : t.send}</button><p role={notice === "failure" ? "alert" : "status"}>{notice ? t[notice] : ""}</p></form>;
+  </div><Field label={t.message}><textarea required minLength={3} maxLength={4000} rows={7} value={form.message} onChange={event => setForm({ ...form, message: event.target.value })} /></Field></fieldset><button className={styles.primary} disabled={busy}><Send size={17} /><TextActionLabel light>{busy ? t.sending : t.send}</TextActionLabel></button><p role={notice === "failure" ? "alert" : "status"}>{notice ? t[notice] : ""}</p></form>;
 }
 export default function WorkspaceContent({ page, overview, user, locale, signOut, signingOut }: { page: CustomerPage; overview: Overview; user: Customer; locale: Locale; signOut: () => void; signingOut: boolean }) {
   const t = workspaceCopy[locale];

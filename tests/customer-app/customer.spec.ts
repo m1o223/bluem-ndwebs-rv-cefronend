@@ -38,6 +38,13 @@ for (const [index, width] of [390, 768, 1440].entries()) {
     await expect(page.getByRole("dialog")).toBeVisible();
     await expect(page.getByRole("dialog").locator("nav a")).toHaveCount(5);
     await expect(page.getByRole("link", { name: "Home", exact: true })).toHaveAttribute("aria-current", "page");
+    await page.keyboard.press("Tab");
+    for (const action of await page.getByRole("dialog").locator("nav a, button:has([data-text-action-label])").all()) {
+      const before = await action.boundingBox();
+      await action.focus();
+      await expect.poll(() => action.locator("[data-text-action-label]").evaluate(element => getComputedStyle(element, "::after").opacity)).toBe("1");
+      expect(await action.boundingBox()).toEqual(before);
+    }
     await page.screenshot({ path: info.outputPath("customer-menu.png") });
     await page.keyboard.press("Escape");
     await expect(page.getByRole("dialog")).not.toBeVisible();
