@@ -1,5 +1,5 @@
 import Link from "next/link";
-import AiComingSoon from "./ai-coming-soon";
+import AiPageLink from "./ai-page-link";
 import HeroVisual from "./hero-visual";
 import shared from "./home.module.css";
 import styles from "./hero.module.css";
@@ -9,16 +9,14 @@ export default function Hero() {
     <section className={styles.hero} aria-labelledby="hero-title" data-hero>
       <div className={styles.inner}>
         <div className={styles.copy}>
-          <p className={`${shared.eyebrow} ${styles.eyebrow}`}><span className={shared.blueDot} /> BLUEMIND WEB SERVICE</p>
           <h1 id="hero-title" className={styles.headline}>
-            <span>We design.</span>
-            <span>We develop.</span>
-            <span className={styles.accent}>You move forward.</span>
+            <span>We design &amp; develop</span>{" "}
+            <span>You move forward</span>
           </h1>
-          <p className={styles.description}>Thoughtfully designed. Expertly developed.<br />Websites that move your business forward.</p>
+          <p className={styles.description}>Websites built around your ideas, designed to move your business forward.</p>
           <div className={`${shared.actions} ${styles.actions}`}>
             <Link href="/quote" className={`${styles.ctaButton} ${styles.primaryCta}`}>Get Started</Link>
-            <AiComingSoon triggerClassName={styles.ctaButton} />
+            <AiPageLink triggerClassName={styles.ctaButton} />
           </div>
         </div>
         <HeroVisual />

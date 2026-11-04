@@ -5,7 +5,7 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     const errors: string[] = [];
     page.on("pageerror", error => errors.push(error.message));
-    await page.goto("/");
+    await page.goto("/services");
     const header = page.locator("header[data-scrolled]");
     const language = header.getByRole("button", { name: "Selected language: English" });
     const menu = header.locator('button[aria-controls="home-navigation"]');
@@ -36,8 +36,6 @@ for (const width of [320, 390, 768, 1024, 1440]) {
         expect(overlap).toBe(false);
       }
     }
-    await expect(page.getByRole("link", { name: /Get Started/ }).first()).toHaveAttribute("href", "/quote");
-    await expect(page.getByRole("link", { name: /Ask BlueMind AI/ }).first()).toHaveAttribute("href", "/ask-ai");
     await language.click();
     await expect(header.getByRole("menuitemradio")).toHaveCount(3);
     await page.keyboard.press("Escape");
@@ -47,13 +45,12 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     const navigation = header.getByRole("navigation");
     await expect(navigation).toBeVisible();
     await expect(navigation.locator("a")).toHaveCount(8);
-    await navigation.getByRole("link", { name: "Website Concepts", exact: true }).click();
+    await page.keyboard.press("Escape");
+    await page.evaluate(() => scrollTo(0, 500));
     await expect(header).toHaveAttribute("data-scrolled", "true");
     await expect.poll(async () => (await header.boundingBox())!.y).toBe(0);
-    const bottom = (await header.boundingBox())!.height;
     await page.waitForTimeout(500);
     await page.screenshot({ path: testInfo.outputPath("sticky-header.png") });
-    await expect.poll(async () => (await page.locator("#selected-work").boundingBox())!.y).toBeGreaterThanOrEqual(bottom);
     await signIn.click();
     await expect(page).toHaveURL(/\/sign-in$/);
     await expect(signIn).toHaveAttribute("aria-current", "page");

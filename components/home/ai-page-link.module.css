@@ -1,0 +1,5 @@
+.trigger { position: relative; }
+.trigger.trigger { font-size: 16px; font-weight: 500; line-height: 1.25; }
+.sizer { visibility: hidden; }
+.label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 7px; }
+.label svg { flex-shrink: 0; }
