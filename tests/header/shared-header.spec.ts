@@ -35,7 +35,7 @@ for (const width of [320, 390, 768, 1440]) {
       }
       await reference.goto("https://bluemind-web-service.vercel.app/templates/morrow");
       const expected = await appearance(reference);
-      for (const path of ["/", "/templates", "/templates/morrow", "/templates/aster", "/templates/june-atlas", "/templates/meridian", "/templates/form-field", "/templates/haven", "/templates/sera", "/about", "/services", "/how-we-work", "/care", "/contact", "/quote", "/sign-in", "/our-work"]) {
+      for (const path of ["/", "/templates", "/templates/morrow", "/templates/aster", "/templates/june-atlas", "/templates/meridian", "/templates/form-field", "/templates/haven", "/templates/sera", "/about", "/services", "/how-we-work", "/care", "/contact", "/quote", "/our-work"]) {
         expect((await page.goto(path))?.status(), path).toBe(200);
         await expect(header(page)).toHaveCount(1);
         await expect(header(page).locator('a[href="/sign-in"]')).toBeVisible();
@@ -84,8 +84,10 @@ for (const width of [320, 390, 768, 1440]) {
     await navigate("/about");
     await header(page).locator('a[href="/sign-in"]').click();
     await expect(page).toHaveURL(/\/sign-in$/);
-    await assertHeader();
-    await navigate("/");
+    await expect(menu(page)).toHaveCount(0);
+    await expect(language(page)).toHaveCount(0);
+    await home(page).click();
+    await expect(page).toHaveURL(/\/$/);
     await page.reload();
     await assertHeader();
     await page.evaluate(() => scrollTo(0, 600));

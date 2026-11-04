@@ -7,6 +7,8 @@ import Navigation from "./navigation";
 import PageContent from "./page-content";
 
 export default function WebsiteShell({ children }: { children: ReactNode }) {
-  if (usePathname() === "/ask-ai") return children;
+  const pathname = usePathname();
+  if (pathname === "/ask-ai") return children;
+  if (pathname === "/sign-in") return <><Navigation /><main>{children}</main></>;
   return <><Navigation /><PageContent>{children}</PageContent><Footer /></>;
 }

@@ -54,10 +54,9 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await page.screenshot({ path: testInfo.outputPath("sticky-header.png") });
     await signIn.click();
     await expect(page).toHaveURL(/\/sign-in$/);
-    await expect(signIn).toHaveAttribute("aria-current", "page");
-    await expectPlainSignIn();
+    await expect(signIn).toHaveCount(0);
     await expect(page.getByRole("heading", { level: 1, name: "Sign in" })).toBeVisible();
-    await expect(page.locator("main input, main form")).toHaveCount(0);
+    await expect(page.locator("main input, main form")).toHaveCount(3);
     await page.reload();
     await expect(page.getByRole("heading", { level: 1, name: "Sign in" })).toBeVisible();
     await expect(page.locator("header[data-scrolled]")).toHaveCSS("position", "sticky");
@@ -67,7 +66,7 @@ for (const width of [320, 390, 768, 1024, 1440]) {
 }
 
 test("languages, keyboard selection and mutually exclusive menus", async ({ page }) => {
-  await page.goto("/sign-in");
+  await page.goto("/about");
   const header = page.locator("header[data-scrolled]");
   const language = header.locator('button[aria-controls="header-languages"]');
   await language.focus();
@@ -75,12 +74,12 @@ test("languages, keyboard selection and mutually exclusive menus", async ({ page
   await expect(header.getByRole("menuitemradio", { name: /English/ })).toBeFocused();
   await page.keyboard.press("ArrowDown");
   await page.keyboard.press("Enter");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Logga in");
+  await expect(language).toHaveAttribute("aria-label", "Selected language: Svenska");
   await language.click();
   await header.getByRole("menuitemradio", { name: /العربية/ }).click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("تسجيل الدخول");
+  await expect(language).toHaveAttribute("aria-label", "Selected language: العربية");
   await page.reload();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("تسجيل الدخول");
+  await expect(language).toHaveAttribute("aria-label", "Selected language: العربية");
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await header.locator('button[aria-controls="home-navigation"]').click();
@@ -90,12 +89,12 @@ test("languages, keyboard selection and mutually exclusive menus", async ({ page
   await expect(language).toHaveAttribute("aria-expanded", "false");
   await language.click();
   await header.getByRole("menuitemradio", { name: /English/ }).click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Sign in");
+  await expect(language).toHaveAttribute("aria-label", "Selected language: English");
 });
 
 test("existing navigation destinations load and AI remains outside the marketing shell", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  for (const path of ["/", "/about", "/services", "/templates", "/templates/morrow", "/how-we-work", "/care", "/contact", "/quote", "/sign-in"]) {
+  for (const path of ["/", "/about", "/services", "/templates", "/templates/morrow", "/how-we-work", "/care", "/contact", "/quote"]) {
     const response = await page.goto(path);
     expect(response?.status()).toBe(200);
     await page.locator('button[aria-controls="home-navigation"]').click();
@@ -109,6 +108,6 @@ test("existing navigation destinations load and AI remains outside the marketing
 
 test("reduced motion disables header transitions", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/sign-in");
+  await page.goto("/about");
   await expect(page.locator('button[aria-controls="home-navigation"]')).toHaveCSS("transition-duration", "0s");
 });
