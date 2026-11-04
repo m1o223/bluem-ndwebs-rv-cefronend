@@ -59,6 +59,7 @@
 .section .control:hover { background: var(--bluemind-blue-hover); }
 .counter { width: 64px; color: #64748b; font-size: 13px; font-variant-numeric: tabular-nums; }
 .description { max-width: 650px; margin: 20px auto 24px; font-size: 16px; line-height: 1.7; color: #515e70; }
+.clarification { max-width: 650px; margin: -12px auto 24px; font-size: 14px; line-height: 1.7; color: #515e70; }
 .cta {
   display: inline-flex;
   align-items: center;

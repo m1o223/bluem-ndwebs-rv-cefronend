@@ -38,8 +38,8 @@ for (const width of [390, 768, 1440]) {
       await baseline.goto("https://bluemind-web-service.vercel.app/");
       for (const target of [page, baseline]) await target.evaluate(() => document.fonts.ready);
       const headerDelta = (await page.locator("body > header").boundingBox())!.height - (await baseline.locator("body > header").boundingBox())!.height;
-      const processHeight = (await page.locator("#home-how-we-work").boundingBox())?.height ?? 0;
-      const referenceProcessHeight = await baseline.locator("#home-how-we-work").count() ? (await baseline.locator("#home-how-we-work").boundingBox())!.height : 0;
+      const processHeight = await page.locator("#home-how-we-work, #home-meet-ai").evaluateAll(sections => sections.reduce((height, section) => height + section.getBoundingClientRect().height, 0));
+      const referenceProcessHeight = await baseline.locator("#home-how-we-work, #home-meet-ai").evaluateAll(sections => sections.reduce((height, section) => height + section.getBoundingClientRect().height, 0));
       for (const selector of ["[data-hero]", "#selected-work", 'section[aria-labelledby="about-summary-title"]', "footer"]) {
         const actual = page.locator(selector).first(), reference = baseline.locator(selector).first();
         const box = (await actual.boundingBox())!, original = (await reference.boundingBox())!;
