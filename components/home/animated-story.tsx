@@ -1,20 +1,13 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowLeft, ArrowRight, Pause, Play } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useLocalization, type Locale } from "../localization-provider";
 import styles from "./work-process.module.css";
 
 export type StoryCopy = {
   title: string;
-  description: string;
-  clarification?: string;
-  action: string;
-  previous: string;
-  next: string;
-  pause: string;
-  play: string;
+  instructions: string;
   steps: readonly string[];
 };
 
@@ -22,19 +15,19 @@ type AnimatedStoryProps = {
   id: string;
   titleId: string;
   content: Record<Locale, StoryCopy>;
-  href: string;
 };
 
-export default function AnimatedStory({ id, titleId, content, href }: AnimatedStoryProps) {
+export default function AnimatedStory({ id, titleId, content }: AnimatedStoryProps) {
   const { locale } = useLocalization();
   const copy = content[locale];
-  const cardRef = useRef<HTMLDivElement>(null);
+  const deviceRef = useRef<HTMLDivElement>(null);
   const [step, setStep] = useState(0);
   const [inView, setInView] = useState(false);
   const [visible, setVisible] = useState(true);
   const [paused, setPaused] = useState(false);
+  const [focused, setFocused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(true);
-  const playing = inView && visible && !paused && !reducedMotion;
+  const playing = inView && visible && !paused && !focused && !reducedMotion;
   const rtl = locale === "ar";
 
   useEffect(() => {
@@ -45,8 +38,10 @@ export default function AnimatedStory({ id, titleId, content, href }: AnimatedSt
     updateVisibility();
     motion.addEventListener("change", updateMotion);
     document.addEventListener("visibilitychange", updateVisibility);
-    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting && entry.intersectionRatio >= 0.5), { threshold: [0, 0.5] });
-    if (cardRef.current) observer.observe(cardRef.current);
+    const observer = new IntersectionObserver(([entry]) => {
+      setInView(entry.isIntersecting && entry.intersectionRatio >= 0.25);
+    }, { threshold: [0, 0.25] });
+    if (deviceRef.current) observer.observe(deviceRef.current);
     return () => {
       observer.disconnect();
       motion.removeEventListener("change", updateMotion);
@@ -54,38 +49,41 @@ export default function AnimatedStory({ id, titleId, content, href }: AnimatedSt
     };
   }, []);
 
-  function navigate(direction: number) {
-    setPaused(true);
-    setStep(current => (current + direction + copy.steps.length) % copy.steps.length);
-  }
-
   return (
     <section id={id} className={styles.section} aria-labelledby={titleId} lang={locale} dir={rtl ? "rtl" : "ltr"} data-no-translate>
-      <div className={styles.inner}>
-        <h2 id={titleId} className={styles.title}>{copy.title}</h2>
-        <div ref={cardRef} className={styles.card} data-work-card data-playing={playing} data-manual={paused || reducedMotion}>
-          <div className={styles.textArea} aria-live={playing ? "off" : "polite"} aria-atomic="true">
-            <p key={`${locale}-${step}`} className={styles.sentence} data-work-step={step + 1} onAnimationEnd={() => {
-              // The CSS timeline owns both the text transition and step cadence.
-              if (playing) setStep(current => (current + 1) % copy.steps.length);
-            }}>{copy.steps[step]}</p>
+      <h2 id={titleId} className={styles.srOnly}>{copy.title}</h2>
+      <p id={`${id}-instructions`} className={styles.srOnly}>{copy.instructions}</p>
+      <ol className={styles.srOnly}>{copy.steps.map(text => <li key={text}>{text}</li>)}</ol>
+      <div ref={deviceRef} className={styles.device} data-work-card data-playing={playing}
+        data-static={paused || focused || reducedMotion} role="group" tabIndex={0}
+        aria-labelledby={titleId} aria-describedby={`${id}-instructions`}
+        onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
+        onKeyDown={event => {
+          if (event.key === " " || event.key === "Enter") {
+            event.preventDefault();
+            setPaused(current => !current);
+          } else if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+            event.preventDefault();
+            const direction = (event.key === "ArrowRight" ? 1 : -1) * (rtl ? -1 : 1);
+            setPaused(true);
+            setStep(current => (current + direction + copy.steps.length) % copy.steps.length);
+          }
+        }}>
+        <div className={styles.frame} data-device-frame>
+          <div className={styles.screen} data-device-screen>
+            <div className={styles.screenContent} data-screen-content aria-hidden="true">
+              <Image className={styles.logo} src="/images/brand/bluemind-original-logo-transparent.png" width={96} height={96} alt="" sizes="96px" />
+              <div className={styles.input} data-story-input>
+                <div className={styles.textArea}>
+                  <p key={`${locale}-${step}`} className={styles.sentence} data-work-step={step + 1} onAnimationEnd={event => {
+                    // The text's CSS timeline owns the cadence; the screen zoom runs independently.
+                    if (event.target === event.currentTarget) setStep(current => (current + 1) % copy.steps.length);
+                  }}>{copy.steps[step]}</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div className={styles.controls}>
-          <button type="button" className={styles.control} onClick={() => navigate(-1)} aria-label={copy.previous} title={copy.previous} data-work-previous>
-            {rtl ? <ArrowRight size={18} aria-hidden="true" /> : <ArrowLeft size={18} aria-hidden="true" />}
-          </button>
-          <span className={styles.counter} dir="ltr" aria-hidden="true">{String(step + 1).padStart(2, "0")} / {copy.steps.length}</span>
-          <button type="button" className={styles.control} onClick={() => navigate(1)} aria-label={copy.next} title={copy.next} data-work-next>
-            {rtl ? <ArrowLeft size={18} aria-hidden="true" /> : <ArrowRight size={18} aria-hidden="true" />}
-          </button>
-          {!reducedMotion && <button type="button" className={styles.control} onClick={() => setPaused(current => !current)} aria-label={paused ? copy.play : copy.pause} title={paused ? copy.play : copy.pause} data-work-pause>
-            {paused ? <Play size={16} aria-hidden="true" /> : <Pause size={16} aria-hidden="true" />}
-          </button>}
-        </div>
-        <p className={styles.description}>{copy.description}</p>
-        {copy.clarification && <p className={styles.clarification}>{copy.clarification}</p>}
-        <Link href={href} className={styles.cta}>{copy.action}{rtl ? <ArrowLeft size={17} aria-hidden="true" /> : <ArrowRight size={17} aria-hidden="true" />}</Link>
       </div>
     </section>
   );
