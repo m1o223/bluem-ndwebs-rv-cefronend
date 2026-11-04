@@ -3,9 +3,10 @@ import { expect, test } from "@playwright/test";
 for (const width of [320, 390, 768, 1024, 1440]) {
   test(`header controls, scrolling and sign-in at ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 900 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
     const errors: string[] = [];
     page.on("pageerror", error => errors.push(error.message));
-    await page.goto("/services");
+    await page.goto("/");
     const header = page.locator("header[data-scrolled]");
     const language = header.getByRole("button", { name: "Selected language: English" });
     const menu = header.locator('button[aria-controls="home-navigation"]');
@@ -93,7 +94,8 @@ test("languages, keyboard selection and mutually exclusive menus", async ({ page
 });
 
 test("existing navigation destinations load and AI remains outside the marketing shell", async ({ page }) => {
-  for (const path of ["/", "/about", "/services", "/how-we-work", "/care", "/contact", "/quote", "/sign-in"]) {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  for (const path of ["/", "/about", "/services", "/templates", "/templates/morrow", "/how-we-work", "/care", "/contact", "/quote", "/sign-in"]) {
     const response = await page.goto(path);
     expect(response?.status()).toBe(200);
     await page.locator('button[aria-controls="home-navigation"]').click();

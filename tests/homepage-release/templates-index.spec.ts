@@ -27,7 +27,7 @@ for (const width of [390, 768, 1440]) {
     await expect(space).toBeEmpty();
   });
 
-  test(`original homepage header, hero and later sections stay in place at ${width}px`, async ({ page, context }) => {
+  test(`homepage content layout is preserved below the shared header at ${width}px`, async ({ page, context }) => {
     const baseline = await context.newPage();
     try {
       for (const target of [page, baseline]) {
@@ -37,11 +37,12 @@ for (const width of [390, 768, 1440]) {
       await page.goto("/");
       await baseline.goto("https://bluemind-web-service.vercel.app/");
       for (const target of [page, baseline]) await target.evaluate(() => document.fonts.ready);
-      for (const selector of ["body > header", "[data-hero]", "#selected-work", 'section[aria-labelledby="about-summary-title"]', "footer"]) {
+      const headerDelta = (await page.locator("body > header").boundingBox())!.height - (await baseline.locator("body > header").boundingBox())!.height;
+      for (const selector of ["[data-hero]", "#selected-work", 'section[aria-labelledby="about-summary-title"]', "footer"]) {
         const actual = page.locator(selector).first(), reference = baseline.locator(selector).first();
         const box = (await actual.boundingBox())!, original = (await reference.boundingBox())!;
         for (const key of ["x", "y", "width", "height"] as const) {
-          expect(Math.abs(box[key] - original[key]), `${selector}: ${key}`).toBeLessThan(0.1);
+          expect(Math.abs(box[key] - original[key] - (key === "y" ? headerDelta : 0)), `${selector}: ${key}`).toBeLessThan(0.1);
         }
         if (selector !== "#selected-work") expect(await actual.textContent()).toBe(await reference.textContent());
       }

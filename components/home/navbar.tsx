@@ -1,19 +1,15 @@
 ﻿"use client";
 
 import Link from "next/link";
-import { Check, ChevronDown, Globe2, Menu, Plus, X } from "lucide-react";
+import { Check, ChevronDown, Globe2, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { BrandLockup } from "../brand-lockup";
 import { useLocalization, type Locale } from "../localization-provider";
-import currentStyles from "./home.module.css";
-import previewStyles from "./preview-header.module.css";
+import styles from "./home.module.css";
 
 const links = [["/", "Home"], ["/about", "About Us"], ["/services", "Services"], ["/templates", "Website Concepts"], ["/how-we-work", "How We Work"], ["/care", "Website Care"], ["/contact", "Contact"]];
-const homepageStyles = Object.fromEntries(Object.entries(currentStyles).map(([key, value]) => [key, `${value} ${previewStyles[key] ?? ""}`]));
 
 export default function Navbar({ activePath = "/" }: { activePath?: string }) {
-  const isHomepage = activePath === "/";
-  const styles = isHomepage ? homepageStyles : currentStyles;
   const { locale, languages, setLocale } = useLocalization();
   const [expanded, setExpanded] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
@@ -25,7 +21,6 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
   const selectedLanguage = languages.find((language) => language.code === locale) ?? languages[0];
 
   useEffect(() => {
-    if (isHomepage) return;
     const header = headerRef.current;
     if (!header) return;
     const updateHeight = () => document.documentElement.style.setProperty("--website-header-height", `${header.offsetHeight}px`);
@@ -40,7 +35,13 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
       window.removeEventListener("scroll", updateScroll);
       document.documentElement.style.removeProperty("--website-header-height");
     };
-  }, [isHomepage]);
+  }, []);
+
+  useEffect(() => {
+    setExpanded(false);
+    setLanguageOpen(false);
+    setScrolled(window.scrollY > 8);
+  }, [activePath]);
 
   useEffect(() => {
     if (!expanded) return;
@@ -81,23 +82,23 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
   }, [languageOpen]);
 
   return (
-    <header ref={headerRef} className={styles.header} data-scrolled={isHomepage ? undefined : scrolled} onKeyDown={(event) => {
+    <header ref={headerRef} className={styles.header} data-scrolled={scrolled} onKeyDown={(event) => {
       if (event.key === "Escape" && expanded) {
         setExpanded(false);
         toggleRef.current?.focus();
       }
     }}>
       <div className={styles.headerInner}>
-        <Link className={styles.brand} href="/" aria-label="BlueMind Web Service home" onClick={() => { setExpanded(false); setLanguageOpen(false); }}><BrandLockup className={isHomepage ? undefined : styles.headerBrand} logoClassName={styles.brandLogo} priority solidLogo /></Link>
+        <Link className={styles.brand} href="/" aria-label="BlueMind Web Service home" onClick={() => { setExpanded(false); setLanguageOpen(false); }}><BrandLockup className={styles.headerBrand} logoClassName={styles.brandLogo} priority solidLogo /></Link>
         <div className={styles.headerControls}>
-          {!isHomepage && <Link className={styles.signInLink} href="/sign-in" aria-current={activePath === "/sign-in" ? "page" : undefined} onClick={() => { setExpanded(false); setLanguageOpen(false); }}>Sign in</Link>}
+          <Link className={styles.signInLink} href="/sign-in" aria-current={activePath === "/sign-in" ? "page" : undefined} onClick={() => { setExpanded(false); setLanguageOpen(false); }}>Sign in</Link>
           <div className={styles.languageSelector} ref={languageRef} data-no-translate>
             <button ref={languageToggleRef} className={styles.languageButton} type="button" aria-label={`Selected language: ${selectedLanguage.label}`} aria-haspopup="menu" aria-controls="header-languages" aria-expanded={languageOpen} onClick={() => { setLanguageOpen((open) => !open); setExpanded(false); }} onKeyDown={(event) => {
               if (event.key === "ArrowDown" || event.key === "ArrowUp") { event.preventDefault(); setLanguageOpen(true); setExpanded(false); }
             }}>
-              {isHomepage ? <span aria-hidden="true" className={styles.languageIcon}>{"\uD83C\uDF10"}</span> : <Globe2 aria-hidden="true" className={styles.languageIcon} size={19} strokeWidth={1.6} />}
+              <Globe2 aria-hidden="true" className={styles.languageIcon} size={19} strokeWidth={1.6} />
               <span className={styles.languageShort}>{selectedLanguage.short}</span>
-              {isHomepage ? <span className={styles.languageChevron} aria-hidden="true">{"\u25BE"}</span> : <ChevronDown className={styles.languageChevron} aria-hidden="true" size={12} />}
+              <ChevronDown className={styles.languageChevron} aria-hidden="true" size={12} />
             </button>
             <div id="header-languages" className={styles.languageMenu} role="menu" aria-label="Languages" data-open={languageOpen} inert={!languageOpen} onKeyDown={(event) => {
               const buttons = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>("button"));
@@ -125,7 +126,7 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
                   }}
                 >
                   <span>{language.label}</span>
-                  {!isHomepage && locale === language.code ? <Check size={15} aria-hidden="true" /> : <small>{language.short}</small>}
+                  {locale === language.code ? <Check size={15} aria-hidden="true" /> : <small>{language.short}</small>}
                 </button>
               ))}
             </div>
@@ -133,7 +134,7 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
           <button ref={toggleRef} className={styles.menuToggle} type="button" aria-label={expanded ? "Close menu" : "Open menu"} aria-expanded={expanded} aria-controls="home-navigation" data-expanded={expanded} onClick={() => { setExpanded((open) => !open); setLanguageOpen(false); }}>
             <span className={styles.menuLabel} aria-hidden="true"><span>Menu</span><span>Close</span></span>
             <span className={styles.menuSymbol} aria-hidden="true">
-              {isHomepage ? <Plus className={styles.menuOpenIcon} size={20} /> : <Menu className={styles.menuOpenIcon} size={20} />}
+              <Menu className={styles.menuOpenIcon} size={20} />
               <X className={styles.menuCloseIcon} size={20} />
             </span>
           </button>
