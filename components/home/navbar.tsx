@@ -85,7 +85,7 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
       <div className={styles.headerInner}>
         <Link className={styles.brand} href="/" aria-label="BlueMind Web Service home" onClick={() => { setExpanded(false); setLanguageOpen(false); }}><BrandLockup className={styles.headerBrand} logoClassName={styles.brandLogo} priority solidLogo /></Link>
         <div className={styles.headerControls}>
-          <Link className={styles.signInButton} href="/sign-in" aria-current={activePath === "/sign-in" ? "page" : undefined} onClick={() => { setExpanded(false); setLanguageOpen(false); }}>Sign in</Link>
+          <Link className={styles.signInLink} href="/sign-in" aria-current={activePath === "/sign-in" ? "page" : undefined} onClick={() => { setExpanded(false); setLanguageOpen(false); }}>Sign in</Link>
           <div className={styles.languageSelector} ref={languageRef} data-no-translate>
             <button ref={languageToggleRef} className={styles.languageButton} type="button" aria-label={`Selected language: ${selectedLanguage.label}`} aria-haspopup="menu" aria-controls="header-languages" aria-expanded={languageOpen} onClick={() => { setLanguageOpen((open) => !open); setExpanded(false); }} onKeyDown={(event) => {
               if (event.key === "ArrowDown" || event.key === "ArrowUp") { event.preventDefault(); setLanguageOpen(true); setExpanded(false); }

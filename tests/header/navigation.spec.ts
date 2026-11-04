@@ -11,6 +11,17 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     const menu = header.locator('button[aria-controls="home-navigation"]');
     const signIn = header.getByRole("link", { name: "Sign in", exact: true });
     await expect(signIn).toBeVisible();
+    const expectPlainSignIn = async () => {
+      await expect(signIn).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+      await expect(signIn).toHaveCSS("border-top-width", "0px");
+      await expect(signIn).toHaveCSS("border-radius", "0px");
+      await expect(signIn).toHaveCSS("box-shadow", "none");
+    };
+    await expectPlainSignIn();
+    await expect(signIn).toHaveAttribute("href", "/sign-in");
+    await signIn.hover();
+    await expectPlainSignIn();
+    await page.mouse.move(0, 0);
     await expect(language).toBeVisible();
     await expect(menu).toBeVisible();
     await page.waitForTimeout(800);
@@ -45,6 +56,8 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await expect.poll(async () => (await page.locator("#selected-work").boundingBox())!.y).toBeGreaterThanOrEqual(bottom);
     await signIn.click();
     await expect(page).toHaveURL(/\/sign-in$/);
+    await expect(signIn).toHaveAttribute("aria-current", "page");
+    await expectPlainSignIn();
     await expect(page.getByRole("heading", { level: 1, name: "Sign in" })).toBeVisible();
     await expect(page.locator("main input, main form")).toHaveCount(0);
     await page.reload();
