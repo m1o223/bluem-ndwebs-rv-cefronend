@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useLocalization, type Locale } from "../localization-provider";
 import styles from "./work-process.module.css";
@@ -8,7 +7,7 @@ import styles from "./work-process.module.css";
 export type StoryCopy = {
   title: string;
   instructions: string;
-  steps: readonly string[];
+  steps: readonly (readonly [string, string])[];
 };
 
 type AnimatedStoryProps = {
@@ -53,7 +52,7 @@ export default function AnimatedStory({ id, titleId, content }: AnimatedStoryPro
     <section id={id} className={styles.section} aria-labelledby={titleId} lang={locale} dir={rtl ? "rtl" : "ltr"} data-no-translate>
       <h2 id={titleId} className={styles.srOnly}>{copy.title}</h2>
       <p id={`${id}-instructions`} className={styles.srOnly}>{copy.instructions}</p>
-      <ol className={styles.srOnly}>{copy.steps.map(text => <li key={text}>{text}</li>)}</ol>
+      <ol className={styles.srOnly}>{copy.steps.map(lines => <li key={lines.join(" ")}>{lines.join(" ")}</li>)}</ol>
       <div ref={deviceRef} className={styles.device} data-work-card data-playing={playing}
         data-static={paused || focused || reducedMotion} role="group" tabIndex={0}
         aria-labelledby={titleId} aria-describedby={`${id}-instructions`}
@@ -72,14 +71,14 @@ export default function AnimatedStory({ id, titleId, content }: AnimatedStoryPro
         <div className={styles.frame} data-device-frame>
           <div className={styles.screen} data-device-screen>
             <div className={styles.screenContent} data-screen-content aria-hidden="true">
-              <Image className={styles.logo} src="/images/brand/bluemind-original-logo-transparent.png" width={96} height={96} alt="" sizes="96px" />
-              <div className={styles.input} data-story-input>
-                <div className={styles.textArea}>
-                  <p key={`${locale}-${step}`} className={styles.sentence} data-work-step={step + 1} onAnimationEnd={event => {
-                    // The text's CSS timeline owns the cadence; the screen zoom runs independently.
-                    if (event.target === event.currentTarget) setStep(current => (current + 1) % copy.steps.length);
-                  }}>{copy.steps[step]}</p>
-                </div>
+              <div className={styles.textArea} data-story-text>
+                <p key={`${locale}-${step}`} className={styles.sentence} data-work-step={step + 1} onAnimationEnd={event => {
+                  // Advancing from animationend keeps the fade and content changes on one timeline.
+                  if (event.target === event.currentTarget) setStep(current => (current + 1) % copy.steps.length);
+                }}>
+                  <span className={styles.line} data-story-line>{copy.steps[step][0]}</span>{" "}
+                  <span className={styles.line} data-story-line>{copy.steps[step][1]}</span>
+                </p>
               </div>
             </div>
           </div>
