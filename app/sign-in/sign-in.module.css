@@ -18,8 +18,10 @@
 .formArea input:last-of-type { margin-bottom: 8px; }
 .formArea button { font: inherit; cursor: pointer; }
 .forgot { align-self: flex-end; padding: 8px 0; min-height: 36px; margin-bottom: 18px; border: 0; background: transparent; color: #142d4e; font-size: 13px !important; }
-.primary { min-height: 48px; border: 1px solid #142d4e; border-radius: 8px; background: #142d4e; color: #fff; font-weight: 500 !important; }
+.primary { position: relative; min-height: 48px; padding-inline: 42px; border: 1px solid #142d4e; border-radius: 8px; background: #142d4e; color: #fff; font-weight: 500 !important; }
 .primary:hover { background: #203f63; }
+/* Override the global CTA scale rule only in this preview. */
+.page .formArea .primary:is(:hover, :active):not(:disabled) { transform: none !important; background: #203f63 !important; border-color: #203f63 !important; }
 .divider { display: flex; align-items: center; gap: 14px; margin: 26px 0; font-size: 13px; color: #687382; }
 .divider::before, .divider::after { content: ""; height: 1px; flex: 1; background: #e2e8f0; }
 .providers { display: grid; gap: 12px; }
@@ -27,8 +29,20 @@
 .providers img { position: absolute; inset-inline-start: 14px; object-fit: contain; }
 .providers button:hover { background: #f1f7fd; }
 .back:hover, .forgot:hover { text-decoration: underline; }
-.page :is(input, button, a):focus-visible { outline: 2px solid #477bad; outline-offset: 3px; }
-.notice { min-height: 40px; margin: 16px 0 0; font-size: 13px; line-height: 1.6; text-align: center; color: #536174; }
+.page :is(input, select, button, a):focus-visible { outline: 2px solid #477bad; outline-offset: 3px; }
+.formArea :is(input, select, button) { transition: background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease, color 200ms ease; }
+.formArea :is(input, select):hover { border-color: #adbdce; }
+.formArea :is(input, select):focus { border-color: #477bad; box-shadow: 0 0 0 3px #477bad12; }
+.formArea button:disabled { cursor: default; }
+.primary[data-active="true"] { background: #264d74; border-color: #264d74; }
+.providers button[data-active="true"] { background: #f1f7fd; border-color: #9bb8d3; }
+.forgot[data-active="true"] { color: #356fa8; }
+.spinner { position: absolute; inset-inline-end: 14px; top: calc(50% - 9px); animation: preview-spin 1.1s linear infinite; }
+@keyframes preview-spin { to { transform: rotate(360deg); } }
+.previewNote, .notice { font-size: 13px; line-height: 1.6; text-align: center; color: #536174; }
+.previewNote { margin: 16px 0 0; }
+.notice { min-height: 42px; margin: 8px 0 0; }
+@media (prefers-reduced-motion: reduce) { .formArea :is(input, select, button) { transition: none; } .spinner { animation: none; } }
 @media (max-width: 620px) {
   .page { padding: 12px 20px 24px; }
   .center { padding: 18px 0 0; min-height: 0; }

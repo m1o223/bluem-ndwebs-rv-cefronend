@@ -1,10 +1,13 @@
 import { test, expect, type Page } from "@playwright/test";
 const paths = ["/dashboard", "/my-project", "/blue-mind-ai", "/dashboard/contact", "/account"];
+// The public sign-in is a design preview. Seed isolated test sessions through the unchanged API.
+async function authenticate(page: Page, index: number, customerType?: string) {
+  const response = await page.request.post("/api/customer/login", { headers: { Origin: "http://localhost:3199" }, data: { email: `customer-${index}@example.invalid`, password: "Isolated-browser-test-123!", customerType } });
+  expect(response.status()).toBe(200);
+  await page.goto("/dashboard");
+}
 async function login(page: Page, index: number) {
-  await page.goto("/sign-in");
-  await page.getByLabel("Email", { exact: true }).fill(`customer-${index}@example.invalid`);
-  await page.getByLabel("Password", { exact: true }).fill("Isolated-browser-test-123!");
-  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await authenticate(page, index);
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(page.getByRole("heading", { name: "Home", exact: true })).toBeVisible();
 }
@@ -66,24 +69,12 @@ for (const [index, width] of [390, 768, 1440].entries()) {
     expect(errors).toEqual([]);
   });
 }
-test("invalid login, CSRF, unavailable providers and duplicate submits", async ({ page, request }) => {
+test("existing authentication API still rejects invalid credentials and CSRF", async ({ page, request }) => {
   const blocked = await request.post("/api/customer/login", { headers: { Origin: "https://evil.invalid" }, data: { email: "x", password: "x" } });
   expect(blocked.status()).toBe(403);
-  await page.goto("/sign-in");
-  await page.getByLabel("Email", { exact: true }).fill("customer-4@example.invalid");
-  await page.getByLabel("Password", { exact: true }).fill("wrong");
-  await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  await expect(page.getByRole("status")).toContainText("Email or password is incorrect");
-  for (const name of ["Continue with Google", "Continue with BankID"]) {
-    await page.getByRole("button", { name }).click();
-    await expect(page.getByRole("status")).toContainText("not connected");
-  }
-  let calls = 0;
-  page.on("request", request => { if (request.url().endsWith("/api/customer/login")) calls++; });
-  await page.getByLabel("Password", { exact: true }).fill("Isolated-browser-test-123!");
-  await page.getByRole("button", { name: "Sign in", exact: true }).evaluate(button => { (button as HTMLButtonElement).click(); (button as HTMLButtonElement).click(); });
-  await expect(page).toHaveURL(/\/dashboard$/);
-  expect(calls).toBe(1);
+  const invalid = await request.post("/api/customer/login", { headers: { Origin: "http://localhost:3199" }, data: { email: "customer-4@example.invalid", password: "wrong" } });
+  expect(invalid.status()).toBe(401);
+  await login(page, 4);
 });
 
 test("optional customer type, account persistence, contact receipt and notification empty state", async ({ page }, info) => {
@@ -163,10 +154,7 @@ test("account errors are not empty states; write failures do not show success", 
 test("Arabic customer shell preserves RTL and only the approved items", async ({ page }, info) => {
   await page.addInitScript(() => localStorage.setItem("bluemind-language", "ar"));
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/sign-in");
-  await page.locator("#sign-in-email").fill("customer-5@example.invalid");
-  await page.locator("#sign-in-password").fill("Isolated-browser-test-123!");
-  await page.locator('button[type="submit"]').click();
+  await authenticate(page, 5);
   await expect(page.getByRole("heading", { name: "الرئيسية", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "فتح القائمة" }).click();
   await expect(page.getByRole("dialog").locator("nav a")).toHaveCount(5);
@@ -187,11 +175,7 @@ test("Arabic customer shell preserves RTL and only the approved items", async ({
 test("Swedish account labels, optional login choice and contact failure", async ({ page }, info) => {
   await page.addInitScript(() => localStorage.setItem("bluemind-language", "sv"));
   await page.setViewportSize({ width: 768, height: 1024 });
-  await page.goto("/sign-in");
-  await page.locator("#sign-in-email").fill("customer-10@example.invalid");
-  await page.locator("#sign-in-password").fill("Isolated-browser-test-123!");
-  await page.locator("#sign-in-customer-type").selectOption("private");
-  await page.locator('button[type="submit"]').click();
+  await authenticate(page, 10, "private");
   await expect(page).toHaveURL(/\/dashboard$/);
   await page.goto("/account");
   await expect(page.getByLabel("Kundtyp (valfritt)")).toHaveValue("private");

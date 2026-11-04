@@ -36,25 +36,55 @@ for (const width of [320, 390, 768, 1440]) {
   }
 }
 
-test("failed login and unconnected providers never simulate authentication", async ({ page }) => {
-  await page.route("**/api/customer/login", route => route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ code: "unavailable" }) }));
+test("all sign-in actions are local previews with no requests, storage or authentication", async ({ page, context }) => {
   await page.goto("/sign-in");
   const requests: string[] = [];
-  page.on("request", request => { if (request.method() !== "GET") requests.push(request.url()); });
+  const cookies = await context.cookies();
+  page.on("request", request => { if (request.method() !== "GET" || request.url().includes("/api/") || /ui-test|not-a-real-password/.test(request.url() + (request.postData() || ""))) requests.push(request.url()); });
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  expect(await page.locator("#sign-in-email").evaluate((input: HTMLInputElement) => input.validity.valueMissing)).toBe(true);
+  await expect(page.getByRole("status")).toHaveText("Previewing interaction...");
+  await expect(page.getByRole("status")).toHaveText("Preview complete. You have not been signed in.");
   await page.getByLabel("Email", { exact: true }).fill("ui-test@example.invalid");
   await page.getByLabel("Password", { exact: true }).fill("not-a-real-password");
-  await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  await expect(page.getByRole("status")).toContainText("Sign in is temporarily unavailable");
-  await page.getByRole("button", { name: "Forgot password?" }).click();
-  await expect(page.getByRole("status")).toHaveText("Password recovery is not available yet.");
-  for (const name of ["Continue with Google", "Continue with BankID"]) {
-    await page.getByRole("button", { name }).click();
-    await expect(page.getByRole("status")).toHaveText("This sign-in method is not connected yet.");
+  await page.locator("#sign-in-customer-type").selectOption("company");
+  for (const name of ["Sign in", "Continue with Google", "Continue with BankID", "Forgot password?"]) {
+    const button = page.getByRole("button", { name, exact: true });
+    const before = await button.boundingBox();
+    await button.evaluate(element => { (element as HTMLButtonElement).click(); (element as HTMLButtonElement).click(); });
+    await expect(page.getByRole("status")).toHaveText("Previewing interaction...");
+    await expect(button).toBeDisabled();
+    expect(await button.boundingBox()).toEqual(before);
+    await expect(page.getByRole("status")).toHaveText("Preview complete. You have not been signed in.");
+    await expect(button).toBeEnabled();
   }
+  await page.getByLabel("Password", { exact: true }).press("Enter");
+  await expect(page.getByRole("status")).toHaveText("Previewing interaction...");
+  await expect(page.getByRole("status")).toHaveText("Preview complete. You have not been signed in.");
+  await expect(page.getByRole("status")).toBeEmpty();
   await expect(page).toHaveURL(/\/sign-in$/);
-  expect(requests).toHaveLength(1);
-  expect(requests[0]).toMatch(/\/api\/customer\/login$/);
+  expect(requests).toEqual([]);
+  expect(await context.cookies()).toEqual(cookies);
+  expect(context.pages()).toHaveLength(1);
   expect(await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }))).not.toMatch(/ui-test|not-a-real-password/);
+  await page.reload();
+  await expect(page.getByLabel("Email", { exact: true })).toHaveValue("");
+  await expect(page.getByLabel("Password", { exact: true })).toHaveValue("");
+  await expect(page.locator("#sign-in-customer-type")).toHaveValue("");
+});
+
+test("preview respects reduced motion, keyboard focus and navigation cleanup", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/sign-in");
+  await page.getByLabel("Email", { exact: true }).focus();
+  await expect(page.getByLabel("Email", { exact: true })).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(page.getByLabel("Password", { exact: true })).toBeFocused();
+  const google = page.getByRole("button", { name: "Continue with Google" });
+  await google.click();
+  await expect(google.locator("svg")).toHaveCSS("animation-name", "none");
+  await page.getByRole("link", { name: "Back", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await page.goBack();
+  await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeEnabled();
+  await expect(page.getByRole("status")).toBeEmpty();
 });
