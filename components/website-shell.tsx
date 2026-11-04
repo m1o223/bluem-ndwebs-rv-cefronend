@@ -9,7 +9,7 @@ import { isCustomerPath } from "../app/lib/customer/routes";
 
 export default function WebsiteShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  if (pathname === "/ask-ai" || isCustomerPath(pathname)) return children;
+  if (pathname === "/ask-ai" || pathname === "/dashboard-preview" || isCustomerPath(pathname)) return children;
   if (pathname === "/sign-in") return <><Navigation /><main>{children}</main></>;
   return <><Navigation /><PageContent>{children}</PageContent><Footer textEffects={pathname === "/"} /></>;
 }

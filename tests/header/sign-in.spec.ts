@@ -41,13 +41,10 @@ test("all sign-in actions are local previews with no requests, storage or authen
   const requests: string[] = [];
   const cookies = await context.cookies();
   page.on("request", request => { if (request.method() !== "GET" || request.url().includes("/api/") || /ui-test|not-a-real-password/.test(request.url() + (request.postData() || ""))) requests.push(request.url()); });
-  await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  await expect(page.getByRole("status")).toHaveText("Previewing interaction...");
-  await expect(page.getByRole("status")).toHaveText("Preview complete. You have not been signed in.");
   await page.getByLabel("Email", { exact: true }).fill("ui-test@example.invalid");
   await page.getByLabel("Password", { exact: true }).fill("not-a-real-password");
   await page.locator("#sign-in-customer-type").selectOption("company");
-  for (const name of ["Sign in", "Continue with Google", "Continue with BankID", "Forgot password?"]) {
+  for (const name of ["Continue with Google", "Continue with BankID", "Forgot password?"]) {
     const button = page.getByRole("button", { name, exact: true });
     const before = await button.boundingBox();
     await button.evaluate(element => { (element as HTMLButtonElement).click(); (element as HTMLButtonElement).click(); });
@@ -59,14 +56,13 @@ test("all sign-in actions are local previews with no requests, storage or authen
   }
   await page.getByLabel("Password", { exact: true }).press("Enter");
   await expect(page.getByRole("status")).toHaveText("Previewing interaction...");
-  await expect(page.getByRole("status")).toHaveText("Preview complete. You have not been signed in.");
-  await expect(page.getByRole("status")).toBeEmpty();
-  await expect(page).toHaveURL(/\/sign-in$/);
+  await expect(page).toHaveURL(/\/dashboard-preview$/);
   expect(requests).toEqual([]);
   expect(await context.cookies()).toEqual(cookies);
   expect(context.pages()).toHaveLength(1);
   expect(await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }))).not.toMatch(/ui-test|not-a-real-password/);
-  await page.reload();
+  await page.goBack();
+  await expect(page).toHaveURL(/\/sign-in$/);
   await expect(page.getByLabel("Email", { exact: true })).toHaveValue("");
   await expect(page.getByLabel("Password", { exact: true })).toHaveValue("");
   await expect(page.locator("#sign-in-customer-type")).toHaveValue("");

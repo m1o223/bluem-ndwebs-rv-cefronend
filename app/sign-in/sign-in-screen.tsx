@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, LoaderCircle } from "lucide-react";
 import { useEffect, useRef, type FormEvent } from "react";
 import { useLocalization } from "../../components/localization-provider";
@@ -16,6 +17,7 @@ const copy = {
 };
 
 export default function SignInScreen() {
+  const router = useRouter();
   const { locale } = useLocalization();
   const text = copy[locale];
   const { feedback, preview, busy } = usePreviewInteraction();
@@ -28,7 +30,10 @@ export default function SignInScreen() {
 
   function signIn(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    preview("email");
+    preview("email", () => {
+      form.current?.reset();
+      router.push("/dashboard-preview");
+    });
   }
 
   return <section className={styles.page} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate aria-labelledby="sign-in-title">

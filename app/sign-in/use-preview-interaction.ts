@@ -13,12 +13,17 @@ export function usePreviewInteraction() {
 
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
 
-  function preview(action: PreviewAction) {
+  function preview(action: PreviewAction, onComplete?: () => void) {
     if (pending.current) return;
     if (timer.current) clearTimeout(timer.current);
     pending.current = true;
     setFeedback({ action, phase: "loading" });
     timer.current = setTimeout(() => {
+      if (onComplete) {
+        // Keep the control locked until navigation unmounts this screen.
+        onComplete();
+        return;
+      }
       pending.current = false;
       setFeedback({ action, phase: "settled" });
       timer.current = setTimeout(() => setFeedback(null), 1600);

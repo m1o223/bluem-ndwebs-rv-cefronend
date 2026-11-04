@@ -52,7 +52,7 @@ test("sign-in effects preserve pill dimensions and local preview behavior", asyn
   await page.goto("/sign-in");
   const mutations: string[] = [];
   page.on("request", request => { if (request.method() !== "GET" || request.url().includes("/api/")) mutations.push(request.url()); });
-  for (const name of ["Sign in", "Continue with Google", "Continue with BankID", "Forgot password?"]) {
+  for (const name of ["Continue with Google", "Continue with BankID", "Forgot password?"]) {
     const button = page.getByRole("button", { name, exact: true });
     await button.scrollIntoViewIfNeeded();
     const before = await button.boundingBox();
