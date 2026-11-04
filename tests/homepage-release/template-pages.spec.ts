@@ -17,7 +17,7 @@ for (const width of [390, 768, 1440]) {
       await page.emulateMedia({ reducedMotion: "reduce" });
       const errors: string[] = [];
       page.on("pageerror", error => errors.push(error.message));
-      await page.goto("/");
+      await page.goto("/templates");
       const card = page.locator(`[data-project-card="${id}"]`);
       await expect(card).toHaveAttribute("href", `/templates/${slug}`);
       await card.locator(`[data-preview="${id}"]`).click();
@@ -60,7 +60,7 @@ for (const width of [390, 768, 1440]) {
       const response = await page.reload();
       expect(response?.status()).toBe(200);
       await expect(viewport.locator("h1")).toBeVisible();
-      await page.goto("/");
+      await page.goto("/templates");
       await card.locator("[data-demo-cta]").click();
       await expect(page).toHaveURL(new RegExp(`/templates/${slug}$`));
       await expect(viewport).toBeVisible();
@@ -68,15 +68,15 @@ for (const width of [390, 768, 1440]) {
     });
   }
 
-  test(`homepage concepts preserve all content and card geometry at ${width}px`, async ({ page, context }) => {
+  test(`templates preserve all content and card geometry at ${width}px`, async ({ page, context }) => {
     const baseline = await context.newPage();
     try {
       for (const target of [page, baseline]) {
         await target.setViewportSize({ width, height: 900 });
         await target.emulateMedia({ reducedMotion: "reduce" });
       }
-      await page.goto("/");
-      await baseline.goto("https://bluemind-web-service.vercel.app/");
+      await page.goto("/templates");
+      await baseline.goto(`https://bluemind-web-service.vercel.app${process.env.TEMPLATES_REFERENCE_PATH || "/templates"}`);
       for (const target of [page, baseline]) await target.evaluate(() => document.fonts.ready);
       await expect(page.locator("#selected-work")).toHaveText((await baseline.locator("#selected-work").textContent())!);
       for (const [id] of templates) {

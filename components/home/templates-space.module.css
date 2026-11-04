@@ -1,0 +1,66 @@
+/* Freeze the released collection's responsive footprint, including text-wrap
+   boundaries, without mounting hidden cards, images, text, or focus targets. */
+.space {
+  --height-en: 3680.15625px;
+  --height-sv: 3699.90625px;
+  --height-ar: 3503.6875px;
+  height: var(--height-en);
+}
+:global(body[data-locale="sv"]) .space { height: var(--height-sv); }
+:global(body[data-locale="ar"]) .space { height: var(--height-ar); }
+
+@media (min-width: 340px) { .space { --height-en: 3645.1875px; } }
+@media (min-width: 379px) { .space { --height-en: 3626.71875px; } }
+@media (min-width: 384px) { .space { --height-en: 3608.25px; } }
+@media (min-width: 385px) { .space { --height-en: 3573.28125px; } }
+@media (min-width: 392px) { .space { --height-en: 3551.453125px; } }
+@media (min-width: 396px) { .space { --height-en: 3532.984375px; } }
+@media (min-width: 414px) { .space { --height-en: 3530.484375px; } }
+@media (min-width: 421px) { .space { --height-en: 3512.015625px; } }
+@media (min-width: 425px) { .space { --height-en: 3493.546875px; } }
+@media (min-width: 435px) { .space { --height-en: 3475.078125px; } }
+@media (min-width: 436px) { .space { --height-en: 3456.609375px; } }
+@media (min-width: 452px) { .space { --height-en: 3436.453125px; } }
+@media (min-width: 621px) { .space { --height-en: 3485.21875px; } }
+@media (min-width: 701px) { .space { --height-en: 2266.890625px; } }
+@media (min-width: 761px) { .space { --height-en: 2259.921875px; } }
+@media (min-width: 799px) { .space { --height-en: 2231.390625px; } }
+@media (min-width: 843px) { .space { --height-en: 2192.640625px; } }
+@media (min-width: 856px) { .space { --height-en: 2174.171875px; } }
+@media (min-width: 863px) { .space { --height-en: 2155.703125px; } }
+@media (min-width: 883px) { .space { --height-en: 2137.234375px; } }
+@media (min-width: 886px) { .space { --height-en: 2118.765625px; } }
+
+@media (min-width: 324px) { .space { --height-sv: 3685.90625px; } }
+@media (min-width: 351px) { .space { --height-sv: 3650.9375px; } }
+@media (min-width: 354px) { .space { --height-sv: 3645.1875px; } }
+@media (min-width: 362px) { .space { --height-sv: 3626.71875px; } }
+@media (min-width: 383px) { .space { --height-sv: 3608.25px; } }
+@media (min-width: 392px) { .space { --height-sv: 3589.78125px; } }
+@media (min-width: 393px) { .space { --height-sv: 3571.3125px; } }
+@media (min-width: 406px) { .space { --height-sv: 3552.84375px; } }
+@media (min-width: 412px) { .space { --height-sv: 3531.015625px; } }
+@media (min-width: 414px) { .space { --height-sv: 3508.984375px; } }
+@media (min-width: 419px) { .space { --height-sv: 3490.515625px; } }
+@media (min-width: 430px) { .space { --height-sv: 3472.046875px; } }
+@media (min-width: 450px) { .space { --height-sv: 3451.890625px; } }
+@media (min-width: 492px) { .space { --height-sv: 3436.453125px; } }
+@media (min-width: 621px) { .space { --height-sv: 3444.953125px; } }
+@media (min-width: 701px) { .space { --height-sv: 2262.34375px; } }
+@media (min-width: 731px) { .space { --height-sv: 2227.375px; } }
+@media (min-width: 737px) { .space { --height-sv: 2226.625px; } }
+@media (min-width: 761px) { .space { --height-sv: 2221.171875px; } }
+@media (min-width: 797px) { .space { --height-sv: 2202.703125px; } }
+@media (min-width: 799px) { .space { --height-sv: 2184.234375px; } }
+@media (min-width: 825px) { .space { --height-sv: 2165.765625px; } }
+@media (min-width: 852px) { .space { --height-sv: 2147.296875px; } }
+@media (min-width: 857px) { .space { --height-sv: 2137.234375px; } }
+@media (min-width: 874px) { .space { --height-sv: 2125.265625px; } }
+@media (min-width: 1013px) { .space { --height-sv: 2118.765625px; } }
+
+@media (min-width: 330px) { .space { --height-ar: 3481.859375px; } }
+@media (min-width: 336px) { .space { --height-ar: 3459.828125px; } }
+@media (min-width: 373px) { .space { --height-ar: 3438.4375px; } }
+@media (min-width: 621px) { .space { --height-ar: 3447.234375px; } }
+@media (min-width: 701px) { .space { --height-ar: 2138.953125px; } }
+@media (min-width: 776px) { .space { --height-ar: 2122.5625px; } }

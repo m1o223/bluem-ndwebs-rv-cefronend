@@ -8,7 +8,7 @@ import { useLocalization, type Locale } from "../localization-provider";
 import currentStyles from "./home.module.css";
 import previewStyles from "./preview-header.module.css";
 
-const links = [["/", "Home"], ["/about", "About Us"], ["/services", "Services"], ["/#selected-work", "Website Concepts"], ["/how-we-work", "How We Work"], ["/care", "Website Care"], ["/contact", "Contact"]];
+const links = [["/", "Home"], ["/about", "About Us"], ["/services", "Services"], ["/templates", "Website Concepts"], ["/how-we-work", "How We Work"], ["/care", "Website Care"], ["/contact", "Contact"]];
 const homepageStyles = Object.fromEntries(Object.entries(currentStyles).map(([key, value]) => [key, `${value} ${previewStyles[key] ?? ""}`]));
 
 export default function Navbar({ activePath = "/" }: { activePath?: string }) {

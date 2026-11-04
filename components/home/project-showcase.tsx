@@ -9,7 +9,7 @@ import ConceptReveal from "./concept-reveal";
 import portfolio from "../portfolio/showcase.module.css";
 import styles from "./home.module.css";
 
-export default function ProjectShowcase() {
+export default function ProjectShowcase({ headingAs: Heading = "h2" }: { headingAs?: "h1" | "h2" }) {
   return (
     <section
       id="selected-work"
@@ -21,7 +21,7 @@ export default function ProjectShowcase() {
           <div className={styles.sectionHeading}>
             <div>
               <p className={styles.eyebrow}>INTERACTIVE DEMOS</p>
-              <h2 id="work-title">Website Concepts</h2>
+              <Heading id="work-title">Website Concepts</Heading>
             </div>
             <p>
               Explore original, interactive website concepts across different
