@@ -1,0 +1,30 @@
+.app { min-height: 100dvh; background: #fff; color: #142d4e; }
+.header { height: 78px; padding-inline: 32px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid #edf0f4; background: #fff; }
+.header a { text-decoration: none; color: inherit; }
+.brand { gap: 6px; }
+.logo { --logo-size: 62px; }
+.controls { display: flex; align-items: center; gap: 16px; }
+.avatar, .iconButton { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; flex-shrink: 0; color: #142d4e; }
+.avatar { border-radius: 50%; background: #f1f5f9; border: 1px solid #e2e8f0; }
+.iconButton { border: 0; background: transparent; cursor: pointer; border-radius: 6px; }
+.iconButton:hover { background: #f1f7fd; }
+.main { width: 100%; padding: 36px; }
+.main h1 { margin: 0; font-size: 24px; font-weight: 500; letter-spacing: 0; }
+.drawer { position: fixed; inset-block: 0; inset-inline: auto 0; margin: 0; width: min(300px, calc(100% - 40px)); height: 100dvh; max-height: 100dvh; max-width: none; padding: 16px; background: #fff; border: 0; border-inline-start: 1px solid #e2e8f0; color: #142d4e; transform: translateX(100%); transition: transform 220ms ease; }
+.app[dir="rtl"] .drawer { transform: translateX(-100%); }
+.app .drawer[data-open="true"] { transform: translateX(0); }
+@starting-style { .drawer[data-open="true"] { transform: translateX(100%); } .app[dir="rtl"] .drawer[data-open="true"] { transform: translateX(-100%); } }
+.drawer::backdrop { background: #142d4e26; }
+.drawerHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; font-size: 18px; font-weight: 600; }
+.drawer nav { display: grid; gap: 6px; }
+.drawer nav a, .signOut { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 10px 12px; color: inherit; text-decoration: none; border-radius: 6px; font: inherit; font-size: 14px; }
+.drawer nav a:hover, .drawer nav a[aria-current="page"] { background: #edf3fa; }
+.drawer nav a[aria-current="page"] { font-weight: 600; }
+.signOut { width: 100%; margin-top: 24px; border: 0; background: transparent; cursor: pointer; text-align: start; }
+.signOut:hover { background: #f1f7fd; }
+.signOut:disabled { opacity: .6; cursor: wait; }
+.error { font-size: 13px; line-height: 1.6; }
+.app :is(a, button):focus-visible { outline: 2px solid #477bad; outline-offset: 3px; }
+.checking { min-height: 100dvh; background: #fff; }
+@media (max-width: 620px) { .header { height: 72px; padding-inline: 16px; } .controls { gap: 8px; } .main { padding: 28px 20px; } }
+@media (prefers-reduced-motion: reduce) { .drawer { transition: none; } }

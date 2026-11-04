@@ -36,7 +36,8 @@ for (const width of [320, 390, 768, 1440]) {
   }
 }
 
-test("unconnected methods never submit credentials or simulate authentication", async ({ page }) => {
+test("failed login and unconnected providers never simulate authentication", async ({ page }) => {
+  await page.route("**/api/customer/login", route => route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ code: "unavailable" }) }));
   await page.goto("/sign-in");
   const requests: string[] = [];
   page.on("request", request => { if (request.method() !== "GET") requests.push(request.url()); });
@@ -45,7 +46,7 @@ test("unconnected methods never submit credentials or simulate authentication", 
   await page.getByLabel("Email", { exact: true }).fill("ui-test@example.invalid");
   await page.getByLabel("Password", { exact: true }).fill("not-a-real-password");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  await expect(page.getByRole("status")).toContainText("Your details have not been sent");
+  await expect(page.getByRole("status")).toContainText("Sign in is temporarily unavailable");
   await page.getByRole("button", { name: "Forgot password?" }).click();
   await expect(page.getByRole("status")).toHaveText("Password recovery is not available yet.");
   for (const name of ["Continue with Google", "Continue with BankID"]) {
@@ -53,6 +54,7 @@ test("unconnected methods never submit credentials or simulate authentication", 
     await expect(page.getByRole("status")).toHaveText("This sign-in method is not connected yet.");
   }
   await expect(page).toHaveURL(/\/sign-in$/);
-  expect(requests).toEqual([]);
+  expect(requests).toHaveLength(1);
+  expect(requests[0]).toMatch(/\/api\/customer\/login$/);
   expect(await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }))).not.toMatch(/ui-test|not-a-real-password/);
 });
