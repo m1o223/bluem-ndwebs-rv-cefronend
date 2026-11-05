@@ -34,8 +34,14 @@ export async function finishGoogle(request: NextRequest) {
   const state = request.nextUrl.searchParams.get("state"), code = request.nextUrl.searchParams.get("code");
   const clear = (response: NextResponse) => { response.cookies.set(FLOW_COOKIE, "", { ...cookie, maxAge: 0 }); return response; };
   const destination = (path: string) => new URL(path, localTest() ? request.nextUrl.origin : GOOGLE_SITE);
-  const failure = (reason: string) => clear(NextResponse.redirect(destination(`/sign-in?google=${reason}`), { status: 303, headers }));
-  if (!opaque(state) || !opaque(browserToken)) return clear(fail("invalid_google_callback"));
+  const failure = (reason: "cancelled" | "link_required" | "unavailable" | "failed") => {
+    console.warn(JSON.stringify({ event: "customer_google_callback", outcome: reason }));
+    return clear(NextResponse.redirect(destination(`/sign-in?google=${reason}`), { status: 303, headers }));
+  };
+  if (!opaque(state) || !opaque(browserToken)) {
+    console.warn(JSON.stringify({ event: "customer_google_callback", outcome: "invalid_browser_binding", statePresent: opaque(state), flowCookiePresent: opaque(browserToken) }));
+    return clear(fail("invalid_google_callback"));
+  }
   if (request.nextUrl.searchParams.has("error")) return failure("cancelled");
   if (!code || code.length > 2048 || request.nextUrl.searchParams.getAll("code").length !== 1 || request.nextUrl.searchParams.getAll("state").length !== 1) return failure("failed");
   try {
@@ -45,6 +51,7 @@ export async function finishGoogle(request: NextRequest) {
     if (!opaque(data.token) || !isCustomer(data.user)) return failure("failed");
     const response = clear(NextResponse.redirect(destination("/dashboard"), { status: 303, headers }));
     response.cookies.set(CUSTOMER_COOKIE, data.token, { ...cookie, maxAge: CUSTOMER_TTL });
+    console.info(JSON.stringify({ event: "customer_google_callback", outcome: "session_cookie_set", destination: "/dashboard" }));
     return response;
   } catch { return failure("unavailable"); }
 }

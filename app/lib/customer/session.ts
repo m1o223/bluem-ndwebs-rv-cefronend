@@ -5,6 +5,9 @@ import type { Customer } from "./routes";
 
 export const CUSTOMER_COOKIE = "__Host-bluemind_customer";
 export const CUSTOMER_TTL = 8 * 60 * 60;
+export class CustomerSessionUnavailable extends Error {
+  constructor() { super("Customer session verification is temporarily unavailable"); }
+}
 const RENDER = "https://bluemind-web-service-backend.onrender.com";
 function backend() {
   const local = process.env.CUSTOMER_AUTH_BACKEND_URL;
@@ -28,10 +31,12 @@ export async function getCustomer() {
   if (!token || !/^[a-f0-9]{64}$/.test(token)) return null;
   try {
     const response = await customerRequest("session", token);
-    if (!response.ok) return null;
+    if (response.status === 401) return null;
+    if (!response.ok) throw new CustomerSessionUnavailable();
     const { user } = await response.json();
-    return isCustomer(user) ? user : null;
-  } catch { return null; }
+    if (!isCustomer(user)) throw new CustomerSessionUnavailable();
+    return user;
+  } catch { throw new CustomerSessionUnavailable(); }
 }
 export async function requireCustomer() {
   const user = await getCustomer();

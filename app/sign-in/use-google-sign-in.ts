@@ -18,7 +18,7 @@ export function useGoogleSignIn() {
     setBusy(true); setError("");
     try {
       const query = ["private", "company"].includes(customerType) ? `?customerType=${customerType}` : "";
-      const response = await fetch(`/api/auth/google${query}`, { method: "POST", signal: controller.signal });
+      const response = await fetch(`/api/auth/google${query}`, { method: "POST", credentials: "same-origin", cache: "no-store", signal: AbortSignal.any([controller.signal, AbortSignal.timeout(20000)]) });
       if (!response.ok) throw new Error("unavailable");
       const { authorizationUrl } = await response.json();
       const url = new URL(authorizationUrl);

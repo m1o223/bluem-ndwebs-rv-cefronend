@@ -12,7 +12,7 @@ export function useEmailSignIn() {
     const values = new FormData(form);
     values.set("customerType", form.querySelector("select")?.value || "");
     try {
-      const response = await fetch("/api/customer/login", { method: "POST", headers: { "Content-Type": "application/json" }, cache: "no-store", signal: AbortSignal.any([controller.signal, AbortSignal.timeout(20000)]), body: JSON.stringify({ email: values.get("email"), password: values.get("password"), customerType: values.get("customerType") }) });
+      const response = await fetch("/api/customer/login", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, cache: "no-store", signal: AbortSignal.any([controller.signal, AbortSignal.timeout(20000)]), body: JSON.stringify({ email: values.get("email"), password: values.get("password"), customerType: values.get("customerType") }) });
       if (controller.signal.aborted) return;
       if (!response.ok) { setStatus(response.status === 401 || response.status === 400 ? "credentials" : response.status === 429 ? "rate" : "unavailable"); return; }
       const result = await response.json();

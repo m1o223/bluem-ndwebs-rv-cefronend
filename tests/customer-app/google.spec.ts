@@ -42,6 +42,14 @@ for (const width of [390, 768, 1440]) {
     await expect(page.locator("body")).toContainText("Google test customer");
     expect((await context.cookies(origin)).some(cookie => cookie.name === "__Host-bluemind_customer")).toBe(true);
     expect((await context.cookies(origin)).some(cookie => cookie.name === "__Host-bluemind_google_flow")).toBe(false);
+    const session = (await context.cookies(origin)).find(cookie => cookie.name === "__Host-bluemind_customer")!;
+    expect(session.httpOnly && session.secure).toBe(true);
+    expect(session.sameSite).toBe("Lax");
+    expect(session.path).toBe("/");
+    expect((await context.request.get(`${origin}/api/customer/session`)).status()).toBe(200);
+    await page.reload();
+    await expect(page).toHaveURL(`${origin}/dashboard`);
+    await expect(page.locator("body")).toContainText("Google test customer");
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
     await context.request.post(`${origin}/api/customer/logout`, { headers: { Origin: origin } });
     await page.goto(`${origin}/dashboard`);

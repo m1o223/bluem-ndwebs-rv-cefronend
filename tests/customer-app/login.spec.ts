@@ -58,3 +58,29 @@ test("customer API rejects cross-origin mutations even from another production a
   const response = await request.post("/api/customer/login", { headers: { Origin: "https://bluemindwebservice.com" }, data: { email: "customer-1@example.invalid", password: "not-used" } });
   expect(response.status()).toBe(403);
 });
+
+test("session guard waits, retains cookies on temporary errors and retries without logging out", async ({ page, context }) => {
+  await page.goto("/login");
+  await page.getByLabel("Email", { exact: true }).fill("customer-9@example.invalid");
+  await page.getByLabel("Password", { exact: true }).fill("Isolated-browser-test-123!");
+  let fail = true;
+  await page.route("**/api/customer/session", async route => {
+    if (fail) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      await route.fulfill({ status: 503, json: { code: "unavailable" } });
+    } else await route.continue();
+  });
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(page.getByRole("alert")).toBeVisible();
+  expect((await context.cookies()).some(cookie => cookie.name === "__Host-bluemind_customer")).toBe(true);
+  await expect(page.getByRole("heading", { name: "Home", exact: true })).toHaveCount(0);
+  fail = false;
+  await page.getByRole("button", { name: "Try again", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Home", exact: true })).toBeVisible();
+  await page.route("**/api/customer/session", route => route.fulfill({ status: 401, json: { user: null } }));
+  // Revoke the actual session too, so the login page does not legitimately return to dashboard.
+  await context.request.post("/api/customer/logout", { headers: { Origin: "http://localhost:3199" } });
+  await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+  await expect(page).toHaveURL(/\/sign-in$/);
+});

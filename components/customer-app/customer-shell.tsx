@@ -12,6 +12,7 @@ import WorkspaceContent from "./workspace-content";
 import { workspaceCopy } from "./workspace-copy";
 import type { Overview } from "./workspace-types";
 import TextActionLabel from "../text-action-label";
+import SessionRecovery from "./session-recovery";
 
 const icons = [Home, Folder, Sparkles, MessageCircle, Settings];
 export default function CustomerShell({ user, page }: { user: Customer; page: CustomerPage }) {
@@ -25,6 +26,8 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState(false);
   const [verified, setVerified] = useState(false);
+  const [sessionError, setSessionError] = useState(false);
+  const [sessionRetry, setSessionRetry] = useState(0);
   const shell = useRef<HTMLDivElement>(null);
   const [overview, setOverview] = useState<Overview | null>(null);
   const [loadError, setLoadError] = useState(false);
@@ -34,7 +37,7 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
   useEffect(() => {
     const controller = new AbortController();
     setOverview(null); setLoadError(false);
-    fetch("/api/customer/overview", { cache: "no-store", signal: controller.signal }).then(async response => {
+    fetch("/api/customer/overview", { credentials: "same-origin", cache: "no-store", signal: controller.signal }).then(async response => {
       if (response.status === 401) { window.location.replace("/sign-in"); return; }
       if (!response.ok) throw new Error("overview");
       const data = await response.json();
@@ -46,17 +49,25 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
 
   useEffect(() => {
     let active = true;
+    let checking = false;
     const controller = new AbortController();
     async function check() {
-      if (pending.current) return;
+      if (pending.current || checking) return;
+      checking = true;
+      setSessionError(false);
       try {
-        const response = await fetch("/api/customer/session", { cache: "no-store", signal: controller.signal });
+        const response = await fetch("/api/customer/session", { credentials: "same-origin", cache: "no-store", signal: AbortSignal.any([controller.signal, AbortSignal.timeout(20000)]) });
+        if (!active || pending.current) return;
+        if (response.status === 401) { window.location.replace("/sign-in"); return; }
+        if (!response.ok) throw new Error("session unavailable");
         const value = await response.json();
         if (!active || pending.current) return;
-        if (!response.ok || value.user?.id !== user.id) { window.location.replace("/sign-in"); return; }
+        if (!value.user?.id) throw new Error("invalid session response");
+        if (value.user.id !== user.id) { window.location.replace("/dashboard"); return; }
         setVerified(true);
         if (shell.current) shell.current.style.visibility = "";
-      } catch { if (active && !pending.current) window.location.replace("/sign-in"); }
+      } catch { if (active && !pending.current) { setVerified(false); setSessionError(true); } }
+      finally { checking = false; }
     }
     const hide = () => { if (shell.current) shell.current.style.visibility = "hidden"; };
     const onShow = (event: PageTransitionEvent) => { if (event.persisted) void check(); };
@@ -74,7 +85,7 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
       window.removeEventListener("focus", onFocus);
       if (closeTimer.current) clearTimeout(closeTimer.current);
     };
-  }, [page, user.id]);
+  }, [page, user.id, sessionRetry]);
 
   function closeMenu() {
     setOpen(false);
@@ -90,7 +101,7 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
     if (pending.current) return;
     pending.current = true; setBusy(true); setNotice(false);
     try {
-      const response = await fetch("/api/customer/logout", { method: "POST", cache: "no-store" });
+      const response = await fetch("/api/customer/logout", { method: "POST", credentials: "same-origin", cache: "no-store" });
       if (!response.ok) throw new Error("logout");
       setVerified(false);
       const channel = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel("bluemind-customer-session") : null;
@@ -98,6 +109,7 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
       window.location.replace("/");
     } catch { pending.current = false; setBusy(false); setNotice(true); }
   }
+  if (sessionError) return <SessionRecovery retry={() => setSessionRetry(value => value + 1)} />;
   if (!verified) return <div className={styles.checking} role="status" aria-label={text.session} />;
   return <div ref={shell} className={styles.app} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate>
     <header className={styles.header}>
