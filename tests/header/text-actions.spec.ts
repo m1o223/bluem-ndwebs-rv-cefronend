@@ -47,8 +47,9 @@ test("homepage underline reverses smoothly without changing header geometry", as
   await expect(page.locator("[data-text-action-label]")).toHaveCount(0);
 });
 
-test("sign-in effects preserve pill dimensions and local preview behavior", async ({ page }, info) => {
+test("sign-in effects preserve pill dimensions and provider interaction states", async ({ page }, info) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.route("**/api/auth/google", async route => { await new Promise(resolve => setTimeout(resolve, 900)); await route.fulfill({ status: 503, json: { code: "google_unavailable" } }); });
   await page.goto("/sign-in");
   const mutations: string[] = [];
   page.on("request", request => { if (request.method() !== "GET" || request.url().includes("/api/")) mutations.push(request.url()); });
@@ -71,7 +72,7 @@ test("sign-in effects preserve pill dimensions and local preview behavior", asyn
   await page.keyboard.press("Shift+Tab");
   await expect.poll(() => opacity(back)).toBe("1");
   await page.screenshot({ path: info.outputPath("sign-in-underline.png"), fullPage: true });
-  expect(mutations).toEqual([]);
+  expect(mutations.map(url => new URL(url).pathname)).toEqual(["/api/auth/google"]);
 });
 
 test("mobile touch, RTL and reduced motion retain usable text feedback", async ({ browser }) => {

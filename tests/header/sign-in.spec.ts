@@ -36,7 +36,7 @@ for (const width of [320, 390, 768, 1440]) {
   }
 }
 
-test("all sign-in actions are local previews with no requests, storage or authentication", async ({ page, context }) => {
+test("email, BankID and recovery remain local previews without authentication", async ({ page, context }) => {
   await page.goto("/sign-in");
   const requests: string[] = [];
   const cookies = await context.cookies();
@@ -44,7 +44,7 @@ test("all sign-in actions are local previews with no requests, storage or authen
   await page.getByLabel("Email", { exact: true }).fill("ui-test@example.invalid");
   await page.getByLabel("Password", { exact: true }).fill("not-a-real-password");
   await page.locator("#sign-in-customer-type").selectOption("company");
-  for (const name of ["Continue with Google", "Continue with BankID", "Forgot password?"]) {
+  for (const name of ["Continue with BankID", "Forgot password?"]) {
     const button = page.getByRole("button", { name, exact: true });
     const before = await button.boundingBox();
     await button.evaluate(element => { (element as HTMLButtonElement).click(); (element as HTMLButtonElement).click(); });
@@ -75,9 +75,9 @@ test("preview respects reduced motion, keyboard focus and navigation cleanup", a
   await expect(page.getByLabel("Email", { exact: true })).toBeFocused();
   await page.keyboard.press("Tab");
   await expect(page.getByLabel("Password", { exact: true })).toBeFocused();
-  const google = page.getByRole("button", { name: "Continue with Google" });
-  await google.click();
-  await expect(google.locator("svg")).toHaveCSS("animation-name", "none");
+  const bankid = page.getByRole("button", { name: "Continue with BankID" });
+  await bankid.click();
+  await expect(bankid.locator("svg")).toHaveCSS("animation-name", "none");
   await page.getByRole("link", { name: "Back", exact: true }).click();
   await expect(page).toHaveURL(/\/$/);
   await page.goBack();

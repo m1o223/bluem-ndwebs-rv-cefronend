@@ -9,6 +9,13 @@ import { useLocalization } from "../../components/localization-provider";
 import styles from "./sign-in.module.css";
 import { usePreviewInteraction } from "./use-preview-interaction";
 import TextActionLabel from "../../components/text-action-label";
+import { useGoogleSignIn } from "./use-google-sign-in";
+
+const googleCopy = {
+  en: { note: "Email and BankID are design previews. Google sign-in uses your Google account when configured.", loading: "Connecting to Google...", unavailable: "Google sign-in is not configured yet. Please try again later.", failed: "Google sign-in could not be completed. Please try again.", cancelled: "Google sign-in was cancelled.", link_required: "This email already has a BlueMind account. Contact our team to securely link Google." },
+  sv: { note: "E-post och BankID är designförhandsvisningar. Google-inloggning använder ditt Google-konto när den är konfigurerad.", loading: "Ansluter till Google...", unavailable: "Google-inloggning är inte konfigurerad än. Försök igen senare.", failed: "Google-inloggningen kunde inte slutföras. Försök igen.", cancelled: "Google-inloggningen avbröts.", link_required: "Den här e-postadressen har redan ett BlueMind-konto. Kontakta vårt team för att länka Google säkert." },
+  ar: { note: "البريد الإلكتروني وBankID معاينة للتصميم. يستخدم تسجيل الدخول بجوجل حسابك على Google بعد إكمال الإعداد.", loading: "جارٍ الاتصال بـ Google...", unavailable: "لم يكتمل إعداد تسجيل الدخول بجوجل بعد. يرجى المحاولة لاحقًا.", failed: "تعذر إكمال تسجيل الدخول بجوجل. يرجى المحاولة مجددًا.", cancelled: "تم إلغاء تسجيل الدخول بجوجل.", link_required: "يوجد حساب BlueMind بهذا البريد بالفعل. تواصل مع فريقنا لربط Google بشكل آمن." },
+};
 
 const copy = {
   en: { title: "Sign in", back: "Back", email: "Email", password: "Password", forgot: "Forgot password?", divider: "or continue with", google: "Continue with Google", bankid: "Continue with BankID", preview: "Design preview only. No information is sent or saved.", loading: "Previewing interaction...", finished: "Preview complete. You have not been signed in." },
@@ -20,7 +27,10 @@ export default function SignInScreen() {
   const router = useRouter();
   const { locale } = useLocalization();
   const text = copy[locale];
-  const { feedback, preview, busy } = usePreviewInteraction();
+  const { feedback, preview, busy: previewBusy } = usePreviewInteraction();
+  const google = useGoogleSignIn();
+  const busy = previewBusy || google.busy;
+  const googleText = googleCopy[locale];
   const form = useRef<HTMLFormElement>(null);
   useEffect(() => {
     const clear = () => form.current?.reset();
@@ -30,6 +40,7 @@ export default function SignInScreen() {
 
   function signIn(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (busy) return;
     preview("email", () => {
       form.current?.reset();
       router.push("/dashboard-preview");
@@ -54,11 +65,11 @@ export default function SignInScreen() {
         </form>
         <div className={styles.divider}><span>{text.divider}</span></div>
         <div className={styles.providers}>
-          <button type="button" disabled={busy} aria-busy={busy && feedback?.action === "google"} data-active={feedback?.action === "google"} onClick={() => preview("google")}><Image src="/images/sign-in/google.png" width={20} height={20} alt="" /><TextActionLabel>{text.google}</TextActionLabel>{busy && feedback?.action === "google" && <LoaderCircle size={18} className={styles.spinner} aria-hidden="true" />}</button>
+          <button type="button" disabled={busy} aria-busy={google.busy} data-active={google.busy} onClick={() => { const choice = form.current?.querySelector<HTMLSelectElement>("select")?.value || ""; void google.start(choice); }}><Image src="/images/sign-in/google.png" width={20} height={20} alt="" /><TextActionLabel>{text.google}</TextActionLabel>{google.busy && <LoaderCircle size={18} className={styles.spinner} aria-hidden="true" />}</button>
           <button type="button" disabled={busy} aria-busy={busy && feedback?.action === "bankid"} data-active={feedback?.action === "bankid"} onClick={() => preview("bankid")}><Image src="/images/sign-in/bankid.svg" width={30} height={28} alt="" /><TextActionLabel>{text.bankid}</TextActionLabel>{busy && feedback?.action === "bankid" && <LoaderCircle size={18} className={styles.spinner} aria-hidden="true" />}</button>
         </div>
-        <p id="sign-in-preview" className={styles.previewNote}>{text.preview}</p>
-        <p className={styles.notice} role="status" aria-live="polite" aria-atomic="true">{busy ? text.loading : feedback ? text.finished : ""}</p>
+        <p id="sign-in-preview" className={styles.previewNote}>{googleText.note}</p>
+        <p className={styles.notice} role="status" aria-live="polite" aria-atomic="true">{google.busy ? googleText.loading : previewBusy ? text.loading : google.error ? googleText[google.error as "unavailable" | "failed" | "cancelled" | "link_required"] : feedback ? text.finished : ""}</p>
       </div>
     </div>
   </section>;
