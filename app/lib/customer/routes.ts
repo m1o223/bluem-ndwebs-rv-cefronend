@@ -7,4 +7,4 @@ export const customerRoutes = [
 ] as const;
 export type CustomerPage = typeof customerRoutes[number]["key"];
 export const isCustomerPath = (path: string) => customerRoutes.some(route => path === route.href);
-export type Customer = { id: string; displayName: string; email: string };
+export type Customer = { id: string; displayName: string; email: string; profileImage?: string | null; role?: "user"; status?: "active" };

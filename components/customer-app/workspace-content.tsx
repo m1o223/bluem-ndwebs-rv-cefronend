@@ -7,6 +7,9 @@ import type { Overview, Profile, Project } from "./workspace-types";
 import { workspaceCopy, type WorkspaceCopy } from "./workspace-copy";
 import styles from "./customer.module.css";
 import TextActionLabel from "../text-action-label";
+import SecuritySettings from "./security-settings";
+import ProfilePhoto from "./profile-photo";
+import { authCopy } from "../../app/sign-in/auth-copy";
 
 type Locale = keyof typeof workspaceCopy;
 function Field({ label, children }: { label: string; children: ReactNode }) { return <label className={styles.field}><span>{label}</span>{children}</label>; }
@@ -81,7 +84,7 @@ function Account({ overview, user, locale, signOut, signingOut }: { overview: Ov
   return <>
     <form onSubmit={submit} aria-busy={busy}>
       <section className={styles.section}>
-        <h2>{t.profile}</h2><div className={styles.profileHeading}><span className={styles.profilePhoto} aria-label={t.photo}><UserRound size={30} /></span><div><strong>{profile.fullName || user.email}</strong><p className={styles.muted}>{t.photoLater}</p></div></div>
+        <h2>{t.profile}</h2><div className={styles.profileHeading}><span className={styles.profilePhoto} aria-label={t.photo}><ProfilePhoto src={user.profileImage} /></span><div><strong>{profile.fullName || user.email}</strong><p className={styles.muted}>{user.profileImage ? authCopy[locale].googlePhoto : t.photoLater}</p></div></div>
         <div className={styles.formGrid}>
           <Field label={t.fullName}><input autoComplete="name" maxLength={160} value={profile.fullName} onChange={event => patch({ fullName: event.target.value })} /></Field>
           <Field label={t.email}><input type="email" dir="ltr" value={user.email} readOnly aria-describedby="email-note" /></Field>
@@ -89,10 +92,11 @@ function Account({ overview, user, locale, signOut, signingOut }: { overview: Ov
           {profile.customerType === "company" && <><Field label={t.companyName}><input autoComplete="organization" maxLength={180} value={profile.companyName} onChange={event => patch({ companyName: event.target.value })} /></Field><Field label={t.companyNumber}><input maxLength={80} value={profile.companyNumber} onChange={event => patch({ companyNumber: event.target.value })} /></Field></>}
         </div><p id="email-note" className={styles.muted}>{t.emailNote}</p><p className={styles.identifier}>{t.accountId}: <bdi>{user.id}</bdi></p>
       </section>
-      <section className={styles.section}><h2>{t.methods}</h2>{[["email", t.email], ["google", "Google"], ["bankid", "BankID"]].map(([key, title]) => <div className={styles.settingRow} key={key}><span>{title}</span><span className={styles.muted}>{profile.loginMethods.includes(key) ? t.linked : t.notLinked}</span></div>)}{profile.loginMethods.includes("email") && <button className={styles.secondary} type="button" disabled title={t.later}>{t.password}</button>}<p className={styles.muted}>{t.later}</p></section>
+      <section className={styles.section}><h2>{t.methods}</h2>{[["email", t.email], ["google", "Google"], ["bankid", "BankID"]].map(([key, title]) => <div className={styles.settingRow} key={key}><span>{title}</span><span className={styles.muted}>{profile.loginMethods.includes(key) ? t.linked : t.notLinked}</span></div>)}</section>
       <section className={styles.section}><h2>{t.notifications}</h2>{([['project', 'projectNotices'], ['team', 'teamNotices'], ['billing', 'billingNotices'], ['email', 'emailNotices']] as const).map(([key, label]) => <label key={key} className={styles.settingRow}><span>{t[label]}</span><input type="checkbox" role="switch" checked={profile.preferences[key]} onChange={event => patch({ preferences: { ...profile.preferences, [key]: event.target.checked } })} /></label>)}<p className={styles.muted}>{t.preferencesNote}</p></section>
       <div className={styles.saveRow}><button type="submit" className={styles.primary} disabled={busy}><Save size={17} /><TextActionLabel light>{busy ? t.saving : t.save}</TextActionLabel></button><p role={notice === "failure" ? "alert" : "status"}>{notice ? t[notice] : ""}</p></div>
     </form>
+    <SecuritySettings locale={locale} passwordLogin={profile.loginMethods.includes("email")} />
     <section className={styles.section}><h2>{t.actions}</h2><div className={styles.actions}><button disabled title={t.deletionNote}><Trash2 size={17} />{t.delete}</button><button type="button" onClick={signOut} disabled={signingOut}><LogOut size={17} /><TextActionLabel>{locale === "ar" ? "تسجيل الخروج" : locale === "sv" ? "Logga ut" : "Sign out"}</TextActionLabel></button></div><p className={styles.muted}>{t.deletionNote}</p></section>
   </>;
 }

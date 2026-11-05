@@ -36,7 +36,7 @@ for (const width of [320, 390, 768, 1440]) {
   }
 }
 
-test("email, BankID and recovery remain local previews without authentication", async ({ page, context }) => {
+test("BankID stays a preview, recovery is truthful, and email requires real authentication", async ({ page, context }) => {
   await page.goto("/sign-in");
   const requests: string[] = [];
   const cookies = await context.cookies();
@@ -44,7 +44,7 @@ test("email, BankID and recovery remain local previews without authentication", 
   await page.getByLabel("Email", { exact: true }).fill("ui-test@example.invalid");
   await page.getByLabel("Password", { exact: true }).fill("not-a-real-password");
   await page.locator("#sign-in-customer-type").selectOption("company");
-  for (const name of ["Continue with BankID", "Forgot password?"]) {
+  for (const name of ["Continue with BankID"]) {
     const button = page.getByRole("button", { name, exact: true });
     const before = await button.boundingBox();
     await button.evaluate(element => { (element as HTMLButtonElement).click(); (element as HTMLButtonElement).click(); });
@@ -54,13 +54,18 @@ test("email, BankID and recovery remain local previews without authentication", 
     await expect(page.getByRole("status")).toHaveText("Preview complete. You have not been signed in.");
     await expect(button).toBeEnabled();
   }
+  await page.getByRole("button", { name: "Forgot password?", exact: true }).click();
+  await expect(page.getByRole("status")).toContainText("contact BlueMind");
+  await page.route("**/api/customer/login", route => route.fulfill({ status: 401, json: { code: "credentials" } }));
   await page.getByLabel("Password", { exact: true }).press("Enter");
-  await expect(page.getByRole("status")).toHaveText("Previewing interaction...");
-  await expect(page).toHaveURL(/\/dashboard-preview$/);
-  expect(requests).toEqual([]);
+  await expect(page.getByRole("status")).toContainText("Email or password is incorrect");
+  await expect(page).toHaveURL(/\/sign-in$/);
+  expect(requests.map(url => new URL(url).pathname)).toEqual(["/api/customer/login"]);
   expect(await context.cookies()).toEqual(cookies);
   expect(context.pages()).toHaveLength(1);
   expect(await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }))).not.toMatch(/ui-test|not-a-real-password/);
+  await page.getByRole("link", { name: "Back", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
   await page.goBack();
   await expect(page).toHaveURL(/\/sign-in$/);
   await expect(page.getByLabel("Email", { exact: true })).toHaveValue("");

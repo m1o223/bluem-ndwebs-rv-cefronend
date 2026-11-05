@@ -92,7 +92,7 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
     }}>
       <div className={styles.headerInner}>
         <Link className={styles.brand} href="/" aria-label="BlueMind Web Service home" onClick={() => { setExpanded(false); setLanguageOpen(false); }}><BrandLockup className={styles.headerBrand} logoClassName={styles.brandLogo} priority solidLogo /></Link>
-        {activePath !== "/sign-in" && <div className={styles.headerControls}>
+        {activePath !== "/sign-in" && activePath !== "/login" && <div className={styles.headerControls}>
           <Link className={styles.signInLink} href="/sign-in" aria-current={activePath === "/sign-in" ? "page" : undefined} onClick={() => { setExpanded(false); setLanguageOpen(false); }}><TextActionLabel enabled={textEffects}>Sign in</TextActionLabel></Link>
           <div className={styles.languageSelector} ref={languageRef} data-no-translate>
             <button ref={languageToggleRef} className={styles.languageButton} type="button" aria-label={`Selected language: ${selectedLanguage.label}`} aria-haspopup="menu" aria-controls="header-languages" aria-expanded={languageOpen} onClick={() => { setLanguageOpen((open) => !open); setExpanded(false); }} onKeyDown={(event) => {
@@ -141,7 +141,7 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
             </span>
           </button>
         </div>}
-        {activePath !== "/sign-in" && <div className={`${styles.navPanel} ${expanded ? styles.navExpanded : ""}`}>
+        {activePath !== "/sign-in" && activePath !== "/login" && <div className={`${styles.navPanel} ${expanded ? styles.navExpanded : ""}`}>
           <nav id="home-navigation" aria-label="Main navigation" className={styles.homeNav} inert={!expanded} aria-hidden={!expanded ? true : undefined}>
             {links.map(([href, label]) => <Link key={href} href={href} onClick={() => setExpanded(false)} aria-current={href === activePath ? "page" : undefined}>{textEffects ? <TextActionLabel>{label}</TextActionLabel> : <span className={styles.navLabel}>{label}</span>}</Link>)}
             <Link href="/quote" className={styles.navCta} onClick={() => setExpanded(false)} aria-current={activePath === "/quote" ? "page" : undefined}><TextActionLabel enabled={textEffects} light>Request a Quote</TextActionLabel></Link>

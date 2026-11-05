@@ -6,18 +6,18 @@ const result = (body: object, status = 200) => NextResponse.json(body, { status,
 const cookie = { httpOnly: true, secure: true, sameSite: "lax" as const, path: "/" };
 async function handler(request: NextRequest, context: { params: Promise<{ action: string }> }) {
   const { action } = await context.params;
-  if (action !== "login" && action !== "logout" && action !== "session" && action !== "overview" && action !== "profile" && action !== "contact") return result({ code: "missing" }, 404);
+  if (action !== "login" && action !== "logout" && action !== "session" && action !== "overview" && action !== "profile" && action !== "contact" && action !== "password") return result({ code: "missing" }, 404);
   const readOnly = action === "session" || action === "overview";
   if (request.method !== (readOnly ? "GET" : "POST")) return result({ code: "method" }, 405);
   if (!readOnly) {
     const origin = request.headers.get("origin");
-    const allowed = process.env.VERCEL ? ["https://bluemind-web-service.vercel.app", "https://bluemindwebservice.com", "https://www.bluemindwebservice.com"] : [new URL(request.url).origin];
-    if (!origin || !allowed.includes(origin) || request.headers.get("sec-fetch-site") === "cross-site") return result({ code: "forbidden" }, 403);
+    const allowed = process.env.VERCEL ? ["https://bluemindwebservice.com", "https://www.bluemindwebservice.com"] : [request.nextUrl.origin];
+    if (!origin || origin !== request.nextUrl.origin || !allowed.includes(origin) || request.headers.get("sec-fetch-site") === "cross-site") return result({ code: "forbidden" }, 403);
   }
   const token = request.cookies.get(CUSTOMER_COOKIE)?.value;
   if (action !== "login" && action !== "logout" && !token) return result({ code: "credentials" }, 401);
   let body: string | undefined;
-  if (action === "login" || action === "profile" || action === "contact") {
+  if (action === "login" || action === "profile" || action === "contact" || action === "password") {
     const maximum = action === "login" ? 2048 : 20000;
     if (request.headers.get("content-type")?.split(";")[0] !== "application/json" || Number(request.headers.get("content-length")) > maximum) return result({ code: "invalid" }, 400);
     const reader = request.body?.getReader();
@@ -51,7 +51,7 @@ async function handler(request: NextRequest, context: { params: Promise<{ action
       if (action === "session" && upstream.status === 401) response.cookies.set(CUSTOMER_COOKIE, "", { ...cookie, maxAge: 0 });
       return response;
     }
-    if (action === "logout") {
+    if (action === "logout" || action === "password") {
       const response = result({ success: true });
       response.cookies.set(CUSTOMER_COOKIE, "", { ...cookie, maxAge: 0 });
       return response;

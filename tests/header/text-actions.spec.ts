@@ -53,7 +53,7 @@ test("sign-in effects preserve pill dimensions and provider interaction states",
   await page.goto("/sign-in");
   const mutations: string[] = [];
   page.on("request", request => { if (request.method() !== "GET" || request.url().includes("/api/")) mutations.push(request.url()); });
-  for (const name of ["Continue with Google", "Continue with BankID", "Forgot password?"]) {
+  for (const name of ["Continue with Google", "Continue with BankID"]) {
     const button = page.getByRole("button", { name, exact: true });
     await button.scrollIntoViewIfNeeded();
     const before = await button.boundingBox();
@@ -80,7 +80,8 @@ test("mobile touch, RTL and reduced motion retain usable text feedback", async (
   const page = await context.newPage();
   await page.addInitScript(() => localStorage.setItem("bluemind-language", "ar"));
   await page.goto((test.info().project.use.baseURL as string) + "/sign-in");
-  const button = page.locator('button[type="submit"]');
+  const button = page.getByRole("button", { name: /BankID/ });
+  await button.scrollIntoViewIfNeeded();
   const before = await button.boundingBox();
   await button.tap();
   await expect.poll(() => opacity(button)).toBe("1");
