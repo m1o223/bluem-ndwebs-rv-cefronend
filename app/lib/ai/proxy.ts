@@ -3,6 +3,7 @@ import { FILE_LIMITS } from "./attachments";
 
 const BACKEND = "https://bluemind-web-service-backend.onrender.com";
 const SITE = "https://bluemind-web-service.vercel.app";
+const ALLOWED_SITES = new Set([SITE, "https://bluemindwebservice.com", "https://www.bluemindwebservice.com"]);
 const secure = process.env.NODE_ENV === "production";
 const error = (status: number, code: string) => NextResponse.json({ code }, { status, headers: { "Cache-Control": "no-store" } });
 
@@ -30,9 +31,8 @@ async function readBody(request: Request, limit: number) {
 // This route forwards only AI traffic. The OpenAI key and execution stay on Render.
 export async function proxyAi(request: NextRequest) {
   const origin = request.headers.get("origin");
-  const expected = secure ? SITE : new URL(request.url).origin;
   if (request.method !== "POST") return error(405, "invalid");
-  if (origin !== expected) return error(403, "invalid");
+  if (!origin || (secure ? !ALLOWED_SITES.has(origin) : origin !== new URL(request.url).origin)) return error(403, "invalid");
   if (request.method === "POST" && request.headers.get("content-type")?.split(";")[0].trim() !== "application/json") return error(415, "invalid");
   let body: string | undefined;
   let attachments = false;

@@ -17,6 +17,30 @@ test("public proxy rejects cross-site and oversized requests", async () => {
   expect(called).toBe(false);
 });
 
+for (const site of ["https://bluemindwebservice.com", "https://www.bluemindwebservice.com"]) {
+  test(`custom production domain forwards through the unchanged Render connection: ${site}`, async () => {
+    const body = { messages: [{ role: "user", content: "domain routing fixture" }] };
+    globalThis.fetch = async (url, options) => {
+      expect(String(url)).toBe("https://bluemind-web-service-backend.onrender.com/api/ai/chat");
+      expect(new Headers(options?.headers).get("origin")).toBe(origin);
+      expect(JSON.parse(String(options?.body))).toEqual(body);
+      return new Response('{"type":"done"}\n', { headers: { "Content-Type": "application/x-ndjson" } });
+    };
+    const request = new NextRequest(`${site}/api/ai/chat`, { method: "POST", headers: { Origin: site, "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    expect((await proxyAi(request)).status).toBe(200);
+  });
+}
+
+test("production origin allowlist rejects lookalikes, null origins and arbitrary same-host sites", async () => {
+  test.skip(process.env.NODE_ENV !== "production", "Production allowlist check");
+  globalThis.fetch = async () => { throw Error("Must not call Render"); };
+  for (const source of ["https://bluemindwebservice.com.evil.test", "http://bluemindwebservice.com", "https://preview.example", "null"]) {
+    const url = source === "null" ? origin : source;
+    const request = new NextRequest(`${url}/api/ai/chat`, { method: "POST", headers: { Origin: source, "Content-Type": "application/json" }, body: "{}" });
+    expect((await proxyAi(request)).status).toBe(403);
+  }
+});
+
 test("anonymous chat reaches Render without tokens and preserves streamed context", async () => {
   const body = { messages: [{ role: "user", content: "hello" }, { role: "assistant", content: "Previous reply" }, { role: "user", content: "Follow-up" }] };
   globalThis.fetch = async (url, options) => {
