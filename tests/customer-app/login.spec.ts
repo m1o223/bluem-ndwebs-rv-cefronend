@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { closeCustomerMenu, visitCustomerPage } from "./menu-helpers";
 
 for (const [index, width] of [390, 768, 1440].entries()) {
   test(`real email login and account redirect at ${width}px`, async ({ page }, info) => {
@@ -11,6 +12,7 @@ for (const [index, width] of [390, 768, 1440].entries()) {
     await page.screenshot({ path: info.outputPath(`login-${width}.png`) });
     await page.getByRole("button", { name: "Sign in", exact: true }).click();
     await expect(page).toHaveURL(/\/dashboard$/);
+    await closeCustomerMenu(page);
     await expect(page.getByRole("heading", { name: "Home", exact: true })).toBeVisible();
     await page.goto("/login");
     await expect(page).toHaveURL(/\/dashboard$/);
@@ -40,7 +42,7 @@ test("password change revokes sessions and requires the new password", async ({ 
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
   const old = (await context.cookies()).find(cookie => cookie.name === "__Host-bluemind_customer")!;
-  await page.goto("/account");
+  await visitCustomerPage(page, "/account");
   await page.getByLabel("Current password", { exact: true }).fill("Isolated-browser-test-123!");
   await page.getByLabel("New password", { exact: true }).fill("Replacement-test-password-456!");
   await page.getByRole("button", { name: "Change password", exact: true }).click();
@@ -77,6 +79,7 @@ test("session guard waits, retains cookies on temporary errors and retries witho
   await expect(page.getByRole("heading", { name: "Home", exact: true })).toHaveCount(0);
   fail = false;
   await page.getByRole("button", { name: "Try again", exact: true }).click();
+  await closeCustomerMenu(page);
   await expect(page.getByRole("heading", { name: "Home", exact: true })).toBeVisible();
   await page.route("**/api/customer/session", route => route.fulfill({ status: 401, json: { user: null } }));
   // Revoke the actual session too, so the login page does not legitimately return to dashboard.

@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
+import { closeCustomerMenu, visitCustomerPage } from "./menu-helpers";
 const paths = ["/dashboard", "/my-project", "/blue-mind-ai", "/dashboard/contact", "/account"];
-// The public sign-in is a design preview. Seed isolated test sessions through the unchanged API.
+// Seed isolated test sessions through the real backend handler, never production data.
 async function authenticate(page: Page, index: number, customerType?: string) {
   const response = await page.request.post("/api/customer/login", { headers: { Origin: "http://localhost:3199" }, data: { email: `customer-${index}@example.invalid`, password: "Isolated-browser-test-123!", customerType } });
   expect(response.status()).toBe(200);
@@ -9,6 +10,7 @@ async function authenticate(page: Page, index: number, customerType?: string) {
 async function login(page: Page, index: number) {
   await authenticate(page, index);
   await expect(page).toHaveURL(/\/dashboard$/);
+  await closeCustomerMenu(page);
   await expect(page.getByRole("heading", { name: "Home", exact: true })).toBeVisible();
 }
 test("unauthenticated and forged sessions cannot reach any customer page", async ({ page, context }) => {
@@ -23,10 +25,10 @@ test("unauthenticated and forged sessions cannot reach any customer page", async
 for (const [index, width] of [390, 768, 1440].entries()) {
   test(`customer navigation and sign out at ${width}px`, async ({ page, context }, info) => {
     await page.setViewportSize({ width, height: 900 });
-    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.emulateMedia({ reducedMotion: width === 768 ? "reduce" : "no-preference" });
     const errors: string[] = [];
     page.on("pageerror", error => errors.push(error.message));
-    await login(page, index);
+    await authenticate(page, index);
     const token = (await context.cookies()).find(cookie => cookie.name === "__Host-bluemind_customer")!;
     expect(token.httpOnly).toBe(true); expect(token.secure).toBe(true); expect(token.sameSite).toBe("Lax");
     expect(await page.evaluate(() => document.cookie)).not.toContain(token.value);
@@ -34,7 +36,6 @@ for (const [index, width] of [390, 768, 1440].entries()) {
     await expect(page.locator("footer")).toHaveCount(0);
     await expect(page.locator("header")).not.toContainText(/Services|Pricing|Templates/);
     const menu = page.getByRole("button", { name: "Open menu", exact: true });
-    await menu.click();
     await expect(page.getByRole("dialog")).toBeVisible();
     await expect(page.getByRole("dialog").locator("nav a")).toHaveCount(5);
     await expect(page.getByRole("link", { name: "Home", exact: true })).toHaveAttribute("aria-current", "page");
@@ -48,22 +49,34 @@ for (const [index, width] of [390, 768, 1440].entries()) {
     await page.screenshot({ path: info.outputPath("customer-menu.png") });
     await page.keyboard.press("Escape");
     await expect(page.getByRole("dialog")).not.toBeVisible();
+    await expect(menu).toBeFocused();
+    await menu.click();
     for (const [name, path] of [["My Project", "/my-project"], ["BlueMind AI", "/blue-mind-ai"], ["Contact Us", "/dashboard/contact"], ["Account / Settings", "/account"], ["Home", "/dashboard"]]) {
-      await menu.click();
       await page.getByRole("dialog").getByRole("link", { name, exact: true }).click();
       await expect(page).toHaveURL(new RegExp(path + "$"));
-      await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
-      await expect(page.getByRole("dialog")).not.toBeVisible();
+      await expect(page.locator("main h1")).toHaveText(name);
+      await expect(page.getByRole("dialog")).toBeVisible();
+      await expect(page.getByRole("dialog").getByRole("link", { name, exact: true })).toHaveAttribute("aria-current", "page");
       await expect(page.locator("main")).not.toContainText("Unable to load");
-      if (path === "/account") await expect(page.getByLabel("Customer type (optional)")).toBeVisible();
-      if (path === "/dashboard/contact") await expect(page.getByLabel("Message", { exact: true })).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
     }
+    await closeCustomerMenu(page);
+    await page.locator("header a[href='/account']").click();
+    await expect(page).toHaveURL(/\/account$/);
+    await expect(page.locator("main h1")).toHaveText("Account / Settings");
+    await expect(page.getByRole("dialog")).not.toBeVisible();
+    await page.locator("header a[href='/dashboard']").click();
+    await expect(page).toHaveURL(/\/dashboard$/);
+    await expect(page.locator("main h1")).toHaveText("Home");
+    await expect(page.getByRole("dialog")).not.toBeVisible();
+    await page.reload();
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await closeCustomerMenu(page);
+    await menu.click();
     await page.screenshot({ path: info.outputPath("customer-home.png") });
     const other = await context.newPage();
     await other.goto("/dashboard");
-    await expect(other.getByRole("heading", { name: "Home", exact: true })).toBeVisible();
-    await menu.click();
+    await expect(other.getByRole("dialog")).toBeVisible();
     await page.getByRole("button", { name: "Sign out", exact: true }).click();
     await expect(page).toHaveURL(/\/$/);
     await expect(other).toHaveURL(/\/sign-in$/);
@@ -90,7 +103,7 @@ test("optional customer type, account persistence, contact receipt and notificat
   await page.getByRole("button", { name: "Notifications", exact: true }).click();
   await expect(page.getByText("No notifications yet.")).toBeVisible();
   await page.keyboard.press("Escape");
-  await page.goto("/account");
+  await visitCustomerPage(page, "/account");
   await page.getByLabel("Full name", { exact: true }).fill("Customer Six");
   await page.getByLabel("Customer type (optional)").selectOption("company");
   await page.getByLabel("Company name", { exact: true }).fill("Example Company");
@@ -102,22 +115,23 @@ test("optional customer type, account persistence, contact receipt and notificat
   await expect(page).toHaveURL(/\/$/);
   await login(page, 6);
   await expect(page.getByText("Welcome, Customer Six", { exact: true })).toBeVisible();
-  await page.goto("/account");
+  await visitCustomerPage(page, "/account");
   await expect(page.getByLabel("Company name", { exact: true })).toHaveValue("Example Company");
   await expect(page.getByRole("switch", { name: "Project updates" })).toBeChecked();
   await expect(page.getByRole("button", { name: "Delete account", exact: true })).toBeDisabled();
-  await page.goto("/dashboard/contact");
+  await visitCustomerPage(page, "/dashboard/contact");
   await expect(page.getByLabel("Full name", { exact: true })).toHaveValue("Customer Six");
   await page.getByLabel("Customer type (optional)").selectOption("");
   await expect(page.getByLabel("Company name", { exact: true })).toHaveCount(0);
   await page.getByLabel("Message", { exact: true }).fill("Please review this test-only idea.");
   await page.getByRole("button", { name: "Send message", exact: true }).click();
   await expect(page.getByText("Your message has been received by the team.")).toBeVisible();
-  await page.goto("/account");
+  await visitCustomerPage(page, "/account");
   await page.getByLabel("Customer type (optional)").selectOption("");
   await page.getByRole("button", { name: "Save changes" }).click();
   await expect(page.getByText("Changes saved to your account.")).toBeVisible();
   await page.reload();
+  await closeCustomerMenu(page);
   await expect(page.getByLabel("Customer type (optional)")).toHaveValue("");
 });
 
@@ -132,14 +146,14 @@ test("real project projection, seven stages, amounts, notifications and responsi
   for (const width of [1440, 768, 390, 320]) {
     await page.setViewportSize({ width, height: 900 });
     for (const path of ["/dashboard", "/my-project", "/dashboard/contact", "/account", "/blue-mind-ai"]) {
-      await page.goto(path);
+      await visitCustomerPage(page, path);
       await expect(page.locator("main h1")).toBeVisible();
       await expect(page.getByText("Loading account information", { exact: true })).toHaveCount(0);
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
       await page.screenshot({ path: info.outputPath(`${path.replaceAll("/", "-")}-${width}.png`), fullPage: true });
     }
   }
-  await page.goto("/my-project");
+  await visitCustomerPage(page, "/my-project");
   await expect(page.getByText("TEST-8", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "View invoice" })).toBeDisabled();
   await expect(page.getByText("Fixture review completed")).toBeVisible();
@@ -148,7 +162,7 @@ test("real project projection, seven stages, amounts, notifications and responsi
 test("account errors are not empty states; write failures do not show success", async ({ page }) => {
   await login(page, 9);
   await page.route("**/api/customer/overview", route => route.fulfill({ status: 503, json: { code: "unavailable" } }));
-  await page.goto("/account");
+  await visitCustomerPage(page, "/account");
   await expect(page.locator("main").getByText("Unable to load your account information.")).toBeVisible();
   await page.unroute("**/api/customer/overview");
   await page.getByRole("button", { name: "Try again" }).click();
@@ -162,8 +176,7 @@ test("Arabic customer shell preserves RTL and only the approved items", async ({
   await page.addInitScript(() => localStorage.setItem("bluemind-language", "ar"));
   await page.setViewportSize({ width: 390, height: 844 });
   await authenticate(page, 5);
-  await expect(page.getByRole("heading", { name: "الرئيسية", exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "فتح القائمة" }).click();
+  await expect(page.locator("main h1")).toHaveText("الرئيسية");
   await expect(page.getByRole("dialog").locator("nav a")).toHaveCount(5);
   await expect.poll(async () => (await page.getByRole("dialog").boundingBox())!.x).toBeGreaterThanOrEqual(0);
   const drawer = (await page.getByRole("dialog").boundingBox())!;
@@ -171,7 +184,7 @@ test("Arabic customer shell preserves RTL and only the approved items", async ({
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(390);
   await page.screenshot({ path: info.outputPath("customer-arabic.png") });
   await page.keyboard.press("Escape");
-  await page.goto("/account");
+  await visitCustomerPage(page, "/account");
   await expect(page.getByLabel("نوع العميل (اختياري)")).toBeVisible();
   await page.getByLabel("نوع العميل (اختياري)").selectOption("company");
   await expect(page.getByLabel("اسم الشركة", { exact: true })).toBeVisible();
@@ -184,10 +197,10 @@ test("Swedish account labels, optional login choice and contact failure", async 
   await page.setViewportSize({ width: 768, height: 1024 });
   await authenticate(page, 10, "private");
   await expect(page).toHaveURL(/\/dashboard$/);
-  await page.goto("/account");
+  await visitCustomerPage(page, "/account");
   await expect(page.getByLabel("Kundtyp (valfritt)")).toHaveValue("private");
   await page.screenshot({ path: info.outputPath("account-swedish.png"), fullPage: true });
-  await page.goto("/dashboard/contact");
+  await visitCustomerPage(page, "/dashboard/contact");
   await page.getByLabel("Meddelande", { exact: true }).fill("A test-only message which must not be sent.");
   await page.route("**/api/customer/contact", route => route.fulfill({ status: 503, json: { code: "unavailable" } }));
   await page.getByRole("button", { name: "Skicka meddelande" }).click();

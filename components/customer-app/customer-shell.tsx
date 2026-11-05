@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Home, Folder, Sparkles, MessageCircle, Settings, LogOut, Menu, X, UserRound, Bell } from "lucide-react";
 import Image from "next/image";
 import { BrandLockup } from "../brand-lockup";
@@ -13,6 +13,7 @@ import { workspaceCopy } from "./workspace-copy";
 import type { Overview } from "./workspace-types";
 import TextActionLabel from "../text-action-label";
 import SessionRecovery from "./session-recovery";
+import { useCustomerMenu } from "./menu-state";
 
 const icons = [Home, Folder, Sparkles, MessageCircle, Settings];
 export default function CustomerShell({ user, page }: { user: Customer; page: CustomerPage }) {
@@ -20,9 +21,8 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
   const text = customerCopy[locale];
   const dialog = useRef<HTMLDialogElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pending = useRef(false);
-  const [open, setOpen] = useState(false);
+  const { open, setOpen } = useCustomerMenu();
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState(false);
   const [verified, setVerified] = useState(false);
@@ -83,20 +83,26 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
       window.removeEventListener("pagehide", hide);
       window.removeEventListener("pageshow", onShow);
       window.removeEventListener("focus", onFocus);
-      if (closeTimer.current) clearTimeout(closeTimer.current);
     };
   }, [page, user.id, sessionRetry]);
 
-  function closeMenu() {
-    setOpen(false);
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-    closeTimer.current = setTimeout(() => { dialog.current?.close(); toggle.current?.focus(); }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 220);
-  }
-  function openMenu() {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-    dialog.current?.showModal();
-    setOpen(true);
-  }
+  useLayoutEffect(() => {
+    const element = dialog.current;
+    if (!verified || sessionError || !element) return;
+    if (open) {
+      if (!element.open) element.showModal();
+      return;
+    }
+    if (!element.open) return;
+    const timer = setTimeout(() => {
+      element.close();
+      toggle.current?.focus();
+    }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 220);
+    return () => clearTimeout(timer);
+  }, [open, verified, sessionError]);
+
+  function closeMenu() { setOpen(false); }
+  function openMenu() { setOpen(true); }
   async function signOut() {
     if (pending.current) return;
     pending.current = true; setBusy(true); setNotice(false);
@@ -137,7 +143,7 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
       <nav aria-label={text.menu}>
         {customerRoutes.map((route, index) => {
           const Icon = icons[index];
-          return <Link href={route.href} key={route.href} prefetch={false} aria-current={page === route.key ? "page" : undefined} onClick={closeMenu}><Icon size={19} aria-hidden="true" /><TextActionLabel>{text[route.key]}</TextActionLabel></Link>;
+          return <Link href={route.href} key={route.href} prefetch={false} aria-current={page === route.key ? "page" : undefined}><Icon size={19} aria-hidden="true" /><TextActionLabel>{text[route.key]}</TextActionLabel></Link>;
         })}
       </nav>
       <button type="button" className={styles.signOut} disabled={busy} onClick={signOut}><LogOut size={19} aria-hidden="true" /><TextActionLabel>{busy ? text.signingOut : text.signout}</TextActionLabel></button>
