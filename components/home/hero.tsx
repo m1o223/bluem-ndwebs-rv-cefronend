@@ -1,6 +1,7 @@
 import Link from "next/link";
 import AiPageLink from "./ai-page-link";
 import HeroVisual from "./hero-visual";
+import PaymentMethods from "./payment-methods";
 import shared from "./home.module.css";
 import styles from "./hero.module.css";
 import TextActionLabel from "../text-action-label";
@@ -21,7 +22,7 @@ export default function Hero() {
           </div>
         </div>
         <HeroVisual />
-        <a className={styles.scrollCue} href="#selected-work"><span aria-hidden="true">↓</span> <TextActionLabel>SCROLL TO EXPLORE</TextActionLabel></a>
+        <PaymentMethods />
       </div>
     </section>
   );

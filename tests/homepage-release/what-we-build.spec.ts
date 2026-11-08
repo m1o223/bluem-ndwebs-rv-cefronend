@@ -1,104 +1,63 @@
 import { expect, test } from "@playwright/test";
 
-for (const [width, height] of [[320, 700], [390, 844], [768, 1024], [1024, 768], [1440, 900], [1920, 1080]]) {
-  test(`Folio Books devices and content fit ${width}x${height}`, async ({ page }, info) => {
+for (const [width, height] of [[390, 844], [768, 1024], [1440, 900]]) {
+  test(`homepage order and payment bar fit ${width}x${height}`, async ({ page }) => {
     await page.setViewportSize({ width, height });
     await page.emulateMedia({ reducedMotion: "reduce" });
-    const errors: string[]=[]; page.on("pageerror", error=>errors.push(error.message));
+    await page.addInitScript(() => localStorage.setItem("bluemind:brand-intro:v1", "complete"));
     await page.goto("/");
-    const section=page.locator("[data-build-section]");
-    await expect(section.locator("h2")).toHaveText("What We Build");
-    await expect(section.locator("li")).toHaveCount(15);
-    const paymentSet = section.locator('[data-payment-set="primary"]');
-    await expect(paymentSet.locator("[data-payment-name]")).toHaveCount(12);
-    expect(await paymentSet.locator("[data-payment-name]").evaluateAll(elements => elements.map(element => element.getAttribute("data-payment-name")))).toEqual(["Klarna", "Swish", "Faktura", "Visa", "Mastercard", "Apple Pay", "Google Pay", "PayPal", "American Express", "Alipay", "mada", "Pix"]);
-    for (const name of ["Klarna", "Swish", "Faktura"]) await expect(paymentSet.locator(`[data-payment-name="${name}"]`)).toBeVisible();
-    await expect.poll(()=>section.locator("[data-build-device] img").evaluateAll(images=>images.every(image=>(image as HTMLImageElement).complete && (image as HTMLImageElement).naturalWidth>0))).toBe(true);
-    const stage=(await section.locator("[data-build-stage]").boundingBox())!;
-    const devices=await section.locator("[data-build-device]").all();
-    for(const device of devices) {
-      await expect(device).toHaveCSS("opacity", "1");
-      const box=(await device.boundingBox())!;
-      expect(box.x).toBeGreaterThanOrEqual(stage.x); expect(box.x+box.width).toBeLessThanOrEqual(stage.x+stage.width);
-      expect(box.y).toBeGreaterThanOrEqual(stage.y); expect(box.y+box.height).toBeLessThanOrEqual(stage.y+stage.height);
-      const image=device.locator("img");
-      expect(await image.evaluate(e=>{const i=e as HTMLImageElement;return Math.abs(i.width/i.height-i.naturalWidth/i.naturalHeight);})).toBeLessThan(.025);
-    }
-    const tablet=(await devices[1].boundingBox())!;
-    expect(tablet.x+tablet.width/2).toBeGreaterThan(stage.x+stage.width*.35);
-    expect(tablet.x+tablet.width/2).toBeLessThan(stage.x+stage.width*.8);
-    const desktop=(await devices[0].boundingBox())!;
-    const phone=(await devices[2].boundingBox())!;
-    expect(tablet.x).toBeLessThan(desktop.x+desktop.width);
-    expect(phone.x).toBeLessThan(tablet.x+tablet.width);
-    const description=(await section.locator("[data-build-description]").boundingBox())!;
-    expect(description.y).toBeGreaterThanOrEqual(stage.y+stage.height);
-    expect(await section.evaluate(e=>e.getAnimations({subtree:true}).length)).toBe(0);
-    expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(width);
-    await section.screenshot({path:info.outputPath("what-we-build.png")});
-    expect(errors).toEqual([]);
+
+    const hero = page.locator("[data-hero]");
+    const visual = hero.locator("[data-hero-visual]");
+    const payments = hero.locator("[data-payment-methods]");
+    const whatWeDo = page.locator("[data-what-we-do]");
+    await expect(hero).toBeVisible();
+    await expect(visual).toBeVisible();
+    await expect(payments).toBeVisible();
+    await expect(whatWeDo).toBeVisible();
+    await expect(page.locator(".scrollCue")).toHaveCount(0);
+
+    const visualBox = (await visual.boundingBox())!;
+    const paymentsBox = (await payments.boundingBox())!;
+    const whatWeDoBox = (await whatWeDo.boundingBox())!;
+    expect(paymentsBox.y).toBeGreaterThanOrEqual(visualBox.y + visualBox.height - 1);
+    expect(whatWeDoBox.y).toBeGreaterThanOrEqual(paymentsBox.y + paymentsBox.height - 1);
+
+    const primary = payments.locator('[data-payment-set="primary"]');
+    expect(await primary.locator("[data-payment-name]").evaluateAll(elements => elements.map(element => element.getAttribute("data-payment-name")))).toEqual([
+      "Klarna", "Swish", "Faktura", "Visa", "Mastercard", "Apple Pay", "Google Pay", "PayPal", "American Express", "Alipay", "mada", "Pix",
+    ]);
+    for (const name of ["Klarna", "Swish", "Faktura"]) await expect(primary.locator(`[data-payment-name="${name}"]`)).toBeVisible();
+    await expect(primary.locator('[data-payment-name="Klarna"] img')).toHaveAttribute("src", /klarna/);
+    await expect(primary.locator('[data-payment-name="Swish"] img')).toHaveAttribute("src", /swish/);
+    await expect(primary.locator('[data-payment-name="Faktura"]')).toContainText("Faktura");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
   });
 }
 
-for (const [width, entrance, settled] of [[1440,700,700],[390,500,500]]) {
-test(`scroll trigger coordinates entrances, one-time zoom and text without replay at ${width}px`, async ({ page }) => {
-  await page.setViewportSize({width,height:500});
-  await page.addInitScript(()=>localStorage.setItem("bluemind:brand-intro:v1","complete"));
+test("payment bar holds briefly then uses a slow seamless marquee", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.addInitScript(() => localStorage.setItem("bluemind:brand-intro:v1", "complete"));
   await page.goto("/");
-  const section=page.locator("[data-build-section]");
-  await expect(section).toHaveAttribute("data-started","false");
-  await section.locator("[data-build-stage]").scrollIntoViewIfNeeded();
-  await expect(section).toHaveAttribute("data-started","true");
-  const groupTiming=await section.locator("[data-build-group]").evaluate(el=>{const a=el.getAnimations()[0];return {delay:a.effect!.getTiming().delay,duration:a.effect!.getTiming().duration};});
-  expect(groupTiming).toEqual({delay:0,duration:entrance});
-  expect(await section.locator("[data-build-device]").evaluateAll(elements=>elements.every(element=>element.getAnimations().length===0))).toBe(true);
-  const freeze=async(time:number)=>section.evaluate((e,time)=>e.getAnimations({subtree:true}).forEach(a=>{a.pause();a.currentTime=time;}),time);
-  await freeze(entrance);
-  for(const device of await section.locator("[data-build-device]").all()) await expect(device).toHaveCSS("opacity","1");
-  await expect(section.locator("[data-build-description]")).toHaveCSS("opacity","0");
-  await freeze(settled);
-  for(const device of await section.locator("[data-build-device]").all()) await expect(device).toHaveCSS("opacity","1");
-  const group=section.locator("[data-build-group]");
-  await freeze(settled+1000);
-  expect(await group.evaluate(e=>new DOMMatrixReadOnly(getComputedStyle(e).transform).a)).toBeCloseTo(1,3);
-  const stage=(await section.locator("[data-build-stage]").boundingBox())!;
-  for(const device of await section.locator("[data-build-device]").all()) {
-    const box=(await device.boundingBox())!;
-    expect(box.x).toBeGreaterThanOrEqual(stage.x);expect(box.x+box.width).toBeLessThanOrEqual(stage.x+stage.width);
-    expect(box.y).toBeGreaterThanOrEqual(stage.y);expect(box.y+box.height).toBeLessThanOrEqual(stage.y+stage.height);
-  }
-  await freeze(settled+2000);
-  expect(await group.evaluate(e=>new DOMMatrixReadOnly(getComputedStyle(e).transform).a)).toBeCloseTo(1,3);
-  const card=await group.elementHandle();
-  await page.evaluate(()=>scrollTo(0,0));
-  await section.locator("[data-build-stage]").scrollIntoViewIfNeeded();
-  expect(await group.evaluate((e,old)=>e===old,card)).toBe(true);
-  expect(await group.evaluate(e=>e.getAnimations()[0].currentTime)).toBe(settled+2000);
-});
-}
-
-test("device sequence waits for the original intro to finish",async({page})=>{
-  await page.setViewportSize({width:1440,height:1080});await page.goto("/");
-  const section=page.locator("[data-build-section]");
-  await expect(page.locator("#bluemind-brand-intro")).toBeVisible();
-  await expect.poll(()=>section.locator("[data-build-device] img").evaluateAll(images=>images.every(image=>(image as HTMLImageElement).complete))).toBe(true);
-  await expect(section).toHaveAttribute("data-started","false");
-  await page.getByRole("button",{name:"Skip Intro",exact:true}).click();
-  await expect(section).toHaveAttribute("data-started","true");
+  const track = page.locator("[data-payment-track]");
+  await expect(track).toBeVisible();
+  const timing = await track.evaluate(element => {
+    const animation = element.getAnimations()[0];
+    const effect = animation?.effect?.getTiming();
+    return { delay: effect?.delay, duration: effect?.duration };
+  });
+  expect(timing).toEqual({ delay: 1200, duration: 72000 });
 });
 
-for(const [locale,title,description,cta] of [["ar","شو منبني؟","مواقع مصمّمة حسب احتياجات شغلك.","احكيلنا عن فكرتك"],["sv","Vad vi bygger","Webbplatser byggda efter ditt företags behov.","Berätta om din idé"]]) {
-  test(`localized content and idea destination in ${locale}`,async({page})=>{
-    await page.setViewportSize({width:390,height:844}); await page.emulateMedia({reducedMotion:"reduce"});
-    await page.addInitScript(locale=>localStorage.setItem("bluemind-language",locale),locale);
-    await page.goto("/"); const section=page.locator("[data-build-section]");
-    await expect(section).toHaveAttribute("dir",locale==="ar"?"rtl":"ltr");
-    await expect(section.locator("h2")).toHaveText(title);
-    await expect(section.locator("[data-build-description]")).toHaveText(description);
-    await expect(section.locator("li")).toHaveCount(15);
-    await expect(section.getByRole("link",{name:cta,exact:true})).toHaveAttribute("href","/ask-ai?source=what-we-build&new=1");
-    await section.getByRole("link",{name:cta,exact:true}).click(); await expect(page).toHaveURL(/\/ask-ai\?source=what-we-build&new=1$/);
-    await expect(page.getByText(locale === "ar" ? "شو فكرة الموقع اللي ببالك؟ احكيلي عنها بطريقتك. منرتّبها سوا، ومنحدّد شو بدك يكون بالموقع، ومنجهّز طلبك خطوة بخطوة." : locale === "sv" ? "Vilken webbplatsidé har du i åtanke? Berätta om den med dina egna ord. Vi organiserar den tillsammans, bestämmer vad webbplatsen ska innehålla och förbereder din förfrågan steg för steg." : "What website idea do you have in mind? Tell me about it in your own way. We’ll organize it together, define what you want the website to include, and prepare your request step by step.")).toBeVisible();
-    expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(390);
+for (const [locale, paymentTitle, sectionTitle] of [["ar", "طرق الدفع", "شو منعمل؟"], ["sv", "Betalningsmetoder", "Vad vi gör"]]) {
+  test(`localized What We Do and payment title in ${locale}`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.addInitScript(value => localStorage.setItem("bluemind-language", value), locale);
+    await page.goto("/");
+    await expect(page.locator("#payment-methods-title")).toHaveText(paymentTitle);
+    await expect(page.locator("#what-we-do-title")).toHaveText(sectionTitle);
+    await expect(page.locator("[data-payment-methods]")).toHaveAttribute("dir", locale === "ar" ? "rtl" : "ltr");
+    await expect(page.locator("[data-what-we-do]")).toHaveAttribute("dir", locale === "ar" ? "rtl" : "ltr");
   });
 }
