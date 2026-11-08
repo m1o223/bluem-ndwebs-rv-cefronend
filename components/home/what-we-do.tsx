@@ -6,6 +6,7 @@ import { ArrowUpRight } from "lucide-react";
 import { useLocalization } from "../localization-provider";
 import TextActionLabel from "../text-action-label";
 import { whatWeBuildCopy } from "./what-we-build-copy";
+import BlueMindAiDemo from "./bluemind-ai-demo";
 import styles from "./what-we-do.module.css";
 
 const titles = { en: "What We Do", ar: "شو منعمل؟", sv: "Vad vi gör" } as const;
@@ -37,5 +38,6 @@ export default function WhatWeDo() {
       </div>
       <Link href="/ask-ai?source=what-we-build&new=1" className={styles.cta}><TextActionLabel light>{text.cta}</TextActionLabel><ArrowUpRight size={18} aria-hidden="true" /></Link>
     </div>
+    <BlueMindAiDemo />
   </section>;
 }

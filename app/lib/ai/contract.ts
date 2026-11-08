@@ -14,6 +14,7 @@ export const AI_ERRORS = {
   attachment_limit: "This document exceeds analysis limits. Use up to 10 PDF pages, 40,000 text characters, or 2,000 spreadsheet cells (500 rows per sheet). No content was silently omitted.",
   attachment_session: "Your upload session expired. Please try again.",
   attachment_context: "This chat is too long to include all its attachments. Start a new chat and attach the relevant files again.",
+  demo_limit: "You have used the two preview messages. Continue in BlueMind AI to keep working on your idea.",
 } as const;
 export type AiErrorCode = keyof typeof AI_ERRORS;
 export type ChatEvent = { type: "delta"; text: string } | { type: "message_card"; card: MessageCardContent } | { type: "done" } | { type: "error"; code: AiErrorCode };

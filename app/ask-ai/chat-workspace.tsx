@@ -119,6 +119,24 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    if (params.get("continue") === "1") {
+      try {
+        const stored = sessionStorage.getItem("bluemind-ai-demo-transfer");
+        const value = stored ? JSON.parse(stored) : null;
+        if (value?.source === "what-we-build" && Array.isArray(value.messages) && value.messages.length) {
+          const transferred = (value.messages as unknown[]).filter((message: unknown): message is Message => Boolean(message && typeof message === "object"
+            && ((message as Message).role === "user" || (message as Message).role === "assistant") && typeof (message as Message).text === "string"))
+            .map((message: Message) => ({ ...message, id: crypto.randomUUID(), complete: true }));
+          if (transferred.length) {
+            const id = crypto.randomUUID();
+            setConversations([{ id, title: transferred.find(message => message.role === "user")?.text.slice(0, 80) || "Website idea", source: "what-we-build", messages: transferred }]);
+            setActiveId(id);
+            sessionStorage.removeItem("bluemind-ai-demo-transfer");
+            return;
+          }
+        }
+      } catch { sessionStorage.removeItem("bluemind-ai-demo-transfer"); }
+    }
     if (params.get("source") !== "what-we-build" || params.get("new") !== "1") return;
     const language = document.documentElement.lang.split("-")[0];
     const locale = language === "ar" || language === "sv" ? language : "en";
@@ -292,6 +310,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
       const turns = conversationMessages.filter(message => message.complete || (message.stopped && message.text.trim())).map(message => ({ role: message.role,
         content: message.card ? [message.text, messageCardText(message.card)].filter(Boolean).join("\n\n") : message.text,
         ...(message.attachments?.length ? { attachments: message.attachments.map(wireAttachment) } : {}) }));
+      while (turns[0]?.role === "assistant") turns.shift();
       const activeSource = source ?? conversations.find(conversation => conversation.id === id)?.source;
       const firstUser = turns.findIndex(turn => turn.role === "user");
       if (activeSource && firstUser >= 0) turns[firstUser] = {
