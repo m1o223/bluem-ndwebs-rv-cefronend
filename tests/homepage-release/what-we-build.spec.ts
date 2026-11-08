@@ -7,9 +7,13 @@ for (const [width, height] of [[320, 700], [390, 844], [768, 1024], [1024, 768],
     const errors: string[]=[]; page.on("pageerror", error=>errors.push(error.message));
     await page.goto("/");
     const section=page.locator("[data-build-section]");
-    await expect(section.getByRole("heading")).toHaveText("What We Build");
+    await expect(section.locator("h2")).toHaveText("What We Build");
     await expect(section.locator("li")).toHaveCount(15);
-    await expect.poll(()=>section.locator("img").evaluateAll(images=>images.every(image=>(image as HTMLImageElement).complete && (image as HTMLImageElement).naturalWidth>0))).toBe(true);
+    const paymentSet = section.locator('[data-payment-set="primary"]');
+    await expect(paymentSet.locator("[data-payment-name]")).toHaveCount(12);
+    expect(await paymentSet.locator("[data-payment-name]").evaluateAll(elements => elements.map(element => element.getAttribute("data-payment-name")))).toEqual(["Klarna", "Swish", "Faktura", "Visa", "Mastercard", "Apple Pay", "Google Pay", "PayPal", "American Express", "Alipay", "mada", "Pix"]);
+    for (const name of ["Klarna", "Swish", "Faktura"]) await expect(paymentSet.locator(`[data-payment-name="${name}"]`)).toBeVisible();
+    await expect.poll(()=>section.locator("[data-build-device] img").evaluateAll(images=>images.every(image=>(image as HTMLImageElement).complete && (image as HTMLImageElement).naturalWidth>0))).toBe(true);
     const stage=(await section.locator("[data-build-stage]").boundingBox())!;
     const devices=await section.locator("[data-build-device]").all();
     for(const device of devices) {
@@ -77,7 +81,7 @@ test("device sequence waits for the original intro to finish",async({page})=>{
   await page.setViewportSize({width:1440,height:1080});await page.goto("/");
   const section=page.locator("[data-build-section]");
   await expect(page.locator("#bluemind-brand-intro")).toBeVisible();
-  await expect.poll(()=>section.locator("img").evaluateAll(images=>images.every(image=>(image as HTMLImageElement).complete))).toBe(true);
+  await expect.poll(()=>section.locator("[data-build-device] img").evaluateAll(images=>images.every(image=>(image as HTMLImageElement).complete))).toBe(true);
   await expect(section).toHaveAttribute("data-started","false");
   await page.getByRole("button",{name:"Skip Intro",exact:true}).click();
   await expect(section).toHaveAttribute("data-started","true");
@@ -89,7 +93,7 @@ for(const [locale,title,description,cta] of [["ar","شو منبني؟","مواق
     await page.addInitScript(locale=>localStorage.setItem("bluemind-language",locale),locale);
     await page.goto("/"); const section=page.locator("[data-build-section]");
     await expect(section).toHaveAttribute("dir",locale==="ar"?"rtl":"ltr");
-    await expect(section.getByRole("heading")).toHaveText(title);
+    await expect(section.locator("h2")).toHaveText(title);
     await expect(section.locator("[data-build-description]")).toHaveText(description);
     await expect(section.locator("li")).toHaveCount(15);
     await expect(section.getByRole("link",{name:cta,exact:true})).toHaveAttribute("href","/ask-ai?source=what-we-build&new=1");

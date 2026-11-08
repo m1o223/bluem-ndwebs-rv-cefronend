@@ -53,5 +53,22 @@
     "format": "SVG",
     "purpose": "Informational planned payment method; no checkout enabled",
     "modifications": "None"
+  },
+  "swish": {
+    "source": "https://cdn.prod.website-files.com/65200b28053a7ec77284becf/65fd521b0fc28b127f908dcd_Swish.svg",
+    "provider": "Dintero marketing materials",
+    "format": "SVG",
+    "purpose": "Informational planned payment method; no checkout enabled",
+    "modifications": "None",
+    "officialReference": "https://www.getswish.se/sv-press/press-kit/"
+  },
+  "mada": {
+    "source": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Mada_Logo.svg",
+    "provider": "Wikimedia Commons",
+    "format": "SVG",
+    "purpose": "Informational planned payment method; no checkout enabled",
+    "modifications": "None",
+    "license": "Public domain text logo; trademark restrictions may still apply",
+    "officialReference": "https://www.mada.com/"
   }
 }

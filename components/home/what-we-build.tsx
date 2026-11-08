@@ -2,12 +2,35 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, FileText } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useLocalization } from "../localization-provider";
 import TextActionLabel from "../text-action-label";
 import { whatWeBuildCopy } from "./what-we-build-copy";
 import styles from "./what-we-build.module.css";
+
+type PaymentMethod = { name: string; asset?: string; featured?: boolean; invoice?: boolean };
+
+const paymentMethods: readonly PaymentMethod[] = [
+  { name: "Klarna", asset: "/images/footer/klarna.svg", featured: true },
+  { name: "Swish", asset: "/images/footer/swish.svg" },
+  { name: "Faktura", invoice: true },
+  { name: "Visa", asset: "/images/footer/visa.png" },
+  { name: "Mastercard", asset: "/images/footer/mastercard.svg" },
+  { name: "Apple Pay", asset: "/images/footer/apple-pay.svg" },
+  { name: "Google Pay", asset: "/images/footer/google-pay.svg" },
+  { name: "PayPal", asset: "/images/footer/paypal.svg" },
+  { name: "American Express", asset: "/images/footer/american-express.svg" },
+  { name: "Alipay", asset: "/images/footer/alipay.svg" },
+  { name: "mada", asset: "/images/footer/mada.svg" },
+  { name: "Pix", asset: "/images/footer/pix.svg" },
+] as const;
+
+const paymentTitles = {
+  en: "Payment methods",
+  ar: "طرق الدفع",
+  sv: "Betalningsmetoder",
+} as const;
 
 export default function WhatWeBuild() {
   const { locale } = useLocalization();
@@ -56,6 +79,18 @@ export default function WhatWeBuild() {
         <p className={styles.invitationBody}>{text.invitationBody}</p>
       </div>
       <Link href="/ask-ai?source=what-we-build&new=1" className={`${styles.cta} ${styles.reveal}`}><TextActionLabel light>{text.cta}</TextActionLabel><ArrowUpRight size={18} aria-hidden="true" /></Link>
+      <section className={`${styles.payments} ${styles.reveal}`} aria-labelledby="payment-methods-title">
+        <h3 id="payment-methods-title" className={styles.paymentTitle}>{paymentTitles[locale]}</h3>
+        <div className={styles.paymentViewport}>
+          <div className={styles.paymentTrack} data-payment-track>
+            {["primary", "duplicate"].map(set => <div key={set} className={styles.paymentSet} data-payment-set={set} aria-hidden={set === "duplicate"}>
+              {paymentMethods.map(method => <div key={`${set}-${method.name}`} className={`${styles.paymentItem} ${method.featured ? styles.paymentFeatured : ""}`} data-payment-name={method.name}>
+                {method.asset ? <Image src={method.asset} alt={method.name} width={120} height={40} sizes="120px" /> : <span className={styles.invoiceMark}><FileText size={18} strokeWidth={1.7} aria-hidden="true" /><span>{method.name}</span></span>}
+              </div>)}
+            </div>)}
+          </div>
+        </div>
+      </section>
     </div>
   </section>;
 }
