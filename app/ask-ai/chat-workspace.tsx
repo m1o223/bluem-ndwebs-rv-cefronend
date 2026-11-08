@@ -15,13 +15,22 @@ import { AttachmentList, ImageViewer } from "./attachments";
 import { FILE_LIMITS, documentAccept, imageAccept, readAttachment, wireAttachment, type LocalAttachment } from "../lib/ai/attachments";
 
 type Message = { id: string; text: string; role: "user" | "assistant"; complete: boolean; stopped?: boolean; feedback?: Feedback; card?: MessageCardContent; attachments?: LocalAttachment[] };
-type Conversation = { id: string; title: string; messages: Message[]; error?: AiErrorCode; retryMessageId?: string };
+type GuidedSource = "what-we-build";
+type Conversation = { id: string; title: string; messages: Message[]; source?: GuidedSource; error?: AiErrorCode; retryMessageId?: string };
 type RunningReply = {
   conversationId: string; controller: AbortController; assistantId: string; replaced?: Message;
   timeout?: number; thinkingTimer?: number; networkDone: boolean; visible: string;
 };
 const THINKING_MIN_MS = 2000;
 const suggestions = ["Create a website", "Design a page", "Improve my website", "Business ideas", "Help me get started", "Explore our services"];
+const guidedWelcome: Record<"en" | "ar" | "sv", string> = {
+  en: "What website idea do you have in mind? Tell me about it in your own way. We’ll organize it together, define what you want the website to include, and prepare your request step by step.",
+  ar: "شو فكرة الموقع اللي ببالك؟ احكيلي عنها بطريقتك. منرتّبها سوا، ومنحدّد شو بدك يكون بالموقع، ومنجهّز طلبك خطوة بخطوة.",
+  sv: "Vilken webbplatsidé har du i åtanke? Berätta om den med dina egna ord. Vi organiserar den tillsammans, bestämmer vad webbplatsen ska innehålla och förbereder din förfrågan steg för steg.",
+};
+const guidedContext: Record<GuidedSource, string> = {
+  "what-we-build": "The visitor opened BlueMind AI from the What We Build section because they want to discuss a special website idea. Help them explain and organize the idea, clarify requirements, and prepare a request for the BlueMind Web Service team. Do not claim that AI builds the website itself. Before any request is sent to the team, let the visitor review and approve it.",
+};
 
 function History({ conversations, activeId, compact = false, onSelect, onNew }: {
   conversations: Conversation[]; activeId: string | null; compact?: boolean;
@@ -74,6 +83,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   const composer = useRef<HTMLFormElement>(null);
   const composerStartTop = useRef<number | null>(null);
   const composerMotion = useRef<Animation | null>(null);
+  const sourceFromQuery = useRef<GuidedSource | null>(null);
   const { viewport: history, content: messageList, followBottom } = useChatScroll(activeId);
   const drawer = useRef<HTMLDialogElement>(null);
   const attachmentArea = useRef<HTMLDivElement>(null);
@@ -105,6 +115,19 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
       window.clearTimeout(running.thinkingTimer);
       setPendingId(null);
     }
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("source") !== "what-we-build" || params.get("new") !== "1") return;
+    const language = document.documentElement.lang.split("-")[0];
+    const locale = language === "ar" || language === "sv" ? language : "en";
+    const id = crypto.randomUUID();
+    sourceFromQuery.current = "what-we-build";
+    setConversations([{ id, title: locale === "ar" ? "فكرة موقع جديدة" : locale === "sv" ? "Ny webbplatsidé" : "New website idea", source: "what-we-build", messages: [{
+      id: crypto.randomUUID(), role: "assistant", text: guidedWelcome[locale], complete: true,
+    }] }]);
+    setActiveId(id);
   }, []);
 
   useEffect(() => {
@@ -216,6 +239,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
         ? freezeReply(conversation, running, true) : conversation));
     }
     setActiveId(id);
+    if (id === null) sourceFromQuery.current = null;
     setDraft("");
     setAttachmentsOpen(false);
     drawer.current?.close();
@@ -249,7 +273,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
       ? freezeReply(conversation, running) : conversation));
   }
 
-  async function reply(id: string, conversationMessages: Message[], replaced?: Message) {
+  async function reply(id: string, conversationMessages: Message[], replaced?: Message, source?: GuidedSource) {
     if (request.current) return;
     const assistantId = crypto.randomUUID();
     const running: RunningReply = { conversationId: id, controller: new AbortController(), assistantId, replaced, networkDone: false, visible: "" };
@@ -268,6 +292,12 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
       const turns = conversationMessages.filter(message => message.complete || (message.stopped && message.text.trim())).map(message => ({ role: message.role,
         content: message.card ? [message.text, messageCardText(message.card)].filter(Boolean).join("\n\n") : message.text,
         ...(message.attachments?.length ? { attachments: message.attachments.map(wireAttachment) } : {}) }));
+      const activeSource = source ?? conversations.find(conversation => conversation.id === id)?.source;
+      const firstUser = turns.findIndex(turn => turn.role === "user");
+      if (activeSource && firstUser >= 0) turns[firstUser] = {
+        ...turns[firstUser],
+        content: `[BlueMind conversation context]\n${guidedContext[activeSource]}\n\nVisitor message:\n${turns[firstUser].content}`,
+      };
       const context = boundedContext(turns);
       if (turns.some(turn => turn.attachments?.length && !context.includes(turn))) throw new ChatRequestError("attachment_context");
       await requestReply(context, running.controller.signal, delta => {
@@ -322,19 +352,20 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
     followBottom();
     const message: Message = { id: crypto.randomUUID(), text, role: "user", complete: true, ...(files.length ? { attachments: files } : {}) };
     const id = activeId ?? crypto.randomUUID();
+    const source = active?.source ?? sourceFromQuery.current ?? undefined;
     const conversationMessages = [...messages, message];
     if (activeId) {
       setConversations(current => current.map(conversation => conversation.id === activeId
         ? { ...conversation, messages: [...conversation.messages, message] } : conversation));
     } else {
-      setConversations(current => [{ id, title: (text || files[0]?.name || "Attachments").replace(/\s+/g, " ").slice(0, 80), messages: [message] }, ...current]);
+      setConversations(current => [{ id, title: (text || files[0]?.name || "Attachments").replace(/\s+/g, " ").slice(0, 80), messages: [message], ...(source ? { source } : {}) }, ...current]);
       setActiveId(id);
     }
     setDraft("");
     setFiles([]); setFileError("");
     setAttachmentsOpen(false);
     input.current?.focus();
-    void reply(id, conversationMessages);
+    void reply(id, conversationMessages, undefined, source);
   }
 
   async function selectFiles(selected: FileList | null) {
@@ -369,7 +400,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
     followBottom();
     const completeMessages = active.messages.filter(message => message.complete || (message.stopped && message.text.trim()));
     setConversations(current => current.map(conversation => conversation.id === active.id ? { ...conversation, messages: completeMessages } : conversation));
-    void reply(active.id, completeMessages);
+    void reply(active.id, completeMessages, undefined, active.source);
   }
 
   function regenerate(messageId: string) {
@@ -378,7 +409,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
     const previous = active.messages[index];
     if (!previous?.complete || previous.role !== "assistant" || active.messages[index - 1]?.role !== "user") return;
     // Exclude the old answer and all later turns from this request; retain them in the UI.
-    void reply(active.id, active.messages.slice(0, index), previous);
+    void reply(active.id, active.messages.slice(0, index), previous, active.source);
   }
 
   function setFeedback(messageId: string, feedback: Feedback) {

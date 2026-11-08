@@ -51,8 +51,11 @@ export default function WhatWeBuild() {
       <p className={`${styles.description} ${styles.reveal}`} data-build-description>{text.description}</p>
       <ul className={`${styles.types} ${styles.reveal}`} aria-label={text.title}>{text.types.map(type => <li key={type}>{type}</li>)}</ul>
       <p className={`${styles.features} ${styles.reveal}`}>{text.features}</p>
-      <p className={`${styles.invitation} ${styles.reveal}`}>{text.invitation}</p>
-      <Link href="/quote" className={`${styles.cta} ${styles.reveal}`}><TextActionLabel light>{text.cta}</TextActionLabel><ArrowUpRight size={18} aria-hidden="true" /></Link>
+      <div className={`${styles.invitation} ${styles.reveal}`}>
+        <p className={styles.invitationTitle}>{text.invitationTitle}</p>
+        <p className={styles.invitationBody}>{text.invitationBody}</p>
+      </div>
+      <Link href="/ask-ai?source=what-we-build&new=1" className={`${styles.cta} ${styles.reveal}`}><TextActionLabel light>{text.cta}</TextActionLabel><ArrowUpRight size={18} aria-hidden="true" /></Link>
     </div>
   </section>;
 }
