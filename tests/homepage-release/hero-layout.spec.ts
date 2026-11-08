@@ -20,7 +20,7 @@ for (const [width, height] of [[320, 568], [375, 812], [620, 900], [768, 1024], 
     const description = hero.getByText("Online stores, restaurant websites, portfolios, and custom sites built around your needs.", { exact: true });
     await expect(heading.locator("span")).toHaveText(["Have a website idea?", "We’ll build it."]);
     await expect(hero.getByText("BLUEMIND WEB SERVICE", { exact: true })).toHaveCount(0);
-    const actions = hero.locator('a[href="/quote"]').locator("..");
+    const actions = hero.locator('a[href="/quote"]').first().locator("..");
     const visual = hero.locator("[data-hero-visual]");
     const cue = hero.locator('a[href="#selected-work"]');
     const rects = await Promise.all([heading, description, actions, visual, cue].map(element => element.boundingBox()));
@@ -41,27 +41,12 @@ for (const [width, height] of [[320, 568], [375, 812], [620, 900], [768, 1024], 
       expect(first.y).toBe(second.y);
       expect(first.height).toBe(second.height);
     }
-    const scene = rects[3]!;
-    const website = (await visual.locator("[data-website-preview]").boundingBox())!;
-    const code = (await visual.locator("[data-code-preview]").boundingBox())!;
-    expect(website.x + website.width / 2).toBeCloseTo(width / 2, 0);
-    expect(code.x).toBeLessThan(website.x);
-    expect(code.y).toBeLessThan(website.y);
-    if (width > 620) {
-      expect(website.width).toBeGreaterThan(code.width);
-      for (const card of await visual.locator('[class*="miniCard"]').all()) {
-        const box = (await card.boundingBox())!;
-        expect(box.x + box.width / 2).toBeGreaterThan(website.x + website.width / 2);
-      }
-    }
-    for (const card of await visual.locator('[data-website-preview], [data-code-preview], [class*="miniCard"]').all()) {
-      if (!await card.isVisible()) continue;
-      const box = (await card.boundingBox())!;
-      expect(box.x).toBeGreaterThanOrEqual(scene.x);
-      expect(box.x + box.width).toBeLessThanOrEqual(scene.x + scene.width + 1);
-      expect(box.y).toBeGreaterThanOrEqual(scene.y);
-      expect(box.y + box.height).toBeLessThanOrEqual(scene.y + scene.height);
-    }
+    await expect(visual.getByRole("heading", { name: "What We Build", exact: true })).toBeVisible();
+    await expect(visual.locator("[data-build-device]")).toHaveCount(3);
+    const deviceBoxes = await visual.locator("[data-build-device]").evaluateAll(elements => elements.map(element => { const box = element.getBoundingClientRect(); return { x: box.x, right: box.right }; }));
+    expect(deviceBoxes[0].right).toBeLessThan(deviceBoxes[1].x);
+    expect(deviceBoxes[1].right).toBeLessThan(deviceBoxes[2].x);
+    await expect(visual.locator("li")).toHaveCount(15);
     await hero.screenshot({ path: info.outputPath("hero.png") });
     await page.evaluate(() => scrollTo(0, 0));
     await page.screenshot({ path: info.outputPath("viewport.png") });
@@ -112,20 +97,12 @@ test("homepage reveal follows header, headline, description, actions, visuals wi
   expect(await page.evaluate(() => document.getAnimations().some(a => a instanceof CSSAnimation && a.animationName === "bluemindIntroHome"))).toBe(false);
 });
 
-test.describe("existing visual interactions", () => {
+test.describe("device showcase touch navigation", () => {
   test.use({ hasTouch: true, reducedMotion: "reduce" });
-  test("website preview still flips with touch and keyboard", async ({ page }) => {
+  test("idea button opens the existing project request on touch devices", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await page.goto("/");
-    const card = page.locator("[data-website-preview]");
-    await card.tap();
-    await expect(card).toHaveAttribute("data-flipped", "true");
-    await card.tap();
-    await expect(card).toHaveAttribute("data-flipped", "false");
-    await card.focus();
-    await page.keyboard.press("Enter");
-    await expect(card).toHaveAttribute("data-flipped", "true");
-    await page.keyboard.press("Space");
-    await expect(card).toHaveAttribute("data-flipped", "false");
+    await page.getByRole("link", { name: "Tell us your idea", exact: true }).tap();
+    await expect(page).toHaveURL(/\/quote$/);
   });
 });
