@@ -22,5 +22,5 @@ export function useEmailSignIn() {
     } catch { if (!controller.signal.aborted) setStatus("unavailable"); }
     finally { if (!controller.signal.aborted) request.current = null; }
   }
-  return { start, status, busy: status === "loading" || status === "success" };
+  return { start, status, busy: status === "loading" || status === "success", reset: () => { if (!request.current) setStatus("idle"); } };
 }

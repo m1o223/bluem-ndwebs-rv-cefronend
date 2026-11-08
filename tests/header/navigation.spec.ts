@@ -55,10 +55,10 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await signIn.click();
     await expect(page).toHaveURL(/\/sign-in$/);
     await expect(signIn).toHaveCount(0);
-    await expect(page.getByRole("heading", { level: 1, name: "Sign in" })).toBeVisible();
-    await expect(page.locator("main input, main form")).toHaveCount(3);
+    await expect(page.getByRole("heading", { level: 1, name: "Get Started" })).toBeVisible();
+    await expect(page.locator("main input, main form")).toHaveCount(0);
     await page.reload();
-    await expect(page.getByRole("heading", { level: 1, name: "Sign in" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Get Started" })).toBeVisible();
     await expect(page.locator("header[data-scrolled]")).toHaveCSS("position", "sticky");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     expect(errors).toEqual([]);

@@ -28,5 +28,5 @@ export function useGoogleSignIn() {
       if (!controller.signal.aborted) { setError("unavailable"); setBusy(false); pending.current = null; }
     }
   }
-  return { busy, error, start };
+  return { busy, error, start, clearError: () => { if (!pending.current) setError(""); } };
 }

@@ -53,7 +53,7 @@ test("sign-in effects preserve pill dimensions and provider interaction states",
   await page.goto("/sign-in");
   const mutations: string[] = [];
   page.on("request", request => { if (request.method() !== "GET" || request.url().includes("/api/")) mutations.push(request.url()); });
-  for (const name of ["Continue with Google", "Continue with BankID"]) {
+  for (const name of ["Continue with Google"]) {
     const button = page.getByRole("button", { name, exact: true });
     await button.scrollIntoViewIfNeeded();
     const before = await button.boundingBox();
@@ -80,14 +80,16 @@ test("mobile touch, RTL and reduced motion retain usable text feedback", async (
   const page = await context.newPage();
   await page.addInitScript(() => localStorage.setItem("bluemind-language", "ar"));
   await page.goto((test.info().project.use.baseURL as string) + "/sign-in");
-  const button = page.getByRole("button", { name: /BankID/ });
+  const button = page.locator("[data-auth-card] button").last();
   await button.scrollIntoViewIfNeeded();
   const before = await button.boundingBox();
-  await button.tap();
+  await button.focus();
   await expect.poll(() => opacity(button)).toBe("1");
   expect(await button.boundingBox()).toEqual(before);
   const duration = await button.locator("[data-text-action-label]").evaluate(element => getComputedStyle(element, "::after").transitionDuration);
   expect(duration).toBe("0s");
+  await button.tap();
+  await expect(page.locator("[data-auth-card] input")).toHaveCount(3);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await context.close();
 });

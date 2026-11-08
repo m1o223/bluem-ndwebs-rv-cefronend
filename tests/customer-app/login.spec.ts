@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { closeCustomerMenu, visitCustomerPage } from "./menu-helpers";
+import { closeCustomerMenu, visitCustomerPage, openEmailLogin } from "./menu-helpers";
 
 for (const [index, width] of [390, 768, 1440].entries()) {
   test(`real email login and account redirect at ${width}px`, async ({ page }, info) => {
@@ -7,6 +7,7 @@ for (const [index, width] of [390, 768, 1440].entries()) {
     await page.goto("/login");
     await expect(page.locator("footer")).toHaveCount(0);
     await expect(page.locator("header")).not.toContainText("Menu");
+    await openEmailLogin(page);
     await page.getByLabel("Email", { exact: true }).fill(`customer-${index}@example.invalid`);
     await page.getByLabel("Password", { exact: true }).fill("Isolated-browser-test-123!");
     await page.screenshot({ path: info.outputPath(`login-${width}.png`) });
@@ -24,6 +25,7 @@ for (const [index, width] of [390, 768, 1440].entries()) {
 
 test("email failure never opens the demo dashboard; duplicate submissions are prevented", async ({ page }) => {
   await page.goto("/login");
+  await openEmailLogin(page);
   let calls = 0;
   await page.route("**/api/customer/login", async route => { calls++; await new Promise(resolve => setTimeout(resolve, 250)); await route.fulfill({ status: 401, json: { code: "credentials" } }); });
   await page.getByLabel("Email", { exact: true }).fill("customer-4@example.invalid");
@@ -37,6 +39,7 @@ test("email failure never opens the demo dashboard; duplicate submissions are pr
 
 test("password change revokes sessions and requires the new password", async ({ page, context }) => {
   await page.goto("/login");
+  await openEmailLogin(page);
   await page.getByLabel("Email", { exact: true }).fill("customer-11@example.invalid");
   await page.getByLabel("Password", { exact: true }).fill("Isolated-browser-test-123!");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
@@ -50,6 +53,7 @@ test("password change revokes sessions and requires the new password", async ({ 
   expect((await context.cookies()).some(cookie => cookie.name === "__Host-bluemind_customer")).toBe(false);
   const response = await page.request.get("/api/customer/session", { headers: { Cookie: `${old.name}=${old.value}` } });
   expect(response.status()).toBe(401);
+  await openEmailLogin(page);
   await page.getByLabel("Email", { exact: true }).fill("customer-11@example.invalid");
   await page.getByLabel("Password", { exact: true }).fill("Replacement-test-password-456!");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
@@ -63,6 +67,7 @@ test("customer API rejects cross-origin mutations even from another production a
 
 test("session guard waits, retains cookies on temporary errors and retries without logging out", async ({ page, context }) => {
   await page.goto("/login");
+  await openEmailLogin(page);
   await page.getByLabel("Email", { exact: true }).fill("customer-9@example.invalid");
   await page.getByLabel("Password", { exact: true }).fill("Isolated-browser-test-123!");
   let fail = true;

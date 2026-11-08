@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Sign in | BlueMind Web Service",
+  title: "Get Started | BlueMind Web Service",
 };
 
 export default async function SignInPage() {

@@ -1,5 +1,10 @@
 import { expect, type Page } from "@playwright/test";
 
+export async function openEmailLogin(page: Page) {
+  await page.getByRole("button", { name: "Continue with Email & Password", exact: true }).click();
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+}
+
 export async function closeCustomerMenu(page: Page) {
   const menu = page.locator("#customer-menu");
   await expect(menu).toBeVisible();

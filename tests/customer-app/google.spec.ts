@@ -25,8 +25,7 @@ for (const width of [390, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await page.route("https://accounts.google.com/**", route => route.fulfill({ body: "Isolated provider test", contentType: "text/plain" }));
     await page.goto("/sign-in");
-    await page.getByLabel("Email", { exact: true }).fill("must-not-send@example.invalid");
-    await page.getByLabel("Password", { exact: true }).fill("must-not-send-password");
+    await expect(page.locator("input")).toHaveCount(0);
     const requests: string[] = [];
     page.on("request", request => { if (request.method() === "POST") requests.push(request.url() + (request.postData() || "")); });
     await page.getByRole("button", { name: "Continue with Google", exact: true }).click();
@@ -84,7 +83,7 @@ test("Google not configured shows a truthful message and prevents duplicate star
   const button = page.getByRole("button", { name: "Continue with Google", exact: true });
   await button.evaluate(element => { (element as HTMLButtonElement).click(); (element as HTMLButtonElement).click(); });
   await expect(button).toBeDisabled();
-  await expect(page.getByRole("status")).toContainText("not configured yet");
+  await expect(page.getByRole("status")).toContainText("could not be started");
   await expect(button).toBeEnabled();
   expect(calls).toBe(1);
   await expect(page).toHaveURL(/\/sign-in$/);

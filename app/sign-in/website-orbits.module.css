@@ -1,0 +1,68 @@
+.orbits { position: absolute; inset: 0; pointer-events: none; overflow: hidden; --outer-x: min(52vw, 1050px); --outer-y: 365px; --inner-x: min(36vw, 730px); --inner-y: 280px; mask-image: linear-gradient(90deg, #000 calc(50% - 290px), transparent calc(50% - 248px), transparent calc(50% + 248px), #000 calc(50% + 290px)), linear-gradient(0deg, #000 calc(50% - 475px), transparent calc(50% - 430px), transparent calc(50% + 430px), #000 calc(50% + 475px)); mask-composite: add; }
+.device { position: absolute; left: 0; top: 0; width: 160px; offset-path: ellipse(var(--outer-x) var(--outer-y) at 50% 50%); offset-rotate: 0deg; offset-anchor: center; transform: rotate(var(--tilt)); animation: orbit-clockwise 56s linear infinite; will-change: offset-distance; color: var(--ink); }
+.device[data-ring="inner"] { offset-path: ellipse(var(--inner-x) var(--inner-y) at 50% 50%); animation-name: orbit-counterclockwise; animation-duration: 72s; }
+.device[data-device="phone"] { width: 100px; }
+.device[data-device="desktop"] { width: 220px; }
+.frame { padding: 5px; border-radius: 12px; background: #24303c; box-shadow: 0 10px 24px #142d4e14, 0 2px 5px #142d4e12; border: 1px solid #77818c; }
+.device[data-device="phone"] .frame { padding: 4px; border-radius: 15px; }
+.device[data-device="desktop"] .frame { padding: 4px; border-radius: 7px 7px 3px 3px; }
+.chrome { height: 11px; padding: 0 5px; display: flex; align-items: center; gap: 2px; background: #fff; border-radius: 7px 7px 0 0; color: #9ba3ae; }
+.chrome i { width: 2px; height: 2px; border-radius: 50%; background: #d2d8df; }
+.chrome > span { flex: 1; text-align: center; font-size: 3px; }
+.device[data-device="phone"] .chrome { height: 8px; }
+.device[data-device="phone"] .chrome i, .device[data-device="phone"] .chrome span { display: none; }
+.device[data-device="phone"] .chrome::after { content: ""; width: 24px; height: 3px; margin: auto; border-radius: 4px; background: #26323e; }
+.website { background: var(--surface); aspect-ratio: .77; overflow: hidden; border-radius: 0 0 7px 7px; }
+.device[data-device="phone"] .website { aspect-ratio: .52; border-radius: 0 0 10px 10px; }
+.device[data-device="desktop"] .website { aspect-ratio: 1.62; border-radius: 0; }
+.nav { height: 21px; display: flex; align-items: center; justify-content: space-between; padding-inline: 8px; border-bottom: 1px solid #142d4e0d; }
+.nav b { font-size: 6px; font-weight: 700; }
+.nav > span { font-size: 4px; }
+.content { padding: 11px 9px 7px; }
+.content small { display: block; font-size: 4px; line-height: 1.5; }
+.content h2 { margin: 5px 0 9px; font-size: 16px; font-weight: 600; line-height: 1.08; letter-spacing: 0; }
+.photo { display: block; width: 100%; height: 80px; object-fit: cover; border-radius: 2px; }
+.cta { display: inline-block; margin-top: 9px; padding: 5px 7px; background: var(--ink); color: #fff; border-radius: 2px; font-size: 5px; }
+.details { display: flex; justify-content: space-between; gap: 5px; padding: 7px 8px; font-size: 4px; border-top: 1px solid #142d4e12; }
+.device[data-device="desktop"] .content { display: grid; grid-template-columns: 1fr 1fr; column-gap: 10px; padding: 11px; }
+.device[data-device="desktop"] .content small { grid-column: 1; }
+.device[data-device="desktop"] .content h2 { grid-column: 1; font-size: 17px; margin-block: 6px; }
+.device[data-device="desktop"] .photo { grid-column: 2; grid-row: 1 / 5; height: 75px; }
+.device[data-device="desktop"] .cta { justify-self: start; margin-top: 4px; }
+.device[data-device="phone"] .nav { padding-inline: 6px; height: 19px; }
+.device[data-device="phone"] .nav b { font-size: 5px; }
+.device[data-device="phone"] .nav > span { font-size: 3px; }
+.device[data-device="phone"] .content { padding: 10px 6px 7px; }
+.device[data-device="phone"] .content h2 { font-size: 13px; }
+.device[data-device="phone"] .photo { height: 65px; }
+.device[data-device="phone"] .details { font-size: 3px; }
+.base { height: 5px; background: #d6dce3; border: 1px solid #b3bec9; border-radius: 0 0 50% 50%; margin-inline: -7px; }
+.collection { display: flex; gap: 4px; align-items: flex-end; height: 77px; padding: 10px 5px; background: #e5e6df; }
+.collection span { display: block; width: 33%; height: 52px; background: #9aa18d; clip-path: polygon(27% 0, 40% 8%, 60% 8%, 73% 0, 100% 21%, 85% 42%, 75% 34%, 75% 100%, 25% 100%, 25% 34%, 15% 42%, 0 21%); }
+.collection span:nth-child(2) { background: #d4c4af; height: 60px; }
+.collection span:nth-child(3) { background: #717a7b; }
+.appointment { padding: 9px 6px; background: #fff; border: 1px solid #cee4e8; border-radius: 4px; }
+.appointment strong { display: block; font-size: 7px; line-height: 1.4; }
+.appointment div { padding-top: 10px; font-size: 6px; }
+.appointment p { margin-bottom: 0; font-size: 5px; color: #3e7c88; }
+.orbits[data-paused="true"] .device { animation-play-state: paused; }
+@keyframes orbit-clockwise { from { offset-distance: calc(var(--phase) * 1%); } to { offset-distance: calc(var(--phase) * 1% + 100%); } }
+@keyframes orbit-counterclockwise { from { offset-distance: calc(var(--phase) * 1%); } to { offset-distance: calc(var(--phase) * 1% - 100%); } }
+@media (min-width: 1600px) { .orbits { --outer-y: 390px; --inner-y: 300px; } .device[data-device="desktop"] { width: 240px; } .device[data-device="tablet"] { width: 176px; } .device[data-device="phone"] { width: 108px; } }
+@media (max-width: 1100px) and (orientation: landscape), (hover: none) and (pointer: coarse) and (orientation: landscape) {
+  .orbits { --outer-x: 49vw; --outer-y: 315px; }
+  .device { display: none; }
+  .device[data-preview="fashion"], .device[data-preview="restaurant"], .device[data-preview="hotel"], .device[data-preview="fitness"] { display: block; }
+  .device[data-preview="fashion"] { --phase: 62.5 !important; }
+  .device[data-preview="restaurant"] { --phase: 87.5 !important; }
+  .device[data-preview="hotel"] { --phase: 12.5 !important; }
+  .device[data-preview="fitness"] { --phase: 37.5 !important; }
+}
+@media (max-width: 767px), (max-width: 1100px) and (orientation: portrait), (hover: none) and (pointer: coarse) and (orientation: portrait) {
+  .orbits { position: relative; inset: auto; display: flex; align-items: center; justify-content: center; gap: 26px; padding: 36px 12px 28px; margin: 0 auto; width: min(100%, 430px); overflow: visible; mask-image: none; }
+  .device { display: none !important; offset-path: none; animation: none; will-change: auto; }
+  .device[data-mobile="true"] { display: block !important; position: relative; inset: auto; flex-shrink: 0; }
+  .device[data-device="tablet"] { width: min(40vw, 160px); }
+  .device[data-device="phone"] { width: min(26vw, 100px); }
+}
+@media (prefers-reduced-motion: reduce) { .device { animation: none; offset-distance: calc(var(--phase) * 1%); will-change: auto; } }
