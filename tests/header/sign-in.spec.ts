@@ -18,6 +18,8 @@ for (const width of [320, 390, 768, 1440]) {
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
       const emailOption=page.locator("[data-auth-card] button").last();
       await emailOption.click();
+      await expect(page.locator("[data-auth-card] input")).toHaveCount(2);
+      await page.locator('[data-auth-card] [class*="existing"] button').click();
       await expect(page.locator("[data-auth-card] input")).toHaveCount(3);
       await expect(page.locator("#sign-in-customer-type")).toHaveValue("");
       await expect(page.locator("#sign-in-customer-type")).not.toHaveAttribute("required", "");
@@ -41,7 +43,6 @@ test("email login keeps real error handling and keyboard access", async ({ page,
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/sign-in");
   await page.getByRole("button", { name: "Continue with Email & Password", exact: true }).click();
-  await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await page.getByLabel("Email", { exact: true }).fill("ui-test@example.invalid");
   await page.keyboard.press("Tab");
   await expect(page.getByLabel("Password", { exact: true })).toBeFocused();
