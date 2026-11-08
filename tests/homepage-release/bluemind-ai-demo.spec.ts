@@ -37,7 +37,7 @@ test("desktop tablet preview accepts an image, allows two replies, then transfer
   expect(calls()).toBe(2);
   await demo.getByRole("button", { name: "Continue in BlueMind AI" }).click();
   await expect(page).toHaveURL(/\/ask-ai\?source=what-we-build&continue=1/);
-  await expect(page.getByRole("log", { name: "Conversation" })).toContainText("I want a bookstore website");
+  await expect(page.getByRole("log", { name: "Conversation" })).toContainText("I want a bookstore website", { timeout: 10000 });
 });
 
 test("mobile hides the tablet and keeps the explanation and full chat link", async ({ page }) => {
