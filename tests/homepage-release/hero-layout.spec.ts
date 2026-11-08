@@ -17,8 +17,8 @@ for (const [width, height] of [[320, 568], [375, 812], [620, 900], [768, 1024], 
     await page.evaluate(() => document.fonts.ready);
     const hero = page.locator("[data-hero]");
     const heading = hero.locator("h1");
-    const description = hero.getByText("Websites built around your ideas, designed to move your business forward.", { exact: true });
-    await expect(heading.locator("span")).toHaveText(["We design & develop", "You move forward"]);
+    const description = hero.getByText("Online stores, restaurant websites, portfolios, and custom sites built around your needs.", { exact: true });
+    await expect(heading.locator("span")).toHaveText(["Have a website idea?", "We’ll build it."]);
     await expect(hero.getByText("BLUEMIND WEB SERVICE", { exact: true })).toHaveCount(0);
     const actions = hero.locator('a[href="/quote"]').locator("..");
     const visual = hero.locator("[data-hero-visual]");
