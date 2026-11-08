@@ -15,6 +15,13 @@ for (const [width, height] of [[390, 844], [768, 1024], [1440, 900]]) {
     await expect(visual).toBeVisible();
     await expect(payments).toBeVisible();
     await expect(whatWeDo).toBeVisible();
+    const folioDevices = whatWeDo.locator("[data-folio-device]");
+    expect(await folioDevices.evaluateAll(elements => elements.map(element => element.getAttribute("data-folio-device")))).toEqual(["desktop", "tablet", "phone"]);
+    await expect(folioDevices).toHaveCount(3);
+    for (const device of ["desktop", "tablet", "phone"]) await expect(whatWeDo.locator(`[data-folio-device="${device}"] img`)).toBeVisible();
+    const folioBoxes = await folioDevices.evaluateAll(elements => elements.map(element => { const box = element.getBoundingClientRect(); return { x: box.x, right: box.right }; }));
+    expect(folioBoxes[1].x).toBeLessThan(folioBoxes[0].right);
+    expect(folioBoxes[2].x).toBeLessThan(folioBoxes[1].right);
     await expect(page.locator(".scrollCue")).toHaveCount(0);
 
     const visualBox = (await visual.boundingBox())!;
