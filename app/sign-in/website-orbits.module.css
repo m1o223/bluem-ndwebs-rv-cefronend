@@ -1,4 +1,4 @@
-.orbits { position: absolute; inset: 0; pointer-events: none; overflow: hidden; --outer-x: min(60vw, 1200px); --outer-y: 440px; --inner-x: min(43vw, 850px); --inner-y: 350px; }
+.orbits { position: absolute; inset: 0; pointer-events: none; overflow: hidden; --outer-x: min(48vw, 900px); --outer-y: min(32dvh, 340px); --inner-x: min(36vw, 680px); --inner-y: min(25dvh, 260px); }
 .device { opacity: 1; }
 .device { position: absolute; left: 0; top: 0; width: 160px; offset-path: ellipse(var(--outer-x) var(--outer-y) at 50% 50%); offset-rotate: 0deg; offset-anchor: center; transform: rotate(var(--tilt)); animation: orbit-clockwise 67.2s linear infinite; will-change: offset-distance; color: var(--ink); }
 .device[data-ring="inner"] { offset-path: ellipse(var(--inner-x) var(--inner-y) at 50% 50%); animation-name: orbit-clockwise; animation-duration: 86.4s; }
@@ -48,9 +48,9 @@
 .appointment p { margin-bottom: 0; font-size: 5px; color: #3e7c88; }
 .orbits[data-paused="true"] .device { animation-play-state: paused; }
 @keyframes orbit-clockwise { from { offset-distance: calc(var(--phase) * 1%); } to { offset-distance: calc(var(--phase) * 1% + 100%); } }
-@media (min-width: 1600px) { .orbits { --outer-y: 460px; --inner-y: 380px; } .device[data-device="desktop"] { width: 240px; } .device[data-device="tablet"] { width: 176px; } .device[data-device="phone"] { width: 108px; } }
+@media (min-width: 1600px) { .orbits { --outer-y: min(34dvh, 390px); --inner-y: min(27dvh, 300px); } .device[data-device="desktop"] { width: 240px; } .device[data-device="tablet"] { width: 176px; } .device[data-device="phone"] { width: 108px; } }
 @media (max-width: 1100px) and (orientation: landscape), (hover: none) and (pointer: coarse) and (orientation: landscape) {
-  .orbits { --outer-x: 57vw; --outer-y: 410px; }
+  .orbits { --outer-x: 52vw; --outer-y: min(32dvh, 250px); --inner-x: 39vw; --inner-y: min(25dvh, 190px); }
   .device { display: none; }
   .device[data-preview="fashion"], .device[data-preview="restaurant"], .device[data-preview="hotel"], .device[data-preview="fitness"] { display: block; }
   .device[data-preview="fashion"] { --phase: 62.5 !important; }
@@ -59,7 +59,7 @@
   .device[data-preview="fitness"] { --phase: 37.5 !important; }
 }
 @media (max-width: 767px), (max-width: 1100px) and (orientation: portrait), (hover: none) and (pointer: coarse) and (orientation: portrait) {
-  .orbits { --outer-x: 58vw; --outer-y: 405px; --inner-x: 45vw; --inner-y: 350px; }
+  .orbits { --outer-x: 58vw; --outer-y: min(30dvh, 220px); --inner-x: 45vw; --inner-y: min(24dvh, 170px); }
   .device { display: none !important; }
   .device[data-mobile="true"], .device[data-preview="company"], .device[data-preview="cafe"] { display: block !important; }
   .device[data-device="tablet"] { width: min(28vw, 140px); }
