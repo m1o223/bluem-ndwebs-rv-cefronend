@@ -1,11 +1,11 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Home, Folder, Sparkles, MessageCircle, Settings, LogOut, Menu, X, UserRound, Bell } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Home, Sparkles, MessageCircle, Settings } from "lucide-react";
 import Image from "next/image";
 import { BrandLockup } from "../brand-lockup";
 import { useLocalization } from "../localization-provider";
-import { customerRoutes, type Customer, type CustomerPage } from "../../app/lib/customer/routes";
+import { type Customer, type CustomerPage } from "../../app/lib/customer/routes";
 import { customerCopy } from "./copy";
 import styles from "./customer.module.css";
 import WorkspaceContent from "./workspace-content";
@@ -13,9 +13,6 @@ import { workspaceCopy } from "./workspace-copy";
 import type { Overview } from "./workspace-types";
 import TextActionLabel from "../text-action-label";
 import SessionRecovery from "./session-recovery";
-import { useCustomerMenu } from "./menu-state";
-
-const icons = [Home, Folder, Sparkles, MessageCircle, Settings];
 const demoOverview: Overview = {
   profile: { fullName: "", customerType: null, companyName: "", companyNumber: "", preferences: { project: false, team: false, billing: false, email: false }, loginMethods: [] },
   project: null,
@@ -24,10 +21,7 @@ const demoOverview: Overview = {
 export default function CustomerShell({ user, page }: { user: Customer; page: CustomerPage }) {
   const { locale } = useLocalization();
   const text = customerCopy[locale];
-  const dialog = useRef<HTMLDialogElement>(null);
-  const toggle = useRef<HTMLButtonElement>(null);
   const pending = useRef(false);
-  const { open, setOpen } = useCustomerMenu();
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState(false);
   const [verified, setVerified] = useState(false);
@@ -91,23 +85,6 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
     };
   }, [page, user.id, sessionRetry]);
 
-  useLayoutEffect(() => {
-    const element = dialog.current;
-    if (!verified || sessionError || !element) return;
-    if (open) {
-      if (!element.open) element.showModal();
-      return;
-    }
-    if (!element.open) return;
-    const timer = setTimeout(() => {
-      element.close();
-      toggle.current?.focus();
-    }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 220);
-    return () => clearTimeout(timer);
-  }, [open, verified, sessionError]);
-
-  function closeMenu() { setOpen(false); }
-  function openMenu() { setOpen(true); }
   async function signOut() {
     if (pending.current) return;
     pending.current = true; setBusy(true); setNotice(false);
@@ -123,14 +100,17 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
   if (sessionError) return <SessionRecovery retry={() => setSessionRetry(value => value + 1)} />;
   if (!verified) return <div className={styles.checking} role="status" aria-label={text.session} />;
   const pageTitle = page === "notifications" ? workspaceText.notifications : text[page];
+  const accountLabel = text.account.split(" /")[0];
+  const messagesLabel = locale === "sv" ? "Meddelanden" : locale === "ar" ? "\u0627\u0644\u0631\u0633\u0627\u0626\u0644" : "Messages";
   return <div ref={shell} className={styles.app} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate>
     <header className={styles.header}>
       <Link href="/dashboard" aria-label="BlueMind"><BrandLockup solidLogo className={styles.brand} logoClassName={styles.logo} /></Link>
-      <div className={styles.controls}>
-        <Link href="/notifications" className={styles.iconButton} aria-label={workspaceText.notifications} title={workspaceText.notifications}><Bell size={21} aria-hidden="true" />{overview?.notifications.some(item => !item.read) && <span className={styles.unread} />}</Link>
-        <Link href="/account" className={styles.avatar} aria-label={text.account} title={user.displayName}><UserRound size={21} aria-hidden="true" /></Link>
-        <button ref={toggle} type="button" className={styles.iconButton} aria-label={text.menu} aria-expanded={open} aria-controls="customer-menu" onClick={openMenu}><Menu size={23} aria-hidden="true" /></button>
-      </div>
+      <nav className={styles.desktopNav} aria-label="Account navigation">
+        <Link href="/dashboard" aria-current={page === "home" ? "page" : undefined}><Home size={18} aria-hidden="true" /><TextActionLabel>{text.home}</TextActionLabel></Link>
+        <Link href="/blue-mind-ai" aria-current={page === "ai" ? "page" : undefined}><Sparkles size={18} aria-hidden="true" /><TextActionLabel>{text.ai}</TextActionLabel></Link>
+        <Link href="/notifications" aria-current={page === "notifications" ? "page" : undefined}><MessageCircle size={18} aria-hidden="true" /><TextActionLabel>{messagesLabel}</TextActionLabel></Link>
+        <Link href="/account" aria-current={page === "account" ? "page" : undefined}><Settings size={18} aria-hidden="true" /><TextActionLabel>{accountLabel}</TextActionLabel></Link>
+      </nav>
     </header>
     <main className={styles.main}>
       <Image className={styles.watermark} src="/images/brand/bluemind-original-logo-transparent.png" width={1065} height={1212} alt="" aria-hidden="true" />
@@ -138,21 +118,5 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
       {page !== "notifications" && loadError ? <div role="alert"><p>{workspaceText.loadError}</p><button className={styles.secondary} onClick={() => setReload(value => value + 1)}><TextActionLabel>{workspaceText.retry}</TextActionLabel></button></div> : page !== "notifications" && !overview ? <p role="status">{workspaceText.loading}</p> : <WorkspaceContent key={page} page={page} overview={overview || demoOverview} user={user} locale={locale} signOut={() => void signOut()} signingOut={busy} />}
       {notice && <p className={styles.error} role="alert">{text.error}</p>}
     </main>
-    <dialog ref={dialog} id="customer-menu" className={styles.drawer} data-open={open} aria-label={text.menu} onCancel={event => { event.preventDefault(); closeMenu(); }} onClick={event => {
-      if (event.target === event.currentTarget) {
-        const rect = event.currentTarget.getBoundingClientRect();
-        if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) closeMenu();
-      }
-    }}>
-      <div className={styles.drawerHeader}><span>BlueMind</span><button className={styles.iconButton} type="button" aria-label={text.close} onClick={closeMenu}><X size={22} aria-hidden="true" /></button></div>
-      <nav aria-label={text.menu}>
-        {customerRoutes.map((route, index) => {
-          const Icon = icons[index];
-          return <Link href={route.href} key={route.href} prefetch={false} aria-current={page === route.key ? "page" : undefined}><Icon size={19} aria-hidden="true" /><TextActionLabel>{text[route.key]}</TextActionLabel></Link>;
-        })}
-      </nav>
-      <button type="button" className={styles.signOut} disabled={busy} onClick={signOut}><LogOut size={19} aria-hidden="true" /><TextActionLabel>{busy ? text.signingOut : text.signout}</TextActionLabel></button>
-      {notice && <p className={styles.error} role="alert">{text.error}</p>}
-    </dialog>
   </div>;
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, FolderKanban, Home, LogIn, Menu, Settings, Sparkles } from "lucide-react";
+import { Bell, Home, LogIn, Settings, Sparkles } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import styles from "./bottom-navigation.module.css";
@@ -65,17 +65,15 @@ export default function BottomNavigation() {
     if (authenticated) {
       return [
         { href: "/dashboard", label: t.home, icon: Home, active: pathname === "/dashboard" },
-        { href: "/my-project", label: t.project, icon: FolderKanban, active: pathname === "/my-project" },
         { href: "/blue-mind-ai", label: t.ai, icon: Sparkles, active: pathname === "/blue-mind-ai" },
         { href: "/notifications", label: t.messages, icon: Bell, active: pathname === "/notifications" },
-        { href: "/account", label: t.account, icon: Settings, active: pathname === "/account" },
+        { href: "/account", label: t.account.split(" /")[0], icon: Settings, active: pathname === "/account" },
       ];
     }
     return [
       { href: "/", label: t.home, icon: Home, active: pathname === "/" },
       { href: "/ask-ai", label: t.ai, icon: Sparkles, active: pathname === "/ask-ai" },
       { href: "/sign-in", label: t.signIn, icon: LogIn, active: pathname === "/sign-in" || pathname === "/login" },
-      { href: "/menu", label: t.menu, icon: Menu, active: pathname === "/menu" },
     ];
   }, [authenticated, locale, pathname]);
 
