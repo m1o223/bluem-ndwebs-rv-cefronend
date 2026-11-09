@@ -134,8 +134,7 @@
 .sectionHeading { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 31px; gap: 30px; }
 .sectionHeading .eyebrow { margin-bottom: 12px; }
 .sectionHeading h1,
-.sectionHeading h2,
-.about h2 { font-size: 38px; font-weight: 500; letter-spacing: -1.7px; line-height: 1.14; margin: 0; }
+.sectionHeading h2 { font-size: 38px; font-weight: 500; letter-spacing: -1.7px; line-height: 1.14; margin: 0; }
 .bluePeriod { color: #2d66e6; }
 .sectionHeading > p { color: var(--bluemind-text); font-size: 12px; line-height: 1.8; margin: 0 0 4px; }
 .projectCard { display: block; padding: 0; width: 100%; overflow: hidden; border: 1px solid #dce0e7; border-radius: 9px; background: #fff; text-align: left; cursor: pointer; box-shadow: 0 7px 24px #19243b07; transition: transform .3s, box-shadow .3s; }
@@ -166,13 +165,6 @@
 .projectCaption p { color: #7f8792; font-size: 10px; margin: 0; }
 .projectCaption p > span { padding: 0 8px; }
 .previewHint { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 10px; color: #8a929d; }
-.about { display: grid; grid-template-columns: 1fr 1.12fr; padding-block: 85px; gap: 80px; }
-.about .eyebrow { margin-bottom: 17px; }
-.about h2 { font-size: 35px; }
-.aboutCopy { font-size: 15px; line-height: 1.85; color: #717986; margin: -5px 0 29px; max-width: 440px; }
-.strengths { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; border-top: 1px solid #e7eaf0; padding-top: 21px; }
-.strengths span { font-size: 9px; color: #a0a8b3; }
-.strengths h3 { font-size: 11px; font-weight: 500; line-height: 1.6; margin: 9px 0 0; }
 .cta { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #e9ecf1; padding-block: 60px; gap: 40px; }
 .cta .eyebrow { margin-bottom: 16px; }
 .cta h2 { margin: 0; font-size: 47px; line-height: 1.08; letter-spacing: -2px; font-weight: 500; }
@@ -210,11 +202,6 @@
   .container { width: calc(100% - 56px); }
   .actions { gap: 18px; }
   .primaryButton { padding: 14px 17px; gap: 24px; }
-  .about { gap: 40px; padding-block: 65px; }
-  .about h2 { font-size: 30px; }
-  .aboutCopy { font-size: 13px; }
-  .strengths { gap: 10px; }
-  .strengths h3 { font-size: 10px; }
   .cta h2 { font-size: 40px; }
   .cta .actions { gap: 20px; }
 }
@@ -253,10 +240,6 @@
   .projectCaption h3 { font-size: 12px; }
   .projectCaption p { font-size: 9px; }
   .previewHint { font-size: 9px; line-height: 1.5; }
-  .about { grid-template-columns: 1fr; gap: 26px; padding-block: 48px; }
-  .aboutCopy { font-size: 14px; margin: 0 0 25px; }
-  .strengths { gap: 12px; }
-  .strengths h3 { font-size: 10px; }
   .cta { align-items: flex-start; flex-direction: column; gap: 28px; padding-block: 41px; }
   .cta h2 { font-size: 42px; }
   .footer { flex-wrap: wrap; gap: 15px 25px; padding-block: 24px; font-size: 8px; }
