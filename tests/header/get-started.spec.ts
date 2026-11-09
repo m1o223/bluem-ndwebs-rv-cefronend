@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-for (const [width, height, previewCount] of [[320, 700, 4], [390, 844, 4], [768, 1024, 4], [1024, 768, 4], [1440, 900, 10], [1920, 1080, 10]]) {
+for (const [width, height, previewCount] of [[320, 700, 10], [390, 844, 10], [768, 1024, 10], [1024, 768, 10], [1440, 900, 10], [1920, 1080, 10]]) {
   test(`Get Started steps and responsive previews at ${width}x${height}`, async ({ page }, info) => {
     await page.setViewportSize({ width, height });
     const errors: string[] = []; page.on("pageerror", error => errors.push(error.message));
