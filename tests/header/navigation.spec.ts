@@ -11,6 +11,7 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     const language = header.getByRole("button", { name: "Selected language: English" });
     const menu = header.locator('button[aria-controls="home-navigation"]');
     const signIn = header.getByRole("link", { name: "Sign in", exact: true });
+    const compactNavigation = width < 1024;
     await expect(signIn).toBeVisible();
     const expectPlainSignIn = async () => {
       await expect(signIn).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
@@ -24,10 +25,22 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await expectPlainSignIn();
     await page.mouse.move(0, 0);
     await expect(language).toBeVisible();
-    await expect(menu).toBeVisible();
+    if (compactNavigation) {
+      await expect(menu).toBeHidden();
+      const bottom = page.getByRole("navigation", { name: "Primary navigation", exact: true });
+      await expect(bottom).toBeVisible();
+      await expect(bottom.getByRole("link")).toHaveCount(4);
+      await expect(bottom.getByRole("link", { name: "Menu", exact: true })).toBeVisible();
+      expect(await page.evaluate(() => getComputedStyle(document.body).paddingBottom)).not.toBe("0px");
+    } else {
+      await expect(menu).toBeVisible();
+    }
     await page.waitForTimeout(800);
     await page.screenshot({ path: testInfo.outputPath("homepage-header.png") });
-    const boxes = await Promise.all([header.getByRole("link", { name: "BlueMind Web Service home" }), signIn, language, menu].map(element => element.boundingBox()));
+    const headerControls = compactNavigation
+      ? [header.getByRole("link", { name: "BlueMind Web Service home" }), signIn, language]
+      : [header.getByRole("link", { name: "BlueMind Web Service home" }), signIn, language, menu];
+    const boxes = await Promise.all(headerControls.map(element => element.boundingBox()));
     for (let i = 0; i < boxes.length; i++) {
       const box = boxes[i]!;
       expect(box.x).toBeGreaterThanOrEqual(0);
@@ -42,11 +55,13 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     await page.keyboard.press("Escape");
     await expect(language).toBeFocused();
     await expect(language).toHaveAttribute("aria-expanded", "false");
-    await menu.click();
-    const navigation = header.getByRole("navigation");
-    await expect(navigation).toBeVisible();
-    await expect(navigation.locator("a")).toHaveCount(8);
-    await page.keyboard.press("Escape");
+    if (!compactNavigation) {
+      await menu.click();
+      const navigation = header.getByRole("navigation");
+      await expect(navigation).toBeVisible();
+      await expect(navigation.locator("a")).toHaveCount(8);
+      await page.keyboard.press("Escape");
+    }
     await page.evaluate(() => scrollTo(0, 500));
     await expect(header).toHaveAttribute("data-scrolled", "true");
     await expect.poll(async () => (await header.boundingBox())!.y).toBe(0);
@@ -82,9 +97,14 @@ test("languages, keyboard selection and mutually exclusive menus", async ({ page
   await expect(language).toHaveAttribute("aria-label", "Selected language: العربية");
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await header.locator('button[aria-controls="home-navigation"]').click();
-  await language.click();
-  await expect(header.locator('button[aria-controls="home-navigation"]')).toHaveAttribute("aria-expanded", "false");
+  const headerMenu = header.locator('button[aria-controls="home-navigation"]');
+  if (await headerMenu.isVisible()) {
+    await headerMenu.click();
+    await language.click();
+    await expect(headerMenu).toHaveAttribute("aria-expanded", "false");
+  } else {
+    await expect(headerMenu).toBeHidden();
+  }
   await page.locator("main").click({ position: { x: 10, y: 300 } });
   await expect(language).toHaveAttribute("aria-expanded", "false");
   await language.click();

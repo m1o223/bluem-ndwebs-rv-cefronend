@@ -1,4 +1,5 @@
 .navigation {
+  display: none;
   position: fixed;
   z-index: 80;
   right: 0;
@@ -55,7 +56,15 @@
 .label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 
 :global(body[data-bottom-navigation="true"]) {
-  padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  padding-bottom: 0;
+}
+
+@media (max-width: 1023px), (hover: none) and (pointer: coarse) {
+  .navigation { display: block; }
+
+  :global(body[data-bottom-navigation="true"]) {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  }
 }
 
 @media (max-width: 700px) {
