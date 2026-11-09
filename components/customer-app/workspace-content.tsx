@@ -10,6 +10,7 @@ import TextActionLabel from "../text-action-label";
 import SecuritySettings from "./security-settings";
 import ProfilePhoto from "./profile-photo";
 import { authCopy } from "../../app/sign-in/auth-copy";
+import NotificationsMessages from "./notifications-messages";
 
 type Locale = keyof typeof workspaceCopy;
 function Field({ label, children }: { label: string; children: ReactNode }) { return <label className={styles.field}><span>{label}</span>{children}</label>; }
@@ -123,6 +124,7 @@ function Contact({ overview, user, locale }: { overview: Overview; user: Custome
 }
 export default function WorkspaceContent({ page, overview, user, locale, signOut, signingOut }: { page: CustomerPage; overview: Overview; user: Customer; locale: Locale; signOut: () => void; signingOut: boolean }) {
   const t = workspaceCopy[locale];
+  if (page === "notifications") return <NotificationsMessages locale={locale} />;
   if (page === "home") return <><p className={styles.welcome}>{t.welcome}{overview.profile.fullName ? `, ${overview.profile.fullName}` : ""}</p><ProjectContent overview={overview} locale={locale} home /></>;
   if (page === "project") return <ProjectContent overview={overview} locale={locale} home={false} />;
   if (page === "contact") return <Contact overview={overview} user={user} locale={locale} />;

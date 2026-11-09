@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { memo, useEffect, useRef, useState, type CSSProperties } from "react";
+import { memo, useEffect, useState, type CSSProperties } from "react";
 import styles from "./website-orbits.module.css";
 
 const previews = [
@@ -18,45 +18,13 @@ const previews = [
 ] as const;
 
 function WebsiteOrbits() {
-  const root = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState(false);
   useEffect(() => {
     const update = () => setPaused(document.hidden);
     update(); document.addEventListener("visibilitychange", update);
     return () => document.removeEventListener("visibilitychange", update);
   }, []);
-  useEffect(() => {
-    const layer = root.current;
-    const stage = layer?.parentElement;
-    const area = stage?.querySelector<HTMLElement>("[data-auth-card]");
-    if (!layer || !stage || !area) return;
-    const devices = [...layer.querySelectorAll<HTMLElement>("[data-preview]")];
-    let guard: IntersectionObserver | undefined;
-    const protectForm = () => {
-      guard?.disconnect();
-      const bounds = stage.getBoundingClientRect();
-      const form = area.getBoundingClientRect();
-      const gap = bounds.width < 768 ? 28 : 40;
-      const top = Math.max(0, form.top - bounds.top - gap);
-      const right = Math.max(0, bounds.right - form.right - gap);
-      const bottom = Math.max(0, bounds.bottom - form.bottom - gap);
-      const left = Math.max(0, form.left - bounds.left - gap);
-      // Fade entire previews before they reach the form, rather than blurring or masking its surroundings.
-      guard = new IntersectionObserver(entries => entries.forEach(entry => {
-        (entry.target as HTMLElement).dataset.obscured = String(entry.isIntersecting);
-      }), { root: stage, rootMargin: `${-top}px ${-right}px ${-bottom}px ${-left}px`, threshold: 0 });
-      devices.forEach(device => {
-        const box = device.getBoundingClientRect();
-        device.dataset.obscured = String(box.right >= form.left - gap && box.left <= form.right + gap && box.bottom >= form.top - gap && box.top <= form.bottom + gap);
-        guard!.observe(device);
-      });
-      layer.dataset.ready = "true";
-    };
-    const observer = new ResizeObserver(protectForm);
-    observer.observe(area); observer.observe(stage); protectForm();
-    return () => { observer.disconnect(); guard?.disconnect(); };
-  }, []);
-  return <div ref={root} className={styles.orbits} data-auth-orbits data-paused={paused} aria-hidden="true" dir="ltr">
+  return <div className={styles.orbits} data-auth-orbits data-paused={paused} aria-hidden="true" dir="ltr">
     {previews.map(item => <div key={item.id} className={styles.device} data-preview={item.id} data-ring={item.ring} data-device={item.device} data-mobile={"mobile" in item && item.mobile} style={{ "--phase": item.phase, "--tilt": `${item.tilt}deg`, "--ink": item.color, "--surface": item.surface } as CSSProperties}>
       <div className={styles.frame}>
         <div className={styles.chrome}><i /><i /><i /><span>{item.brand.toLowerCase().replaceAll(" ", "")}.studio</span></div>

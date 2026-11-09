@@ -16,6 +16,11 @@ import SessionRecovery from "./session-recovery";
 import { useCustomerMenu } from "./menu-state";
 
 const icons = [Home, Folder, Sparkles, MessageCircle, Settings];
+const demoOverview: Overview = {
+  profile: { fullName: "", customerType: null, companyName: "", companyNumber: "", preferences: { project: false, team: false, billing: false, email: false }, loginMethods: [] },
+  project: null,
+  notifications: [],
+};
 export default function CustomerShell({ user, page }: { user: Customer; page: CustomerPage }) {
   const { locale } = useLocalization();
   const text = customerCopy[locale];
@@ -117,20 +122,20 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
   }
   if (sessionError) return <SessionRecovery retry={() => setSessionRetry(value => value + 1)} />;
   if (!verified) return <div className={styles.checking} role="status" aria-label={text.session} />;
+  const pageTitle = page === "notifications" ? workspaceText.notifications : text[page];
   return <div ref={shell} className={styles.app} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate>
     <header className={styles.header}>
       <Link href="/dashboard" aria-label="BlueMind"><BrandLockup solidLogo className={styles.brand} logoClassName={styles.logo} /></Link>
       <div className={styles.controls}>
-        <button type="button" className={styles.iconButton} popoverTarget="customer-notifications" aria-label={workspaceText.notifications} title={workspaceText.notifications}><Bell size={21} aria-hidden="true" />{overview?.notifications.some(item => !item.read) && <span className={styles.unread} />}</button>
+        <Link href="/notifications" className={styles.iconButton} aria-label={workspaceText.notifications} title={workspaceText.notifications}><Bell size={21} aria-hidden="true" />{overview?.notifications.some(item => !item.read) && <span className={styles.unread} />}</Link>
         <Link href="/account" className={styles.avatar} aria-label={text.account} title={user.displayName}><UserRound size={21} aria-hidden="true" /></Link>
         <button ref={toggle} type="button" className={styles.iconButton} aria-label={text.menu} aria-expanded={open} aria-controls="customer-menu" onClick={openMenu}><Menu size={23} aria-hidden="true" /></button>
       </div>
     </header>
-    <div id="customer-notifications" popover="auto" className={styles.notifications} dir={locale === "ar" ? "rtl" : "ltr"}><div className={styles.sectionHeading}><h2>{workspaceText.notifications}</h2><button type="button" className={styles.iconButton} popoverTarget="customer-notifications" popoverTargetAction="hide" aria-label={workspaceText.close}><X size={18} /></button></div>{loadError ? <p role="alert">{workspaceText.loadError}</p> : !overview ? <p role="status">{workspaceText.loading}</p> : overview.notifications.length ? <ul>{overview.notifications.map(item => <li key={item.id}><p>{item.text}</p>{item.createdAt && <time dateTime={item.createdAt}>{new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(item.createdAt))}</time>}</li>)}</ul> : <p>{workspaceText.noNotifications}</p>}</div>
     <main className={styles.main}>
       <Image className={styles.watermark} src="/images/brand/bluemind-original-logo-transparent.png" width={1065} height={1212} alt="" aria-hidden="true" />
-      <h1>{text[page]}</h1>
-      {loadError ? <div role="alert"><p>{workspaceText.loadError}</p><button className={styles.secondary} onClick={() => setReload(value => value + 1)}><TextActionLabel>{workspaceText.retry}</TextActionLabel></button></div> : !overview ? <p role="status">{workspaceText.loading}</p> : <WorkspaceContent key={page} page={page} overview={overview} user={user} locale={locale} signOut={() => void signOut()} signingOut={busy} />}
+      <h1>{pageTitle}</h1>
+      {page !== "notifications" && loadError ? <div role="alert"><p>{workspaceText.loadError}</p><button className={styles.secondary} onClick={() => setReload(value => value + 1)}><TextActionLabel>{workspaceText.retry}</TextActionLabel></button></div> : page !== "notifications" && !overview ? <p role="status">{workspaceText.loading}</p> : <WorkspaceContent key={page} page={page} overview={overview || demoOverview} user={user} locale={locale} signOut={() => void signOut()} signingOut={busy} />}
       {notice && <p className={styles.error} role="alert">{text.error}</p>}
     </main>
     <dialog ref={dialog} id="customer-menu" className={styles.drawer} data-open={open} aria-label={text.menu} onCancel={event => { event.preventDefault(); closeMenu(); }} onClick={event => {

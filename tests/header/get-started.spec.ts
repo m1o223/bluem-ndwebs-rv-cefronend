@@ -63,6 +63,8 @@ test("both orbits move continuously, keep devices upright and preserve a clear c
   const outer = page.locator('[data-preview="fashion"]'); const inner = page.locator('[data-preview="cafe"]');
   expect(await outer.evaluate(e => getComputedStyle(e).animationDuration)).toBe("67.2s");
   expect(await inner.evaluate(e => getComputedStyle(e).animationDuration)).toBe("86.4s");
+  expect(await outer.evaluate(e => getComputedStyle(e).animationName)).toContain("orbit-clockwise");
+  expect(await inner.evaluate(e => getComputedStyle(e).animationName)).toContain("orbit-clockwise");
   const start = (await outer.boundingBox())!;
   await outer.evaluate(e => e.getAnimations().find(a=>a instanceof CSSAnimation)!.currentTime = 14000);
   const moved = (await outer.boundingBox())!;
@@ -97,24 +99,19 @@ test("reduced motion and short mobile viewport keep forms accessible without hor
 });
 
 for (const width of [390, 1440]) {
-  test(`orbit previews never obscure the welcome, login or recovery controls at ${width}px`, async ({page}) => {
+  test(`orbit previews stay visible around the auth controls at ${width}px`, async ({page}) => {
     await page.setViewportSize({width,height:900});
     await page.goto("/sign-in");
     const area=page.locator("[data-auth-card]");
     const orbits=page.locator("[data-auth-orbits]");
-    await expect(orbits).toHaveAttribute("data-ready","true");
     for (const mode of ["welcome","login","recovery"]) {
       if(mode==="login") await area.getByRole("button",{name:"Continue with Email & Password",exact:true}).click();
       if(mode==="recovery") await area.getByRole("button",{name:"Forgot password?",exact:true}).click();
       for(const time of [0,16800,33600,50400]) {
         await orbits.evaluate((e,time)=>e.getAnimations({subtree:true}).filter(a=>a instanceof CSSAnimation).forEach(a=>{a.pause();a.currentTime=time;}),time);
-        await expect.poll(()=>area.evaluate(area=>{
-          const form=area.getBoundingClientRect();
-          return [...document.querySelectorAll<HTMLElement>("[data-preview]")].filter(device=>{
-            const box=device.getBoundingClientRect();
-            return getComputedStyle(device).display!=="none" && Number(getComputedStyle(device).opacity)>.01 && box.right>form.left && box.left<form.right && box.bottom>form.top && box.top<form.bottom;
-          }).length;
-        })).toBe(0);
+        await expect.poll(()=>orbits.evaluate(e=>[...e.querySelectorAll<HTMLElement>("[data-preview]")]
+          .filter(device=>getComputedStyle(device).display!=="none")
+          .every(device=>getComputedStyle(device).opacity === "1"))).toBe(true);
         await expect(area).toHaveCSS("background-color","rgba(0, 0, 0, 0)");
       }
       for(const control of await area.locator("button:not(:disabled),input").all()) {

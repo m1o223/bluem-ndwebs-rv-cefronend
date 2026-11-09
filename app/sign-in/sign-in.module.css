@@ -1,6 +1,6 @@
 .page { position: relative; isolation: isolate; overflow-x: clip; min-height: calc(100dvh - var(--website-header-height, 95px)); padding: 24px max(24px, calc((100% - 1140px) / 2)) 0; background: #fff; color: #142d4e; }
 .watermark { position: absolute; z-index: -1; width: min(560px, 80%); height: auto; top: 50%; right: -100px; transform: translateY(-50%); opacity: .025; pointer-events: none; user-select: none; object-fit: contain; }
-.back { position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: inherit; text-decoration: none; font-size: 14px; }
+.back { position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0; border: 0; background: transparent; box-shadow: none; color: inherit; text-decoration: none; font-size: 14px; }
 .stage { position: relative; width: 100vw; margin-inline: calc((100% - 100vw) / 2); height: max(900px, calc(100dvh - var(--website-header-height, 95px) - 68px)); display: grid; grid-template-rows: minmax(0, 1fr); align-items: center; }
 .center { position: relative; z-index: 1; display: grid; place-items: center; padding: 36px 16px; pointer-events: none; }
 .formArea { width: min(400px, 100%); box-sizing: border-box; padding: 32px; border: 0; background: transparent; box-shadow: none; pointer-events: auto; }

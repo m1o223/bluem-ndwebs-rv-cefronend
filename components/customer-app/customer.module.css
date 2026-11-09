@@ -27,7 +27,7 @@
 .app :is(a, button):focus-visible { outline: 2px solid #477bad; outline-offset: 3px; }
 .checking { min-height: 100dvh; background: #fff; }
 .watermark { position: absolute; z-index: -1; top: 140px; inset-inline-end: 0; width: min(42%, 380px); height: auto; opacity: .025; pointer-events: none; user-select: none; }
-.main h2, .notifications h2 { margin: 0 0 20px; font-size: 18px; font-weight: 600; letter-spacing: 0; }
+.main h2 { margin: 0 0 20px; font-size: 18px; font-weight: 600; letter-spacing: 0; }
 .main p { line-height: 1.65; font-size: 14px; }
 .welcome { margin-top: 12px; color: #536176; }
 .section { padding-block: 28px; border-bottom: 1px solid #e8ecf1; }
@@ -85,13 +85,39 @@
 .settingRow:last-of-type { margin-bottom: 20px; }
 .iconButton { position: relative; }
 .unread { position: absolute; top: 7px; right: 7px; width: 6px; height: 6px; border-radius: 50%; background: #3679b3; }
-.notifications { position: fixed; inset-block: 84px auto; inset-inline: auto 20px; margin: 0; width: min(360px,calc(100vw - 32px)); max-height: min(460px,75dvh); overflow: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 8px 28px #142d4e14; background: #fff; color: #142d4e; }
-.notifications .sectionHeading { flex-wrap: nowrap; }
-.notifications h2 { margin: 0; }
-.notifications p { font-size: 14px; line-height: 1.65; }
-.notifications ul { list-style: none; padding: 0; margin: 0; }
-.notifications li { padding-block: 12px; border-bottom: 1px solid #e8ecf1; overflow-wrap: anywhere; }
-.notifications time { font-size: 12px; color: #637083; }
+.messagesPage { padding-top: 20px; }
+.messageWorkspace { display: grid; grid-template-columns: minmax(250px, 330px) minmax(0, 1fr); min-height: min(680px, calc(100dvh - 190px)); border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; background: #fff; box-shadow: 0 14px 34px #142d4e0b; }
+.messageList { min-width: 0; border-inline-end: 1px solid #e8ecf1; background: #f8fafc; }
+.messageListHeading { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 22px 20px 8px; }
+.messageListHeading h2 { margin: 0; font-size: 18px; }
+.eyebrow { margin: 0 0 6px !important; color: #3679b3; font-size: 11px !important; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.messageListHeading > svg { color: #6a7a8e; }
+.messageHint { margin: 0; padding: 0 20px 18px; color: #637083; font-size: 12px !important; }
+.threadList { display: grid; }
+.thread { display: grid; gap: 7px; width: 100%; padding: 16px 20px; border: 0; border-top: 1px solid #e8ecf1; background: transparent; color: #142d4e; font: inherit; text-align: start; cursor: pointer; }
+.thread:hover, .thread[data-selected="true"] { background: #edf3fa; }
+.threadTop { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.threadTop strong { min-width: 0; font-size: 14px; font-weight: 600; }
+.threadPreview { overflow: hidden; color: #637083; font-size: 12px; line-height: 1.5; text-overflow: ellipsis; white-space: nowrap; }
+.thread time { color: #7b8795; font-size: 11px; }
+.unreadLabel { flex: 0 0 auto; color: #3679b3; font-size: 11px; font-weight: 600; }
+.conversation { display: flex; min-width: 0; flex-direction: column; background: #fff; }
+.conversationHeader { display: flex; align-items: center; gap: 14px; min-height: 72px; padding: 14px 24px; border-bottom: 1px solid #e8ecf1; }
+.conversationHeader h2 { margin: 0 0 5px; font-size: 18px; }
+.demoBadge { display: inline-flex; align-items: center; min-height: 22px; padding: 2px 8px; border-radius: 999px; background: #edf3fa; color: #3679b3; font-size: 11px; }
+.backToMessages { display: none; }
+.conversationMessages { display: flex; min-height: 0; flex: 1; flex-direction: column; gap: 16px; overflow: auto; padding: 24px; }
+.demoMessage { max-width: min(78%, 640px); padding: 14px 16px; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc; }
+.demoMessage[data-sender="customer"] { align-self: flex-end; border-color: #c9dced; background: #edf5fb; }
+.demoMessage p { margin: 0; white-space: pre-wrap; }
+.demoMessage time { display: inline-flex; align-items: center; gap: 5px; margin-top: 9px; color: #7b8795; font-size: 11px; }
+.demoComposer { display: flex; align-items: flex-end; gap: 10px; padding: 16px 24px 20px; border-top: 1px solid #e8ecf1; }
+.demoComposer textarea { flex: 1; min-width: 0; min-height: 48px; max-height: 140px; resize: vertical; padding: 12px 14px; border: 1px solid #dce3eb; border-radius: 8px; background: #fff; color: #142d4e; font: inherit; font-size: 14px; }
+.demoComposer textarea:focus-visible { outline: 2px solid #477bad; outline-offset: 2px; }
+.conversationEmpty { display: grid; min-height: 100%; flex: 1; place-items: center; align-content: center; gap: 10px; color: #637083; }
+.conversationEmpty p { margin: 0; }
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+@media (max-width: 760px) { .messageWorkspace { display: block; min-height: 0; border: 0; border-radius: 0; box-shadow: none; overflow: visible; } .messageList { min-height: calc(100dvh - 190px); border: 1px solid #e2e8f0; border-radius: 10px; } .messageList[data-hidden="true"] { display: none; } .conversation[data-visible="false"] { display: none; } .conversation { min-height: calc(100dvh - 190px); border: 1px solid #e2e8f0; border-radius: 10px; } .conversationHeader { padding-inline: 16px; } .backToMessages { display: inline-flex; flex: 0 0 auto; } .conversationMessages { padding: 18px 16px; } .demoMessage { max-width: 90%; } .demoComposer { padding: 14px 16px 16px; } }
 @media (max-width: 780px) { .steps { grid-template-columns: 1fr; } .details { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 @media (max-width: 620px) { .formGrid { grid-template-columns: 1fr; } .profileHeading { align-items: flex-start; } .controls { gap: 2px; } .avatar, .iconButton { width: 38px; height: 42px; } .header { gap: 4px; } .brand { gap: 2px; } .logo { --logo-size: 46px; } .steps small { max-width: 90px; } }
 @media (max-width: 620px) { .header { height: 72px; padding-inline: 16px; } .controls { gap: 8px; } .main { padding: 28px 20px; } }

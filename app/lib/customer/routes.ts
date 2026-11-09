@@ -5,6 +5,6 @@ export const customerRoutes = [
   { href: "/dashboard/contact", key: "contact" },
   { href: "/account", key: "account" },
 ] as const;
-export type CustomerPage = typeof customerRoutes[number]["key"];
-export const isCustomerPath = (path: string) => customerRoutes.some(route => path === route.href);
+export type CustomerPage = typeof customerRoutes[number]["key"] | "notifications";
+export const isCustomerPath = (path: string) => customerRoutes.some(route => path === route.href) || path === "/notifications";
 export type Customer = { id: string; displayName: string; email: string; profileImage?: string | null; role?: "user"; status?: "active" };
