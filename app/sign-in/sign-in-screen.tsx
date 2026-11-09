@@ -27,6 +27,7 @@ export default function SignInScreen() {
   const availability = useRef<HTMLParagraphElement>(null);
   const busy = google.busy || email.busy;
   const authText = authCopy[locale];
+  const returnTo = typeof window === "undefined" ? "" : new URLSearchParams(window.location.search).get("returnTo") || "";
 
   useEffect(() => {
     const clear = () => form.current?.reset();
@@ -66,7 +67,7 @@ export default function SignInScreen() {
             {mode === "welcome" ? <>
               <p className={styles.subtitle}>{text.subtitle}</p>
               <div className={styles.providers}>
-                <button type="button" disabled={busy} aria-busy={google.busy} data-active={google.busy} onClick={() => void google.start("")}><Image src="/images/sign-in/google.png" width={20} height={20} alt="" /><TextActionLabel>{text.google}</TextActionLabel>{google.busy && <LoaderCircle size={18} className={styles.spinner} aria-hidden="true" />}</button>
+                <button type="button" disabled={busy} aria-busy={google.busy} data-active={google.busy} onClick={() => void google.start("", returnTo)}><Image src="/images/sign-in/google.png" width={20} height={20} alt="" /><TextActionLabel>{text.google}</TextActionLabel>{google.busy && <LoaderCircle size={18} className={styles.spinner} aria-hidden="true" />}</button>
                 <div className={styles.bankid}><button type="button" disabled aria-describedby="bankid-note"><Image src="/images/sign-in/bankid.svg" width={28} height={26} alt="" /><span>{text.bankid}</span></button><small id="bankid-note">{text.bankidNote}</small></div>
                 <button type="button" disabled={busy} onClick={() => changeMode("login")}><Mail className={styles.providerIcon} size={20} aria-hidden="true" /><TextActionLabel>{text.emailOption}</TextActionLabel></button>
               </div>

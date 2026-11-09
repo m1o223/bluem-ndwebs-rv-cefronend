@@ -1,7 +1,7 @@
 import { MESSAGE_CARD_FORMAT, type MessageCardContent } from "./message-card";
 import type { Attachment } from "./attachments";
 
-export type ChatTurn = { role: "user" | "assistant"; content: string; attachments?: Attachment[] };
+export type ChatTurn = { id?: string; role: "user" | "assistant"; content: string; attachments?: Attachment[] };
 export const AI_LIMITS = { messageChars: 4000, assistantChars: 12000, contextChars: 18000, turns: 20, bodyBytes: 80000, outputTokens: 2000 } as const;
 export const AI_ERRORS = {
   unavailable: "BlueMind AI is temporarily unavailable. Please try again later.",

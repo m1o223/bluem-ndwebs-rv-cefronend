@@ -32,9 +32,33 @@ const guidedContext: Record<GuidedSource, string> = {
   "what-we-build": "The visitor opened BlueMind AI from the What We Build section because they want to discuss a special website idea. Help them explain and organize the idea, clarify requirements, and prepare a request for the BlueMind Web Service team. Do not claim that AI builds the website itself. Before any request is sent to the team, let the visitor review and approve it.",
 };
 
-function History({ conversations, activeId, compact = false, onSelect, onNew }: {
+function serverConversation(value: unknown): Conversation | null {
+  if (!value || typeof value !== "object") return null;
+  const source = (value as { source?: unknown }).source === "what-we-build" ? "what-we-build" : undefined;
+  const rawMessages = (value as { messages?: unknown }).messages;
+  if (!Array.isArray(rawMessages)) return null;
+  const messages = rawMessages.flatMap((item, index): Message[] => {
+    if (!item || typeof item !== "object") return [];
+    const message = item as { id?: unknown; role?: unknown; content?: unknown; attachments?: unknown; card?: unknown };
+    if ((message.role !== "user" && message.role !== "assistant") || typeof message.content !== "string") return [];
+    const attachments = Array.isArray(message.attachments) ? message.attachments.flatMap((file, fileIndex) => {
+      if (!file || typeof file !== "object") return [];
+      const value = file as { name?: unknown; type?: unknown; data?: unknown };
+      if (typeof value.name !== "string" || typeof value.type !== "string" || typeof value.data !== "string") return [];
+      return [{ id: typeof message.id === "string" ? `${message.id}-${fileIndex}` : crypto.randomUUID(), name: value.name, type: value.type, data: value.data, size: 0 } as LocalAttachment];
+    }) : [];
+    const card = message.role === "assistant" ? validateMessageCard(message.card) : null;
+    return [{ id: typeof message.id === "string" ? message.id : crypto.randomUUID(), role: message.role, text: message.content, complete: true, ...(attachments.length ? { attachments } : {}), ...(card ? { card } : {}) }];
+  });
+  if (!messages.length) return null;
+  const id = typeof (value as { id?: unknown }).id === "string" ? (value as { id: string }).id : "";
+  if (!id) return null;
+  return { id, title: typeof (value as { title?: unknown }).title === "string" ? (value as { title: string }).title : "Website idea", messages, ...(source ? { source } : {}) };
+}
+
+function History({ conversations, activeId, compact = false, onSelect, onNew, accountAuthenticated }: {
   conversations: Conversation[]; activeId: string | null; compact?: boolean;
-  onSelect: (id: string) => void; onNew: () => void;
+  onSelect: (id: string) => void; onNew: () => void; accountAuthenticated: boolean | null;
 }) {
   const [activated, setActivated] = useState(false);
   const activationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -51,6 +75,7 @@ function History({ conversations, activeId, compact = false, onSelect, onNew }: 
     </button>
     <nav className={styles.history} aria-label="Conversation history">
       {!compact && <p className={styles.historyLabel}>Conversations</p>}
+      {!compact && accountAuthenticated === false && activeId && <Link className={styles.saveChatLink} href={`/sign-in?returnTo=${encodeURIComponent(`/ask-ai?conversation=${activeId}`)}`}><span>Sign in to save this chat</span><ArrowUp size={15} aria-hidden="true" /></Link>}
       {conversations.map(conversation => <button key={conversation.id} type="button" className={styles.historyItem}
         aria-current={activeId === conversation.id ? "page" : undefined} aria-label={conversation.title} title={conversation.title}
         onClick={() => onSelect(conversation.id)}>
@@ -63,6 +88,7 @@ function History({ conversations, activeId, compact = false, onSelect, onNew }: 
 export default function ChatWorkspace({ available, embedded = false }: { available: boolean; embedded?: boolean }) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [accountAuthenticated, setAccountAuthenticated] = useState<boolean | null>(null);
   const [draft, setDraft] = useState("");
   const [collapsed, setCollapsed] = useState(false);
   const [attachmentsOpen, setAttachmentsOpen] = useState(false);
@@ -118,7 +144,21 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
   }, []);
 
   useEffect(() => {
+    fetch("/api/customer/session", { credentials: "same-origin", cache: "no-store" }).then(response => setAccountAuthenticated(response.ok)).catch(() => setAccountAuthenticated(false));
+  }, []);
+
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    const persistedId = params.get("conversation");
+    if (persistedId) {
+      let active = true;
+      fetch(`/api/ai/conversations/${encodeURIComponent(persistedId)}`, { credentials: "same-origin", cache: "no-store" }).then(async response => {
+        if (!response.ok) throw new Error("conversation");
+        const value = serverConversation((await response.json()).conversation);
+        if (active && value) { setConversations([value]); setActiveId(value.id); }
+      }).catch(() => { if (active) setConversations([]); });
+      return () => { active = false; };
+    }
     if (params.get("continue") === "1") {
       try {
         const stored = sessionStorage.getItem("bluemind-ai-demo-transfer");
@@ -147,6 +187,18 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
     }] }]);
     setActiveId(id);
   }, []);
+
+  useEffect(() => {
+    if (accountAuthenticated !== true || new URLSearchParams(window.location.search).has("conversation")) return;
+    let active = true;
+    fetch("/api/ai/conversations", { credentials: "same-origin", cache: "no-store" }).then(async response => {
+      if (!response.ok) return;
+      const value = await response.json();
+      const loaded = Array.isArray(value.conversations) ? value.conversations.map((item: unknown) => ({ ...(item as Conversation), messages: [] })) : [];
+      if (active && loaded.length) setConversations(loaded);
+    }).catch(() => {});
+    return () => { active = false; };
+  }, [accountAuthenticated]);
 
   useEffect(() => {
     if (!thinking || !contentArrived || !thinkingReply?.ready) return;
@@ -242,6 +294,17 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
   }
 
   function chooseConversation(id: string | null) {
+    const selected = conversations.find(conversation => conversation.id === id);
+    if (id && selected && !selected.messages.length) {
+      void fetch(`/api/ai/conversations/${encodeURIComponent(id)}`, { credentials: "same-origin", cache: "no-store" }).then(async response => {
+        if (!response.ok) throw new Error("conversation");
+        const loaded = serverConversation((await response.json()).conversation);
+        if (!loaded) throw new Error("conversation");
+        setConversations(current => current.map(conversation => conversation.id === id ? loaded : conversation));
+        setActiveId(id);
+      }).catch(() => {});
+      return;
+    }
     if (hasMessages !== Boolean(conversations.find(conversation => conversation.id === id)?.messages.length)) captureComposerPosition();
     fileRead.current?.abort(); fileRead.current = null;
     setFiles([]); setFileError(""); setPreparing(null); setViewing(null);
@@ -308,7 +371,7 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
     running.timeout = window.setTimeout(() => running.controller.abort(), 65000);
     setConversations(current => current.map(conversation => conversation.id === id ? { ...conversation, error: undefined, retryMessageId: undefined } : conversation));
     try {
-      const turns = conversationMessages.filter(message => message.complete || (message.stopped && message.text.trim())).map(message => ({ role: message.role,
+      const turns = conversationMessages.filter(message => message.complete || (message.stopped && message.text.trim())).map(message => ({ id: message.id, role: message.role,
         content: message.card ? [message.text, messageCardText(message.card)].filter(Boolean).join("\n\n") : message.text,
         ...(message.attachments?.length ? { attachments: message.attachments.map(wireAttachment) } : {}) }));
       while (turns[0]?.role === "assistant") turns.shift();
@@ -342,7 +405,7 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
             : replaced ? conversation.messages.map(message => message.id === replaced.id ? next : message)
             : [...conversation.messages, next] };
         }));
-      });
+      }, { conversationId: id, source: activeSource });
       if (request.current === running) {
         running.networkDone = true;
         setConversations(current => current.map(conversation => conversation.id === id
@@ -445,7 +508,7 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
         && message.text.length + messageCardText(card).length + 2 <= AI_LIMITS.assistantChars ? { ...message, card } : message) } : conversation));
   }
 
-  const historyProps = { conversations, activeId, onSelect: chooseConversation, onNew: () => chooseConversation(null) };
+  const historyProps = { conversations, activeId, onSelect: chooseConversation, onNew: () => chooseConversation(null), accountAuthenticated };
   const thinkingIndicator = <div key={`thinking-${animatedId}`} className={styles.assistant} role="status" aria-label="BlueMind AI is preparing a response">
     <div className={styles.thinkingIndicator} data-ready={contentArrived && thinkingReply?.ready} aria-hidden="true"><span className={styles.thinkingDot} /></div>
   </div>;

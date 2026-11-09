@@ -18,7 +18,9 @@ export function useEmailSignIn() {
       const result = await response.json();
       if (!result.user?.id) throw new Error("invalid");
       form.reset(); setStatus("success");
-      window.location.replace("/dashboard");
+      const returnTo = new URLSearchParams(window.location.search).get("returnTo");
+      const destination = returnTo && returnTo.startsWith("/") && !returnTo.startsWith("//") ? returnTo : "/dashboard";
+      window.location.replace(destination);
     } catch { if (!controller.signal.aborted) setStatus("unavailable"); }
     finally { if (!controller.signal.aborted) request.current = null; }
   }

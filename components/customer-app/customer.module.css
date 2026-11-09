@@ -35,6 +35,17 @@
 .sectionHeading h2 { margin: 0; }
 .empty { display: flex; align-items: center; gap: 16px; min-height: 156px; color: #596779; }
 .empty svg { flex-shrink: 0; color: #69829f; }
+.conversationLoading { display: flex; align-items: center; gap: 10px; min-height: 84px; color: #637083; font-size: 13px; }
+.spinner { animation: customerSpin .8s linear infinite; }
+@keyframes customerSpin { to { transform: rotate(360deg); } }
+.aiConversationList { display: grid; gap: 8px; margin-top: 22px; }
+.aiConversationItem { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; align-items: center; gap: 13px; min-height: 68px; padding: 12px 14px; border: 1px solid #e2e8f0; border-radius: 8px; color: #142d4e; text-decoration: none; transition: background-color 160ms ease, border-color 160ms ease; }
+.aiConversationItem:hover { background: #f5f9fc; border-color: #c9dced; }
+.aiConversationItem > svg { color: #6a7a8e; }
+.aiConversationIcon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #edf3fa; color: #3679b3; }
+.aiConversationCopy { display: grid; min-width: 0; gap: 5px; }
+.aiConversationCopy strong { overflow: hidden; font-size: 14px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.aiConversationCopy small { color: #637083; font-size: 12px; }
 .muted, .identifier { color: #637083; font-size: 13px; line-height: 1.6; }
 .identifier { overflow-wrap: anywhere; }
 .textLink { display: inline-flex; align-items: center; gap: 8px; color: #142d4e; font-size: 14px; text-decoration: none; font-weight: 500; min-height: 44px; }

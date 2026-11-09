@@ -11,13 +11,16 @@ export function useGoogleSignIn() {
     if (["cancelled", "failed", "unavailable", "link_required"].includes(value || "")) setError(value!);
     return () => { pending.current?.abort(); pending.current = null; };
   }, []);
-  async function start(customerType: string) {
+  async function start(customerType: string, returnTo = "") {
     if (pending.current) return;
     const controller = new AbortController();
     pending.current = controller;
     setBusy(true); setError("");
     try {
-      const query = ["private", "company"].includes(customerType) ? `?customerType=${customerType}` : "";
+      const params = new URLSearchParams();
+      if (["private", "company"].includes(customerType)) params.set("customerType", customerType);
+      if (returnTo.startsWith("/") && !returnTo.startsWith("//")) params.set("returnTo", returnTo);
+      const query = params.toString() ? `?${params.toString()}` : "";
       const response = await fetch(`/api/auth/google${query}`, { method: "POST", credentials: "same-origin", cache: "no-store", signal: AbortSignal.any([controller.signal, AbortSignal.timeout(20000)]) });
       if (!response.ok) throw new Error("unavailable");
       const { authorizationUrl } = await response.json();

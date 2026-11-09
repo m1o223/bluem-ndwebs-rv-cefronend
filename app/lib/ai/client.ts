@@ -5,10 +5,16 @@ export class ChatRequestError extends Error {
   constructor(public code: AiErrorCode) { super(AI_ERRORS[code]); }
 }
 
-export async function requestReply(messages: ChatTurn[], signal: AbortSignal, onDelta: (text: string) => void, onCard?: (card: MessageCardContent) => void, options?: { endpoint?: string; credentials?: RequestCredentials }) {
+export async function requestReply(messages: ChatTurn[], signal: AbortSignal, onDelta: (text: string) => void, onCard?: (card: MessageCardContent) => void, options?: {
+  endpoint?: string; credentials?: RequestCredentials; conversationId?: string; source?: string;
+}) {
   signal.throwIfAborted();
   const response = await fetch(options?.endpoint ?? "/api/ai/chat", {
-    method: "POST", credentials: options?.credentials ?? "omit", redirect: "error", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages, ...(onCard ? { responseFormat: MESSAGE_CARD_FORMAT } : {}) }), signal,
+    method: "POST", credentials: options?.credentials ?? "same-origin", redirect: "error", headers: {
+      "Content-Type": "application/json",
+      ...(options?.conversationId ? { "x-ai-conversation-id": options.conversationId } : {}),
+      ...(options?.source ? { "x-ai-source": options.source } : {}),
+    }, body: JSON.stringify({ messages, ...(onCard ? { responseFormat: MESSAGE_CARD_FORMAT } : {}) }), signal,
   });
   if (!response.ok) {
     const body = await response.json().catch(() => null);
