@@ -7,6 +7,26 @@ test.describe("What We Do interactive demos", () => {
     await page.goto("/");
   });
 
+  test("changes only the category name colour on hover", async ({ page }) => {
+    const restaurant = page.locator('[data-demo-category="restaurant"]');
+    const label = restaurant.locator("span");
+    const arrow = restaurant.locator("svg");
+    const labelBefore = await label.evaluate((element) => getComputedStyle(element).color);
+    const arrowBefore = await arrow.evaluate((element) => getComputedStyle(element).color);
+    await restaurant.hover();
+    await expect.poll(() => label.evaluate((element) => getComputedStyle(element).color)).not.toBe(labelBefore);
+    await expect.poll(() => arrow.evaluate((element) => getComputedStyle(element).color)).toBe(arrowBefore);
+  });
+
+  test("slides the preview down on open and close", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.locator('[data-demo-category="restaurant"]').click();
+    await expect(page.locator('[role="dialog"]')).toHaveAttribute("data-demo-phase", "open");
+    await page.getByRole("button", { name: "Close demo" }).click();
+    await expect(page.locator('[role="dialog"]')).toHaveAttribute("data-demo-phase", "closing");
+    await expect(page.locator('[role="dialog"]')).toHaveCount(0);
+  });
+
   test("exposes every category and completes a restaurant demo order", async ({ page }) => {
     const categories = page.locator("[data-demo-categories] button");
     await expect(categories).toHaveCount(16);
@@ -136,6 +156,7 @@ test.describe("What We Do interactive demos", () => {
       await flow.locator('form button[type="submit"]').click();
       await expect(site.getByText("Demo complete", { exact: true })).toBeVisible();
       await page.getByRole("button", { name: "Close demo" }).click();
+      await expect(page.locator("[role=dialog]")).toHaveCount(0);
       await expect(opener).toBeFocused();
     }
   });

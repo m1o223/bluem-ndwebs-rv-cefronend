@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { ArrowRight, Check, ChevronDown, Menu, Plus, X } from "lucide-react";
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type FormEvent } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type FormEvent } from "react";
 import { useLocalization } from "../localization-provider";
 import {
   demoCategories,
@@ -20,6 +20,13 @@ const deviceSizes: Record<DeviceMode, { label: string; width: number; height: nu
   ipad: { label: "iPad", width: 768, height: 1024 },
   desktop: { label: "Desktop", width: 1280, height: 820 },
 };
+
+function getInitialDevice(): DeviceMode {
+  if (typeof window === "undefined") return "desktop";
+  if (window.matchMedia("(max-width: 600px)").matches) return "phone";
+  if (window.matchMedia("(max-width: 1024px)").matches) return "ipad";
+  return "desktop";
+}
 
 const cartItems: Record<string, { name: string; detail: string; price: number }[]> = {
   restaurant: [
@@ -112,7 +119,17 @@ export default function CategoryDemoViewer({
   const [selectedItem, setSelectedItem] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [formMessage, setFormMessage] = useState("");
+  const [closing, setClosing] = useState(false);
+  const closingRef = useRef(false);
+  const closeTimer = useRef<number | null>(null);
   const opener = useRef<HTMLElement | null>(null);
+
+  const handleClose = useCallback(() => {
+    if (closingRef.current) return;
+    closingRef.current = true;
+    setClosing(true);
+    closeTimer.current = window.setTimeout(onClose, 420);
+  }, [onClose]);
 
   useEffect(() => {
     opener.current = document.activeElement as HTMLElement | null;
@@ -122,16 +139,21 @@ export default function CategoryDemoViewer({
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        onClose();
+        handleClose();
       }
     };
     document.addEventListener("keydown", onKeyDown);
     return () => {
+      if (closeTimer.current) window.clearTimeout(closeTimer.current);
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", onKeyDown);
       opener.current?.focus({ preventScroll: true });
     };
-  }, [onClose]);
+  }, [handleClose]);
+
+  useLayoutEffect(() => {
+    setDevice(getInitialDevice());
+  }, []);
 
   useLayoutEffect(() => {
     const host = stage.current;
@@ -153,8 +175,8 @@ export default function CategoryDemoViewer({
   const frameStyle = { width: size.width, height: size.height, transform: `scale(${scale})` };
 
   return (
-    <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="demo-viewer-title">
-      <div className={styles.viewer}>
+    <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="demo-viewer-title" data-demo-phase={closing ? "closing" : "open"}>
+      <div className={`${styles.viewer} ${closing ? styles.viewerClosing : ""}`}>
         <header className={styles.viewerHeader}>
           <div className={styles.viewerIdentity}>
             <span className={styles.viewerKicker}>Demo website</span>
@@ -168,7 +190,7 @@ export default function CategoryDemoViewer({
                 </button>
               ))}
             </div>
-            <button ref={closeButton} type="button" className={styles.closeButton} onClick={onClose} aria-label="Close demo">
+            <button ref={closeButton} type="button" className={styles.closeButton} onClick={handleClose} aria-label="Close demo">
               Close <X size={17} aria-hidden="true" />
             </button>
           </div>

@@ -10,13 +10,12 @@
 .folioPhone { z-index: 3; width: 14%; margin-inline-start: -4%; }
 .description { max-width: 700px; margin: 16px auto 30px; color: #607085; font-size: 20px; line-height: 1.6; }
 .types { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 32px; margin: 0; padding: 0; text-align: start; }
-.typeButton { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 14px 0; border: 0; border-bottom: 1px solid #e8edf3; background: transparent; color: var(--bluemind-text); cursor: pointer; font: inherit; font-size: 16px; line-height: 1.55; text-align: start; transition: color 180ms ease, border-color 180ms ease, transform 180ms ease; }
-.typeButton svg { flex: 0 0 auto; color: #91a0b1; transition: transform 180ms ease, color 180ms ease; }
-.typeButton:hover, .typeButton:focus-visible, .typeButton[data-active="true"] { color: var(--bluemind-blue); }
-.typeButton:hover svg, .typeButton:focus-visible svg, .typeButton[data-active="true"] svg { color: var(--bluemind-blue); transform: translateX(3px); }
+.typeButton { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 14px 0; border: 0; border-bottom: 1px solid #e8edf3; background: transparent; color: var(--bluemind-text); cursor: pointer; font: inherit; font-size: 16px; line-height: 1.55; text-align: start; transition: color 180ms ease; }
+.typeButton > span { color: inherit; transition: color 180ms ease; }
+.typeButton svg { flex: 0 0 auto; color: #91a0b1; transition: none; }
+.typeButton:hover > span, .typeButton:focus-visible > span, .typeButton[data-active="true"] > span { color: var(--bluemind-blue); }
 .typeButton:focus-visible { outline: 2px solid var(--bluemind-blue); outline-offset: 4px; border-radius: 4px; }
 .section[dir="rtl"] .typeButton svg { transform: scaleX(-1); }
-.section[dir="rtl"] .typeButton:hover svg, .section[dir="rtl"] .typeButton:focus-visible svg, .section[dir="rtl"] .typeButton[data-active="true"] svg { transform: translateX(-3px) scaleX(-1); }
 .features { max-width: 800px; margin: 28px auto 0; color: #607085; font-size: 17px; line-height: 1.7; }
 .invitation { max-width: 900px; margin: 58px auto 25px; text-wrap: balance; }
 .invitationTitle { margin: 0; font-size: 32px; font-weight: 600; line-height: 1.35; }
