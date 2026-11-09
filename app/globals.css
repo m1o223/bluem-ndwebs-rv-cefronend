@@ -1,6 +1,8 @@
 :root {
   --font-body-family: "Inter", "Segoe UI", Arial, sans-serif;
   --font-heading-family: "Inter", "Segoe UI", Arial, sans-serif;
+  --control-radius: 999px;
+  --icon-control-radius: 50%;
   --bluemind-text: #111111;
   --bluemind-blue: #142D4E;
   --bluemind-blue-hover: #EDF3FA;
@@ -113,6 +115,22 @@ input,
 textarea,
 select {
   font-family: var(--font-body-family);
+}
+
+/* Shared control shape: wide actions are pills; equal icon controls become circles. */
+:where(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a[role="button"],
+  a[class*="Button"],
+  a[class*="button"],
+  a[class*="Cta"],
+  a[class*="cta"],
+  a[class*="navCta"]
+) {
+  border-radius: var(--control-radius) !important;
 }
 
 a {

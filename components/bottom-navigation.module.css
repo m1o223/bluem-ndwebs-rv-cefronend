@@ -9,7 +9,7 @@
   padding: 9px;
   transform: translateX(-50%);
   border: 1px solid rgba(186, 198, 212, .82);
-  border-radius: 24px;
+  border-radius: 999px;
   background: rgba(255, 255, 255, .86);
   box-shadow: 0 16px 40px rgba(20, 45, 78, .14), 0 2px 8px rgba(20, 45, 78, .06);
   -webkit-backdrop-filter: blur(18px) saturate(1.15);
@@ -33,7 +33,7 @@
   gap: 8px;
   padding: 8px 12px;
   border: 1px solid transparent;
-  border-radius: 17px;
+  border-radius: 999px;
   color: #4b5563;
   text-decoration: none;
   font-size: 12px;
@@ -68,9 +68,9 @@
 }
 
 @media (max-width: 700px) {
-  .navigation { width: calc(100% - 20px); padding: 7px; border-radius: 21px; }
+  .navigation { width: calc(100% - 20px); padding: 7px; border-radius: 999px; }
   .items { gap: 3px; }
-  .item { min-height: 56px; flex-direction: column; gap: 3px; padding: 7px 3px; border-radius: 15px; font-size: 10px; }
+  .item { min-height: 56px; flex-direction: column; gap: 3px; padding: 7px 3px; border-radius: 999px; font-size: 10px; }
   .icon { width: 18px; height: 18px; }
 }
 

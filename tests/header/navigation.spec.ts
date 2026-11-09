@@ -13,16 +13,10 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     const signIn = header.getByRole("link", { name: "Sign in", exact: true });
     const compactNavigation = width < 1024;
     await expect(signIn).toBeVisible();
-    const expectPlainSignIn = async () => {
-      await expect(signIn).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
-      await expect(signIn).toHaveCSS("border-top-width", "0px");
-      await expect(signIn).toHaveCSS("border-radius", "0px");
-      await expect(signIn).toHaveCSS("box-shadow", "none");
-    };
-    await expectPlainSignIn();
+    await expect(signIn).toHaveCSS("border-radius", "999px");
     await expect(signIn).toHaveAttribute("href", "/sign-in");
     await signIn.hover();
-    await expectPlainSignIn();
+    await expect(signIn).toHaveCSS("border-radius", "999px");
     await page.mouse.move(0, 0);
     await expect(language).toBeVisible();
     if (compactNavigation) {
