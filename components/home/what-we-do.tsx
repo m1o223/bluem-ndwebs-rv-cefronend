@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { useCallback, useRef, useState } from "react";
 import { useLocalization } from "../localization-provider";
 import TextActionLabel from "../text-action-label";
 import { whatWeBuildCopy } from "./what-we-build-copy";
 import BlueMindAiDemo from "./bluemind-ai-demo";
+import CategoryDemoViewer from "./category-demo";
+import { demoCategories, type DemoCategoryId } from "./category-demo-data";
 import styles from "./what-we-do.module.css";
 
 const titles = { en: "What We Do", ar: "شو منعمل؟", sv: "Vad vi gör" } as const;
@@ -14,6 +17,13 @@ const titles = { en: "What We Do", ar: "شو منعمل؟", sv: "Vad vi gör" } 
 export default function WhatWeDo() {
   const { locale } = useLocalization();
   const text = whatWeBuildCopy[locale];
+  const [selectedCategory, setSelectedCategory] = useState<DemoCategoryId | null>(null);
+  const opener = useRef<HTMLButtonElement | null>(null);
+  const closeDemo = useCallback(() => {
+    setSelectedCategory(null);
+    requestAnimationFrame(() => opener.current?.focus({ preventScroll: true }));
+  }, []);
+
   return <section className={styles.section} data-what-we-do data-no-translate dir={locale === "ar" ? "rtl" : "ltr"} aria-labelledby="what-we-do-title">
     <div className={styles.inner}>
       <p className={styles.eyebrow}>BLUEMIND WEB SERVICE</p>
@@ -30,7 +40,20 @@ export default function WhatWeDo() {
         </div>
       </div>
       <p className={styles.description}>{text.description}</p>
-      <ul className={styles.types} aria-label={titles[locale]}>{text.types.map(type => <li key={type}>{type}</li>)}</ul>
+      <div className={styles.types} aria-label={titles[locale]} data-demo-categories>
+        {demoCategories.map(category => <button
+          key={category.id}
+          ref={element => { if (selectedCategory === category.id) opener.current = element; }}
+          type="button"
+          className={styles.typeButton}
+          data-demo-category={category.id}
+          data-active={selectedCategory === category.id}
+          aria-pressed={selectedCategory === category.id}
+          onClick={(event) => { opener.current = event.currentTarget; setSelectedCategory(category.id); }}
+        >
+          <span>{category.label[locale]}</span><ArrowRight size={15} aria-hidden="true" />
+        </button>)}
+      </div>
       <p className={styles.features}>{text.features}</p>
       <div className={styles.invitation}>
         <p className={styles.invitationTitle}>{text.invitationTitle}</p>
@@ -39,5 +62,6 @@ export default function WhatWeDo() {
       <Link href="/ask-ai?source=what-we-build&new=1" className={styles.cta}><TextActionLabel light>{text.cta}</TextActionLabel><ArrowUpRight size={18} aria-hidden="true" /></Link>
     </div>
     <BlueMindAiDemo />
+    {selectedCategory && <CategoryDemoViewer category={selectedCategory} onClose={closeDemo} />}
   </section>;
 }
