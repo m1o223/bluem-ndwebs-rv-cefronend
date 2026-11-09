@@ -90,7 +90,7 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
         toggleRef.current?.focus();
       }
     }}>
-      <div className={styles.headerInner}>
+      <div className={styles.headerInner} data-expanded={expanded}>
         <Link className={styles.brand} href="/" aria-label="BlueMind Web Service home" onClick={() => { setExpanded(false); setLanguageOpen(false); }}><BrandLockup className={styles.headerBrand} logoClassName={styles.brandLogo} priority solidLogo /></Link>
         {activePath !== "/sign-in" && activePath !== "/login" && <div className={styles.headerControls}>
           <Link className={styles.signInLink} href="/sign-in" aria-current={activePath === "/sign-in" ? "page" : undefined} onClick={() => { setExpanded(false); setLanguageOpen(false); }}><TextActionLabel enabled={textEffects}>Sign in</TextActionLabel></Link>

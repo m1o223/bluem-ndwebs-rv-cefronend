@@ -34,6 +34,9 @@ for (const width of [320, 390, 768, 1024, 1440]) {
       expect(await page.evaluate(() => getComputedStyle(document.body).paddingBottom)).not.toBe("0px");
     } else {
       await expect(menu).toBeVisible();
+      const headerInner = header.locator('[data-expanded]').first();
+      await expect(headerInner).toHaveCSS("border-radius", "24px");
+      await expect(headerInner).toHaveCSS("backdrop-filter", /blur\(16px\)/);
     }
     await page.waitForTimeout(800);
     await page.screenshot({ path: testInfo.outputPath("homepage-header.png") });
@@ -60,7 +63,9 @@ for (const width of [320, 390, 768, 1024, 1440]) {
       const navigation = header.getByRole("navigation");
       await expect(navigation).toBeVisible();
       await expect(navigation.locator("a")).toHaveCount(8);
+      await expect(header.locator('div[data-expanded="true"]')).toHaveCSS("border-bottom-left-radius", "0px");
       await page.keyboard.press("Escape");
+      await expect(header.locator('div[data-expanded="false"]')).toHaveCSS("border-radius", "24px");
     }
     await page.evaluate(() => scrollTo(0, 500));
     await expect(header).toHaveAttribute("data-scrolled", "true");
