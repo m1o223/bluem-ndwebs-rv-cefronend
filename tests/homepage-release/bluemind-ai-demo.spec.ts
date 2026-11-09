@@ -5,36 +5,45 @@ const imagePath = path.resolve(process.cwd(), "public/images/folio-books/folio-p
 
 async function mockDemoApi(page: import("@playwright/test").Page) {
   let calls = 0;
+  const bodies: unknown[] = [];
   await page.route("**/api/ai/demo", async route => {
     calls += 1;
+    bodies.push(route.request().postDataJSON());
     await route.fulfill({
       status: 200,
       headers: { "content-type": "application/x-ndjson" },
       body: `{"type":"delta","text":"Preview response ${calls}"}\n{"type":"done"}\n`,
     });
   });
-  return () => calls;
+  return { calls: () => calls, bodies };
 }
 
 test("desktop tablet preview accepts an image, allows two replies, then transfers the conversation", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.emulateMedia({ reducedMotion: "reduce" });
-  const calls = await mockDemoApi(page);
+  const mock = await mockDemoApi(page);
   await page.goto("/");
   const demo = page.locator("[data-ai-demo]");
   await expect(demo).toBeVisible();
   await expect(demo.getByText(/What kind of website do you have in mind/)).toBeVisible();
-  await demo.locator('input[type="file"]').setInputFiles(imagePath);
-  await expect(demo.getByRole("button", { name: /Remove / })).toHaveCount(1);
+  await expect(demo.getByRole("button", { name: "Close menu" })).toBeVisible();
+  await demo.getByRole("button", { name: "Close menu" }).click();
+  await expect(demo.getByRole("button", { name: "Open menu" })).toBeVisible();
+  await demo.getByRole("button", { name: "Open menu" }).click();
+  await demo.locator('input[type="file"]').first().setInputFiles(imagePath);
+  await expect(demo.getByRole("button", { name: /Remove image/ })).toHaveCount(1);
   await demo.locator("textarea").fill("I want a bookstore website");
   await demo.getByRole("button", { name: "Send message" }).click();
   await expect(demo.getByText("Preview response 1")).toBeVisible();
+  expect((mock.bodies[0] as { messages: Array<{ content: string; attachments?: Array<{ name: string; data: string }> }> }).messages[0].content).toBe("I want a bookstore website");
+  expect((mock.bodies[0] as { messages: Array<{ attachments?: Array<{ name: string; data: string }> }> }).messages[0].attachments?.[0]).toMatchObject({ name: "folio-phone.webp" });
+  expect((mock.bodies[0] as { messages: Array<{ attachments?: Array<{ data: string }> }> }).messages[0].attachments?.[0].data.length).toBeGreaterThan(100);
   await demo.locator("textarea").fill("Can you help me shape the idea?");
   await demo.getByRole("button", { name: "Send message" }).click();
   await expect(demo.getByText("Preview response 2")).toBeVisible();
   await expect(demo.getByRole("dialog")).toBeVisible();
   await expect(demo.getByRole("button", { name: "Continue in BlueMind AI" })).toBeVisible();
-  expect(calls()).toBe(2);
+  expect(mock.calls()).toBe(2);
   await demo.getByRole("button", { name: "Continue in BlueMind AI" }).click();
   await expect(page).toHaveURL(/\/ask-ai\?source=what-we-build&continue=1/);
   await expect(page.getByRole("log", { name: "Conversation" })).toContainText("I want a bookstore website", { timeout: 10000 });
