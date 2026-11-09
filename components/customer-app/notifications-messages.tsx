@@ -227,7 +227,7 @@ export default function NotificationsMessages({ locale }: { locale: Locale }) {
 
   return <section className={styles.messagesPage} aria-label={t.title}>
     <div className={styles.messageWorkspace} data-mode={active ? "conversation" : "list"}>
-      <section className={styles.messageList} data-hidden={active ? "true" : "false"} aria-label={t.title}>
+      <section className={styles.messageList} data-message-list="true" data-hidden={active ? "true" : "false"} aria-label={t.title}>
         <div className={styles.messageListHeading}><div><p className={styles.eyebrow}>BlueMind Web Service</p><h2>{t.title}</h2></div><Mail size={22} aria-hidden="true" /></div>
         <p className={styles.messageHint}>{t.select}</p>
         <div className={styles.threadList}>
@@ -242,7 +242,7 @@ export default function NotificationsMessages({ locale }: { locale: Locale }) {
           })}
         </div>
       </section>
-      <section className={styles.conversation} data-visible={Boolean(active)} aria-label={active?.title || t.empty}>
+      <section className={styles.conversation} data-message-conversation="true" data-visible={Boolean(active)} aria-label={active?.title || t.empty}>
         {active ? <>
           <header className={styles.conversationHeader}><button type="button" className={`${styles.backToMessages} ${styles.secondary}`} onClick={leaveConversation} aria-label={t.back}><ArrowLeft size={17} aria-hidden="true" />{t.back}</button><span className={styles.conversationAvatar} aria-hidden="true">{active.avatar}</span><div><h2>{active.title}</h2><span className={styles.demoBadge}>{t.demo}</span></div></header>
           <div className={styles.conversationMessages} aria-live="polite">{activeMessages.map(message => <article key={message.id} className={styles.demoMessage} data-sender={message.sender}>{message.kind === "audio" ? <div className={styles.audioMessage}><audio controls src={message.audioUrl} aria-label={t.sentVoice} /><span>{t.voice} · {formatDuration(message.duration || 0)}</span></div> : <p>{message.body}</p>}<time><Clock3 size={13} aria-hidden="true" />{message.time}</time></article>)}</div>
