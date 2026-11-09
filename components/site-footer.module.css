@@ -16,7 +16,7 @@
 .contact dd a { display: inline-flex; min-height: 36px; align-items: center; color: inherit; }
 .contactLink { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; margin-top: 10px; color: var(--bluemind-text); font-size: 13px; font-weight: 500; }
 .footer .note { margin: 12px 0 0; color: var(--bluemind-text); font-size: 11px; line-height: 1.8; }
-.middle { display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px; padding-block: 30px; border-block: 1px solid #dfe4eb; }
+.middle { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; padding-block: 30px; border-block: 1px solid #dfe4eb; }
 .social { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
 .social a, .pendingSocial { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 999px; color: var(--bluemind-blue); }
 .social img { width: 20px; height: 20px; object-fit: contain; filter: brightness(0) saturate(100%) invert(14%) sepia(24%) saturate(1907%) hue-rotate(175deg) brightness(92%) contrast(94%); }
@@ -24,14 +24,14 @@
 .social a:hover { opacity: 1; transform: translateY(-2px); text-decoration: none; background: var(--bluemind-blue-hover); }
 .pendingSocial { opacity: .72; cursor: default; }
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-.payments ul { display: grid; grid-template-columns: repeat(3, minmax(0, 92px)); align-items: start; gap: 14px 18px; }
-.payments li { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 3px; min-height: 42px; padding: 0; border: 0; border-radius: 0; background: transparent; }
-.payments img { width: 72px; height: 28px; object-fit: contain; flex-shrink: 0; }
-.payments img[alt="Apple Pay"] { width: 72px; height: 27px; }
-.payments img[alt="Google Pay"] { width: 84px; height: 30px; }
-.payments img[alt="Visa"] { width: 62px; height: 22px; }
-.payments img[alt="Mastercard"] { width: 56px; height: 28px; }
-.payments img[alt="Klarna"] { width: 74px; height: 28px; }
+.payments ul { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.payments li { display: flex; flex: 1 1 0; min-width: 0; min-height: 50px; align-items: center; justify-content: center; padding: 0 4px; border: 0; border-radius: 0; background: transparent; }
+.payments img { width: 100%; height: 34px; max-width: 88px; object-fit: contain; flex-shrink: 0; }
+.payments img[alt="Apple Pay"] { max-width: 84px; height: 31px; }
+.payments img[alt="Google Pay"] { max-width: 98px; height: 35px; }
+.payments img[alt="Visa"] { max-width: 72px; height: 26px; }
+.payments img[alt="Mastercard"] { max-width: 66px; height: 32px; }
+.payments img[alt="Klarna"] { max-width: 90px; height: 34px; }
 .payments li > span { color: var(--bluemind-blue); font-size: 13px; font-weight: 700; letter-spacing: -.1px; }
 .payments li small { padding: 1px 6px; border-radius: 999px; background: #edf3fa; color: var(--bluemind-blue); font-size: 9px; font-weight: 600; line-height: 1.5; }
 .bottom { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; padding-top: 24px; }
@@ -39,7 +39,7 @@
 .bottom nav a { color: inherit; display: inline-flex; min-height: 36px; align-items: center; }
 .bottom .note { margin-top: 7px; }
 .copyright { margin: 0; color: var(--bluemind-text); font-size: 11px; line-height: 1.8; }
-@media (max-width: 1050px) { .columns { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 48px; } .middle { grid-template-columns: minmax(0, 1fr); gap: 26px; } .bottom { align-items: flex-start; flex-direction: column; gap: 20px; } }
-@media (max-width: 620px) { .footer { padding-block: 34px 24px; } .columns { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-bottom: 28px; } .linkGroup a { min-height: 44px; } .middle { padding-block: 26px; } .bottom nav ul { gap: 12px 20px; } .payments ul { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 330px; gap: 14px 10px; } .payments img { max-width: 72px; } }
+@media (max-width: 1050px) { .columns { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 48px; } .payments ul { flex-wrap: wrap; justify-content: flex-start; gap: 14px 12px; } .payments li { flex: 0 0 calc(16.666% - 10px); } .bottom { align-items: flex-start; flex-direction: column; gap: 20px; } }
+@media (max-width: 620px) { .footer { padding-block: 34px 24px; } .columns { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-bottom: 28px; } .linkGroup a { min-height: 44px; } .middle { padding-block: 26px; } .bottom nav ul { gap: 12px 20px; } .payments ul { gap: 14px 8px; } .payments li { flex-basis: calc(33.333% - 6px); } .payments img { max-width: 82px; height: 30px; } .payments img[alt="Google Pay"] { max-width: 92px; height: 33px; } }
 @media (prefers-reduced-motion: reduce) { .footer a { transition: none; } .social a:hover { transform: none; } }
 

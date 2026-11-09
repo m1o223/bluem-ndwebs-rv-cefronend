@@ -1,3 +1,3 @@
 export const contactConfig = {
-  email: "contact@xn--bluemndwebservice-gvc.com",
+  email: "contactusbluemind@gmail.com",
 } as const;

@@ -38,4 +38,14 @@ test.describe("homepage FAQ", () => {
     await expect(page.locator("[data-faq-list]")).toHaveAttribute("dir", "rtl");
     await expect(page.locator("[data-faq-list] details")).toHaveCount(11);
   });
+
+  test("shows the updated contact details, payment methods, and FAQ footer link", async ({ page }) => {
+    const footer = page.locator("footer");
+    await expect(footer.locator('a[href="mailto:contactusbluemind@gmail.com"]')).toBeVisible();
+    await expect(footer.getByRole("link", { name: /Contact Us/ })).toHaveAttribute("href", "/contact");
+    await expect(footer.locator('[aria-labelledby="footer-payments-title"] li')).toHaveCount(12);
+    await expect(footer.locator('[aria-labelledby="footer-payments-title"] img[alt="Google Pay"]')).toBeVisible();
+    await expect(footer.getByRole("link", { name: "FAQ" })).toHaveAttribute("href", "/faq");
+    await expect(footer.getByText("Coming soon", { exact: true })).toHaveCount(0);
+  });
 });
