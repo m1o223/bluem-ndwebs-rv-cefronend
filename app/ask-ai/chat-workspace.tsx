@@ -60,7 +60,7 @@ function History({ conversations, activeId, compact = false, onSelect, onNew }: 
   </>;
 }
 
-export default function ChatWorkspace({ available }: { available: boolean }) {
+export default function ChatWorkspace({ available, embedded = false }: { available: boolean; embedded?: boolean }) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
@@ -166,6 +166,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
   }, []);
 
   useEffect(() => {
+    if (embedded) return;
     const viewport = window.visualViewport;
     if (!viewport) return;
     // Keep the composer inside the visible viewport when a mobile keyboard opens.
@@ -181,7 +182,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
       viewport.removeEventListener("resize", resize);
       viewport.removeEventListener("scroll", resize);
     };
-  }, []);
+  }, [embedded]);
 
   useLayoutEffect(() => {
     if (!input.current) return;
@@ -449,7 +450,7 @@ export default function ChatWorkspace({ available }: { available: boolean }) {
     <div className={styles.thinkingIndicator} data-ready={contentArrived && thinkingReply?.ready} aria-hidden="true"><span className={styles.thinkingDot} /></div>
   </div>;
 
-  return <div ref={root} className={styles.chat} data-collapsed={collapsed} data-welcome={!hasMessages} data-no-translate dir="ltr">
+  return <div ref={root} className={`${styles.chat} ${embedded ? styles.embedded : ""}`} data-embedded={embedded || undefined} data-collapsed={collapsed} data-welcome={!hasMessages} data-no-translate dir="ltr">
     <aside id="ai-chat-sidebar" className={styles.sidebar} aria-label="Chat sidebar">
       <div className={styles.sidebarTop}>
         <span className={styles.sidebarTitle}>BlueMind AI</span>
