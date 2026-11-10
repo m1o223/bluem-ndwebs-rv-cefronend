@@ -389,7 +389,7 @@ a {
     [class*="homeNav"] a,
     [class*="linkList"] a
   ):active {
-    transform: none;
+    transform: none !important;
   }
 }
 
@@ -428,7 +428,7 @@ a {
   }
 
   :where(a[class*="back"], [class*="desktopNav"] a):active {
-    transform: none;
+    transform: none !important;
   }
 }
 
