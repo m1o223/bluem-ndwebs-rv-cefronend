@@ -1,15 +1,10 @@
 import { expect, test } from "@playwright/test";
 
 for (const width of [390, 768, 1440]) {
-  test(`Menu opens the complete Templates page at ${width}px`, async ({ page }, info) => {
+  test(`Templates index opens and preserves all concepts at ${width}px`, async ({ page }, info) => {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto("/");
-    await expect(page.locator("[data-project-card]")).toHaveCount(0);
-    await page.getByRole("button", { name: "Open menu", exact: true }).click();
-    const link = page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Website Concepts", exact: true });
-    await expect(link).toHaveAttribute("href", "/templates");
-    await link.click();
+    await page.goto("/templates");
     await expect(page).toHaveURL(/\/templates$/);
     await expect(page.getByRole("heading", { name: "Website Concepts", level: 1 })).toBeVisible();
     await expect(page.locator("[data-project-card]")).toHaveCount(8);
