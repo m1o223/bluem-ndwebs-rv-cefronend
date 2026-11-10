@@ -32,7 +32,7 @@ for (const [width, height] of [[390, 844], [768, 1024], [1440, 900]]) {
 
     const primary = payments.locator('[data-payment-set="primary"]');
     expect(await primary.locator("[data-payment-name]").evaluateAll(elements => elements.map(element => element.getAttribute("data-payment-name")))).toEqual([
-      "Klarna", "Swish", "Faktura", "Visa", "Mastercard", "Apple Pay", "Google Pay", "PayPal", "American Express", "Alipay", "mada", "Pix",
+      "Klarna", "Swish", "Faktura", "Visa", "Mastercard", "Google Pay", "Apple Pay", "PayPal",
     ]);
     for (const name of ["Klarna", "Swish", "Faktura"]) await expect(primary.locator(`[data-payment-name="${name}"]`)).toBeVisible();
     await expect(primary.locator('[data-payment-name="Klarna"] img')).toHaveAttribute("src", /klarna/);
@@ -42,7 +42,7 @@ for (const [width, height] of [[390, 844], [768, 1024], [1440, 900]]) {
   });
 }
 
-test("payment bar holds briefly then uses a slow seamless marquee", async ({ page }) => {
+test("payment bar uses a slow seamless marquee", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.addInitScript(() => localStorage.setItem("bluemind:brand-intro:v1", "complete"));
   await page.goto("/");
@@ -53,7 +53,7 @@ test("payment bar holds briefly then uses a slow seamless marquee", async ({ pag
     const effect = animation?.effect?.getTiming();
     return { delay: effect?.delay, duration: effect?.duration };
   });
-  expect(timing).toEqual({ delay: 1200, duration: 72000 });
+  expect(timing).toEqual({ delay: 0, duration: 72000 });
 });
 
 for (const [locale, paymentTitle, sectionTitle] of [["ar", "طرق الدفع", "شو منعمل؟"], ["sv", "Betalningsmetoder", "Vad vi gör"]]) {
