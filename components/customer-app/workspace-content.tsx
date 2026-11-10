@@ -96,10 +96,10 @@ function Account({ overview, user, locale, signOut, signingOut }: { overview: Ov
       </section>
       <section className={styles.section}><h2>{t.methods}</h2>{[["email", t.email], ["google", "Google"], ["bankid", "BankID"]].map(([key, title]) => <div className={styles.settingRow} key={key}><span>{title}</span><span className={styles.muted}>{profile.loginMethods.includes(key) ? t.linked : t.notLinked}</span></div>)}</section>
       <section className={styles.section}><h2>{t.notifications}</h2>{([['project', 'projectNotices'], ['team', 'teamNotices'], ['billing', 'billingNotices'], ['email', 'emailNotices']] as const).map(([key, label]) => <label key={key} className={styles.settingRow}><span>{t[label]}</span><input type="checkbox" role="switch" checked={profile.preferences[key]} onChange={event => patch({ preferences: { ...profile.preferences, [key]: event.target.checked } })} /></label>)}</section>
-      <div className={styles.saveRow}><button type="submit" className={styles.primary} disabled={busy}><Save size={17} /><TextActionLabel light>{busy ? t.saving : t.save}</TextActionLabel></button><p role={notice === "failure" ? "alert" : "status"}>{notice ? t[notice] : ""}</p></div>
+      <div className={styles.saveRow}><button type="submit" className={styles.primary} disabled={busy}><Save size={17} /><TextActionLabel light underline={false}>{busy ? t.saving : t.save}</TextActionLabel></button><p role={notice === "failure" ? "alert" : "status"}>{notice ? t[notice] : ""}</p></div>
     </form>
     <SecuritySettings locale={locale} passwordLogin={profile.loginMethods.includes("email")} />
-    <section className={styles.section}><h2>{t.actions}</h2><div className={styles.actions}><button type="button" onClick={signOut} disabled={signingOut}><LogOut size={17} /><TextActionLabel>{locale === "ar" ? "تسجيل الخروج" : locale === "sv" ? "Logga ut" : "Sign out"}</TextActionLabel></button></div></section>
+    <section className={styles.section}><h2>{t.actions}</h2><div className={styles.actions}><button type="button" onClick={signOut} disabled={signingOut}><LogOut size={17} /><TextActionLabel underline={false}>{locale === "ar" ? "تسجيل الخروج" : locale === "sv" ? "Logga ut" : "Sign out"}</TextActionLabel></button></div></section>
   </>;
 }
 function Contact({ overview, user, locale }: { overview: Overview; user: Customer; locale: Locale }) {
@@ -121,7 +121,7 @@ function Contact({ overview, user, locale }: { overview: Overview; user: Custome
     <CustomerType t={t} value={form.customerType} onChange={customerType => setForm({ ...form, customerType })} />
     {form.customerType === "company" && <Field label={t.companyName}><input autoComplete="organization" maxLength={180} value={form.companyName} onChange={event => setForm({ ...form, companyName: event.target.value })} /></Field>}
     <Field label={`${t.order} (${t.optional})`}><input maxLength={100} value={form.orderNumber} onChange={event => setForm({ ...form, orderNumber: event.target.value })} /></Field>
-  </div><Field label={t.message}><textarea required minLength={3} maxLength={4000} rows={7} value={form.message} onChange={event => setForm({ ...form, message: event.target.value })} /></Field></fieldset><button className={styles.primary} disabled={busy}><Send size={17} /><TextActionLabel light>{busy ? t.sending : t.send}</TextActionLabel></button><p role={notice === "failure" ? "alert" : "status"}>{notice ? t[notice] : ""}</p></form>;
+  </div><Field label={t.message}><textarea required minLength={3} maxLength={4000} rows={7} value={form.message} onChange={event => setForm({ ...form, message: event.target.value })} /></Field></fieldset><button className={styles.primary} disabled={busy}><Send size={17} /><TextActionLabel light underline={false}>{busy ? t.sending : t.send}</TextActionLabel></button><p role={notice === "failure" ? "alert" : "status"}>{notice ? t[notice] : ""}</p></form>;
 }
 export default function WorkspaceContent({ page, overview, user, locale, signOut, signingOut }: { page: CustomerPage; overview: Overview; user: Customer; locale: Locale; signOut: () => void; signingOut: boolean }) {
   const t = workspaceCopy[locale];
