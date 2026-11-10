@@ -106,10 +106,10 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
     <header className={styles.header}>
       <Link href="/dashboard" aria-label="BlueMind"><BrandLockup solidLogo className={styles.brand} logoClassName={styles.logo} /></Link>
       <nav className={styles.desktopNav} aria-label="Account navigation">
-        <Link href="/dashboard" aria-current={page === "home" ? "page" : undefined}><Home size={18} aria-hidden="true" /><TextActionLabel>{text.home}</TextActionLabel></Link>
-        <Link href="/blue-mind-ai" aria-current={page === "ai" ? "page" : undefined}><Sparkles size={18} aria-hidden="true" /><TextActionLabel>{text.ai}</TextActionLabel></Link>
-        <Link href="/notifications" aria-current={page === "notifications" ? "page" : undefined}><MessageCircle size={18} aria-hidden="true" /><TextActionLabel>{messagesLabel}</TextActionLabel></Link>
-        <Link href="/account" aria-current={page === "account" ? "page" : undefined}><Settings size={18} aria-hidden="true" /><TextActionLabel>{accountLabel}</TextActionLabel></Link>
+        <Link href="/dashboard" aria-current={page === "home" ? "page" : undefined}><Home size={18} aria-hidden="true" /><TextActionLabel underline={false}>{text.home}</TextActionLabel></Link>
+        <Link href="/blue-mind-ai" aria-current={page === "ai" ? "page" : undefined}><Sparkles size={18} aria-hidden="true" /><TextActionLabel underline={false}>{text.ai}</TextActionLabel></Link>
+        <Link href="/notifications" aria-current={page === "notifications" ? "page" : undefined}><MessageCircle size={18} aria-hidden="true" /><TextActionLabel underline={false}>{messagesLabel}</TextActionLabel></Link>
+        <Link href="/account" aria-current={page === "account" ? "page" : undefined}><Settings size={18} aria-hidden="true" /><TextActionLabel underline={false}>{accountLabel}</TextActionLabel></Link>
       </nav>
     </header>
     <main className={styles.main}>

@@ -59,7 +59,7 @@ export default function WhatWeDo() {
         <p className={styles.invitationTitle}>{text.invitationTitle}</p>
         <p className={styles.invitationBody}>{text.invitationBody}</p>
       </div>
-      <Link href="/ask-ai?source=what-we-build&new=1" className={styles.cta}><TextActionLabel light>{text.cta}</TextActionLabel><ArrowUpRight size={18} aria-hidden="true" /></Link>
+      <Link href="/ask-ai?source=what-we-build&new=1" className={styles.cta}><TextActionLabel light underline={false}>{text.cta}</TextActionLabel><ArrowUpRight size={18} aria-hidden="true" /></Link>
     </div>
     <BlueMindAiDemo />
     {selectedCategory && <CategoryDemoViewer category={selectedCategory} onClose={closeDemo} />}

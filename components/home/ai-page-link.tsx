@@ -12,6 +12,6 @@ export default function AiPageLink({ triggerClassName }: { triggerClassName: str
   const { locale, translate } = useLocalization();
   return <Link href="/ask-ai" className={`${triggerClassName} ${styles.trigger}`} aria-label={labels[locale]} data-no-translate>
     <span className={styles.sizer} aria-hidden="true">{translate("Explore Concepts")}</span>
-    <span className={styles.label} aria-hidden="true" dir="auto"><TextActionLabel>{labels[locale]}</TextActionLabel><Sparkles size={15} /></span>
+    <span className={styles.label} aria-hidden="true" dir="auto"><TextActionLabel underline={false}>{labels[locale]}</TextActionLabel><Sparkles size={15} /></span>
   </Link>;
 }

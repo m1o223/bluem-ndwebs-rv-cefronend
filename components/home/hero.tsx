@@ -13,11 +13,11 @@ export default function Hero() {
         <div className={styles.copy}>
           <h1 id="hero-title" className={styles.headline}>
             <span>Have a website idea?</span>{" "}
-            <span>We’ll build it.</span>
+            <span>We'll build it.</span>
           </h1>
           <p className={styles.description}>Online stores, restaurant websites, portfolios, and custom sites built around your needs.</p>
           <div className={`${shared.actions} ${styles.actions}`}>
-            <Link href="/quote" className={`${styles.ctaButton} ${styles.primaryCta}`}><TextActionLabel light>Get Started</TextActionLabel></Link>
+            <Link href="/quote" className={`${styles.ctaButton} ${styles.primaryCta}`}><TextActionLabel light underline={false}>Get Started</TextActionLabel></Link>
             <AiPageLink triggerClassName={styles.ctaButton} />
           </div>
         </div>

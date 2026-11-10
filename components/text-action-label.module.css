@@ -4,6 +4,7 @@
 }
 
 .light { --text-action-color: #b8d8fa; }
+.noUnderline::after { display: none; }
 
 .label::after {
   content: "";

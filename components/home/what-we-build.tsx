@@ -78,7 +78,7 @@ export default function WhatWeBuild() {
         <p className={styles.invitationTitle}>{text.invitationTitle}</p>
         <p className={styles.invitationBody}>{text.invitationBody}</p>
       </div>
-      <Link href="/ask-ai?source=what-we-build&new=1" className={`${styles.cta} ${styles.reveal}`}><TextActionLabel light>{text.cta}</TextActionLabel><ArrowUpRight size={18} aria-hidden="true" /></Link>
+      <Link href="/ask-ai?source=what-we-build&new=1" className={`${styles.cta} ${styles.reveal}`}><TextActionLabel light underline={false}>{text.cta}</TextActionLabel><ArrowUpRight size={18} aria-hidden="true" /></Link>
       <section className={`${styles.payments} ${styles.reveal}`} aria-labelledby="payment-methods-title">
         <h3 id="payment-methods-title" className={styles.paymentTitle}>{paymentTitles[locale]}</h3>
         <div className={styles.paymentViewport}>

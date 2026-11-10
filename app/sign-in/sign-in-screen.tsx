@@ -66,14 +66,14 @@ export default function SignInScreen() {
       <div className={styles.center}>
         <div className={styles.formArea} data-auth-card data-mode={mode}>
           <div className={styles.step} key={mode}>
-            {mode !== "welcome" && <button type="button" className={styles.stepBack} disabled={busy} onClick={() => changeMode(mode === "recovery" ? recoveryFrom.current : "welcome")}><ArrowLeft size={15} aria-hidden="true" /><TextActionLabel>{text.back}</TextActionLabel></button>}
+            {mode !== "welcome" && <button type="button" className={styles.stepBack} disabled={busy} onClick={() => changeMode(mode === "recovery" ? recoveryFrom.current : "welcome")}><ArrowLeft size={15} aria-hidden="true" /><TextActionLabel underline={false}>{text.back}</TextActionLabel></button>}
             <h1 id="sign-in-title" ref={title} tabIndex={-1}>{heading}</h1>
             {mode === "welcome" ? <>
               <p className={styles.subtitle}>{text.subtitle}</p>
               <div className={styles.providers}>
-                <button type="button" disabled={busy} aria-busy={google.busy} data-active={google.busy} onClick={() => void google.start("", returnTo)}><Image src="/images/sign-in/google.png" width={20} height={20} alt="" /><TextActionLabel>{text.google}</TextActionLabel>{google.busy && <LoaderCircle size={18} className={styles.spinner} aria-hidden="true" />}</button>
+                <button type="button" disabled={busy} aria-busy={google.busy} data-active={google.busy} onClick={() => void google.start("", returnTo)}><Image src="/images/sign-in/google.png" width={20} height={20} alt="" /><TextActionLabel underline={false}>{text.google}</TextActionLabel>{google.busy && <LoaderCircle size={18} className={styles.spinner} aria-hidden="true" />}</button>
                 <p className={styles.bankidNote} role="status">{text.bankidNote}</p>
-                <button type="button" disabled={busy} onClick={() => changeMode("login")}><Mail className={styles.providerIcon} size={20} aria-hidden="true" /><TextActionLabel>{text.emailOption}</TextActionLabel></button>
+                <button type="button" disabled={busy} onClick={() => changeMode("login")}><Mail className={styles.providerIcon} size={20} aria-hidden="true" /><TextActionLabel underline={false}>{text.emailOption}</TextActionLabel></button>
               </div>
             </> : <>
               {mode === "recovery" && <p className={styles.subtitle}>{text.recoveryDescription}</p>}
@@ -84,9 +84,9 @@ export default function SignInScreen() {
                 </>}
                 <label htmlFor="sign-in-email">{text.email}</label><input id="sign-in-email" name="email" type="email" autoComplete={mode === "register" ? "email" : "username"} inputMode="email" dir="ltr" spellCheck={false} required maxLength={254} disabled={busy} />
                 {mode !== "recovery" && <><label htmlFor="sign-in-password">{text.password}</label><input id="sign-in-password" name="password" type="password" autoComplete={mode === "register" ? "new-password" : "current-password"} required minLength={mode === "register" ? 15 : undefined} disabled={busy} /></>}
-                <button type="submit" className={styles.primary} disabled={busy} aria-busy={email.busy}><TextActionLabel light>{mode === "register" ? text.start : mode === "login" ? text.signIn : text.reset}</TextActionLabel>{email.busy && <LoaderCircle size={18} className={styles.spinner} aria-hidden="true" />}</button>
+              <button type="submit" className={styles.primary} disabled={busy} aria-busy={email.busy}><TextActionLabel light underline={false}>{mode === "register" ? text.start : mode === "login" ? text.signIn : text.reset}</TextActionLabel>{email.busy && <LoaderCircle size={18} className={styles.spinner} aria-hidden="true" />}</button>
               </form>
-              {mode === "register" && <p className={styles.existing}>{text.existing} <button type="button" onClick={() => changeMode("login")}><TextActionLabel>{text.signIn}</TextActionLabel></button></p>}
+              {mode === "register" && <p className={styles.existing}>{text.existing} <button type="button" onClick={() => changeMode("login")}><TextActionLabel underline={false}>{text.signIn}</TextActionLabel></button></p>}
               {mode !== "login" && <p ref={availability} className={styles.availability} role="status" tabIndex={-1}>{mode === "register" ? text.registrationNote : text.recoveryNote}{mode === "recovery" && <> <Link href="/contact">{text.contact}</Link></>}</p>}
             </>}
             {(mode === "welcome" || mode === "login") && <p className={styles.notice} role="status" aria-live="polite" aria-atomic="true">{status}</p>}
