@@ -43,6 +43,7 @@ const messages: Record<Locale, MessageMap> = {
 
 const LocalizationContext = createContext<LocalizationContextValue | null>(null);
 const textOriginals = new WeakMap<Text, string>();
+const textTranslations = new WeakMap<Text, string>();
 const originalAttributePrefix = "data-i18n-original-";
 
 function normalizeLocale(value: string | null): Locale {
@@ -79,6 +80,7 @@ function translateValue(value: string, locale: Locale) {
 
 function translateDynamicValue(value: string, locale: Locale) {
   if (locale === "sv") {
+    if (value === "FAQ") return "Vanliga frågor";
     if (/^\d[\d\s,.]* SEK$/.test(value)) return value.replace(/,/g, " ");
     if (value.startsWith("Pay the remaining ") && value.endsWith(" according to the agreed delivery terms.")) {
       return `Betala resterande ${value.slice(18, -" according to the agreed delivery terms.".length)} enligt \u00f6verenskomna leveransvillkor.`;
@@ -97,6 +99,7 @@ function translateDynamicValue(value: string, locale: Locale) {
     if (value.endsWith("All rights reserved.")) return value.replace("All rights reserved.", "Alla r\u00e4ttigheter f\u00f6rbeh\u00e5llna.");
   }
   if (locale === "ar") {
+    if (value === "FAQ") return "\u0627\u0644\u0623\u0633\u0626\u0644\u0629 \u0627\u0644\u0634\u0627\u0626\u0639\u0629";
     if (/^\d[\d\s,.]* SEK$/.test(value)) return value.replace("SEK", "\u0643\u0631\u0648\u0646\u0629 \u0633\u0648\u064a\u062f\u064a\u0629");
     if (value.startsWith("Pay the remaining ") && value.endsWith(" according to the agreed delivery terms.")) {
       return `\u0627\u062f\u0641\u0639 \u0627\u0644\u0645\u062a\u0628\u0642\u064a ${value.slice(18, -" according to the agreed delivery terms.".length)} \u0648\u0641\u0642\u0627 \u0644\u0634\u0631\u0648\u0637 \u0627\u0644\u062a\u0633\u0644\u064a\u0645 \u0627\u0644\u0645\u062a\u0641\u0642 \u0639\u0644\u064a\u0647\u0627.`;
@@ -113,6 +116,7 @@ function translateDynamicValue(value: string, locale: Locale) {
     if (value.startsWith("Close ")) return `\u0625\u063a\u0644\u0627\u0642 ${value.slice(6)}`;
     if (value.startsWith("Open ")) return `\u0641\u062a\u062d ${value.slice(5)}`;
   }
+  if (locale === "ar" && value.endsWith("All rights reserved.")) return value.replace("All rights reserved.", "\u062c\u0645\u064a\u0639 \u0627\u0644\u062d\u0642\u0648\u0642 \u0645\u062d\u0641\u0648\u0638\u0629.");
   return value;
 }
 
@@ -120,9 +124,14 @@ function translateTextNode(node: Text, locale: Locale) {
   if (shouldSkipNode(node)) return;
   const current = node.nodeValue ?? "";
   if (!current.trim()) return;
-  const original = textOriginals.get(node) ?? current;
+  const storedOriginal = textOriginals.get(node);
+  const previousTranslation = textTranslations.get(node);
+  // React may replace a text node's source when a component renders a locale-specific copy.
+  // Only reuse the stored English source when the current value is still our last translation.
+  const original = storedOriginal && current === previousTranslation ? storedOriginal : current;
   textOriginals.set(node, original);
   const translated = translateValue(original, locale);
+  textTranslations.set(node, translated);
   if (node.nodeValue !== translated) node.nodeValue = translated;
 }
 
