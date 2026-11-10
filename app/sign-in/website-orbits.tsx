@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { memo, useEffect, useState, type CSSProperties } from "react";
+import { memo, type CSSProperties } from "react";
 import styles from "./website-orbits.module.css";
 
 const previews = [
@@ -18,13 +18,7 @@ const previews = [
 ] as const;
 
 function WebsiteOrbits() {
-  const [paused, setPaused] = useState(false);
-  useEffect(() => {
-    const update = () => setPaused(document.hidden);
-    update(); document.addEventListener("visibilitychange", update);
-    return () => document.removeEventListener("visibilitychange", update);
-  }, []);
-  return <div className={styles.orbits} data-auth-orbits data-paused={paused} aria-hidden="true" dir="ltr">
+  return <div className={styles.orbits} data-auth-orbits aria-hidden="true" dir="ltr">
     {previews.map(item => <div key={item.id} className={styles.device} data-preview={item.id} data-ring={item.ring} data-device={item.device} data-mobile={"mobile" in item && item.mobile} style={{ "--phase": item.phase, "--tilt": `${item.tilt}deg`, "--ink": item.color, "--surface": item.surface } as CSSProperties}>
       <div className={styles.frame}>
         <div className={styles.chrome}><i /><i /><i /><span>{item.brand.toLowerCase().replaceAll(" ", "")}.studio</span></div>

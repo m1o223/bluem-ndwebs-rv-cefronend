@@ -2,7 +2,7 @@
 .inner { width: min(1040px, calc(100% - 48px)); margin-inline: auto; padding: 74px 0 78px; text-align: center; }
 .eyebrow { margin: 0 0 12px; color: #72819a; font-size: 10px; font-weight: 600; letter-spacing: 1.8px; }
 .title { margin: 0; color: var(--bluemind-text); font-size: 42px; font-weight: 600; line-height: 1.2; }
-.folioDevices { width: min(100%, 900px); margin: 24px auto 32px; display: flex; align-items: center; justify-content: center; direction: ltr; isolation: isolate; animation: folio-devices-enter 700ms cubic-bezier(.22, 1, .36, 1) both; }
+.folioDevices { width: min(100%, 900px); margin: 24px auto 32px; display: flex; align-items: center; justify-content: center; direction: ltr; isolation: isolate; }
 .folioDevice { position: relative; min-width: 0; flex: 0 0 auto; }
 .folioDevice img { display: block; width: 100%; height: auto; object-fit: contain; }
 .folioDesktop { z-index: 1; width: 52%; }
@@ -10,10 +10,9 @@
 .folioPhone { z-index: 3; width: 14%; margin-inline-start: -4%; }
 .description { max-width: 700px; margin: 16px auto 30px; color: #607085; font-size: 20px; line-height: 1.6; }
 .types { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 32px; margin: 0; padding: 0; text-align: start; }
-.typeButton { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 14px 0; border: 0; border-bottom: 1px solid #e8edf3; background: transparent; color: var(--bluemind-text); cursor: pointer; font: inherit; font-size: 16px; line-height: 1.55; text-align: start; transition: color 180ms ease; }
-.typeButton > span { color: inherit; transition: color 180ms ease; }
-.typeButton svg { flex: 0 0 auto; color: #91a0b1; transition: none; }
-.typeButton:hover > span, .typeButton:focus-visible > span, .typeButton[data-active="true"] > span { color: var(--bluemind-blue); }
+.typeButton { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 14px 0; border: 0; border-bottom: 1px solid #e8edf3; background: transparent; color: var(--bluemind-text); cursor: pointer; font: inherit; font-size: 16px; line-height: 1.55; text-align: start; }
+.typeButton > span { color: inherit; }
+.typeButton svg { flex: 0 0 auto; color: #91a0b1; }
 .typeButton:focus-visible { outline: 2px solid var(--bluemind-blue); outline-offset: 4px; border-radius: 4px; }
 .section[dir="rtl"] .typeButton svg { transform: scaleX(-1); }
 .features { max-width: 800px; margin: 28px auto 0; color: #607085; font-size: 17px; line-height: 1.7; }
@@ -21,10 +20,7 @@
 .invitationTitle { margin: 0; font-size: 32px; font-weight: 600; line-height: 1.35; }
 .invitationBody { max-width: 760px; margin: 12px auto 0; color: #607085; font-size: 18px; line-height: 1.65; }
 .cta { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 50px; padding: 12px 22px; border: 1px solid var(--bluemind-blue); border-radius: 8px; background: var(--bluemind-blue); color: #fff; text-decoration: none; font-size: 14px; }
-.cta:hover { background: #244666; }
 .cta:focus-visible { outline: 2px solid #477bad; outline-offset: 4px; }
 .section[dir="rtl"] .cta svg { transform: scaleX(-1); }
 @media (max-width: 1024px) { .inner { padding-block: 60px 64px; } .title { font-size: 36px; } .description { font-size: 18px; } .invitationTitle { font-size: 28px; } .invitationBody { font-size: 17px; } }
 @media (max-width: 620px) { .inner { width: calc(100% - 40px); padding-block: 48px 52px; } .title { font-size: 30px; } .folioDevices { width: 100%; margin-block: 18px 24px; } .folioDesktop { width: 54%; } .folioTablet { width: 34%; margin-inline-start: -4%; } .folioPhone { width: 16%; margin-inline-start: -4%; } .description { margin-block: 14px 22px; font-size: 17px; } .types { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; } .typeButton { padding-block: 11px; font-size: 14px; } .features { margin-top: 22px; font-size: 15px; } .invitation { margin-top: 38px; } .invitationTitle { font-size: 24px; } .invitationBody { font-size: 16px; } }
-@keyframes folio-devices-enter { from { opacity: 0; transform: translate3d(28px, 0, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
-@media (prefers-reduced-motion: reduce) { .folioDevices, .cta, .typeButton { animation: none; transition: none; } }

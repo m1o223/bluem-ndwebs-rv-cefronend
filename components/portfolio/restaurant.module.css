@@ -67,13 +67,6 @@
   color: #fff6df;
   font-size: 12px !important;
   border-radius: 3px;
-  transition:
-    background 0.18s,
-    transform 0.18s;
-}
-.primary:hover {
-  background: #6d332d;
-  transform: translateY(-1px);
 }
 .textButton {
   min-height: 44px;
@@ -245,10 +238,6 @@
   border-radius: 5px;
 }
 .dishPhoto img {
-  transition: transform 0.4s;
-}
-.dish:hover .dishPhoto img {
-  transform: scale(1.03);
 }
 .dishCopy {
   padding: 22px 0 0;
@@ -775,11 +764,5 @@
   }
   .confirmation h3 {
     font-size: 36px;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .primary:hover,
-  .dish:hover .dishPhoto img {
-    transform: none;
   }
 }

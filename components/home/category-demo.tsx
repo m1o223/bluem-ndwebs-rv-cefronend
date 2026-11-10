@@ -119,16 +119,10 @@ export default function CategoryDemoViewer({
   const [selectedItem, setSelectedItem] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [formMessage, setFormMessage] = useState("");
-  const [closing, setClosing] = useState(false);
-  const closingRef = useRef(false);
-  const closeTimer = useRef<number | null>(null);
   const opener = useRef<HTMLElement | null>(null);
 
   const handleClose = useCallback(() => {
-    if (closingRef.current) return;
-    closingRef.current = true;
-    setClosing(true);
-    closeTimer.current = window.setTimeout(onClose, 420);
+    onClose();
   }, [onClose]);
 
   useEffect(() => {
@@ -144,7 +138,6 @@ export default function CategoryDemoViewer({
     };
     document.addEventListener("keydown", onKeyDown);
     return () => {
-      if (closeTimer.current) window.clearTimeout(closeTimer.current);
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", onKeyDown);
       opener.current?.focus({ preventScroll: true });
@@ -175,8 +168,8 @@ export default function CategoryDemoViewer({
   const frameStyle = { width: size.width, height: size.height, transform: `scale(${scale})` };
 
   return (
-    <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="demo-viewer-title" data-demo-phase={closing ? "closing" : "open"}>
-      <div className={`${styles.viewer} ${closing ? styles.viewerClosing : ""}`}>
+    <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="demo-viewer-title" data-demo-phase="open">
+      <div className={styles.viewer}>
         <header className={styles.viewerHeader}>
           <div className={styles.viewerIdentity}>
             <span className={styles.viewerKicker}>Demo website</span>
@@ -255,14 +248,14 @@ function DemoSite({
   const displayLabel = category.label[locale as "en" | "ar" | "sv"] || category.label.en;
 
   function jump(id: string) {
-    site.current?.querySelector<HTMLElement>(`[data-demo-section="${id}"]`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    site.current?.querySelector<HTMLElement>(`[data-demo-section="${id}"]`)?.scrollIntoView({ behavior: "auto", block: "start" });
     setMenuOpen(false);
   }
 
   function startAction() {
     setStep("select");
     setFormMessage("");
-    requestAnimationFrame(() => site.current?.querySelector<HTMLElement>("[data-demo-flow]")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    site.current?.querySelector<HTMLElement>("[data-demo-flow]")?.scrollIntoView({ behavior: "auto", block: "start" });
   }
 
   function addItem(name: string) {

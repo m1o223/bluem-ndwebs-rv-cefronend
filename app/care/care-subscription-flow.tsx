@@ -286,7 +286,7 @@ export default function CareSubscriptionFlow() {
           <div className={styles.priceSlot}><p key={billing} className={styles.price}><strong>{priceFor(item, billing).replace(" SEK", "")}</strong><span>SEK / {billing === "Monthly" ? "month" : "year"}</span></p></div>
           {billing === "Yearly" && <p className={styles.formNote}>Pay upfront. Save {yearlySavings.toLocaleString("sv-SE")} SEK and receive 12 months of coverage.</p>}
           <ul className={styles.featureList}>{item.features.map(feature => <li key={feature}><StarMark className={styles.star} /><span>{feature}</span></li>)}</ul>
-          <button type="button" className={`${buttonClass} ${item.popular ? buttonStyles.primaryCta : ""}`} disabled={!interactive} onClick={() => { setPlan(item.name); document.getElementById("care-subscribe")?.scrollIntoView({ behavior: "smooth", block: "start" }); }}>Choose {item.name}</button>
+          <button type="button" className={`${buttonClass} ${item.popular ? buttonStyles.primaryCta : ""}`} disabled={!interactive} onClick={() => { setPlan(item.name); document.getElementById("care-subscribe")?.scrollIntoView({ behavior: "auto", block: "start" }); }}>Choose {item.name}</button>
         </article>)}
       </div>
       <div className={styles.planNotes}><p>{hostingNotice}</p><p>Prefer to manage your website yourself? <span>No problem. BlueMind Care is optional.</span></p></div>

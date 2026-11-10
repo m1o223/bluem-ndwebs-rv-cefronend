@@ -1,14 +1,13 @@
 .paymentMethods { width: min(100%, 1040px); margin: 0 auto; text-align: center; }
 .paymentTitle { margin: 0 0 10px; color: #263b55; font-size: 15px; font-weight: 600; line-height: 1.4; }
 .paymentViewport { width: 100%; overflow: hidden; padding: 10px 0; }
-.paymentTrack { display: flex; width: max-content; align-items: center; animation: payment-marquee 72s linear 1200ms infinite; will-change: transform; }
+.paymentTrack { display: flex; width: max-content; align-items: center; }
 .paymentSet { display: flex; align-items: center; gap: 24px; padding-right: 24px; }
 .paymentItem { display: flex; min-width: 86px; height: 46px; flex: 0 0 auto; align-items: center; justify-content: center; padding: 8px 12px; }
 .paymentItem img { display: block; width: auto; height: auto; max-width: 84px; max-height: 28px; object-fit: contain; }
 .paymentFeatured { min-width: 104px; }
 .paymentFeatured img { max-width: 96px; max-height: 32px; }
 .invoiceMark { display: inline-flex; align-items: center; gap: 7px; color: #263b55; font-size: 15px; font-weight: 600; line-height: 1; white-space: nowrap; }
-@keyframes payment-marquee { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
 @media (max-width: 620px) {
   .paymentMethods { width: 100%; }
   .paymentTitle { font-size: 14px; }
@@ -18,8 +17,4 @@
   .paymentFeatured { min-width: 88px; }
   .paymentFeatured img { max-width: 82px; max-height: 28px; }
   .invoiceMark { gap: 5px; font-size: 13px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .paymentTrack { animation: none; }
-  .paymentSet[data-payment-set="duplicate"] { display: none; }
 }

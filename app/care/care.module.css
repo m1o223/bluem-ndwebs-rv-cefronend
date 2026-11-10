@@ -8,7 +8,7 @@
 .billingToggle { display: flex; width: fit-content; max-width: 100%; gap: 4px; margin: 26px 0 0; padding: 5px; border: 1px solid #dfe4eb; border-radius: 12px; }
 .billingOption { position: relative; cursor: pointer; }
 .billingOption input { position: absolute; width: 1px; height: 1px; opacity: 0; }
-.billingOption > span { min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px 20px; border-radius: 8px; color: var(--bluemind-text); font-size: 14px; font-weight: 500; transition: color 160ms ease-out, background-color 160ms ease-out; }
+.billingOption > span { min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px 20px; border-radius: 8px; color: var(--bluemind-text); font-size: 14px; font-weight: 500; }
 .billingOption small { padding: 4px 6px; border: 1px solid #dfe4eb; border-radius: 5px; color: var(--bluemind-text); font-size: 9px; white-space: nowrap; }
 .billingOption input:checked + span { background: var(--bluemind-blue); color: #fff; }
 .billingOption input:checked + span small { color: #fff; border-color: #757b86; }
@@ -16,7 +16,7 @@
 .saving { margin: 10px 0 24px; color: var(--bluemind-text); font-size: 12px; line-height: 1.8; }
 .testNotice { margin: 12px 0 24px; width: fit-content; max-width: 100%; padding: 9px 12px; border: 1px solid #eedaa5; border-radius: 999px; background: #fff8e8; color: #765112; font-size: 12px; font-weight: 700; line-height: 1.5; }
 .pricing { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
-.plan { display: flex; flex-direction: column; min-width: 0; padding: 26px 24px; border: 1px solid #dfe4eb; border-radius: 10px; background: #fff; transition: transform 200ms cubic-bezier(.22, 1, .36, 1), border-color 200ms ease-out, box-shadow 200ms ease-out; }
+.plan { display: flex; flex-direction: column; min-width: 0; padding: 26px 24px; border: 1px solid #dfe4eb; border-radius: 10px; background: #fff; }
 .plan.popular { padding: 25px 23px; border: 2px solid var(--bluemind-blue); background: #fafbfc; }
 .planTop { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 24px; margin-bottom: 20px; color: var(--bluemind-text); font-size: 11px; letter-spacing: .5px; }
 .badge { display: inline-flex; align-items: center; gap: 7px; padding: 6px 9px; border-radius: 16px; background: var(--bluemind-blue); color: #fff; font-size: 9px; font-weight: 600; letter-spacing: .6px; white-space: nowrap; }
@@ -25,7 +25,7 @@
 .plan h3 { margin: 0; font-size: 22px; font-weight: 500; line-height: 1.3; letter-spacing: -.6px; }
 .description { margin: 14px 0 0; min-height: 66px; font-size: 13px; line-height: 1.7; color: var(--bluemind-text); }
 .priceSlot { margin: 22px 0 24px; min-height: 80px; }
-.price { margin: 0; animation: price-enter 180ms ease-out both; }
+.price { margin: 0; }
 .price strong { display: block; font-size: 42px; font-weight: 600; line-height: 1.15; letter-spacing: -1.5px; font-variant-numeric: tabular-nums; }
 .price span { display: block; margin-top: 7px; font-size: 12px; color: var(--bluemind-text); line-height: 1.8; }
 .featureList { display: grid; gap: 12px; list-style: none; margin: 0 0 28px; padding: 20px 0 0; border-top: 1px solid #dfe4eb; }
@@ -81,7 +81,7 @@
 .careReview dt, .careState dt { color: var(--bluemind-text); font-size: 11px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
 .careReview dd, .careState dd { margin: 0; color: var(--bluemind-text); font-size: 13px; font-weight: 700; text-align: right; overflow-wrap: anywhere; }
 .careMethods { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 18px 0; }
-.careMethods button { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px; min-height: 78px; padding: 14px; border: 1px solid #dfe4eb; border-radius: 14px; background: #fff; color: var(--bluemind-text); cursor: pointer; font: inherit; font-weight: 700; text-align: left; transition: transform 200ms cubic-bezier(.22, 1, .36, 1), border-color 180ms ease, background 180ms ease, box-shadow 180ms ease; }
+.careMethods button { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px; min-height: 78px; padding: 14px; border: 1px solid #dfe4eb; border-radius: 14px; background: #fff; color: var(--bluemind-text); cursor: pointer; font: inherit; font-weight: 700; text-align: left; }
 .careMethods button[data-selected="true"] { border-color: var(--bluemind-blue); background: var(--bluemind-blue-hover); box-shadow: inset 0 0 0 1px var(--bluemind-blue); }
 .careMethods button:disabled { cursor: not-allowed; opacity: .62; }
 .careMethods button[data-method="klarna"] { background: #fff3f8; border-color: #f0bdd4; opacity: .78; }
@@ -98,7 +98,7 @@
 .careState { display: grid; justify-items: center; padding: 36px 10px; text-align: center; }
 .careState p { margin: 0; color: var(--bluemind-text); font-size: 14px; line-height: 1.8; }
 .careState .careSuccessMark { width: 76px; height: 76px; margin-bottom: 16px; color: var(--bluemind-blue); }
-.careSpinner { width: 58px; height: 58px; margin-bottom: 20px; border: 2px solid #dfe4eb; border-top-color: var(--bluemind-blue); border-radius: 999px; animation: care-spin 850ms linear infinite; }
+.careSpinner { width: 58px; height: 58px; margin-bottom: 20px; border: 2px solid #dfe4eb; border-top-color: var(--bluemind-blue); border-radius: 999px; }
 .subscriptionList { display: grid; gap: 14px; margin-top: 22px; }
 .subscriptionCard { display: grid; gap: 16px; padding: 18px; border: 1px solid #dfe4eb; border-radius: 14px; background: #fafbfc; }
 .subscriptionCard h3, .cancelPanel h3 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -.3px; }
@@ -112,11 +112,10 @@
 .cancelPanel select, .cancelPanel textarea { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid #dfe4eb; border-radius: 10px; background: #fff; color: var(--bluemind-text); font: inherit; }
 .checkoutActions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .cancelEntry { margin-top: 26px; }
-.modalBackdrop { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 24px; background: rgb(8 12 18 / 28%); backdrop-filter: blur(8px); animation: care-fade 180ms ease-out both; }
-.careModal { position: relative; width: min(760px, 100%); max-height: min(84vh, 820px); overflow-y: auto; padding: 30px; border: 1px solid #dfe4eb; border-radius: 16px; background: #fff; box-shadow: 0 30px 90px rgb(13 20 32 / 22%); animation: care-modal-enter 220ms cubic-bezier(.22, 1, .36, 1) both; }
+.modalBackdrop { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 24px; background: rgb(8 12 18 / 28%); backdrop-filter: blur(8px); }
+.careModal { position: relative; width: min(760px, 100%); max-height: min(84vh, 820px); overflow-y: auto; padding: 30px; border: 1px solid #dfe4eb; border-radius: 16px; background: #fff; box-shadow: 0 30px 90px rgb(13 20 32 / 22%); }
 .careModal h2 { margin: 0 38px 18px 0; color: var(--bluemind-text); font-size: clamp(23px, 3vw, 30px); font-weight: 500; line-height: 1.25; letter-spacing: -.7px; }
-.modalClose { position: absolute; top: 18px; right: 18px; display: inline-grid; place-items: center; width: 38px; height: 38px; border: 1px solid #dfe4eb; border-radius: 999px; background: #fff; color: var(--bluemind-text); cursor: pointer; font: inherit; font-size: 23px; line-height: 1; transition: transform 180ms cubic-bezier(.22, 1, .36, 1), background 180ms ease, border-color 180ms ease; }
-.modalClose:hover { border-color: #aab1bc; background: #f7f8fa; transform: translateY(-2px); }
+.modalClose { position: absolute; top: 18px; right: 18px; display: inline-grid; place-items: center; width: 38px; height: 38px; border: 1px solid #dfe4eb; border-radius: 999px; background: #fff; color: var(--bluemind-text); cursor: pointer; font: inherit; font-size: 23px; line-height: 1; }
 .modalClose:focus-visible { outline: 2px solid var(--bluemind-blue); outline-offset: 3px; }
 .modalEyebrow { width: fit-content; margin: 0 0 12px; padding: 6px 9px; border: 1px solid #dfe4eb; border-radius: 999px; color: var(--bluemind-text); font-size: 10px; font-weight: 800; letter-spacing: .7px; text-transform: uppercase; }
 .modalSummary { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 0 22px; padding: 16px; border: 1px solid #dfe4eb; border-radius: 14px; background: #fafbfc; }
@@ -124,7 +123,7 @@
 .modalSummary span { color: var(--bluemind-text); font-size: 14px; font-weight: 700; text-align: right; }
 .demoNotice { margin: 18px 0; padding: 12px 14px; border: 1px solid #dfe4eb; border-radius: 12px; background: #fafbfc; color: var(--bluemind-text); font-size: 12px; line-height: 1.7; }
 .demoMethods { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 20px 0; }
-.demoMethod { display: grid; gap: 10px; min-height: 92px; padding: 14px; border: 1px solid #dfe4eb; border-radius: 14px; background: #fff; color: var(--bluemind-text); cursor: pointer; font: inherit; font-size: 13px; font-weight: 800; text-align: left; transition: transform 200ms cubic-bezier(.22, 1, .36, 1), border-color 180ms ease, box-shadow 180ms ease, background 180ms ease; }
+.demoMethod { display: grid; gap: 10px; min-height: 92px; padding: 14px; border: 1px solid #dfe4eb; border-radius: 14px; background: #fff; color: var(--bluemind-text); cursor: pointer; font: inherit; font-size: 13px; font-weight: 800; text-align: left; }
 .demoMethod[data-selected="true"] { border-color: var(--bluemind-blue); background: var(--bluemind-blue-hover); box-shadow: inset 0 0 0 1px var(--bluemind-blue); }
 .demoMethod:disabled { cursor: not-allowed; opacity: .68; }
 .demoMethod[data-method="klarna"] { background: #fff3f8; border-color: #f0bdd4; }
@@ -135,16 +134,9 @@
 .reasonList { display: grid; gap: 10px; margin: 18px 0 20px; }
 .reasonList label { display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 12px 14px; border: 1px solid #dfe4eb; border-radius: 12px; cursor: pointer; color: var(--bluemind-text); font-size: 14px; font-weight: 700; }
 .reasonList input { accent-color: var(--bluemind-blue); }
-@keyframes care-spin { to { transform: rotate(360deg); } }
-@keyframes care-fade { from { opacity: 0; } to { opacity: 1; } }
-@keyframes care-modal-enter { from { opacity: 0; transform: translateY(12px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .watermark { position: absolute; z-index: 0; top: -78px; right: clamp(-120px, -7vw, -64px); width: clamp(420px, 45vw, 660px); aspect-ratio: 1 / 1; opacity: .17; pointer-events: none; user-select: none; }
 .watermark img { display: block; width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: contain; }
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
-@keyframes price-enter { from { opacity: .3; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-@media (hover: hover) and (pointer: fine) { .plan:hover { transform: translateY(-3px); border-color: #aab1bc; box-shadow: 0 8px 24px #192c4909; } .plan.popular:hover { border-color: var(--bluemind-blue); } }
-@media (hover: hover) and (pointer: fine) { .careMethods button:hover:not(:disabled) { transform: translateY(-2px); border-color: #aab1bc; box-shadow: 0 12px 28px rgb(25 44 73 / 10%); } }
-@media (hover: hover) and (pointer: fine) { .demoMethod:hover:not(:disabled) { transform: translateY(-2px); border-color: #aab1bc; box-shadow: 0 12px 28px rgb(25 44 73 / 10%); } }
 @media (max-width: 1050px) {
   .pricing { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .plan:last-child { grid-column: 1 / -1; }
@@ -182,5 +174,4 @@
   .formSection form > .button { max-width: 100%; padding-inline: 20px; font-size: 15px; }
   .watermark { width: min(360px, 86vw); top: -26px; right: -92px; opacity: .13; }
 }
-@media (prefers-reduced-motion: reduce) { .price { animation: none; } .plan, .button, .billingOption > span { transition: none; } .plan:hover, .button:hover, .button:active { transform: none; } }
 

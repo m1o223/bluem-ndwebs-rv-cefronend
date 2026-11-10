@@ -21,7 +21,6 @@ import styles from "./project-viewer.module.css";
 import { useLocalization } from "../localization-provider";
 import WindowIcon from "./window-icon";
 
-const PANEL_DURATION = 480;
 type ViewerPhase = "open" | "minimizing" | "minimized" | "closing";
 export type ProjectViewerHandle = { restore: () => void };
 
@@ -76,17 +75,13 @@ export default function InteractiveProjectViewer({
   const Project = projectComponents[project];
   const dialog = useRef<HTMLDialogElement>(null);
   const firstControl = useRef<HTMLButtonElement>(null);
-  const frames = useRef<number[]>([]);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const phaseRef = useRef<ViewerPhase>("open");
-  const revealedRef = useRef(false);
   const releasePage = useRef<(() => void) | null>(null);
   const opener = useRef<HTMLElement | null>(null);
   const restoreButton = useRef<HTMLButtonElement>(null);
   const savedScroll = useRef<{ element: HTMLElement; x: number; y: number }[]>(
     [],
   );
-  const [revealed, setRevealed] = useState(false);
   const [phase, setPhase] = useState<ViewerPhase>("open");
   const [expanded, setExpanded] = useState(false);
   const [device, setDevice] = useState<DeviceMode | null>(null);
@@ -96,13 +91,6 @@ export default function InteractiveProjectViewer({
   function changePhase(next: ViewerPhase) {
     phaseRef.current = next;
     setPhase(next);
-  }
-
-  function cancelPending() {
-    frames.current.forEach(cancelAnimationFrame);
-    frames.current = [];
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = null;
   }
 
   function lockPage() {
@@ -148,28 +136,14 @@ export default function InteractiveProjectViewer({
   }
 
   function show() {
-    cancelPending();
     const element = dialog.current!;
     element.removeAttribute("aria-hidden");
     element.inert = false;
     lockPage();
     if (!element.open) element.showModal();
     firstControl.current?.focus({ preventScroll: true });
-    element.getBoundingClientRect();
-    frames.current.push(
-      requestAnimationFrame(() => {
-        // Restore logical scroll offsets after the hidden dialog is laid out again.
-        savedScroll.current.forEach(({ element, x, y }) =>
-          element.scrollTo({ left: x, top: y, behavior: "instant" }),
-        );
-        frames.current.push(
-          requestAnimationFrame(() => {
-            if (phaseRef.current !== "open") return;
-            revealedRef.current = true;
-            setRevealed(true);
-          }),
-        );
-      }),
+    savedScroll.current.forEach(({ element: scrollElement, x, y }) =>
+      scrollElement.scrollTo({ left: x, top: y, behavior: "instant" }),
     );
   }
 
@@ -177,7 +151,6 @@ export default function InteractiveProjectViewer({
     opener.current = document.activeElement as HTMLElement | null;
     show();
     return () => {
-      cancelPending();
       dialog.current?.close();
       unlockPage();
       if (phaseRef.current !== "minimized" && opener.current?.isConnected)
@@ -270,7 +243,6 @@ export default function InteractiveProjectViewer({
   function finishExit() {
     const intent = phaseRef.current;
     if (intent !== "closing" && intent !== "minimizing") return;
-    cancelPending();
     if (intent === "closing") {
       onClose();
     } else {
@@ -298,17 +270,8 @@ export default function InteractiveProjectViewer({
           y: element.scrollTop,
         }));
     }
-    cancelPending();
     changePhase(intent);
-    setRevealed(false);
-    if (
-      !revealedRef.current ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      finishExit();
-    } else {
-      timer.current = setTimeout(finishExit, PANEL_DURATION + 80);
-    }
+    finishExit();
   }
 
   function close() {
@@ -319,7 +282,6 @@ export default function InteractiveProjectViewer({
     const current = phaseRef.current;
     if (current !== "minimized" && current !== "minimizing") return;
     changePhase("open");
-    revealedRef.current = false;
     show();
   }
 
@@ -341,32 +303,12 @@ export default function InteractiveProjectViewer({
       <dialog
         ref={dialog}
         className={styles.dialog}
-        data-revealed={revealed}
-        data-closing={phase === "closing"}
         data-viewer-phase={phase}
         inert={phase === "minimized"}
         aria-hidden={phase === "minimized" ? true : undefined}
         data-expanded={expanded}
         aria-labelledby="project-viewer-title"
         aria-describedby="project-viewer-category"
-        onTransitionEnd={(e) => {
-          if (
-            e.target === e.currentTarget &&
-            e.propertyName === "transform" &&
-            (phaseRef.current === "closing" ||
-              phaseRef.current === "minimizing")
-          )
-            finishExit();
-        }}
-        onTransitionCancel={(e) => {
-          if (
-            e.target === e.currentTarget &&
-            (phaseRef.current === "closing" ||
-              phaseRef.current === "minimizing") &&
-            window.matchMedia("(prefers-reduced-motion: reduce)").matches
-          )
-            finishExit();
-        }}
         onCancel={(e) => {
           e.preventDefault();
           close();

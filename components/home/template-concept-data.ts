@@ -65,12 +65,10 @@ const details = [
   background: #f8f7f0;
   border-radius: 8px;
   padding: 22px;
-  transition: transform .22s ease, box-shadow .22s ease;
 }
-
-.productCard:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 18px 42px #30472e18;
+.productCard:focus-visible {
+  outline: 2px solid #30472e;
+  outline-offset: 3px;
 }`,
       },
       {

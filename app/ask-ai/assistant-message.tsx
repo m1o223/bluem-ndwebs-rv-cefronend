@@ -1,8 +1,7 @@
 "use client";
 
-import { memo, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { memo, useLayoutEffect } from "react";
 import Markdown, { type Components } from "react-markdown";
-import { FastForward } from "lucide-react";
 import { MessageActions, type Feedback } from "./message-actions";
 import { MessageCard } from "./message-card";
 import type { MessageCardContent } from "../lib/ai/message-card";
@@ -17,67 +16,8 @@ const markdownComponents: Components = {
   pre: ({ children }) => <pre tabIndex={0} aria-label="Code block">{children}</pre>,
 };
 
-function usePresentedText(text: string, animate: boolean, signal?: AbortSignal) {
-  const [instant, setInstant] = useState(false);
-  const instantRef = useRef(false);
-  const [count, setCount] = useState(animate ? 0 : text.length);
-  const [reduced, setReduced] = useState(false);
-  const progress = useRef(count);
-  const target = useRef(text);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useLayoutEffect(() => {
-    const cancel = () => { if (timer.current) clearTimeout(timer.current); timer.current = null; };
-    signal?.addEventListener("abort", cancel, { once: true });
-    if (signal?.aborted) cancel();
-    return () => { cancel(); signal?.removeEventListener("abort", cancel); };
-  }, [signal]);
-
-  useEffect(() => {
-    const media = matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReduced(media.matches);
-    update();
-    media.addEventListener("change", update);
-    return () => media.removeEventListener("change", update);
-  }, []);
-
-  useEffect(() => {
-    target.current = text;
-    if (!animate || instant || reduced) {
-      if (timer.current) clearTimeout(timer.current);
-      timer.current = null;
-      progress.current = text.length;
-      setCount(text.length);
-      return;
-    }
-    // Consume the presentation buffer independently of the network reader.
-    // Adapt to large bursts so long replies don't take minutes to reveal.
-    function tick() {
-      if (instantRef.current || signal?.aborted) { timer.current = null; return; }
-      const value = target.current;
-      const remaining = value.length - progress.current;
-      let next = Math.min(value.length, progress.current + Math.max(4, Math.ceil(remaining / 45)));
-      if (next < value.length && /[\uDC00-\uDFFF]/.test(value[next])) next++;
-      progress.current = next;
-      setCount(next);
-      timer.current = next < value.length ? setTimeout(tick, 40) : null;
-    }
-    if (!signal?.aborted && !timer.current && progress.current < text.length) timer.current = setTimeout(tick, 40);
-  }, [text, animate, instant, reduced, signal]);
-
-  useEffect(() => () => {
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = null;
-  }, []);
-  function showInstantly() {
-    if (signal?.aborted) return;
-    // This affects presentation only. The network reader continues independently.
-    instantRef.current = true;
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = null;
-    setInstant(true);
-  }
-  return { visible: !animate || instant || reduced ? text : text.slice(0, count), showInstantly };
+function usePresentedText(text: string, _animate: boolean, _signal?: AbortSignal) {
+  return { visible: text };
 }
 
 export const AssistantMessage = memo(function AssistantMessage({ id, text, card, complete, stopped, animate, pending, feedback, generating, signal, onPresented, onFeedback, onRegenerate, onSaveCard }: {
@@ -89,7 +29,7 @@ export const AssistantMessage = memo(function AssistantMessage({ id, text, card,
 }) {
   const { locale } = useLocalization();
   const copy = chatCopy[locale];
-  const { visible, showInstantly } = usePresentedText(text, animate && !stopped, signal);
+  const { visible } = usePresentedText(text, animate && !stopped, signal);
   const revealing = visible.length < text.length;
   useLayoutEffect(() => {
     onPresented(id, visible, complete && !revealing);
@@ -99,10 +39,6 @@ export const AssistantMessage = memo(function AssistantMessage({ id, text, card,
       <Markdown skipHtml components={markdownComponents}>{visible}</Markdown>
     </div>}
     {complete && card && !revealing && <MessageCard value={card} maxBodyLength={Math.min(11000, 12000 - text.length - 204)} onSave={value => onSaveCard(id, value)} />}
-    {revealing && <button type="button" className={styles.revealResponse} onClick={showInstantly}
-      title={copy.showInstantly}>
-      <FastForward size={15} aria-hidden="true" />{copy.showInstantly}
-    </button>}
     {complete && !card && !revealing && <MessageActions text={text} feedback={feedback} generating={generating}
       onFeedback={value => onFeedback(id, value)} onRegenerate={() => onRegenerate(id)} />}
   </article>;

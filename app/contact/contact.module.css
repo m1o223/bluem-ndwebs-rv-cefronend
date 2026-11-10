@@ -111,7 +111,6 @@
   touch-action: manipulation;
 }
 .form .sendButton:focus-visible { outline: 2px solid var(--bluemind-blue); outline-offset: 4px; }
-.sendButton:active { background: #1b3a63; }
 .formSpace .formNotice { margin-top: 12px; font-size: 12px; }
 
 @media (max-width: 1120px) {

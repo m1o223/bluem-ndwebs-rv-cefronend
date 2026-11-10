@@ -4,7 +4,6 @@
 .label { font-size: 13px; font-weight: 500; }
 .actions { display: flex; flex: 0 0 auto; gap: 2px; }
 .card .actions button, .editorDialog .close { display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: #656a73; cursor: pointer; }
-.card .actions button:hover:not(:disabled), .editorDialog .close:hover { background: #f1f5f9; color: #202124; }
 .card button:disabled, .editorDialog button:disabled { opacity: .45; cursor: not-allowed; }
 .card button:focus-visible, .editorDialog button:focus-visible { outline: 2px solid #142d4e; outline-offset: 2px; }
 .content { padding: 4px 24px 24px; min-width: 0; }
@@ -26,7 +25,6 @@
 .editorHeader { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 24px; border-bottom: 1px solid #eef0f2; font-size: 15px; font-weight: 500; }
 .editorActions { display: flex; align-items: center; gap: 12px; }
 .editorDialog .save { min-height: 40px; padding: 8px 16px; border: 1px solid #142d4e; border-radius: 6px; background: #142d4e; color: #fff; font: inherit; font-size: 14px; cursor: pointer; }
-.editorDialog .save:hover:not(:disabled) { background: #203e63; }
 .editorScroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 36px max(32px, calc((100% - 880px) / 2)); }
 .document { min-height: 100%; outline: none; font-size: 17px; white-space: pre-wrap; }
 .document > :first-child { margin-top: 0; margin-bottom: 24px; font-size: 28px; font-weight: 650; line-height: 1.4; color: #202124; }

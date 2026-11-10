@@ -12,30 +12,18 @@ export function useChatScroll(conversationId: string | null) {
     const element = viewport.current;
     const list = content.current;
     if (!element || !list) return;
-    const motion = matchMedia("(prefers-reduced-motion: reduce)");
     let pinned = true;
-    let frame = 0;
     let previous = element.scrollTop;
     let written = -1;
     let touchY = 0;
-    let lastTime = 0;
     let scrollbarDrag = false;
-    const stop = () => { pinned = false; cancelAnimationFrame(frame); frame = 0; };
-    const tick = (now: number) => {
-      frame = 0;
+    const stop = () => { pinned = false; };
+    const schedule = () => {
       if (!pinned) return;
       const bottom = Math.max(0, element.scrollHeight - element.clientHeight);
-      const distance = bottom - element.scrollTop;
-      const elapsed = Math.min(64, now - lastTime || 16);
-      lastTime = now;
-      element.scrollTop = motion.matches || Math.abs(distance) <= 3 ? bottom
-        : element.scrollTop + distance * (1 - Math.exp(-elapsed / 65));
+      element.scrollTop = bottom;
       written = element.scrollTop;
       previous = written;
-      if (Math.abs(bottom - written) >= 2) frame = requestAnimationFrame(tick);
-    };
-    const schedule = () => {
-      if (pinned && !frame) { lastTime = performance.now(); frame = requestAnimationFrame(tick); }
     };
     follow.current = () => { pinned = true; schedule(); };
     const wheel = (event: WheelEvent) => { if (event.deltaY < 0) stop(); };

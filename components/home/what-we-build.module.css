@@ -1,45 +1,33 @@
 .section { width: 100%; min-width: 0; margin-top: 42px; text-align: center; color: var(--bluemind-text); --entrance: 700ms; --settled: 700ms; }
 .title { margin: 0 0 10px; font-size: 36px; font-weight: 600; line-height: 1.25; letter-spacing: 0; }
 .stage { position: relative; height: 500px; width: 100%; overflow: clip; isolation: isolate; }
-.group { position: absolute; inset: 40px auto 32px 50%; width: min(94vw, 1200px); margin-left: calc(-1 * min(47vw, 600px)); display: flex; align-items: center; justify-content: center; transform-origin: center; opacity: 0; transform: translate3d(52px, 0, 0); }
+.group { position: absolute; inset: 40px auto 32px 50%; width: min(94vw, 1200px); margin-left: calc(-1 * min(47vw, 600px)); display: flex; align-items: center; justify-content: center; transform-origin: center; }
 .device { min-width: 0; position: relative; flex: 0 0 auto; }
 .device img { display: block; width: 100%; height: auto; object-fit: contain; }
 .desktop { z-index: 1; width: 50%; }
 .tablet { z-index: 2; width: 38%; margin-left: -5%; }
 .phone { z-index: 3; width: 14%; margin-left: -4%; }
-.section[data-started="true"] .group { animation: build-group-enter var(--entrance) cubic-bezier(.22, 1, .36, 1) both; }
 .content { width: min(100%, 1040px); margin-inline: auto; padding: 0 12px 52px; }
-.reveal { opacity: 0; }
-.section[data-started="true"] .reveal { animation: content-enter 450ms var(--settled) ease-out both; }
 .description { margin: 12px 0 32px; font-size: 21px; font-weight: 500; line-height: 1.6; }
 .types { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 32px; margin: 0; padding: 0; list-style: none; text-align: start; }
 .types li { min-width: 0; padding: 14px 0; border-bottom: 1px solid #e8edf3; font-size: 16px; line-height: 1.55; }
-.section[data-started="true"] .types { animation-delay: calc(var(--settled) + 200ms); }
 .features { max-width: 800px; margin: 28px auto 0; font-size: 16px; line-height: 1.7; color: #607085; }
-.section[data-started="true"] .features { animation-delay: calc(var(--settled) + 400ms); }
 .invitation { max-width: 900px; margin: 68px auto 26px; text-wrap: balance; }
 .invitationTitle { margin: 0; font-size: 32px; font-weight: 600; line-height: 1.35; }
 .invitationBody { max-width: 760px; margin: 12px auto 0; font-size: 18px; line-height: 1.65; color: #607085; }
-.section[data-started="true"] .invitation { animation-delay: calc(var(--settled) + 650ms); }
 .cta { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 50px; padding: 12px 22px; border: 1px solid var(--bluemind-blue); border-radius: 8px; background: var(--bluemind-blue); color: #fff; text-decoration: none; font-size: 14px; }
-.section[data-started="true"] .cta { animation-delay: calc(var(--settled) + 800ms); }
-.cta:hover { background: #244666; }
 .cta:focus-visible { outline: 2px solid #477bad; outline-offset: 4px; }
 .section[dir="rtl"] .cta svg { transform: scaleX(-1); }
 .payments { width: min(100%, 1040px); margin: 34px auto 0; }
 .paymentTitle { margin: 0 0 12px; color: #263b55; font-size: 15px; font-weight: 600; line-height: 1.4; }
 .paymentViewport { width: 100%; overflow: hidden; padding: 10px 0; }
-.paymentTrack { display: flex; width: max-content; align-items: center; animation: payment-marquee 72s linear 1200ms infinite; will-change: transform; }
+.paymentTrack { display: flex; width: max-content; align-items: center; }
 .paymentSet { display: flex; align-items: center; gap: 24px; padding-right: 24px; }
 .paymentItem { display: flex; min-width: 86px; height: 46px; flex: 0 0 auto; align-items: center; justify-content: center; padding: 8px 12px; }
 .paymentItem img { display: block; width: auto; height: auto; max-width: 84px; max-height: 28px; object-fit: contain; }
 .paymentFeatured { min-width: 104px; }
 .paymentFeatured img { max-width: 96px; max-height: 32px; }
 .invoiceMark { display: inline-flex; align-items: center; gap: 7px; color: #263b55; font-size: 15px; font-weight: 600; line-height: 1; white-space: nowrap; }
-@keyframes payment-marquee { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
-@keyframes build-group-enter { from { opacity: 0; transform: translate3d(52px, 0, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
-@keyframes content-enter { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 1024px) { .section { margin-top: 30px; } .stage { height: 400px; } .title { font-size: 30px; } .invitation { margin-top: 48px; } .invitationTitle { font-size: 28px; } .invitationBody { font-size: 17px; } .content { padding-inline: 0; } }
 @media (max-width: 620px) { .section { margin-top: 26px; --entrance: 500ms; --settled: 500ms; } .title { font-size: 26px; } .stage { height: 220px; } .group { inset-block: 16px; } .desktop { width: 54%; } .tablet { width: 34%; margin-left: -5%; } .phone { width: 14%; margin-left: -4%; } .description { margin: 4px 0 22px; font-size: 17px; } .types { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; } .types li { font-size: 14px; padding-block: 11px; } .features { font-size: 15px; margin-top: 22px; } .invitation { margin-top: 38px; } .invitationTitle { font-size: 24px; } .invitationBody { font-size: 16px; } .payments { margin-top: 28px; } .paymentTitle { font-size: 14px; } .paymentSet { gap: 16px; padding-right: 16px; } .paymentItem { min-width: 74px; padding-inline: 6px; } .paymentItem img { max-width: 72px; max-height: 24px; } .paymentFeatured { min-width: 88px; } .paymentFeatured img { max-width: 82px; max-height: 28px; } .invoiceMark { font-size: 13px; gap: 5px; } .content { padding-bottom: 28px; } }
 @media (max-width: 380px) { .stage { height: 200px; } .types { column-gap: 14px; } .invitationTitle { font-size: 22px; } .invitationBody { font-size: 15px; } }
-@media (prefers-reduced-motion: reduce) { .section .device, .section .reveal, .section .group { opacity: 1; transform: none; animation: none !important; } .paymentTrack { animation: none; } .paymentSet[data-payment-set="duplicate"] { display: none; } }

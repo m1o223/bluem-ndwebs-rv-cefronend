@@ -41,9 +41,7 @@ export function scrollToSection(control: HTMLElement, section: string) {
       viewport.scrollTop -
       headerHeight -
       8,
-    behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-      ? "auto"
-      : "smooth",
+    behavior: "auto",
   });
 }
 

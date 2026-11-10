@@ -1,4 +1,4 @@
-.chat { position: fixed; inset: var(--chat-top, 0px) 0 auto; display: grid; grid-template-columns: 248px minmax(0, 1fr); height: var(--chat-height, 100dvh); overflow: hidden; background: #fff; color: #111; font-family: var(--font-body-family); transition: grid-template-columns 200ms ease; }
+.chat { position: fixed; inset: var(--chat-top, 0px) 0 auto; display: grid; grid-template-columns: 248px minmax(0, 1fr); height: var(--chat-height, 100dvh); overflow: hidden; background: #fff; color: #111; font-family: var(--font-body-family); }
 .embedded.chat { position: relative; inset: auto; width: 100%; height: 100%; min-height: 0; max-height: none; border-radius: inherit; }
 .embedded .drawer { position: absolute; inset: 0 auto 0 0; width: min(288px, calc(100% - 48px)); height: 100%; }
 .embedded .drawerInner { height: 100%; }
@@ -9,8 +9,7 @@
 .sidebar { border-right: 1px solid #e8ecf1; overflow: hidden; }
 .sidebarTop { display: flex; align-items: center; min-height: 44px; margin-bottom: 16px; }
 .sidebarTitle, .sidebarToggle .toggleLogo { display: none; }
-.chat .iconControl, .drawer .iconControl { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex: 0 0 44px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: #142d4e; cursor: pointer; text-decoration: none; transition: background 160ms ease; }
-.chat .iconControl:hover, .drawer .iconControl:hover { background: #edf3fa; }
+.chat .iconControl, .drawer .iconControl { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex: 0 0 44px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: #142d4e; cursor: pointer; text-decoration: none; }
 .chat :is(button, a):focus-visible, .drawer button:focus-visible { outline: 2px solid #142d4e; outline-offset: 3px; }
 .chat .newChat, .drawer .newChat { display: flex; align-items: center; gap: 12px; min-height: 44px; flex: 0 0 auto; padding: 10px 12px; border: 1px solid #e0e5eb; border-radius: 6px; background: #fff; color: #142d4e; font: inherit; font-size: 14px; text-align: left; cursor: pointer; white-space: nowrap; }
 .history { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; margin-top: 22px; }
@@ -25,7 +24,7 @@
 .topbar { display: flex; justify-content: flex-end; align-items: center; padding: max(12px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 12px 16px; }
 .chat .mobileMenu { display: none; margin-right: auto; }
 .content { position: relative; min-height: 0; overflow: hidden; }
-.empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; opacity: 1; transition: opacity 180ms ease, visibility 180ms; }
+.empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; opacity: 1; }
 .empty[data-hidden="true"] { opacity: 0; visibility: hidden; pointer-events: none; }
 .empty .brandSymbol { --logo-size: 88px; margin-bottom: 18px; }
 /* Reuse the original symbol while compensating for its transparent canvas padding. */
@@ -35,7 +34,7 @@
 .messageScroll { height: 100%; overflow-y: auto; overscroll-behavior: contain; overflow-anchor: none; scrollbar-gutter: stable; padding: 16px 28px 28px; visibility: hidden; }
 .messageScroll[data-active="true"] { visibility: visible; }
 .messages { display: flex; flex-direction: column; gap: 20px; width: min(100%, 800px); margin: 0 auto; }
-.message { align-self: flex-end; min-width: 0; max-width: 85%; padding: 14px 18px; border-radius: 8px; background: #edf3fa; animation: message-enter 180ms ease-out both; }
+.message { align-self: flex-end; min-width: 0; max-width: 85%; padding: 14px 18px; border-radius: 8px; background: #edf3fa; }
 .chat .message p { margin: 0; font-size: 15px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
 .messageText { min-width: 0; max-width: 100%; }
 .message[data-attachments="true"] { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; padding: 0; background: transparent; }
@@ -60,41 +59,34 @@
 .chat .markdown > :first-child { margin-top: 0; }
 .chat .markdown > :last-child { margin-bottom: 0; }
 .chat .revealResponse { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; margin-top: 12px; padding: 4px 8px; border: 0; border-radius: 6px; background: transparent; color: #142d4e; font: inherit; font-size: 12px; cursor: pointer; }
-.chat .revealResponse:hover { background: #edf3fa; }
 .responseActions { margin-top: 12px; }
 .actionButtons { display: flex; align-items: center; gap: 3px; }
-.chat .actionButtons button { position: relative; display: grid; place-items: center; flex: 0 0 36px; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: #667486; cursor: pointer; transition: background 160ms ease, color 160ms ease; }
-.chat .actionButtons button:hover:not(:disabled), .chat .actionButtons button[aria-pressed="true"] { background: #edf3fa; color: #142d4e; }
+.chat .actionButtons button { position: relative; display: grid; place-items: center; flex: 0 0 36px; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 6px; background: transparent; color: #667486; cursor: pointer; }
 .chat .actionButtons button:disabled { opacity: .4; cursor: not-allowed; }
-.actionButtons button::after { content: attr(data-tooltip); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); z-index: 2; width: max-content; max-width: 150px; padding: 6px 8px; border: 1px solid #e0e5eb; border-radius: 5px; background: #fff; color: #142d4e; font-size: 12px; font-weight: 400; line-height: 1.4; text-align: center; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 120ms ease; }
-.actionButtons button:is(:hover, :focus-visible)::after { opacity: 1; visibility: visible; }
-.thinkingIndicator { display: flex; align-items: center; height: 26.25px; opacity: 1; transition: opacity 120ms ease-out; }
+.actionButtons button::after { content: attr(data-tooltip); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); z-index: 2; width: max-content; max-width: 150px; padding: 6px 8px; border: 1px solid #e0e5eb; border-radius: 5px; background: #fff; color: #142d4e; font-size: 12px; font-weight: 400; line-height: 1.4; text-align: center; opacity: 0; visibility: hidden; pointer-events: none; }
+.thinkingIndicator { display: flex; align-items: center; height: 26.25px; opacity: 1; }
 .thinkingIndicator[data-ready="true"] { opacity: 0; }
-.thinkingDot { display: block; flex: 0 0 18px; width: 18px; height: 18px; border-radius: 50%; background: #000; transform-origin: center; animation: thinking-pulse 1.2s ease-in-out infinite; }
+.thinkingDot { display: block; flex: 0 0 18px; width: 18px; height: 18px; border-radius: 50%; background: #000; transform-origin: center; }
 .replyError { font-size: 14px; color: #9c3030; }
 .replyError p { margin: 0 0 8px; }
 .replyError button { padding: 8px 12px; background: #fff; color: #142d4e; border: 1px solid #e0e5eb; border-radius: 6px; cursor: pointer; }
 .composerArea { width: min(100%, 1016px); min-width: 0; justify-self: center; padding: 16px 28px max(clamp(36px, 6dvh, 64px), env(safe-area-inset-bottom)); }
-.suggestionReveal { display: grid; grid-template-rows: 1fr; opacity: 1; transition: grid-template-rows 180ms ease, opacity 180ms ease, visibility 180ms; }
+.suggestionReveal { display: grid; grid-template-rows: 1fr; opacity: 1; }
 .suggestionReveal[data-hidden="true"] { grid-template-rows: 0fr; opacity: 0; visibility: hidden; }
 .suggestionClip { min-height: 0; overflow: hidden; }
 .suggestions { display: flex; flex-wrap: nowrap; gap: 8px; padding: 4px 4px 14px; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; scrollbar-color: #dce3eb transparent; }
-.chat .chip { flex: 0 0 auto; white-space: nowrap; border: 1px solid #e0e5eb; border-radius: 90px; padding: 10px 14px; background: #fff; color: #142d4e; font: inherit; font-size: 14px; font-weight: 400; line-height: 1.4; cursor: pointer; transition: background 160ms ease, border-color 160ms ease; }
+.chat .chip { flex: 0 0 auto; white-space: nowrap; border: 1px solid #e0e5eb; border-radius: 90px; padding: 10px 14px; background: #fff; color: #142d4e; font: inherit; font-size: 14px; font-weight: 400; line-height: 1.4; cursor: pointer; }
 .chip:first-child { margin-left: auto; }
 .chip:last-child { margin-right: auto; }
-.chat .chip:hover { background: #edf3fa; border-color: #cbd8e6; }
-.composer { display: grid; grid-template-columns: 44px minmax(0, 1fr) 40px; align-items: end; gap: 8px; padding: 14px 16px; background: #fff; border: 1px solid #dce3eb; border-radius: 28px; box-shadow: none; transition: border-color 160ms ease, box-shadow 160ms ease; }
+.composer { display: grid; grid-template-columns: 44px minmax(0, 1fr) 40px; align-items: end; gap: 8px; padding: 14px 16px; background: #fff; border: 1px solid #dce3eb; border-radius: 28px; box-shadow: none; }
 .composer:focus-within { border-color: #8199b6; box-shadow: 0 0 0 3px #edf3fa; }
 .chat .input { display: block; width: 100%; min-height: 44px; max-height: 180px; padding: 11px 0; resize: none; overflow-y: auto; border: 0; outline: 0; border-radius: 0; background: transparent; color: #111; font: inherit; font-size: 16px; line-height: 22px; box-shadow: none; }
 .input::placeholder { color: #7c8692; opacity: 1; }
-.chat .primarySend { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 2px; border: 1px solid #142d4e; border-radius: 50%; background: #142d4e; color: #fff; cursor: pointer; transition: transform 160ms ease, opacity 160ms ease; }
-.primarySend:hover:not(:disabled) { transform: scale(.98); }
-.primarySend:active:not(:disabled) { transform: scale(.96); }
+.chat .primarySend { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 2px; border: 1px solid #142d4e; border-radius: 50%; background: #142d4e; color: #fff; cursor: pointer; }
 .chat .primarySend:disabled { opacity: .35; cursor: not-allowed; }
 .attachmentArea { position: relative; }
 .attachmentMenu { position: absolute; bottom: calc(100% + 14px); left: 0; z-index: 3; width: 224px; padding: 8px; border: 1px solid #e0e5eb; border-radius: 8px; background: #fff; box-shadow: 0 8px 24px #142d4e12; }
 .attachmentMenu button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px; border: 0; background: transparent; color: #142d4e; text-align: left; font: inherit; font-size: 14px; cursor: pointer; }
-.attachmentMenu button:hover { background: #edf3fa; }
 .attachmentMenu button:disabled { opacity: .5; cursor: not-allowed; }
 .attachmentTray { grid-column: 1 / -1; min-width: 0; }
 .fileStatus { padding-top: 6px; font-size: 12px; color: #526479; }
@@ -104,11 +96,8 @@
 .chat .status { margin: 10px 0 0; color: #697482; font-size: 12px; line-height: 1.4; text-align: center; }
 .drawer { position: fixed; inset: 0 auto 0 0; width: min(288px, calc(100vw - 48px)); height: 100dvh; max-height: none; max-width: none; margin: 0; padding: 0; border: 0; background: #f7f8fa; color: #111; }
 .drawer::backdrop { background: #142d4e33; }
-.drawer[open] { animation: drawer-enter 200ms ease-out; }
+.drawer[open] { }
 .drawerInner { height: 100%; padding-top: max(12px, env(safe-area-inset-top)); padding-bottom: max(12px, env(safe-area-inset-bottom)); }
-@keyframes message-enter { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes drawer-enter { from { transform: translateX(-100%); } to { transform: translateX(0); } }
-@keyframes thinking-pulse { 0%, 100% { opacity: .3; transform: scale(.9); } 50% { opacity: 1; transform: scale(1); } }
 @media (max-width: 767px) {
   .chat, .chat[data-collapsed="true"] { grid-template-columns: minmax(0, 1fr); }
   .sidebar { display: none; }
@@ -157,21 +146,16 @@
 }
 /* Pointer desktops only: touch devices retain the existing sidebar controls. */
 @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
-  .chat { transition-duration: 225ms; }
+  .chat { }
   .sidebar, .chat[data-collapsed="true"] .sidebar { padding-inline: 13.5px; }
   .sidebar .sidebarTop { position: relative; flex: 0 0 44px; }
-  .sidebarTitle { display: block; padding-left: 10px; padding-right: 44px; overflow: hidden; white-space: nowrap; color: #142d4e; font-size: 16px; font-weight: 600; opacity: 1; transition: opacity 150ms ease; }
+  .sidebarTitle { display: block; padding-left: 10px; padding-right: 44px; overflow: hidden; white-space: nowrap; color: #142d4e; font-size: 16px; font-weight: 600; opacity: 1; }
   .chat[data-collapsed="true"] .sidebarTitle { opacity: 0; visibility: hidden; }
-  .chat .sidebarToggle { position: absolute; right: 0; top: 0; background: transparent; color: #59636f; transition: color 150ms ease; }
-  /* Override the site's global important hover colors only for these sidebar controls. */
-  :global(#ai-chat-sidebar) .sidebarToggle:hover { background: transparent !important; color: var(--bluemind-blue) !important; }
-  .sidebarToggle .toggleLogo { --logo-size: 30px; display: inline-grid; position: absolute; opacity: 1; transition: opacity 150ms ease; pointer-events: none; }
+  .chat .sidebarToggle { position: absolute; right: 0; top: 0; background: transparent; color: #59636f; }
+  .sidebarToggle .toggleLogo { --logo-size: 30px; display: inline-grid; position: absolute; opacity: 1; pointer-events: none; }
   .sidebarToggle .toggleLogo::before { background: var(--bluemind-blue); mask-size: calc(30px * 1065 / 896) calc(30px * 1212 / 896); mask-position: calc(30px * -86 / 896) calc(30px * -300 / 896); }
-  .sidebarToggle .toggleGlyph { opacity: 0; transition: opacity 150ms ease; }
-  .sidebarToggle:is(:hover, :focus-visible) .toggleLogo { opacity: 0; }
-  .sidebarToggle:is(:hover, :focus-visible) .toggleGlyph { opacity: 1; }
-  .chat .sidebar .newChat { border: 0; background: transparent; box-shadow: none; color: #414852; transition: color 150ms ease; }
-  :global(#ai-chat-sidebar) .newChat:is(:hover, :active, [data-activated="true"]) { background: transparent !important; color: var(--bluemind-blue) !important; }
+  .sidebarToggle .toggleGlyph { opacity: 0; }
+  .chat .sidebar .newChat { border: 0; background: transparent; box-shadow: none; color: #414852; }
 }
 /* Desktop: keep the welcome composer design identical after sending; only its position changes. */
 @media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
@@ -193,9 +177,6 @@
   .chat[data-welcome="true"] .suggestions { flex-wrap: wrap; justify-content: center; overflow: visible; padding: 4px 0; }
   .chat[data-welcome="true"] .chip { margin-inline: 0; }
   .chat[data-welcome="true"] .status { order: 2; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .chat, .chat *, .drawer, .drawer * { animation: none !important; transition: none !important; }
 }
 
 /* The tablet is an embedded viewport. Keep it on the same welcome layout as

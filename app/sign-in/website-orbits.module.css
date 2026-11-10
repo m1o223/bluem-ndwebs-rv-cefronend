@@ -1,6 +1,6 @@
 .orbits { position: absolute; inset: 0; pointer-events: none; overflow: hidden; --outer-x: min(54vw, 980px); --outer-y: min(50dvh, 500px); --inner-x: min(44vw, 740px); --inner-y: min(43dvh, 420px); }
-.device { position: absolute; left: 0; top: 0; width: 160px; opacity: 1; offset-path: ellipse(var(--outer-x) var(--outer-y) at 50% 50%); offset-rotate: auto calc(90deg + var(--tilt)); offset-anchor: center; animation: orbit-clockwise 67.2s linear infinite; will-change: offset-distance, transform; color: var(--ink); }
-.device[data-ring="inner"] { offset-path: ellipse(var(--inner-x) var(--inner-y) at 50% 50%); animation-duration: 86.4s; }
+.device { position: absolute; left: 0; top: 0; width: 160px; opacity: 1; offset-path: ellipse(var(--outer-x) var(--outer-y) at 50% 50%); offset-distance: calc(var(--phase) * 1%); offset-rotate: auto calc(90deg + var(--tilt)); offset-anchor: center; color: var(--ink); }
+.device[data-ring="inner"] { offset-path: ellipse(var(--inner-x) var(--inner-y) at 50% 50%); }
 .device[data-device="phone"] { width: 100px; }
 .device[data-device="desktop"] { width: 220px; }
 .frame { padding: 5px; border-radius: 12px; background: #24303c; box-shadow: 0 10px 24px #142d4e14, 0 2px 5px #142d4e12; border: 1px solid #77818c; }
@@ -45,8 +45,6 @@
 .appointment strong { display: block; font-size: 7px; line-height: 1.4; }
 .appointment div { padding-top: 10px; font-size: 6px; }
 .appointment p { margin-bottom: 0; font-size: 5px; color: #3e7c88; }
-.orbits[data-paused="true"] .device { animation-play-state: paused; }
-@keyframes orbit-clockwise { from { offset-distance: calc(var(--phase) * 1%); } to { offset-distance: calc(var(--phase) * 1% + 100%); } }
 @media (min-width: 1600px) { .orbits { --outer-y: min(52dvh, 560px); --inner-y: min(45dvh, 460px); } .device[data-device="desktop"] { width: 240px; } .device[data-device="tablet"] { width: 176px; } .device[data-device="phone"] { width: 108px; } }
 @media (max-width: 1100px) {
   .orbits { --outer-x: min(58vw, 700px); --outer-y: min(45dvh, 380px); --inner-x: min(48vw, 560px); --inner-y: min(40dvh, 330px); }
@@ -60,4 +58,3 @@
   .device[data-device="phone"] { width: min(17vw, 66px); }
   .device[data-device="desktop"] { width: min(30vw, 112px); }
 }
-@media (prefers-reduced-motion: reduce) { .orbits .device { animation: none; transition: none; offset-distance: calc(var(--phase) * 1%); will-change: auto; } }

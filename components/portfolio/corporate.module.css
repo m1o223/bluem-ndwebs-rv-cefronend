@@ -50,13 +50,6 @@
   color: #fff;
   font-size: 12px !important;
   border-radius: 2px;
-  transition:
-    background 0.2s,
-    transform 0.2s;
-}
-.primary:hover {
-  background: #2a4355;
-  transform: translateY(-1px);
 }
 .heroFoot {
   display: block;
@@ -282,9 +275,6 @@
 .caseCard b {
   font-weight: 400;
   font-size: 18px;
-}
-.caseCard:hover {
-  border-color: #9caaa9;
 }
 .demoNote {
   font-size: 10px;
@@ -636,10 +626,5 @@
   .form select,
   .form textarea {
     font-size: 16px;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .primary:hover {
-    transform: none;
   }
 }

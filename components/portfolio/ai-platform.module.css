@@ -290,13 +290,6 @@
   color: #fff;
   border-radius: 7px;
   font-size: 12px !important;
-  transition:
-    background 0.18s,
-    transform 0.18s;
-}
-.primary:hover {
-  background: #635094;
-  transform: translateY(-1px);
 }
 .primary > span {
   margin-left: 24px;
@@ -524,10 +517,6 @@
   font-size: 10px;
   margin-top: 22px;
   color: #7f609c;
-}
-.templateCard:hover {
-  border-color: #a995bf;
-  background: #fdfbff;
 }
 .savedList > div:not(.savedEmpty) {
   display: flex;
@@ -761,10 +750,5 @@
   .footer {
     flex-direction: column;
     gap: 9px;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .primary:hover {
-    transform: none;
   }
 }

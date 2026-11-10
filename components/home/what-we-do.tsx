@@ -21,7 +21,7 @@ export default function WhatWeDo() {
   const opener = useRef<HTMLButtonElement | null>(null);
   const closeDemo = useCallback(() => {
     setSelectedCategory(null);
-    requestAnimationFrame(() => opener.current?.focus({ preventScroll: true }));
+    opener.current?.focus({ preventScroll: true });
   }, []);
 
   return <section className={styles.section} data-what-we-do data-no-translate dir={locale === "ar" ? "rtl" : "ltr"} aria-labelledby="what-we-do-title">

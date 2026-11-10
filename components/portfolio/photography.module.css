@@ -151,10 +151,6 @@
   height: 330px;
 }
 .galleryPhoto img {
-  transition: transform 0.4s ease;
-}
-.galleryItem:hover .galleryPhoto img {
-  transform: scale(1.025);
 }
 .caption {
   display: flex;
@@ -214,10 +210,6 @@
   color: inherit;
   border: 1px solid #e7e1d480;
   font-size: 12px !important;
-}
-.outline:hover {
-  background: #ffffff0d;
-  border-color: #e7e1d4;
 }
 .contactStrip {
   padding: 65px 7%;
@@ -494,10 +486,5 @@
   .form select,
   .form textarea {
     font-size: 16px;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .galleryItem:hover .galleryPhoto img {
-    transform: none;
   }
 }

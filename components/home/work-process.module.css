@@ -56,18 +56,8 @@
   letter-spacing: 0;
   text-align: center;
   text-shadow: 0 0 24px #3b82f62e, 0 0 48px #3b82f617;
-  animation: sentence 4.2s ease-in-out both;
-  animation-play-state: paused;
 }
 .line { display: block; white-space: nowrap; }
-.device[data-playing="true"] .sentence { animation-play-state: running; }
-.device[data-static="true"] .sentence { animation: none; }
-@keyframes sentence {
-  0% { opacity: 0; transform: translateX(-18px); }
-  14% { opacity: 1; transform: translateX(-12px); }
-  84% { opacity: 1; transform: translateX(10px); }
-  100% { opacity: 0; transform: translateX(18px); }
-}
 @media (max-width: 1023px) {
   .section { padding: 48px 20px; }
   .screenContent { padding: 20px; }
@@ -83,7 +73,4 @@
 }
 @media (max-width: 360px) {
   .sentence { font-size: 18px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .sentence { animation: none; }
 }

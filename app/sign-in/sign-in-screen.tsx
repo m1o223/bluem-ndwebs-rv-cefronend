@@ -41,7 +41,7 @@ export default function SignInScreen() {
     if (next === "recovery") recoveryFrom.current = mode;
     form.current?.reset(); email.reset(); google.clearError(); setMode(next);
     // Focus the heading, rather than opening the mobile keyboard automatically.
-    requestAnimationFrame(() => title.current?.focus({ preventScroll: true }));
+    title.current?.focus({ preventScroll: true });
   }
 
   function submit(event: FormEvent<HTMLFormElement>) {

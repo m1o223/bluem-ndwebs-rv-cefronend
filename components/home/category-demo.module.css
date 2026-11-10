@@ -1,6 +1,5 @@
 .overlay { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 18px; background: rgba(13, 28, 44, .72); backdrop-filter: blur(8px); }
-.viewer { display: grid; grid-template-rows: auto minmax(0, 1fr); width: min(1440px, 100%); height: min(94vh, 980px); overflow: hidden; border: 1px solid rgba(255,255,255,.34); border-radius: 18px; background: #f3f6f9; box-shadow: 0 28px 90px rgba(5, 24, 43, .32); animation: demo-viewer-in 380ms cubic-bezier(.22, 1, .36, 1) both; }
-.viewerClosing { animation: demo-viewer-out 420ms cubic-bezier(.22, 1, .36, 1) both; }
+.viewer { display: grid; grid-template-rows: auto minmax(0, 1fr); width: min(1440px, 100%); height: min(94vh, 980px); overflow: hidden; border: 1px solid rgba(255,255,255,.34); border-radius: 18px; background: #f3f6f9; box-shadow: 0 28px 90px rgba(5, 24, 43, .32); }
 .viewerHeader { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 13px 18px; background: #fff; border-bottom: 1px solid #dbe3eb; }
 .viewerIdentity { min-width: 0; }
 .viewerKicker { display: block; color: #7b8b9e; font-size: 9px; font-weight: 700; letter-spacing: 1.6px; line-height: 1.4; text-transform: uppercase; }
@@ -11,10 +10,9 @@
 .deviceControls button, .closeButton { min-height: 32px; padding: 6px 10px; border: 0; border-radius: 999px; background: transparent; color: #607287; cursor: pointer; font: inherit; font-size: 11px; }
 .deviceControls button[aria-pressed="true"] { background: #1e4d78; color: #fff; }
 .closeButton { display: inline-flex; align-items: center; gap: 5px; border: 1px solid #dbe3eb; background: #fff; color: #1e3449; }
-.deviceControls button:hover, .closeButton:hover { color: #17466f; }
 .stage { display: grid; place-items: center; min-height: 0; overflow: hidden; padding: 14px; }
 .frameWrap { position: relative; flex: 0 0 auto; }
-.logicalFrame { position: absolute; top: 0; left: 0; transform-origin: top left; overflow: hidden; border: 1px solid #162b3d; border-radius: 12px; background: var(--surface, #f5f5f5); box-shadow: 0 18px 40px rgba(18, 37, 56, .2); transition: width 240ms ease, height 240ms ease; }
+.logicalFrame { position: absolute; top: 0; left: 0; transform-origin: top left; overflow: hidden; border: 1px solid #162b3d; border-radius: 12px; background: var(--surface, #f5f5f5); box-shadow: 0 18px 40px rgba(18, 37, 56, .2); }
 .site { --accent: #315f7a; --ink: #193343; --surface: #eaf1f3; container-type: inline-size; width: 100%; height: 100%; color: var(--ink); background: #fff; font-family: Inter, Arial, sans-serif; }
 .siteScroll { width: 100%; height: 100%; overflow: auto; scrollbar-color: var(--accent) #eef2f4; scrollbar-width: thin; }
 .siteHeader { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 74px; padding: 0 6%; background: color-mix(in srgb, #fff 93%, var(--surface)); border-bottom: 1px solid color-mix(in srgb, var(--ink) 12%, transparent); }
@@ -24,7 +22,6 @@
 .siteNav { display: flex; align-items: center; gap: 18px; }
 .siteNav button, .menuToggle { padding: 7px 0; border: 0; background: transparent; color: color-mix(in srgb, var(--ink) 74%, transparent); cursor: pointer; font: inherit; font-size: 12px; }
 .siteNav button:last-child { color: var(--accent); font-weight: 650; }
-.siteNav button:hover, .menuToggle:hover { color: var(--accent); }
 .menuToggle { display: none; }
 .siteHero { display: grid; grid-template-columns: 1fr 1fr; gap: 7%; min-height: 560px; padding: 8% 8%; background: linear-gradient(135deg, var(--surface), #fff 68%); }
 .heroCopy { align-self: center; max-width: 560px; }
@@ -32,10 +29,9 @@
 .heroCopy h1 { max-width: 560px; margin: 19px 0 22px; color: var(--ink); font-size: clamp(46px, 5.3cqw, 86px); font-weight: 500; letter-spacing: -.06em; line-height: .98; }
 .heroCopy p { max-width: 470px; margin: 0; color: color-mix(in srgb, var(--ink) 68%, transparent); font-size: clamp(17px, 1.5cqw, 24px); line-height: 1.55; }
 .heroButtons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
-.primaryButton, .secondaryButton, .smallButton, .textButton, .resetButton, .cartBar button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 10px 15px; border-radius: 999px; cursor: pointer; font: inherit; font-size: 12px; transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease; }
+.primaryButton, .secondaryButton, .smallButton, .textButton, .resetButton, .cartBar button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 10px 15px; border-radius: 999px; cursor: pointer; font: inherit; font-size: 12px; }
 .primaryButton { border: 1px solid var(--accent); background: var(--accent); color: #fff; }
 .secondaryButton { border: 1px solid color-mix(in srgb, var(--ink) 24%, transparent); background: transparent; color: var(--ink); }
-.primaryButton:hover, .secondaryButton:hover, .smallButton:hover, .textButton:hover { transform: translateY(-2px); }
 .primaryButton:disabled { opacity: .45; cursor: not-allowed; transform: none; }
 .demoDisclosure { display: block; margin-top: 18px; color: color-mix(in srgb, var(--ink) 48%, transparent); font-size: 10px; }
 .heroImage { position: relative; min-height: 390px; overflow: hidden; border-radius: 6px; background: var(--accent); box-shadow: 18px 18px 0 color-mix(in srgb, var(--accent) 20%, transparent); }
@@ -68,7 +64,6 @@
 .itemGrid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
 .itemCard { display: flex; flex-direction: column; align-items: flex-start; min-height: 190px; padding: 18px; border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); border-radius: 6px; background: #fff; color: var(--ink); text-align: start; }
 button.itemCard { cursor: pointer; font: inherit; }
-.itemCard:hover, .itemSelected { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
 .itemCard h3 { margin: 20px 0 8px; font-size: 17px; }
 .itemCard p { min-height: 43px; margin: 0; color: color-mix(in srgb, var(--ink) 62%, transparent); font-size: 12px; line-height: 1.5; }
 .itemCard strong { margin-top: auto; font-size: 13px; }
@@ -86,7 +81,6 @@ button.itemCard { cursor: pointer; font: inherit; }
 .flowForm > .primaryButton, .aiForm > .primaryButton { justify-self: start; }
 .ticketChoices, .donationChoices { display: flex; flex-wrap: wrap; grid-column: 1 / -1; gap: 8px; }
 .ticketChoices button, .donationChoices button { padding: 10px 13px; border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent); border-radius: 999px; background: #fff; color: var(--ink); cursor: pointer; font: inherit; font-size: 12px; }
-.ticketChoices button:hover, .donationChoices button:hover { border-color: var(--accent); }
 .aiForm { grid-template-columns: 1fr; }
 .aiResult { max-width: 720px; margin-top: 22px; padding: 16px; border-left: 3px solid var(--accent); background: #fff; color: var(--ink); }
 .aiResult p { margin: 8px 0 0; color: color-mix(in srgb, var(--ink) 68%, transparent); font-size: 13px; line-height: 1.6; }
@@ -101,6 +95,3 @@ button.itemCard { cursor: pointer; font: inherit; }
 @container (max-width: 850px) { .siteHero { grid-template-columns: 1fr; min-height: 0; gap: 36px; } .heroImage { min-height: 300px; } .infoGrid { grid-template-columns: 1fr; } .storySection { grid-template-columns: 1fr; } }
 @container (max-width: 600px) { .siteHeader { min-height: 62px; padding-inline: 6%; } .wordmark { gap: 7px; } .wordmark strong { font-size: 16px; } .wordmark small { font-size: 8px; } .siteNav { position: absolute; top: 62px; right: 5%; left: 5%; display: none; flex-direction: column; align-items: stretch; gap: 0; padding: 10px 16px; border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent); background: #fff; box-shadow: 0 12px 30px rgba(0,0,0,.12); } .siteNavOpen { display: flex; } .siteNav button { padding: 12px 0; border-bottom: 1px solid #edf0f2; text-align: start; } .siteNav button:last-child { border-bottom: 0; } .menuToggle { display: inline-flex; } .siteHero, .infoSection, .storySection, .flowSection { padding: 12% 7%; } .heroCopy h1 { font-size: 48px; } .heroCopy p { font-size: 17px; } .heroImage { min-height: 250px; } .infoSection h2, .storySection h2, .flowIntro h2, .flowHeading h2, .confirmation h2 { font-size: 34px; } .infoGrid { gap: 28px; } .storyList div { grid-template-columns: 100px 1fr; } .flowContent { padding: 18px; } .flowHeading { display: block; } .itemGrid { grid-template-columns: 1fr; } .itemCard { min-height: 150px; } .cartBar { align-items: stretch; flex-direction: column; } .flowForm { grid-template-columns: 1fr; } .flowForm label:last-of-type { grid-column: auto; } .flowForm > .primaryButton, .aiForm > .primaryButton { justify-self: stretch; } .siteFooter { align-items: flex-start; flex-direction: column; padding: 28px 7%; } }
 @media (max-width: 700px) { .overlay { padding: 8px; } .viewer { height: min(96vh, 980px); border-radius: 14px; } .viewerHeader { align-items: stretch; flex-direction: column; gap: 9px; padding: 10px 12px; } .viewerActions { justify-content: space-between; gap: 7px; } .deviceControls { flex: 1 1 auto; justify-content: space-between; } .deviceControls button { flex: 1 1 0; min-width: 0; padding-inline: 6px; } .closeButton { flex: 0 0 auto; } .viewerIdentity h2 { font-size: 15px; } .stage { padding: 8px; } }
-@keyframes demo-viewer-in { from { opacity: 0; transform: translate3d(0, -28px, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
-@keyframes demo-viewer-out { from { opacity: 1; transform: translate3d(0, 0, 0); } to { opacity: 0; transform: translate3d(0, 120px, 0); } }
-@media (prefers-reduced-motion: reduce) { .overlay *, .site * { scroll-behavior: auto !important; transition: none !important; } .viewer, .viewerClosing { animation-duration: 1ms; } }

@@ -63,17 +63,11 @@ function History({ conversations, activeId, compact = false, onSelect, onNew, ac
 }) {
   const { locale } = useLocalization();
   const copy = chatCopy[locale];
-  const [activated, setActivated] = useState(false);
-  const activationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => { if (activationTimer.current) clearTimeout(activationTimer.current); }, []);
   function startChat() {
-    if (activationTimer.current) clearTimeout(activationTimer.current);
-    setActivated(true);
-    activationTimer.current = setTimeout(() => setActivated(false), 350);
     onNew();
   }
   return <>
-    <button className={styles.newChat} data-activated={activated} type="button" onClick={startChat} title={copy.newChat} aria-label={copy.newChat}>
+    <button className={styles.newChat} type="button" onClick={startChat} title={copy.newChat} aria-label={copy.newChat}>
       <SquarePen size={20} aria-hidden="true" /><span hidden={compact}>{copy.newChat}</span>
     </button>
     <nav className={styles.history} aria-label={copy.conversations}>
@@ -112,8 +106,6 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
   const root = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLTextAreaElement>(null);
   const composer = useRef<HTMLFormElement>(null);
-  const composerStartTop = useRef<number | null>(null);
-  const composerMotion = useRef<Animation | null>(null);
   const sourceFromQuery = useRef<GuidedSource | null>(null);
   const { viewport: history, content: messageList, followBottom } = useChatScroll(activeId);
   const drawer = useRef<HTMLDialogElement>(null);
@@ -207,10 +199,7 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
 
   useEffect(() => {
     if (!thinking || !contentArrived || !thinkingReply?.ready) return;
-    // Finish the dot's fade before mounting text; the network keeps streaming normally.
-    const timer = window.setTimeout(() => setThinkingReply(current => current?.id === animatedId ? null : current),
-      matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 120);
-    return () => window.clearTimeout(timer);
+    setThinkingReply(current => current?.id === animatedId ? null : current);
   }, [thinking, contentArrived, animatedId, thinkingReply?.ready]);
 
   useEffect(() => () => {
@@ -247,28 +236,6 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
     input.current.style.height = `${Math.min(input.current.scrollHeight, 180)}px`;
   }, [draft]);
 
-  useLayoutEffect(() => {
-    const form = composer.current;
-    const startTop = composerStartTop.current;
-    composerStartTop.current = null;
-    if (!form || startTop === null || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    // Move the existing form from its old position without scaling or remounting it.
-    const distance = startTop - form.getBoundingClientRect().top;
-    if (Math.abs(distance) < 1) return;
-    const animation = form.animate([
-      { transform: `translateY(${distance}px)` },
-      { transform: "translateY(0)" },
-    ], { duration: 380, easing: "cubic-bezier(.22, 1, .36, 1)" });
-    composerMotion.current = animation;
-    const cancel = () => animation.cancel();
-    window.addEventListener("resize", cancel);
-    return () => {
-      animation.cancel();
-      window.removeEventListener("resize", cancel);
-      if (composerMotion.current === animation) composerMotion.current = null;
-    };
-  }, [hasMessages]);
-
   useEffect(() => {
     const media = matchMedia("(min-width: 768px)");
     const closeOnDesktop = () => { if (media.matches) drawer.current?.close(); };
@@ -292,12 +259,6 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
     };
   }, [attachmentsOpen]);
 
-  function captureComposerPosition() {
-    if (!matchMedia("(min-width: 1024px) and (hover: hover) and (pointer: fine)").matches) return;
-    composerStartTop.current = composer.current?.getBoundingClientRect().top ?? null;
-    composerMotion.current?.cancel();
-  }
-
   function chooseConversation(id: string | null) {
     const selected = conversations.find(conversation => conversation.id === id);
     if (id && selected && !selected.messages.length) {
@@ -310,7 +271,6 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
       }).catch(() => {});
       return;
     }
-    if (hasMessages !== Boolean(conversations.find(conversation => conversation.id === id)?.messages.length)) captureComposerPosition();
     fileRead.current?.abort(); fileRead.current = null;
     setFiles([]); setFileError(""); setPreparing(null); setViewing(null);
     setAnimatedId(null);
@@ -436,7 +396,6 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
   function send() {
     const text = draft.trim();
     if ((!text && !files.length) || text.length > AI_LIMITS.messageChars || request.current || fileRead.current) return;
-    if (!hasMessages) captureComposerPosition();
     followBottom();
     const message: Message = { id: crypto.randomUUID(), text, role: "user", complete: true, ...(files.length ? { attachments: files } : {}) };
     const id = activeId ?? crypto.randomUUID();

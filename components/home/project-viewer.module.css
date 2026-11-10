@@ -13,14 +13,7 @@
   color: var(--bluemind-text);
   overflow: hidden;
   box-shadow: 0 24px 80px #11111126;
-  transform: translateY(100dvh);
-  transition:
-    transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
-    width 320ms cubic-bezier(0.22, 1, 0.36, 1),
-    height 320ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-.dialog[data-revealed="true"] {
-  transform: translateY(0);
+  transform: none;
 }
 .dialog[data-expanded="true"] {
   width: 100%;
@@ -31,10 +24,6 @@
 .dialog::backdrop {
   background: #15151500;
   backdrop-filter: blur(3px);
-  transition: background-color 480ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-.dialog[data-revealed="true"]::backdrop {
-  background: #15151524;
 }
 .shell {
   display: flex;
@@ -100,11 +89,6 @@
   font: inherit;
   font-size: 12px;
   font-weight: 600;
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    background-color 180ms ease,
-    color 180ms ease;
 }
 .backButton {
   padding: 0 14px;
@@ -118,13 +102,6 @@
 .expandButton svg {
   width: 13px;
   height: 13px;
-}
-.backButton:hover:not(:disabled),
-.expandButton:hover:not(:disabled) {
-  transform: translateY(-2px);
-  border-color: #c7c7c2;
-  background: #fff;
-  color: #111;
 }
 .backButton:disabled,
 .expandButton:disabled {
@@ -185,18 +162,11 @@
   font-weight: 500;
   color: #666;
   cursor: pointer;
-  transition:
-    background-color 160ms,
-    color 160ms;
 }
 .deviceControls button[aria-pressed="true"] {
   border-color: #1d1d1d;
   background: #1d1d1d;
   color: #fff;
-}
-.deviceControls button:hover:not([aria-pressed="true"]) {
-  color: var(--bluemind-text);
-  background: #f2f2f0;
 }
 .orientationControls {
   display: flex;
@@ -257,9 +227,6 @@
   overflow: hidden;
 }
 .logicalFrame[data-ready="true"] {
-  transition:
-    width 320ms cubic-bezier(0.22, 1, 0.36, 1),
-    height 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .loading {
   min-height: 100%;
@@ -280,15 +247,9 @@
   border: 2px solid #e4e4e2;
   border-top-color: #333;
   border-radius: 50%;
-  animation: loading-turn 800ms linear infinite;
 }
 .loading p {
   margin: 0;
-}
-@keyframes loading-turn {
-  to {
-    transform: rotate(360deg);
-  }
 }
 @media (max-width: 700px) {
   .dialog {
@@ -346,15 +307,6 @@
     padding: 4px;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .dialog,
-  .dialog::backdrop,
-  .dialog *,
-  .logicalFrame[data-ready="true"] {
-    transition: none !important;
-    animation: none !important;
-  }
-}
 
 .restoreDock {
   --dock-safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -381,10 +333,6 @@
 }
 .restoreDock > span {
   font-size: 13px;
-}
-.restoreDock:hover {
-  border-color: var(--bluemind-blue);
-  background: #fafafa;
 }
 .restoreDock:focus-visible:not(:disabled) {
   outline: 2px solid var(--bluemind-blue);

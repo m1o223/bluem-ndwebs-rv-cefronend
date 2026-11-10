@@ -20,7 +20,7 @@ export default function NorthSeaDemo() {
     const target = viewport.current?.querySelector<HTMLElement>(`#${id}`);
     if (target && viewport.current) {
       const top = target.offsetTop - 84;
-      viewport.current.scrollTo({ top, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+      viewport.current.scrollTo({ top, behavior: "auto" });
     }
   }
   return <div ref={viewport} className={styles.demoScroll} data-demo-viewport>

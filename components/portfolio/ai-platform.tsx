@@ -124,9 +124,7 @@ export default function AIPlatformProject() {
     setPrompt(template.prompt);
     setTab("Workspace");
     setStatus(`Loaded ${template.label.toLowerCase()} template.`);
-    requestAnimationFrame(() =>
-      promptInput.current?.focus({ preventScroll: true }),
-    );
+    promptInput.current?.focus({ preventScroll: true });
   }
   function saveDraft() {
     if (!draft) return;
@@ -181,7 +179,7 @@ export default function AIPlatformProject() {
             setDraft(null);
             setTab("Workspace");
             setStatus("A fresh page. What would you like to make?");
-            requestAnimationFrame(() => promptInput.current?.focus());
+            promptInput.current?.focus();
           }}
         >
           New draft

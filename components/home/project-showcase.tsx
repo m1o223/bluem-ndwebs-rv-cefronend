@@ -13,7 +13,7 @@ export default function ProjectShowcase({ headingAs: Heading = "h2" }: { heading
   return (
     <section
       id="selected-work"
-      className={`${styles.showcase} ${portfolio.revealSection}`}
+      className={styles.showcase}
       aria-labelledby="work-title"
     >
       <div className={styles.container}>
@@ -99,10 +99,8 @@ export default function ProjectShowcase({ headingAs: Heading = "h2" }: { heading
                       )
                     )}
                   </div>
-                  <span className={portfolio.hoverOverlay} aria-hidden="true">
-                    <span className={portfolio.cardCta} data-demo-cta>
-                      View Website
-                    </span>
+                  <span className={portfolio.cardCta} data-demo-cta>
+                    View Website
                   </span>
                 </div>
                 <div className={portfolio.caption}>

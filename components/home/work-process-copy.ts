@@ -30,7 +30,7 @@ export const workProcessCopy: Record<Locale, StoryCopy> = {
         "Ready to launch"
       ]
     ],
-    "instructions": "Animation pauses while focused. Use Left and Right to read the steps. Space toggles playback after focus leaves."
+    "instructions": "All project steps are shown on screen. Use Left and Right to review them."
   },
   "ar": {
     "title": "كيف نعمل",
@@ -60,7 +60,7 @@ export const workProcessCopy: Record<Locale, StoryCopy> = {
         "لاستقبال زوارك"
       ]
     ],
-    "instructions": "تتوقف الحركة أثناء التركيز. استخدم السهمين لقراءة الخطوات. مفتاح المسافة يبدّل تشغيل الحركة بعد مغادرة التركيز."
+    "instructions": "تظهر خطوات المشروع على الشاشة. استخدم السهمين لمراجعتها."
   },
   "sv": {
     "title": "Så arbetar vi",
@@ -90,6 +90,6 @@ export const workProcessCopy: Record<Locale, StoryCopy> = {
         "Redo för lansering"
       ]
     ],
-    "instructions": "Animationen pausas vid fokus. Läs stegen med piltangenterna. Mellanslag växlar uppspelning när fokus lämnar."
+    "instructions": "Alla projektsteg visas på skärmen. Använd piltangenterna för att granska dem."
   }
 };
