@@ -9,9 +9,9 @@ import styles from "./home.module.css";
 import TextActionLabel from "../text-action-label";
 
 const languageUi = {
-  en: { search: "Search languages", empty: "No matching languages" },
-  sv: { search: "Sök språk", empty: "Inga matchande språk" },
-  ar: { search: "ابحث عن لغة", empty: "لا توجد لغات مطابقة" },
+  en: { search: "Search languages", empty: "No matching languages", selected: "Selected language: ", languages: "Languages", openMenu: "Open menu", closeMenu: "Close menu", mainNavigation: "Main navigation" },
+  sv: { search: "Sök språk", empty: "Inga matchande språk", selected: "Valt språk: ", languages: "Språk", openMenu: "Öppna meny", closeMenu: "Stäng meny", mainNavigation: "Huvudnavigation" },
+  ar: { search: "ابحث عن لغة", empty: "لا توجد لغات مطابقة", selected: "اللغة المختارة: ", languages: "اللغات", openMenu: "فتح القائمة", closeMenu: "إغلاق القائمة", mainNavigation: "التنقل الرئيسي" },
 } as const;
 
 const links = [["/", "Home"], ["/about", "About Us"], ["/services", "Services"], ["/templates", "Website Concepts"], ["/how-we-work", "How We Work"], ["/care", "Website Care"], ["/contact", "Contact"]];
@@ -108,14 +108,14 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
         {activePath !== "/sign-in" && activePath !== "/login" && <div className={styles.headerControls}>
           <Link className={styles.signInLink} href="/sign-in" aria-current={activePath === "/sign-in" ? "page" : undefined} onClick={() => { setExpanded(false); setLanguageOpen(false); }}><TextActionLabel enabled={textEffects}>Sign in</TextActionLabel></Link>
           <div className={styles.languageSelector} ref={languageRef} data-no-translate>
-            <button ref={languageToggleRef} className={styles.languageButton} type="button" aria-label={`Selected language: ${selectedLanguage.label}`} aria-haspopup="menu" aria-controls="header-languages" aria-expanded={languageOpen} onClick={() => { setLanguageOpen((open) => !open); setExpanded(false); }} onKeyDown={(event) => {
+            <button ref={languageToggleRef} className={styles.languageButton} type="button" aria-label={`${languageText.selected}${selectedLanguage.nativeName}`} aria-haspopup="menu" aria-controls="header-languages" aria-expanded={languageOpen} onClick={() => { setLanguageOpen((open) => !open); setExpanded(false); }} onKeyDown={(event) => {
               if (event.key === "ArrowDown" || event.key === "ArrowUp") { event.preventDefault(); setLanguageOpen(true); setExpanded(false); }
             }}>
               <Globe2 aria-hidden="true" className={styles.languageIcon} size={19} strokeWidth={1.6} />
               <span className={styles.languageShort}><TextActionLabel enabled={textEffects}>{selectedLanguage.short}</TextActionLabel></span>
               <ChevronDown className={styles.languageChevron} aria-hidden="true" size={12} />
             </button>
-            <div id="header-languages" className={styles.languageMenu} role="menu" aria-label="Languages" data-open={languageOpen} inert={!languageOpen} onKeyDown={(event) => {
+            <div id="header-languages" className={styles.languageMenu} role="menu" aria-label={languageText.languages} data-open={languageOpen} inert={!languageOpen} onKeyDown={(event) => {
               const buttons = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>("button"));
               if (!buttons.length) return;
               const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
@@ -165,7 +165,7 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
               {!visibleLanguages.length && <p className={styles.languageEmpty}>{languageText.empty}</p>}
             </div>
           </div>
-          <button ref={toggleRef} className={styles.menuToggle} type="button" aria-label={expanded ? "Close menu" : "Open menu"} aria-expanded={expanded} aria-controls="home-navigation" data-expanded={expanded} onClick={() => { setExpanded((open) => !open); setLanguageOpen(false); }}>
+          <button ref={toggleRef} className={styles.menuToggle} type="button" aria-label={expanded ? languageText.closeMenu : languageText.openMenu} aria-expanded={expanded} aria-controls="home-navigation" data-expanded={expanded} onClick={() => { setExpanded((open) => !open); setLanguageOpen(false); }}>
             <span className={styles.menuLabel} aria-hidden="true"><span><TextActionLabel enabled={textEffects}>Menu</TextActionLabel></span><span><TextActionLabel enabled={textEffects}>Close</TextActionLabel></span></span>
             <span className={styles.menuSymbol} aria-hidden="true">
               <Menu className={styles.menuOpenIcon} size={20} />
@@ -174,7 +174,7 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
           </button>
         </div>}
         {activePath !== "/sign-in" && activePath !== "/login" && <div className={`${styles.navPanel} ${expanded ? styles.navExpanded : ""}`}>
-          <nav id="home-navigation" aria-label="Main navigation" className={styles.homeNav} inert={!expanded} aria-hidden={!expanded ? true : undefined}>
+          <nav id="home-navigation" aria-label={languageText.mainNavigation} className={styles.homeNav} inert={!expanded} aria-hidden={!expanded ? true : undefined}>
             {links.map(([href, label]) => <Link key={href} href={href} onClick={() => setExpanded(false)} aria-current={href === activePath ? "page" : undefined}>{textEffects ? <TextActionLabel>{label}</TextActionLabel> : <span className={styles.navLabel}>{label}</span>}</Link>)}
             <Link href="/quote" className={styles.navCta} onClick={() => setExpanded(false)} aria-current={activePath === "/quote" ? "page" : undefined}><TextActionLabel enabled={textEffects} light>Request a Quote</TextActionLabel></Link>
           </nav>
