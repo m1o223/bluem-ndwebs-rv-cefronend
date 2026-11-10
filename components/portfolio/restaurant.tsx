@@ -77,7 +77,7 @@ const dishes = [
     description:
       "Bright citrus, a gentle bitterness and a good reason to take your time.",
     ingredients: "Citrus · Botanical aperitif · Soda · Orange",
-    allergens: "Contains alcohol. Sample drink only.",
+    allergens: "Contains alcohol.",
   },
   {
     id: "spritz",
@@ -278,8 +278,7 @@ export default function RestaurantProject() {
             ))}
           </div>
           <p className={styles.menuNote}>
-            A fictional seasonal menu. Photography and recipes are illustrative.
-            Dish details include sample allergen information.
+            Seasonal menu. Allergen details are shown on each dish.
           </p>
         </section>
         <section className={styles.story} data-section="story">
@@ -296,7 +295,7 @@ export default function RestaurantProject() {
               <em>A better evening.</em>
             </h2>
             <p>
-              SERA is a fictional neighbourhood restaurant built around a simple
+              SERA is a neighbourhood restaurant built around a simple
               idea: good ingredients, a little care, and enough time to enjoy
               the people you're with.
             </p>
@@ -327,9 +326,9 @@ export default function RestaurantProject() {
               <p>
                 12 Olive Lane
                 <br />
-                Bristol, our fictional home.
+                Bristol.
               </p>
-              <span>Concept address · No physical restaurant</span>
+              <span>Opening hours and reservations are shown for this concept.</span>
             </div>
             <div>
               <h3>A little time for dinner</h3>
@@ -380,8 +379,7 @@ export default function RestaurantProject() {
               <h3>Sample allergen notes</h3>
               <p>{selected.allergens}</p>
               <p className={styles.small}>
-                This is an illustrative dish, not a real menu or dietary
-                recommendation.
+                Ask the team if you have a dietary question.
               </p>
               <button className={styles.primary} onClick={reserve}>
                 A table for something good ↗
@@ -463,7 +461,7 @@ export default function RestaurantProject() {
               <fieldset className={styles.timeField}>
                 <legend>A little time for dinner</legend>
                 {!date ? (
-                  <p>Choose a date to explore the sample times.</p>
+                  <p>Choose a date to see available times.</p>
                 ) : closed ? (
                   <p role="status">
                     Mondays are our day to rest. Try another evening.
@@ -495,8 +493,7 @@ export default function RestaurantProject() {
                 Continue to your details ↗
               </button>
               <small>
-                Sample availability. This preview cannot make a real
-                reservation.
+                Demo reservation. No booking is made.
               </small>
             </form>
           )}
@@ -553,7 +550,7 @@ export default function RestaurantProject() {
                 />
               </label>
               <button className={styles.primary}>
-                Preview your reservation ↗
+                Review your reservation ↗
               </button>
               <button
                 className={styles.textButton}
@@ -563,7 +560,7 @@ export default function RestaurantProject() {
                 Back to your evening
               </button>
               <small>
-                No payment, message or personal information is sent or stored.
+                Demo only. No payment or message is sent.
               </small>
             </form>
           )}
@@ -581,8 +578,7 @@ export default function RestaurantProject() {
                 {guests} {Number(guests) === 1 ? "person" : "people"} · {time}
               </p>
               <p>
-                Your table preview is ready. No reservation was made and no
-                confirmation email was sent.
+                Your table details are ready. No reservation was made.
               </p>
               <button
                 className={styles.primary}

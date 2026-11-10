@@ -319,7 +319,7 @@ function DemoSite({
             {step === "browse" ? <div className={styles.flowIntro}><span className={styles.siteEyebrow}>Try the main journey</span><h2>See how {displayLabel.toLowerCase()} could work from start to finish.</h2><p>{actionDescription(category.action)}</p><button type="button" className={styles.primaryButton} onClick={startAction}>{category.actionLabel}<ArrowRight size={16} /></button></div> : <DemoFlow category={category} step={step} setStep={setStep} items={items} cart={cart} setCart={setCart} selectedItem={selectedItem} setSelectedItem={setSelectedItem} total={total} formMessage={formMessage} submitForm={submitForm} />}
           </section>
         </main>
-        <footer className={styles.siteFooter}><strong>{category.brand}</strong><span>Fictional BlueMind concept · all actions are simulated</span><button type="button" onClick={() => jump("home")}>Back to top <ChevronDown size={14} /></button></footer>
+        <footer className={styles.siteFooter}><strong>{category.brand}</strong><span>Demo concept · actions are simulated</span><button type="button" onClick={() => jump("home")}>Back to top <ChevronDown size={14} /></button></footer>
       </div>
     </div>
   );

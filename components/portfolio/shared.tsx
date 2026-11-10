@@ -259,7 +259,7 @@ export function DemoFooter({
       <strong>{brand}</strong>
       {children}
       <small>
-        A fictional BlueMind concept. Orders and enquiries are simulated.
+        Demo concept. Orders and enquiries are simulated.
       </small>
     </footer>
   );

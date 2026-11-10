@@ -440,7 +440,7 @@ export default function FurnitureProject() {
                 )}
               </button>
               <p className={styles.small}>
-                Build a project edit. Illustrative prices; no purchase is made.
+                Preview only. No purchase is made.
               </p>
             </div>
           </div>
@@ -600,10 +600,10 @@ export default function FurnitureProject() {
                 <textarea name="space" required minLength={12} rows={3} />
               </label>
               <button className={styles.primary}>
-                Preview consultation ↗
+                Review consultation ↗
               </button>
               <small>
-                Sample appointment options. No booking or enquiry is sent.
+                Demo consultation. No booking or enquiry is sent.
               </small>
             </form>
           )}
@@ -619,8 +619,7 @@ export default function FurnitureProject() {
                 {appointment.date} · {appointment.time}
               </p>
               <p>
-                Your consultation preview is complete. No appointment has been
-                booked and no personal information was stored.
+                Your consultation details are ready. No appointment was booked.
               </p>
               <button className={styles.primary} onClick={() => setPanel(null)}>
                 Back to FORM & FIELD

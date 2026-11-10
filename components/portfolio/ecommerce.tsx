@@ -307,7 +307,7 @@ export default function EcommerceProject() {
             onSubmit={(e) => {
               e.preventDefault();
               setEmailStatus(
-                "You're on the demo list. No email was sent or stored.",
+                "Thanks — you’re on the list for this preview.",
               );
             }}
           >
@@ -324,7 +324,7 @@ export default function EcommerceProject() {
             </div>
             <p role="status">
               {emailStatus ||
-                "A fictional concept. Your address stays in this preview."}
+                "Join for product notes and new arrivals."}
             </p>
           </form>
         </section>
@@ -387,7 +387,7 @@ export default function EcommerceProject() {
                 Add to bag — {money(selected.price * quantity)}
               </button>
               <p className={styles.small}>
-                Fictional products. No purchase is made in this preview.
+                Preview product. No purchase is made.
               </p>
             </div>
           </div>
@@ -478,7 +478,7 @@ export default function EcommerceProject() {
                     {total >= 60
                       ? "Complimentary delivery included."
                       : `${money(60 - total)} away from complimentary delivery.`}{" "}
-                    Demo checkout only.
+                    Preview checkout. No payment or order is sent.
                   </p>
                   <button
                     className={styles.button}
@@ -501,10 +501,7 @@ export default function EcommerceProject() {
                 setPanel("confirmation");
               }}
             >
-              <p>
-                Your essentials · {money(total)}. This is a preview, with no
-                payment or order sent.
-              </p>
+              <p>Your essentials · {money(total)}. No payment or order is sent.</p>
               <label>
                 Full name
                 <input name="name" autoComplete="name" required minLength={2} />
@@ -537,7 +534,7 @@ export default function EcommerceProject() {
                   <input name="postcode" autoComplete="postal-code" required />
                 </label>
               </div>
-              <button className={styles.button}>Preview your order</button>
+              <button className={styles.button}>Review your order</button>
               <button
                 type="button"
                 className={styles.back}
@@ -552,8 +549,7 @@ export default function EcommerceProject() {
               <span className={styles.success}>✓</span>
               <h3>Thank you, {orderName}.</h3>
               <p>
-                Your demo order is complete. No payment was collected, no
-                personal data was stored, and no products will be shipped.
+                Your order details are ready. No payment was collected or data stored.
               </p>
               <button className={styles.button} onClick={() => setPanel(null)}>
                 Back to MORROW

@@ -13,23 +13,22 @@ for (const width of [320, 390, 768, 1440]) {
       await expect(page.locator("main section")).toHaveAttribute("dir", locale === "ar" ? "rtl" : "ltr");
       await expect(page.locator("main input")).toHaveCount(0);
       await expect(page.locator("main")).not.toContainText("Apple ID");
-      await expect(page.getByRole("button", { name: /BankID/ })).toBeDisabled();
+      await expect(page.getByRole("button", { name: /BankID/ })).toHaveCount(0);
+      await expect(page.getByRole("status")).toContainText(/coming soon|Kommer snart|قريبًا/i);
       await expect(page.locator("[data-auth-card]")).toContainText("Google");
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
       const emailOption=page.locator("[data-auth-card] button").last();
       await emailOption.click();
       await expect(page.locator("[data-auth-card] input")).toHaveCount(2);
-      await page.locator('[data-auth-card] [class*="existing"] button').click();
-      await expect(page.locator("[data-auth-card] input")).toHaveCount(3);
-      await expect(page.locator("#sign-in-customer-type")).toHaveValue("");
-      await expect(page.locator("#sign-in-customer-type")).not.toHaveAttribute("required", "");
-      for (const input of await page.locator("[data-auth-card] input, [data-auth-card] select, [data-auth-card] button").all()) {
+      await expect(page.getByRole("button", { name: "Create an account", exact: true })).toHaveCount(0);
+      await expect(page.getByRole("button", { name: "Forgot password?", exact: true })).toHaveCount(0);
+      for (const input of await page.locator("[data-auth-card] input, [data-auth-card] button").all()) {
         const box = (await input.boundingBox())!; expect(box.x).toBeGreaterThanOrEqual(0); expect(box.x + box.width).toBeLessThanOrEqual(width);
       }
-      await page.screenshot({ path: info.outputPath("registration.png"), fullPage: true });
+      await page.screenshot({ path: info.outputPath("login.png"), fullPage: true });
       await page.getByRole("link", { name: back, exact: true }).click();
       await expect(page).toHaveURL(/\/$/);
-      await expect(page.locator('header button[aria-controls="home-navigation"]')).toBeVisible();
+      await expect(page.locator("body > header")).toBeVisible();
       await expect(page.locator("footer")).toHaveCount(1);
       await page.goBack();
       await expect(page.getByRole("heading", { level: 1 })).toHaveText(title);

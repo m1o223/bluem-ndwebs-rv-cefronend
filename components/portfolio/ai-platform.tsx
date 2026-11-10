@@ -134,7 +134,7 @@ export default function AIPlatformProject() {
       draft,
       ...items.filter((item) => item.id !== draft.id),
     ]);
-    setStatus("Saved to your session. Drafts reset when this preview closes.");
+    setStatus("Saved in this workspace.");
   }
   async function copyDraft() {
     if (!draft) return;
@@ -171,7 +171,7 @@ export default function AIPlatformProject() {
           <small>SPACE FOR YOUR IDEAS</small>
         </button>
         <div className={styles.session}>
-          <span /> Local demo workspace
+          <span /> Workspace
         </div>
         <button
           className={styles.newDraft}
@@ -226,14 +226,14 @@ export default function AIPlatformProject() {
               <br />A lot of possibility.
             </h3>
             <p>
-              A frontend simulation. No AI service, account or data storage.
+              Guided concept workspace.
             </p>
           </div>
         </aside>
         <main className={styles.main}>
           <div className={styles.topline}>
             <span>YOUR PERSONAL WRITING STUDIO</span>
-            <span>DEMO / 01</span>
+            <span>01 / WORKSPACE</span>
           </div>
           <div className={styles.intro}>
             <p className={styles.eyebrow}>GOOD IDEAS DESERVE A GOOD START.</p>
@@ -351,7 +351,7 @@ export default function AIPlatformProject() {
                       </button>
                     )}
                     <span>
-                      {busy ? "Preparing example…" : "LOCAL DEMO · NO API"}
+                      {busy ? "Preparing brief…" : "Create a brief"}
                     </span>
                   </div>
                 </form>
@@ -532,7 +532,7 @@ export default function AIPlatformProject() {
           </p>
           <footer className={styles.footer}>
             <span>Made for the way you think.</span>
-            <span>ASTER — A FICTIONAL BLUEMIND CONCEPT</span>
+            <span>ASTER workspace concept.</span>
           </footer>
         </main>
       </div>

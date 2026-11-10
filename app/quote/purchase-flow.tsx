@@ -441,7 +441,7 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
               <h2 id="checkout-title">Demo checkout preview complete</h2>
               <p>No real payment was processed and no real order was created.</p>
               <div className={styles.orderNumber}><span>Your Order Number</span><strong>{demoOrderNumber}</strong></div>
-              <p className={styles.demoNotice}>Save this number. You will need it for BlueMind Care and future order support. This is a frontend-only demo order number.</p>
+              <p className={styles.demoNotice}>Keep this number for support. No live order was created.</p>
               <div className={styles.emailPreview}><span>Demo email preview for:</span><strong>{customerEmail}</strong><small>The backend will send a real confirmation only after Stripe confirms an actual payment through a verified webhook.</small></div>
               <section className={styles.careUpsell} aria-labelledby="care-upsell-title">
                 <h3 id="care-upsell-title">Keep your website running smoothly with BlueMind Care.</h3>
@@ -470,7 +470,7 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
               <p>We received your order details.</p>
               <div className={styles.orderNumber}><span>Order</span><strong>{demoOrderNumber}</strong></div>
               <p>Our team will contact you shortly to begin your project.</p>
-              {carePlan && selectedCarePlan ? <p className={styles.demoNotice}>BlueMind Care selected: {selectedCarePlan.name} · {careBilling}. Tomorrow this will become a real subscription after backend/Stripe connection.</p> : null}
+              {carePlan && selectedCarePlan ? <p className={styles.demoNotice}>BlueMind Care selected: {selectedCarePlan.name} · {careBilling}.</p> : null}
               <p className={styles.demoNotice}>{paymentPlan === "deposit_25" ? "25% paid. Remaining balance due according to the agreed delivery terms." : paymentPlan === "deposit_50" ? "50% paid. Remaining balance due according to the agreed delivery terms." : "Paid in full."}</p>
               <button type="button" className={styles.checkoutPrimary} onClick={onClose}>Done</button>
             </div>

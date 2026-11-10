@@ -13,8 +13,8 @@ for (const [width, height, previewCount] of [[320, 700, 10], [390, 844, 10], [76
     await expect(card).toHaveCSS("filter", "none");
     await expect(card.getByRole("heading")).toHaveText("Get Started");
     await expect(card.locator("input")).toHaveCount(0);
-    await expect(card.locator("button")).toHaveText(["Continue with Google", "Continue with BankID", "Continue with Email & Password"]);
-    await expect(page.getByRole("button", { name: "Continue with BankID", exact: true })).toBeDisabled();
+    await expect(card.locator("button")).toHaveText(["Continue with Google", "Continue with Email & Password"]);
+    await expect(card.getByText(/BankID.*coming soon/i)).toBeVisible();
     await expect(page.locator("header button, header nav, footer")).toHaveCount(0);
     await expect(page.locator("[data-preview]:visible")).toHaveCount(previewCount);
     const previews = page.locator("[data-auth-orbits]");
@@ -28,28 +28,16 @@ for (const [width, height, previewCount] of [[320, 700, 10], [390, 844, 10], [76
     await expect(card.locator("input")).toHaveCount(2);
     await page.screenshot({ path: info.outputPath("login.png"), fullPage: true });
     const before = await previews.evaluate(e => e.getAnimations({ subtree: true }).filter(a=>a instanceof CSSAnimation).map(a => a.currentTime as number));
-    await card.getByRole("button", { name: "Create an account", exact: true }).click();
-    await expect(card.locator("input")).toHaveCount(3);
-    await expect(card.getByLabel("Customer type (optional)")).not.toHaveAttribute("required", "");
+    await expect(card.getByRole("button", { name: "Create an account", exact: true })).toHaveCount(0);
+    await expect(card.getByRole("button", { name: "Forgot password?", exact: true })).toHaveCount(0);
     expect(await previews.evaluate((e, old) => e === old, original)).toBe(true);
     expect(await previews.evaluate(e=>({width:e.clientWidth,height:e.clientHeight}))).toEqual(orbitBox);
     const after = await previews.evaluate(e => e.getAnimations({ subtree: true }).filter(a=>a instanceof CSSAnimation).map(a => a.currentTime as number));
     if (before.length) expect(after.every((time, i) => time >= before[i])).toBe(true);
-    await page.screenshot({ path: info.outputPath("register.png"), fullPage: true });
-    for (const field of await card.locator("input, select").all()) {
+    await page.screenshot({ path: info.outputPath("login-condensed.png"), fullPage: true });
+    for (const field of await card.locator("input").all()) {
       const box = (await field.boundingBox())!; expect(box.x).toBeGreaterThanOrEqual(0); expect(box.x + box.width).toBeLessThanOrEqual(width);
     }
-    await card.getByRole("button", { name: "Sign in", exact: true }).click();
-    await expect(card.getByRole("heading")).toHaveText("Sign in");
-    await expect(card.locator("input")).toHaveCount(2);
-    await expect(card.locator("select")).toHaveCount(0);
-    await page.screenshot({ path: info.outputPath("login.png"), fullPage: true });
-    await card.getByRole("button", { name: "Forgot password?", exact: true }).click();
-    await expect(card.getByRole("heading")).toHaveText("Reset your password");
-    await expect(card.locator("input")).toHaveCount(1);
-    await page.screenshot({ path: info.outputPath("recovery.png"), fullPage: true });
-    await card.getByRole("button", { name: "Back", exact: true }).click();
-    await expect(card.getByRole("heading")).toHaveText("Sign in");
     await card.getByRole("button", { name: "Back", exact: true }).click();
     await expect(card.getByRole("heading")).toHaveText("Get Started");
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
@@ -104,9 +92,8 @@ for (const width of [390, 1440]) {
     await page.goto("/sign-in");
     const area=page.locator("[data-auth-card]");
     const orbits=page.locator("[data-auth-orbits]");
-    for (const mode of ["welcome","login","recovery"]) {
+    for (const mode of ["welcome","login"]) {
       if(mode==="login") await area.getByRole("button",{name:"Continue with Email & Password",exact:true}).click();
-      if(mode==="recovery") await area.getByRole("button",{name:"Forgot password?",exact:true}).click();
       for(const time of [0,16800,33600,50400]) {
         await orbits.evaluate((e,time)=>e.getAnimations({subtree:true}).filter(a=>a instanceof CSSAnimation).forEach(a=>{a.pause();a.currentTime=time;}),time);
         await expect.poll(()=>orbits.evaluate(e=>[...e.querySelectorAll<HTMLElement>("[data-preview]")]
@@ -122,18 +109,10 @@ for (const width of [390, 1440]) {
   });
 }
 
-test("unavailable registration and recovery never fabricate success or send credentials", async ({ page }) => {
-  const calls: string[]=[]; page.on("request", r => {if(r.method()==="POST") calls.push(r.url());});
-  await page.goto("/sign-in"); await page.getByRole("button", { name: "Continue with Email & Password", exact: true }).click();
-  await page.getByRole("button", { name: "Create an account", exact: true }).click();
-  await page.getByLabel("Full name", { exact: true }).fill("Test visitor");
-  await page.getByLabel("Email", { exact: true }).fill("visitor@example.invalid");
-  await page.getByLabel("Password", { exact: true }).fill("A-long-example-password");
-  await page.getByRole("button", { name: "Get Started", exact: true }).click();
-  await expect(page.getByRole("status")).toContainText("not available yet");
-  await page.getByRole("button", { name: "Forgot password?", exact: true }).click();
-  await page.getByLabel("Email", { exact: true }).fill("visitor@example.invalid");
-  await page.getByRole("button", { name: "Send reset request", exact: true }).click();
-  await expect(page.getByRole("status")).toContainText("not available yet");
-  expect(calls).toEqual([]);
+test("unavailable account flows stay hidden instead of offering dead controls", async ({ page }) => {
+  await page.goto("/sign-in");
+  await page.getByRole("button", { name: "Continue with Email & Password", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Create an account", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Forgot password?", exact: true })).toHaveCount(0);
+  await expect(page.getByText(/Email sign-up is not available yet|Password reset is not available yet/i)).toHaveCount(0);
 });

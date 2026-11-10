@@ -256,10 +256,6 @@ export default function CorporateProject() {
               </button>
             ))}
           </div>
-          <p className={styles.demoNote}>
-            Fictional engagements created to demonstrate the MERIDIAN
-            experience.
-          </p>
         </section>
         <section className={styles.approach} data-section="approach">
           <div className={styles.heading}>
@@ -370,8 +366,7 @@ export default function CorporateProject() {
               <span className={styles.eyebrow}>YOUR NEXT STEP</span>
               <h3>Thank you, {enquiryName}.</h3>
               <p>
-                Your demo enquiry is complete. No information was submitted or
-                stored.
+                Your enquiry details are ready. No message was sent.
               </p>
               <button
                 className={styles.primary}
@@ -441,11 +436,11 @@ export default function CorporateProject() {
               </label>
               <label className={styles.checkbox}>
                 <input type="checkbox" required /> I understand this is a
-                demonstration enquiry.
+                preview enquiry.
               </label>
-              <button className={styles.primary}>Preview enquiry ↗</button>
+              <button className={styles.primary}>Review enquiry ↗</button>
               <small>
-                No message is sent. Your details stay in this preview session.
+                Demo only. No message is sent.
               </small>
             </form>
           )}

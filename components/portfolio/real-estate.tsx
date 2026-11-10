@@ -421,8 +421,7 @@ export default function RealEstateProject() {
             </div>
           )}
           <p className={styles.demoNote}>
-            Illustrative listings and photography. These properties are not
-            offered for sale.
+            Demo listings. Properties are not for sale.
           </p>
         </section>
         <section className={styles.perspective} data-section="perspective">
@@ -466,7 +465,7 @@ export default function RealEstateProject() {
             <span className={styles.initials}>EH</span>
             <div>
               <h3>Ellis Harper</h3>
-              <span>Your fictional home guide</span>
+              <span>HAVEN home guide</span>
               <p>
                 Thoughtful advice, from the first question to the next chapter.
               </p>
@@ -647,11 +646,10 @@ export default function RealEstateProject() {
                 />
               </label>
               <button className={styles.primary}>
-                Preview viewing enquiry ↗
+                Review viewing request ↗
               </button>
               <small>
-                Sample viewing preferences. No enquiry is sent or appointment
-                booked.
+                Demo request. No viewing is booked.
               </small>
             </form>
           )}
@@ -665,8 +663,7 @@ export default function RealEstateProject() {
                 {confirmation.date} · {confirmation.time}
               </p>
               <p>
-                Your demo enquiry is complete. No viewing has been booked and no
-                personal information was stored.
+                Your viewing details are ready. No viewing was booked.
               </p>
               <button className={styles.primary} onClick={() => setPanel(null)}>
                 Back to the homes

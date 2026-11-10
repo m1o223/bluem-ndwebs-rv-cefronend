@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useRef, useState, type FormEvent, type ReactNode } from "react";
-import { Check, Circle, Clock3, Folder, ArrowRight, FileText, CreditCard, MessageCircle, UserRound, Save, Send, LogOut, Trash2, Sparkles } from "lucide-react";
+import { Check, Circle, Clock3, Folder, ArrowRight, FileText, CreditCard, MessageCircle, Save, Send, LogOut, Sparkles } from "lucide-react";
 import type { Customer, CustomerPage } from "../../app/lib/customer/routes";
 import type { Overview, Profile, Project } from "./workspace-types";
 import { workspaceCopy, type WorkspaceCopy } from "./workspace-copy";
@@ -86,7 +86,7 @@ function Account({ overview, user, locale, signOut, signingOut }: { overview: Ov
   return <>
     <form onSubmit={submit} aria-busy={busy}>
       <section className={styles.section}>
-        <h2>{t.profile}</h2><div className={styles.profileHeading}><span className={styles.profilePhoto} aria-label={t.photo}><ProfilePhoto src={user.profileImage} /></span><div><strong>{profile.fullName || user.email}</strong><p className={styles.muted}>{user.profileImage ? authCopy[locale].googlePhoto : t.photoLater}</p></div></div>
+        <h2>{t.profile}</h2><div className={styles.profileHeading}><span className={styles.profilePhoto} aria-label={t.photo}><ProfilePhoto src={user.profileImage} /></span><div><strong>{profile.fullName || user.email}</strong>{user.profileImage && <p className={styles.muted}>{authCopy[locale].googlePhoto}</p>}</div></div>
         <div className={styles.formGrid}>
           <Field label={t.fullName}><input autoComplete="name" maxLength={160} value={profile.fullName} onChange={event => patch({ fullName: event.target.value })} /></Field>
           <Field label={t.email}><input type="email" dir="ltr" value={user.email} readOnly aria-describedby="email-note" /></Field>
@@ -95,11 +95,11 @@ function Account({ overview, user, locale, signOut, signingOut }: { overview: Ov
         </div><p id="email-note" className={styles.muted}>{t.emailNote}</p><p className={styles.identifier}>{t.accountId}: <bdi>{user.id}</bdi></p>
       </section>
       <section className={styles.section}><h2>{t.methods}</h2>{[["email", t.email], ["google", "Google"], ["bankid", "BankID"]].map(([key, title]) => <div className={styles.settingRow} key={key}><span>{title}</span><span className={styles.muted}>{profile.loginMethods.includes(key) ? t.linked : t.notLinked}</span></div>)}</section>
-      <section className={styles.section}><h2>{t.notifications}</h2>{([['project', 'projectNotices'], ['team', 'teamNotices'], ['billing', 'billingNotices'], ['email', 'emailNotices']] as const).map(([key, label]) => <label key={key} className={styles.settingRow}><span>{t[label]}</span><input type="checkbox" role="switch" checked={profile.preferences[key]} onChange={event => patch({ preferences: { ...profile.preferences, [key]: event.target.checked } })} /></label>)}<p className={styles.muted}>{t.preferencesNote}</p></section>
+      <section className={styles.section}><h2>{t.notifications}</h2>{([['project', 'projectNotices'], ['team', 'teamNotices'], ['billing', 'billingNotices'], ['email', 'emailNotices']] as const).map(([key, label]) => <label key={key} className={styles.settingRow}><span>{t[label]}</span><input type="checkbox" role="switch" checked={profile.preferences[key]} onChange={event => patch({ preferences: { ...profile.preferences, [key]: event.target.checked } })} /></label>)}</section>
       <div className={styles.saveRow}><button type="submit" className={styles.primary} disabled={busy}><Save size={17} /><TextActionLabel light>{busy ? t.saving : t.save}</TextActionLabel></button><p role={notice === "failure" ? "alert" : "status"}>{notice ? t[notice] : ""}</p></div>
     </form>
     <SecuritySettings locale={locale} passwordLogin={profile.loginMethods.includes("email")} />
-    <section className={styles.section}><h2>{t.actions}</h2><div className={styles.actions}><button disabled title={t.deletionNote}><Trash2 size={17} />{t.delete}</button><button type="button" onClick={signOut} disabled={signingOut}><LogOut size={17} /><TextActionLabel>{locale === "ar" ? "تسجيل الخروج" : locale === "sv" ? "Logga ut" : "Sign out"}</TextActionLabel></button></div><p className={styles.muted}>{t.deletionNote}</p></section>
+    <section className={styles.section}><h2>{t.actions}</h2><div className={styles.actions}><button type="button" onClick={signOut} disabled={signingOut}><LogOut size={17} /><TextActionLabel>{locale === "ar" ? "تسجيل الخروج" : locale === "sv" ? "Logga ut" : "Sign out"}</TextActionLabel></button></div></section>
   </>;
 }
 function Contact({ overview, user, locale }: { overview: Overview; user: Customer; locale: Locale }) {

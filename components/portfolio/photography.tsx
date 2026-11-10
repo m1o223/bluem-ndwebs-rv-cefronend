@@ -207,7 +207,7 @@ export default function PhotographyProject() {
               shout. <em>They stay.</em>
             </h2>
             <p>
-              JUNE ATLAS is a fictional visual studio exploring the relationship
+              JUNE ATLAS explores the relationship
               between people, places and the light that connects them. An
               unhurried approach, an eye for detail, and a curiosity for the
               everyday.
@@ -231,7 +231,7 @@ export default function PhotographyProject() {
         </section>
         <DemoFooter brand="JUNE ATLAS">
           <span className={styles.credit}>
-            Curated Unsplash imagery · Fictional studio
+            Selected imagery · Studio concept
           </span>
         </DemoFooter>
       </div>
@@ -322,7 +322,7 @@ export default function PhotographyProject() {
               <p className={styles.eyebrow}>A GOOD START.</p>
               <h3>Your idea has a little more light.</h3>
               <p>
-                Your demo enquiry is complete. No message was sent or stored.
+                Your enquiry details are ready. No message was sent.
               </p>
               <button
                 className={styles.outline}
@@ -366,9 +366,9 @@ export default function PhotographyProject() {
                 A little about your idea
                 <textarea name="idea" required minLength={12} rows={4} />
               </label>
-              <button className={styles.outline}>Preview enquiry ↗</button>
+              <button className={styles.outline}>Review enquiry ↗</button>
               <small>
-                Fictional studio. This form demonstrates the enquiry experience.
+                Demo only. No message is sent.
               </small>
             </form>
           )}

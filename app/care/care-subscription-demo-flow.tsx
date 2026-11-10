@@ -185,7 +185,7 @@ export default function CareSubscriptionDemoFlow() {
       <section className={styles.careModal} role="dialog" aria-modal="true" aria-labelledby="care-purchase-title">
         <button type="button" className={styles.modalClose} onClick={closePurchase} aria-label="Close subscription modal"><span aria-hidden="true">&times;</span></button>
         {purchaseStep === "details" && <>
-          <p className={styles.modalEyebrow}>Frontend demo only</p>
+          <p className={styles.modalEyebrow}>Preview</p>
           <h2 id="care-purchase-title">Subscribe to BlueMind Care</h2>
           <div className={styles.modalSummary}><strong>{selectedPlan.name}</strong><span>{displayPrice(selectedPlan, billing)}</span></div>
           {billing === "Yearly" && <p className={styles.formNote}>Yearly billing is paid upfront. You save {yearlySavings.toLocaleString("sv-SE")} SEK and receive 12 months of service.</p>}
@@ -193,20 +193,20 @@ export default function CareSubscriptionDemoFlow() {
             <div className={styles.field}><label htmlFor="care-demo-email">Email Address <span aria-hidden="true">*</span></label><input id="care-demo-email" type="email" value={orderEmail} onChange={event => setOrderEmail(event.target.value)} placeholder="customer@email.com" required /></div>
             <div className={styles.field}><label htmlFor="care-demo-order">Order Number <span aria-hidden="true">*</span></label><input id="care-demo-order" value={orderNumber} onChange={event => setOrderNumber(event.target.value)} placeholder="#512" required /></div>
           </div>
-          <p className={styles.demoNotice}>Demo eligibility check only. No backend authentication, Stripe payment, email, or subscription is created today.</p>
+          <p className={styles.demoNotice}>Preview only. No subscription is created.</p>
           {purchaseError && <p className={styles.careVerifyError}>{purchaseError}</p>}
           <div className={styles.checkoutActions}><button type="button" className={`${buttonClass} ${buttonStyles.primaryCta}`} onClick={continueToPayment}>Continue to Payment</button></div>
         </>}
         {purchaseStep === "payment" && <>
-          <p className={styles.modalEyebrow}>Demo payment step</p>
+          <p className={styles.modalEyebrow}>Payment</p>
           <h2 id="care-purchase-title">Choose payment method</h2>
           <div className={styles.modalSummary}><strong>{selectedPlan.name}</strong><span>{displayPrice(selectedPlan, billing)}</span></div>
           <div className={styles.demoMethods}>{paymentMethods.map(method => <PaymentMethodCard key={method} method={method} selected={paymentMethod === method} onSelect={setPaymentMethod} />)}</div>
-          <p className={styles.demoNotice}>This is a visual frontend prototype. No card details are collected and no real payment is processed.</p>
+          <p className={styles.demoNotice}>Test payment. No card details are collected or charged.</p>
           <div className={styles.checkoutActions}><button type="button" className={buttonClass} onClick={() => setPurchaseStep("details")}>Back</button><button type="button" className={`${buttonClass} ${buttonStyles.primaryCta}`} onClick={simulatePayment}>Simulate Payment</button></div>
         </>}
-        {purchaseStep === "processing" && <div className={styles.careState}><Spinner /><h2>Preparing demo subscription...</h2><p>This simulated step will become real only after backend and Stripe connection.</p></div>}
-        {purchaseStep === "success" && <div className={styles.careState}><SuccessMark /><h2>BlueMind Care demo subscription ready.</h2><p>This is a frontend-only success state. No payment was processed and no email was sent.</p><dl><div><dt>Plan</dt><dd>{selectedPlan.name}</dd></div><div><dt>Billing</dt><dd>{billing}</dd></div><div><dt>Price</dt><dd>{displayPrice(selectedPlan, billing)}</dd></div></dl><button type="button" className={`${buttonClass} ${buttonStyles.primaryCta}`} onClick={closePurchase}>Done</button></div>}
+        {purchaseStep === "processing" && <div className={styles.careState}><Spinner /><h2>Preparing subscription...</h2><p>No payment or subscription is created.</p></div>}
+        {purchaseStep === "success" && <div className={styles.careState}><SuccessMark /><h2>BlueMind Care preview ready.</h2><p>No payment was processed and no email was sent.</p><dl><div><dt>Plan</dt><dd>{selectedPlan.name}</dd></div><div><dt>Billing</dt><dd>{billing}</dd></div><div><dt>Price</dt><dd>{displayPrice(selectedPlan, billing)}</dd></div></dl><button type="button" className={`${buttonClass} ${buttonStyles.primaryCta}`} onClick={closePurchase}>Done</button></div>}
       </section>
     </div>}
 
@@ -214,19 +214,19 @@ export default function CareSubscriptionDemoFlow() {
       <section className={styles.careModal} role="dialog" aria-modal="true" aria-labelledby="care-cancel-title">
         <button type="button" className={styles.modalClose} onClick={closeCancel} aria-label="Close cancellation modal"><span aria-hidden="true">&times;</span></button>
         {cancelStep === "email" && <>
-          <p className={styles.modalEyebrow}>Frontend demo only</p>
+          <p className={styles.modalEyebrow}>Preview</p>
           <h2 id="care-cancel-title">Manage Your Subscription</h2>
           <div className={styles.field}><label htmlFor="manage-demo-email">Email Address</label><input id="manage-demo-email" type="email" value={manageEmail} onChange={event => setManageEmail(event.target.value)} placeholder="customer@email.com" /></div>
           {recoveryOpen ? <div className={styles.field}><label htmlFor="recovery-order">Order Number</label><input id="recovery-order" value={recoveryOrderNumber} onChange={event => setRecoveryOrderNumber(event.target.value)} placeholder="#512" /></div> : <button type="button" className={styles.inlineButton} onClick={() => setRecoveryOpen(true)}>Forgot the email you used?</button>}
-          <p className={styles.demoNotice}>Frontend preview only. Real subscription lookup will require secure email verification when the backend is connected.</p>
+          <p className={styles.demoNotice}>Preview only. No account lookup is performed.</p>
           <div className={styles.checkoutActions}><button type="button" className={`${buttonClass} ${buttonStyles.primaryCta}`} onClick={findDemoSubscription}>Find My Subscription</button><Link href="/contact" className={buttonClass} onClick={closeCancel}>Contact Us</Link></div>
         </>}
-        {cancelStep === "not-found" && <div className={styles.careState}><h2 id="care-cancel-title">Subscription not found</h2><p>This is a demo state. We could not find a sample subscription for that email.</p><div className={styles.checkoutActions}><button type="button" className={buttonClass} onClick={() => setCancelStep("email")}>Try Again</button><Link href="/contact" className={`${buttonClass} ${buttonStyles.primaryCta}`} onClick={closeCancel}>Contact Us</Link></div></div>}
+        {cancelStep === "not-found" && <div className={styles.careState}><h2 id="care-cancel-title">Subscription not found</h2><p>No preview subscription was found for this email.</p><div className={styles.checkoutActions}><button type="button" className={buttonClass} onClick={() => setCancelStep("email")}>Try Again</button><Link href="/contact" className={`${buttonClass} ${buttonStyles.primaryCta}`} onClick={closeCancel}>Contact Us</Link></div></div>}
         {cancelStep === "subscription" && <div className={styles.careReview}>
           <p className={styles.modalEyebrow}>Demo subscription data</p>
           <h2 id="care-cancel-title">Your subscription</h2>
           <dl><div><dt>Plan</dt><dd>Care Basic</dd></div><div><dt>Price</dt><dd>250 SEK / month</dd></div><div><dt>Status</dt><dd>Active</dd></div><div><dt>Next Renewal</dt><dd>{nextRenewalDate("Monthly")}</dd></div></dl>
-          <p className={styles.demoNotice}>This is sample frontend data only. Real subscription details require future backend authentication.</p>
+          <p className={styles.demoNotice}>Preview data only. No account subscription was loaded.</p>
           <div className={styles.checkoutActions}><button type="button" className={`${buttonClass} ${buttonStyles.primaryCta}`} onClick={() => setCancelStep("reason")}>Cancel Subscription</button></div>
         </div>}
         {cancelStep === "reason" && <>
@@ -241,8 +241,8 @@ export default function CareSubscriptionDemoFlow() {
           <p className={styles.demoNotice}>Future renewal will stop, but the current paid period remains active until its end. Annual plans keep the already-paid 12-month coverage and only stop the next renewal.</p>
           <div className={styles.checkoutActions}><button type="button" className={buttonClass} onClick={closeCancel}>Keep Subscription</button><button type="button" className={`${buttonClass} ${buttonStyles.primaryCta}`} onClick={confirmCancellation}>Confirm Cancellation</button></div>
         </div>}
-        {cancelStep === "processing" && <div className={styles.careState}><Spinner /><h2>Confirming demo cancellation...</h2><p>No Stripe subscription is being changed in this frontend prototype.</p></div>}
-        {cancelStep === "success" && <div className={styles.careState}><SuccessMark /><h2>Your subscription cancellation has been confirmed.</h2><p>In the real flow, a confirmation email will be sent to your registered email address.</p><p className={styles.demoNotice}>Simulated result only. No email was sent. After backend connection, this appears only after Stripe confirms cancellation.</p><button type="button" className={`${buttonClass} ${buttonStyles.primaryCta}`} onClick={closeCancel}>Done</button></div>}
+        {cancelStep === "processing" && <div className={styles.careState}><Spinner /><h2>Confirming cancellation...</h2><p>No subscription is being changed.</p></div>}
+        {cancelStep === "success" && <div className={styles.careState}><SuccessMark /><h2>Your cancellation is ready.</h2><p className={styles.demoNotice}>Preview only. No email was sent.</p><button type="button" className={`${buttonClass} ${buttonStyles.primaryCta}`} onClick={closeCancel}>Done</button></div>}
       </section>
     </div>}
   </>;

@@ -123,7 +123,7 @@ test("optional customer type, account persistence, demo messages and contact rec
   await visitCustomerPage(page, "/account");
   await expect(page.getByLabel("Company name", { exact: true })).toHaveValue("Example Company");
   await expect(page.getByRole("switch", { name: "Project updates" })).toBeChecked();
-  await expect(page.getByRole("button", { name: "Delete account", exact: true })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Delete account", exact: true })).toHaveCount(0);
   await visitCustomerPage(page, "/dashboard/contact");
   await expect(page.getByLabel("Full name", { exact: true })).toHaveValue("Customer Six");
   await page.getByLabel("Customer type (optional)").selectOption("");

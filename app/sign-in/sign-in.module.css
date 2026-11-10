@@ -22,7 +22,7 @@
 .providers img, .providerIcon { position: absolute; inset-inline-start: 12px; object-fit: contain; }
 .providers button:hover:not(:disabled) { background: #f1f7fd; border-color: #acc5df; }
 .providers button:disabled { cursor: not-allowed; opacity: .55; }
-.bankid small { display: block; margin-top: 6px; color: #7a8491; font-size: 11px; text-align: center; line-height: 1.5; }
+.bankidNote { margin: -2px 0 0; color: #7a8491; font-size: 11px; text-align: center; line-height: 1.5; }
 .stepBack { display: flex; align-items: center; gap: 6px; padding: 0; min-height: 30px; margin: -7px 0 16px; border: 0; background: transparent; color: #637083; font-size: 12px !important; }
 .existing { text-align: center; margin: 22px 0 4px; color: #687383; font-size: 12px; line-height: 1.6; }
 .existing button, .forgot { min-height: 36px; padding: 4px; border: 0; background: transparent; color: #245d8b; font-size: 12px !important; }

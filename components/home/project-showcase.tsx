@@ -28,11 +28,7 @@ export default function ProjectShowcase({ headingAs: Heading = "h2" }: { heading
               industries.
             </p>
           </div>
-          <p className={portfolio.disclosure}>
-            Fictional demo brands created by BlueMind Web Service.
-            <br />
-            Not commissioned client projects.
-          </p>
+          <p className={portfolio.disclosure}>Demo concepts by BlueMind Web Service.</p>
         </ConceptReveal>
         <div className={portfolio.grid}>
           {projects.map((project, index) => (

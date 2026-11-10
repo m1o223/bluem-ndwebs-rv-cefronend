@@ -23,7 +23,7 @@ for (const [index, width] of [1440, 768, 390].entries()) {
     await page.getByPlaceholder("Write a message...").fill("A test-only reply.");
     await page.getByRole("button", { name: "Send", exact: true }).click();
     await expect(page.getByText("A test-only reply.", { exact: true })).toBeVisible();
-    await expect(page.getByText("Thanks for your message. This local demo reply", { exact: false }).last()).toBeVisible();
+    await expect(page.getByText("Thanks for your message. This example shows how a team reply will appear.", { exact: true }).last()).toBeVisible();
 
     await page.getByRole("button", { name: "Back to messages", exact: true }).click();
     await expect(page.locator("[data-message-list]")).toBeVisible();

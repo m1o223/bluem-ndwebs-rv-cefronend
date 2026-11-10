@@ -19,7 +19,7 @@ export default function ContactPage() {
               </dl>
             </aside>
             <section className={styles.formSpace} aria-labelledby="form-preview-title">
-              <h2 id="form-preview-title">Message form</h2>
+              <h2 id="form-preview-title">Send a message</h2>
               <ContactForm />
             </section>
           </div>

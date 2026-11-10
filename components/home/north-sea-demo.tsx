@@ -42,7 +42,7 @@ export default function NorthSeaDemo() {
       </button>)}</div>
       <div className={styles.modelDetails} aria-live="polite"><p className={styles.kicker}>A CLOSER LOOK</p><h3>{models[selected].name}</h3><p>{models[selected].description}</p><span>{models[selected].length} / {models[selected].guests}</span></div>
     </section>
-    <section id="sea-viewing" className={styles.viewing}><p className={styles.kicker}>THE WATER IS CALLING</p><h2>Your next voyage<br />starts here.</h2><button className={styles.lightButton} onClick={() => setViewing(!viewing)} aria-expanded={viewing}>Request a viewing <span aria-hidden="true">↗</span></button>{viewing && <p className={styles.demoNotice} role="status">You’re exploring a fictional NORTH SEA concept. No request is sent — this is a preview of what we can build.</p>}</section>
-    <footer className={styles.demoFooter}><span>NORTH SEA</span><span>A fictional concept by BlueMind · No affiliation with a real boat company.</span></footer>
+    <section id="sea-viewing" className={styles.viewing}><p className={styles.kicker}>THE WATER IS CALLING</p><h2>Your next voyage<br />starts here.</h2><button className={styles.lightButton} onClick={() => setViewing(!viewing)} aria-expanded={viewing}>Request a viewing <span aria-hidden="true">↗</span></button>{viewing && <p className={styles.demoNotice} role="status">Demo only. No request is sent.</p>}</section>
+    <footer className={styles.demoFooter}><span>NORTH SEA</span><span>Demo concept by BlueMind.</span></footer>
   </div>;
 }

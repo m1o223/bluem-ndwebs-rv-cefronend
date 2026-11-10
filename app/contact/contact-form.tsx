@@ -74,7 +74,7 @@ export default function ContactForm() {
 
   return (
     <form className={styles.form} aria-labelledby="form-preview-title" aria-describedby="contact-required contact-preview" noValidate onSubmit={handleSubmit} onChange={() => setNotice(readyNotice)}>
-      <p id="contact-required" className={styles.requiredNote}>Fields marked * are required.</p>
+      <p id="contact-required" className={styles.requiredNote}>* Required</p>
       <div className={styles.formGrid}>
         <div className={styles.field}>
           <label htmlFor="contact-fullName">Full Name <span aria-hidden="true">*</span></label>
@@ -101,7 +101,7 @@ export default function ContactForm() {
         <div className={styles.field}>
           <label htmlFor="contact-orderNumber">Order Number <span className={styles.optional}>(Optional)</span></label>
           <input id="contact-orderNumber" name="orderNumber" type="text" aria-describedby="contact-order-help" disabled={submitting} />
-          <p id="contact-order-help" className={styles.fieldHelp}>For an existing order, if applicable.</p>
+          <p id="contact-order-help" className={styles.fieldHelp}>For an existing order.</p>
         </div>
         <div className={`${styles.field} ${styles.fullWidth}`}>
           <label htmlFor="contact-message">Message <span aria-hidden="true">*</span></label>

@@ -224,7 +224,7 @@ export default function OnlineStoreProject() {
         <section className={styles.shop} data-section="shop">
           <div className={styles.sectionHeading}>
             <div><p className={styles.eyebrow}>THE CURRENT EDIT</p><h2>Pieces with a point of view.</h2></div>
-            <p>{shown.length} of {products.length} pieces shown.<br />Fictional products in a fully interactive preview.</p>
+            <p>{shown.length} of {products.length} pieces shown.</p>
           </div>
           <div className={styles.shopTools}>
             <label className={styles.search}>Search products<input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Try jacket or shoe" /></label>
@@ -261,13 +261,12 @@ export default function OnlineStoreProject() {
           <div className={styles.supportGrid}>
             <details open><summary>Shipping & returns <b>+</b></summary><p>Complimentary delivery over {money(150)}. Returns are accepted within 30 days in original condition.</p></details>
             <details><summary>Size guide <b>+</b></summary><p>Clothing runs true to size. For shoes, choose your usual EU size. The full guide is also available on every product detail.</p></details>
-            <details><summary>Need a hand? <b>+</b></summary><p>Use the contact form in this demo to send a fictional question to the VERRA team.</p></details>
           </div>
         </section>
 
         <section className={styles.newsletter}>
           <p className={styles.eyebrow}>THE VERRA LETTER</p><h2>New pieces, considered notes.</h2>
-          <form onSubmit={(e) => { e.preventDefault(); setNewsletter("You are on the demo list. No email was sent or stored."); }}><label htmlFor="verra-email">Email address</label><div><input id="verra-email" type="email" required placeholder="you@example.com" autoComplete="email" /><button className={styles.primary}>Join the letter</button></div><p role="status">{newsletter || "A fictional concept. Your address stays in this preview."}</p></form>
+          <form onSubmit={(e) => { e.preventDefault(); setNewsletter("Thanks — you’re on the list for this preview."); }}><label htmlFor="verra-email">Email address</label><div><input id="verra-email" type="email" required placeholder="you@example.com" autoComplete="email" /><button className={styles.primary}>Join the letter</button></div><p role="status">{newsletter || "Join for product notes and new arrivals."}</p></form>
         </section>
         <DemoFooter brand="VERRA"><span className={styles.footerLine}>Clothing and shoes for the everyday, thoughtfully considered.</span></DemoFooter>
       </div>
@@ -284,17 +283,17 @@ export default function OnlineStoreProject() {
               <details className={styles.detailGuide}><summary>Size guide <b>+</b></summary><p>XS  UK 6-8 · S  UK 8-10 · M  UK 10-12 · L  UK 12-14 · XL  UK 14-16. For shoes, sizes are EU.</p></details>
               <div className={styles.quantity}><button aria-label="Decrease quantity" disabled={quantity === 1} onClick={() => setQuantity((value) => value - 1)}>−</button><output aria-label="Product quantity">{quantity}</output><button aria-label="Increase quantity" disabled={quantity === 10} onClick={() => setQuantity((value) => value + 1)}>+</button></div>
               <button className={styles.primary} disabled={!selectedSize} onClick={() => { addToBag(selected, selectedSize, selectedColor, quantity); setSelected(null); setPanel("bag"); }}>Add to bag · {money(selected.price * quantity)}</button>
-              <p className={styles.detailNote}>{selected.material}. Demo product only; no purchase is made.</p>
+              <p className={styles.detailNote}>{selected.material}. Preview product. No purchase is made.</p>
             </div>
           </div>
         </ModalPanel>
       )}
 
       {panel && (
-        <ModalPanel title={panel === "bag" ? `Your bag (${count})` : panel === "checkout" ? "Checkout preview" : "Order received"} onClose={() => setPanel(null)}>
+        <ModalPanel title={panel === "bag" ? `Your bag (${count})` : panel === "checkout" ? "Checkout" : "Order received"} onClose={() => setPanel(null)}>
           {panel === "bag" && (count === 0 ? <div className={styles.empty}><h3>Your bag is ready for something good.</h3><p>There is nothing here yet. Explore the VERRA edit and choose a piece to continue.</p><button className={styles.primary} onClick={() => setPanel(null)}>Continue shopping</button></div> : <div className={styles.cart}><div className={styles.cartLines}>{lines.map((line) => { const key = `${line.product.id}-${line.size}-${line.color}`; return <div className={styles.cartLine} key={key}><ProductVisual product={line.product} compact /><div><h3>{line.product.name}</h3><p>{line.color} · {line.size} · {money(line.product.price)}</p><div className={styles.quantity}><button aria-label={`Decrease ${line.product.name}`} onClick={() => changeLine(key, -1)}>−</button><output>{line.quantity}</output><button aria-label={`Increase ${line.product.name}`} onClick={() => changeLine(key, 1)}>+</button></div></div><button className={styles.remove} onClick={() => setCart((current) => { const next = { ...current }; delete next[key]; return next; })}>Remove</button></div>; })}</div><div className={styles.cartTotal}><span>Subtotal</span><strong>{money(total)}</strong></div><p className={styles.detailNote}>Demo checkout only. No payment or order is sent.</p><button className={styles.primary} onClick={() => setPanel("checkout")}>Continue to checkout</button><button className={styles.back} onClick={() => setPanel(null)}>Back to shopping</button></div>)}
-          {panel === "checkout" && <form className={styles.checkout} onSubmit={(e) => { e.preventDefault(); const data = new FormData(e.currentTarget); setOrderName(String(data.get("name")).split(" ")[0]); setOrderNumber(`VERRA-${Math.floor(1000 + Math.random() * 9000)}`); setCart({}); setPanel("confirmation"); }}><p>Enter sample details to preview the full VERRA checkout journey.</p><label>Full name<input name="name" required minLength={2} autoComplete="name" /></label><label>Email address<input name="email" type="email" required autoComplete="email" /></label><label>Shipping address<input name="address" required minLength={5} autoComplete="street-address" /></label><div className={styles.formRow}><label>City<input name="city" required autoComplete="address-level2" /></label><label>Postcode<input name="postcode" required autoComplete="postal-code" /></label></div><label>Delivery<select name="delivery" defaultValue="Standard"><option>Standard · 3-5 days · Free</option><option>Express · 1-2 days · {money(12)}</option></select></label><label>Payment preview<select name="payment" defaultValue="Demo card"><option>Demo card (no charge)</option><option>Klarna test flow (no charge)</option></select></label><button className={styles.primary}>Preview order</button><button type="button" className={styles.back} onClick={() => setPanel("bag")}>Back to bag</button></form>}
-          {panel === "confirmation" && <div className={styles.empty}><span className={styles.success}>✓</span><h3>Thanks, {orderName}.</h3><p>Your demo order {orderNumber} is complete. No payment was collected and no personal data was stored.</p><button className={styles.primary} onClick={() => setPanel(null)}>Back to VERRA</button></div>}
+          {panel === "checkout" && <form className={styles.checkout} onSubmit={(e) => { e.preventDefault(); const data = new FormData(e.currentTarget); setOrderName(String(data.get("name")).split(" ")[0]); setOrderNumber(`VERRA-${Math.floor(1000 + Math.random() * 9000)}`); setCart({}); setPanel("confirmation"); }}><p>Enter your details to review the order. No payment or order is sent.</p><label>Full name<input name="name" required minLength={2} autoComplete="name" /></label><label>Email address<input name="email" type="email" required autoComplete="email" /></label><label>Shipping address<input name="address" required minLength={5} autoComplete="street-address" /></label><div className={styles.formRow}><label>City<input name="city" required autoComplete="address-level2" /></label><label>Postcode<input name="postcode" required autoComplete="postal-code" /></label></div><label>Delivery<select name="delivery" defaultValue="Standard"><option>Standard · 3-5 days · Free</option><option>Express · 1-2 days · {money(12)}</option></select></label><label>Payment<select name="payment" defaultValue="Demo card"><option>Test card (no charge)</option><option>Klarna test flow (no charge)</option></select></label><button className={styles.primary}>Review order</button><button type="button" className={styles.back} onClick={() => setPanel("bag")}>Back to bag</button></form>}
+          {panel === "confirmation" && <div className={styles.empty}><span className={styles.success}>✓</span><h3>Thanks, {orderName}.</h3><p>Your order details {orderNumber} are ready. No payment was collected or data stored.</p><button className={styles.primary} onClick={() => setPanel(null)}>Back to VERRA</button></div>}
         </ModalPanel>
       )}
     </article>
