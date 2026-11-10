@@ -17,6 +17,7 @@ type Language = {
   code: Locale;
   short: "EN" | "SV" | "AR";
   label: string;
+  nativeName: string;
 };
 
 type LocalizationContextValue = {
@@ -30,9 +31,9 @@ type MessageMap = Record<string, string>;
 
 const storageKey = "bluemind-language";
 const languages: Language[] = [
-  { code: "en", short: "EN", label: "English" },
-  { code: "sv", short: "SV", label: "Svenska" },
-  { code: "ar", short: "AR", label: "\u0627\u0644\u0639\u0631\u0628\u064a\u0629" },
+  { code: "en", short: "EN", label: "English", nativeName: "English" },
+  { code: "sv", short: "SV", label: "Svenska", nativeName: "Svenska" },
+  { code: "ar", short: "AR", label: "\u0627\u0644\u0639\u0631\u0628\u064a\u0629", nativeName: "\u0627\u0644\u0639\u0631\u0628\u064a\u0629" },
 ];
 const messages: Record<Locale, MessageMap> = {
   en: {},
@@ -46,6 +47,13 @@ const originalAttributePrefix = "data-i18n-original-";
 
 function normalizeLocale(value: string | null): Locale {
   return value === "sv" || value === "ar" ? value : "en";
+}
+
+function preferredBrowserLocale() {
+  if (typeof navigator === "undefined") return "en" as Locale;
+  const candidates = [...(navigator.languages ?? []), navigator.language];
+  const match = candidates.find((value) => /^(ar|sv)(-|$)/i.test(value));
+  return normalizeLocale(match?.slice(0, 2).toLowerCase() ?? "en");
 }
 
 function splitOuterWhitespace(value: string) {
@@ -128,7 +136,8 @@ function translateAttributes(root: ParentNode, locale: Locale) {
       const originalAttribute = `${originalAttributePrefix}${name.replace(/[^a-z0-9-]/gi, "-")}`;
       const storedOriginal = element.getAttribute(originalAttribute);
       if (locale === "en") {
-        element.setAttribute(originalAttribute, current);
+        if (storedOriginal) element.setAttribute(name, storedOriginal);
+        else element.setAttribute(originalAttribute, current);
         return;
       }
       const previousTranslated = storedOriginal ? translateValue(storedOriginal, locale) : null;
@@ -143,8 +152,9 @@ function translateAttributes(root: ParentNode, locale: Locale) {
 function translateDocument(locale: Locale) {
   if (!document.body) return;
   document.documentElement.lang = locale;
-  document.documentElement.dir = "ltr";
+  document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
   document.body.dataset.locale = locale;
+  document.body.dataset.direction = locale === "ar" ? "rtl" : "ltr";
 
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   let node = walker.nextNode();
@@ -160,9 +170,10 @@ export function LocalizationProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      setLocaleState(normalizeLocale(window.localStorage.getItem(storageKey)));
+      const stored = window.localStorage.getItem(storageKey);
+      setLocaleState(stored ? normalizeLocale(stored) : preferredBrowserLocale());
     } catch {
-      setLocaleState("en");
+      setLocaleState(preferredBrowserLocale());
     }
   }, []);
 

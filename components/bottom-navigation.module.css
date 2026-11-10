@@ -3,8 +3,10 @@
   position: fixed;
   z-index: 80;
   right: 0;
+  direction: ltr;
   bottom: max(14px, env(safe-area-inset-bottom));
   left: 50%;
+  right: auto;
   width: min(calc(100% - 32px), 860px);
   padding: 9px;
   transform: translateX(-50%);

@@ -6,6 +6,8 @@ import { FastForward } from "lucide-react";
 import { MessageActions, type Feedback } from "./message-actions";
 import { MessageCard } from "./message-card";
 import type { MessageCardContent } from "../lib/ai/message-card";
+import { chatCopy } from "./chat-copy";
+import { useLocalization } from "../../components/localization-provider";
 import styles from "./chat-workspace.module.css";
 
 const markdownComponents: Components = {
@@ -85,19 +87,21 @@ export const AssistantMessage = memo(function AssistantMessage({ id, text, card,
   card?: MessageCardContent; onSaveCard: (id: string, card: MessageCardContent) => void;
   feedback: Feedback; generating: boolean; onFeedback: (id: string, feedback: Feedback) => void; onRegenerate: (id: string) => void;
 }) {
+  const { locale } = useLocalization();
+  const copy = chatCopy[locale];
   const { visible, showInstantly } = usePresentedText(text, animate && !stopped, signal);
   const revealing = visible.length < text.length;
   useLayoutEffect(() => {
     onPresented(id, visible, complete && !revealing);
   }, [id, visible, complete, revealing, onPresented]);
-  return <article className={`${styles.message} ${styles.assistant}`} aria-label="BlueMind AI response" aria-busy={revealing || (!complete && pending)}>
+  return <article className={`${styles.message} ${styles.assistant}`} aria-label={copy.aiResponse} aria-busy={revealing || (!complete && pending)}>
     {visible && <div className={styles.markdown} dir="auto">
       <Markdown skipHtml components={markdownComponents}>{visible}</Markdown>
     </div>}
     {complete && card && !revealing && <MessageCard value={card} maxBodyLength={Math.min(11000, 12000 - text.length - 204)} onSave={value => onSaveCard(id, value)} />}
     {revealing && <button type="button" className={styles.revealResponse} onClick={showInstantly}
-      title="Show all received text immediately and display incoming text without animation">
-      <FastForward size={15} aria-hidden="true" />Show instantly
+      title={copy.showInstantly}>
+      <FastForward size={15} aria-hidden="true" />{copy.showInstantly}
     </button>}
     {complete && !card && !revealing && <MessageActions text={text} feedback={feedback} generating={generating}
       onFeedback={value => onFeedback(id, value)} onRegenerate={() => onRegenerate(id)} />}

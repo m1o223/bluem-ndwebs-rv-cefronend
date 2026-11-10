@@ -2,11 +2,17 @@
 
 import Link from "next/link";
 import { Check, ChevronDown, Globe2, Menu, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { BrandLockup } from "../brand-lockup";
 import { useLocalization, type Locale } from "../localization-provider";
 import styles from "./home.module.css";
 import TextActionLabel from "../text-action-label";
+
+const languageUi = {
+  en: { search: "Search languages", empty: "No matching languages" },
+  sv: { search: "Sök språk", empty: "Inga matchande språk" },
+  ar: { search: "ابحث عن لغة", empty: "لا توجد لغات مطابقة" },
+} as const;
 
 const links = [["/", "Home"], ["/about", "About Us"], ["/services", "Services"], ["/templates", "Website Concepts"], ["/how-we-work", "How We Work"], ["/care", "Website Care"], ["/contact", "Contact"]];
 
@@ -14,12 +20,19 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
   const { locale, languages, setLocale } = useLocalization();
   const [expanded, setExpanded] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
+  const [languageQuery, setLanguageQuery] = useState("");
   const [scrolled, setScrolled] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const languageToggleRef = useRef<HTMLButtonElement>(null);
   const languageRef = useRef<HTMLDivElement>(null);
   const selectedLanguage = languages.find((language) => language.code === locale) ?? languages[0];
+  const visibleLanguages = useMemo(() => {
+    const query = languageQuery.trim().toLocaleLowerCase();
+    if (!query) return languages;
+    return languages.filter((language) => [language.label, language.nativeName, language.short].some((value) => value.toLocaleLowerCase().includes(query)));
+  }, [languageQuery, languages]);
+  const languageText = languageUi[locale];
   const textEffects = activePath === "/";
 
   useEffect(() => {
@@ -104,6 +117,7 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
             </button>
             <div id="header-languages" className={styles.languageMenu} role="menu" aria-label="Languages" data-open={languageOpen} inert={!languageOpen} onKeyDown={(event) => {
               const buttons = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>("button"));
+              if (!buttons.length) return;
               const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
               let next: number;
               if (event.key === "ArrowDown") next = (index + 1) % buttons.length;
@@ -114,7 +128,24 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
               event.preventDefault();
               buttons[next]?.focus();
             }} onBlur={(event) => { if (!languageRef.current?.contains(event.relatedTarget)) setLanguageOpen(false); }}>
-              {languages.map((language) => (
+              <label className={styles.languageSearchLabel} htmlFor="language-search">{languageText.search}</label>
+              <input
+                id="language-search"
+                className={styles.languageSearch}
+                type="search"
+                value={languageQuery}
+                placeholder={languageText.search}
+                aria-label={languageText.search}
+                onChange={(event) => setLanguageQuery(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") {
+                    event.preventDefault();
+                    setLanguageOpen(false);
+                    languageToggleRef.current?.focus();
+                  }
+                }}
+              />
+              {visibleLanguages.map((language) => (
                 <button
                   key={language.code}
                   type="button"
@@ -127,10 +158,11 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
                     languageToggleRef.current?.focus();
                   }}
                 >
-                  <span><TextActionLabel enabled={textEffects}>{language.label}</TextActionLabel></span>
+                  <span><TextActionLabel enabled={textEffects}>{language.nativeName}</TextActionLabel></span>
                   {locale === language.code ? <Check size={15} aria-hidden="true" /> : <small>{language.short}</small>}
                 </button>
               ))}
+              {!visibleLanguages.length && <p className={styles.languageEmpty}>{languageText.empty}</p>}
             </div>
           </div>
           <button ref={toggleRef} className={styles.menuToggle} type="button" aria-label={expanded ? "Close menu" : "Open menu"} aria-expanded={expanded} aria-controls="home-navigation" data-expanded={expanded} onClick={() => { setExpanded((open) => !open); setLanguageOpen(false); }}>

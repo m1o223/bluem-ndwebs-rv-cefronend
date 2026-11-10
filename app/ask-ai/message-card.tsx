@@ -7,12 +7,14 @@ import Markdown from "react-markdown";
 import { Check, Copy, Pencil, Share2 } from "lucide-react";
 import { messageCardText, type MessageCardContent } from "../lib/ai/message-card";
 import styles from "./message-card.module.css";
+import { chatCopy } from "./chat-copy";
+import { useLocalization } from "../../components/localization-provider";
 
 const MessageEditor = dynamic(() => import("./message-card-editor"), { ssr: false });
 
 function copyLabels() {
   const language = document.documentElement.lang.split("-")[0];
-  if (language === "ar") return { success: "تم نسخ الرسالة", error: "تعذر النسخ. يرجى تحديد الرسالة ونسخها." };
+  if (language === "ar") return { success: "تم نسخ الرسالة", error: "تعذر النسخ. حدّد الرسالة وانسخها." };
   if (language === "sv") return { success: "Meddelandet kopierat", error: "Kunde inte kopiera. Markera och kopiera meddelandet." };
   return { success: "Message copied", error: "Could not copy. Please select and copy the message." };
 }
@@ -20,6 +22,8 @@ function copyLabels() {
 export function MessageCard({ value, onSave, maxBodyLength = 11000 }: {
   value: MessageCardContent; onSave: (value: MessageCardContent) => void; maxBodyLength?: number;
 }) {
+  const { locale } = useLocalization();
+  const copy = chatCopy[locale];
   const [editing, setEditing] = useState(false);
   const [notice, setNotice] = useState<{ text: string; error: boolean } | null>(null);
   const [copied, setCopied] = useState(false);
@@ -65,15 +69,15 @@ export function MessageCard({ value, onSave, maxBodyLength = 11000 }: {
   }
 
   return <>
-    <section className={styles.card} aria-label="Message card">
+    <section className={styles.card} aria-label={copy.messageCard}>
       <header className={styles.header}>
-        <span className={styles.label}>Message</span>
-        <div className={styles.actions} role="group" aria-label="Message card actions">
-          <button ref={editButton} type="button" aria-label="Edit message" title="Edit" aria-haspopup="dialog"
+        <span className={styles.label}>{copy.messageCard}</span>
+        <div className={styles.actions} role="group" aria-label={copy.messageCardActions}>
+          <button ref={editButton} type="button" aria-label={copy.editMessage} title={copy.edit} aria-haspopup="dialog"
             onClick={() => setEditing(true)}><Pencil size={18} aria-hidden="true" /></button>
-          <button type="button" aria-label="Copy message" title={copied ? "Copied" : "Copy"} disabled={busy}
+          <button type="button" aria-label={copy.copyMessage} title={copied ? copy.copied : copy.copy} disabled={busy}
             onClick={() => void copyOrShare(false)}>{copied ? <Check size={18} aria-hidden="true" /> : <Copy size={18} aria-hidden="true" />}</button>
-          <button type="button" aria-label="Share message" title="Share" disabled={busy}
+          <button type="button" aria-label={copy.shareMessage} title={copy.share} disabled={busy}
             onClick={() => void copyOrShare(true)}><Share2 size={18} aria-hidden="true" /></button>
         </div>
       </header>

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { ArrowUp, Camera, File, ImageIcon, Menu, MessageSquare, PanelLeftClose, PanelLeftOpen, Plus, Square, SquarePen, X } from "lucide-react";
 import { BlueMindLogo } from "../../components/blue-mind-logo";
-import { AI_ERRORS, AI_LIMITS, boundedContext, type AiErrorCode } from "../lib/ai/contract";
+import { AI_LIMITS, boundedContext, type AiErrorCode } from "../lib/ai/contract";
 import { ChatRequestError, requestReply } from "../lib/ai/client";
 import { AssistantMessage } from "./assistant-message";
 import { useChatScroll } from "./use-chat-scroll";
@@ -13,6 +13,8 @@ import { messageCardText, validateMessageCard, type MessageCardContent } from ".
 import styles from "./chat-workspace.module.css";
 import { AttachmentList, ImageViewer } from "./attachments";
 import { FILE_LIMITS, documentAccept, imageAccept, readAttachment, wireAttachment, type LocalAttachment } from "../lib/ai/attachments";
+import { attachmentErrorMessage, chatCopy } from "./chat-copy";
+import { useLocalization } from "../../components/localization-provider";
 
 type Message = { id: string; text: string; role: "user" | "assistant"; complete: boolean; stopped?: boolean; feedback?: Feedback; card?: MessageCardContent; attachments?: LocalAttachment[] };
 type GuidedSource = "what-we-build";
@@ -22,7 +24,6 @@ type RunningReply = {
   timeout?: number; thinkingTimer?: number; networkDone: boolean; visible: string;
 };
 const THINKING_MIN_MS = 2000;
-const suggestions = ["Create a website", "Design a page", "Improve my website", "Business ideas", "Help me get started", "Explore our services"];
 const guidedWelcome: Record<"en" | "ar" | "sv", string> = {
   en: "What website idea do you have in mind? Tell me about it in your own way. We’ll organize it together, define what you want the website to include, and prepare your request step by step.",
   ar: "شو فكرة الموقع اللي ببالك؟ احكيلي عنها بطريقتك. منرتّبها سوا، ومنحدّد شو بدك يكون بالموقع، ومنجهّز طلبك خطوة بخطوة.",
@@ -60,6 +61,8 @@ function History({ conversations, activeId, compact = false, onSelect, onNew, ac
   conversations: Conversation[]; activeId: string | null; compact?: boolean;
   onSelect: (id: string) => void; onNew: () => void; accountAuthenticated: boolean | null;
 }) {
+  const { locale } = useLocalization();
+  const copy = chatCopy[locale];
   const [activated, setActivated] = useState(false);
   const activationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (activationTimer.current) clearTimeout(activationTimer.current); }, []);
@@ -70,12 +73,12 @@ function History({ conversations, activeId, compact = false, onSelect, onNew, ac
     onNew();
   }
   return <>
-    <button className={styles.newChat} data-activated={activated} type="button" onClick={startChat} title="New chat" aria-label="New chat">
-      <SquarePen size={20} aria-hidden="true" /><span hidden={compact}>New chat</span>
+    <button className={styles.newChat} data-activated={activated} type="button" onClick={startChat} title={copy.newChat} aria-label={copy.newChat}>
+      <SquarePen size={20} aria-hidden="true" /><span hidden={compact}>{copy.newChat}</span>
     </button>
-    <nav className={styles.history} aria-label="Conversation history">
-      {!compact && <p className={styles.historyLabel}>Conversations</p>}
-      {!compact && accountAuthenticated === false && activeId && <Link className={styles.saveChatLink} href={`/sign-in?returnTo=${encodeURIComponent(`/ask-ai?conversation=${activeId}`)}`}><span>Sign in to save this chat</span><ArrowUp size={15} aria-hidden="true" /></Link>}
+    <nav className={styles.history} aria-label={copy.conversations}>
+      {!compact && <p className={styles.historyLabel}>{copy.conversations}</p>}
+      {!compact && accountAuthenticated === false && activeId && <Link className={styles.saveChatLink} href={`/sign-in?returnTo=${encodeURIComponent(`/ask-ai?conversation=${activeId}`)}`}><span>{copy.saveChat}</span><ArrowUp size={15} aria-hidden="true" /></Link>}
       {conversations.map(conversation => <button key={conversation.id} type="button" className={styles.historyItem}
         aria-current={activeId === conversation.id ? "page" : undefined} aria-label={conversation.title} title={conversation.title}
         onClick={() => onSelect(conversation.id)}>
@@ -86,6 +89,8 @@ function History({ conversations, activeId, compact = false, onSelect, onNew, ac
 }
 
 export default function ChatWorkspace({ available, embedded = false }: { available: boolean; embedded?: boolean }) {
+  const { locale } = useLocalization();
+  const copy = chatCopy[locale];
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [accountAuthenticated, setAccountAuthenticated] = useState<boolean | null>(null);
@@ -457,11 +462,11 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
     const incoming = Array.from(selected);
     const existing = messages.flatMap(message => message.attachments || []).concat(files);
     if (existing.length + incoming.length > FILE_LIMITS.count || existing.reduce((sum, file) => sum + file.size, 0) + incoming.reduce((sum, file) => sum + file.size, 0) > FILE_LIMITS.totalBytes) {
-      setFileError("Use up to 4 attachments and 2.5 MB total per conversation (2 MB per file). Start a new chat for more files."); return;
+      setFileError(copy.attachmentLimit); return;
     }
     const stored = conversations.flatMap(conversation => conversation.messages.flatMap(message => message.attachments || [])).reduce((sum, file) => sum + file.size, 0);
     if (stored + files.reduce((sum, file) => sum + file.size, 0) + incoming.reduce((sum, file) => sum + file.size, 0) > 20 * 1024 * 1024) {
-      setFileError("This temporary session has reached its attachment memory limit. Refresh to clear it before adding more files."); return;
+      setFileError(copy.attachmentSessionLimit); return;
     }
     const controller = new AbortController(); fileRead.current = controller; setPreparing(0);
     try {
@@ -471,7 +476,7 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
       }));
       if (fileRead.current === controller && !controller.signal.aborted) setFiles(current => [...current, ...loaded]);
     } catch (error) {
-      if (fileRead.current === controller && !controller.signal.aborted) setFileError(error instanceof Error ? error.message : "Unable to prepare attachments.");
+      if (fileRead.current === controller && !controller.signal.aborted) setFileError(attachmentErrorMessage(error, locale));
     } finally {
       if (fileRead.current === controller) { fileRead.current = null; setPreparing(null); }
     }
@@ -513,35 +518,35 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
     <div className={styles.thinkingIndicator} data-ready={contentArrived && thinkingReply?.ready} aria-hidden="true"><span className={styles.thinkingDot} /></div>
   </div>;
 
-  return <div ref={root} className={`${styles.chat} ${embedded ? styles.embedded : ""}`} data-embedded={embedded || undefined} data-collapsed={collapsed} data-welcome={!hasMessages} data-no-translate dir="ltr">
-    <aside id="ai-chat-sidebar" className={styles.sidebar} aria-label="Chat sidebar">
+  return <div ref={root} className={`${styles.chat} ${embedded ? styles.embedded : ""}`} data-embedded={embedded || undefined} data-collapsed={collapsed} data-welcome={!hasMessages} data-no-translate dir={locale === "ar" ? "rtl" : "ltr"}>
+    <aside id="ai-chat-sidebar" className={styles.sidebar} aria-label={copy.chatSidebar}>
       <div className={styles.sidebarTop}>
         <span className={styles.sidebarTitle}>BlueMind AI</span>
         <button className={`${styles.iconControl} ${styles.sidebarToggle}`} type="button" onClick={() => setCollapsed(value => !value)}
-        aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"} title={collapsed ? "Expand sidebar" : "Collapse sidebar"} aria-expanded={!collapsed} aria-controls="ai-chat-sidebar">
+        aria-label={collapsed ? copy.expandSidebar : copy.collapseSidebar} title={collapsed ? copy.expandSidebar : copy.collapseSidebar} aria-expanded={!collapsed} aria-controls="ai-chat-sidebar">
         {collapsed && <BlueMindLogo className={styles.toggleLogo} solid />}
         {collapsed ? <PanelLeftOpen className={styles.toggleGlyph} size={20} aria-hidden="true" /> : <PanelLeftClose size={20} aria-hidden="true" />}
       </button></div>
       <History {...historyProps} compact={collapsed} />
     </aside>
 
-    <dialog ref={drawer} className={styles.drawer} aria-label="Chat sidebar" onClick={event => {
+    <dialog ref={drawer} className={styles.drawer} aria-label={copy.chatSidebar} onClick={event => {
       if (event.target === event.currentTarget) {
         const bounds = event.currentTarget.getBoundingClientRect();
         if (event.clientX > bounds.right || event.clientX < bounds.left) event.currentTarget.close();
       }
     }}>
       <div className={styles.drawerInner}>
-        <div className={styles.sidebarTop}><button className={styles.iconControl} type="button" aria-label="Close sidebar" title="Close sidebar" onClick={() => drawer.current?.close()}><X size={20} /></button></div>
+        <div className={styles.sidebarTop}><button className={styles.iconControl} type="button" aria-label={copy.closeSidebar} title={copy.closeSidebar} onClick={() => drawer.current?.close()}><X size={20} /></button></div>
         <History {...historyProps} />
       </div>
     </dialog>
 
     <main className={styles.main}>
       <div className={styles.topbar}>
-        <button className={`${styles.iconControl} ${styles.mobileMenu}`} type="button" aria-label="Open sidebar" title="Open sidebar" onClick={() => drawer.current?.showModal()}><Menu size={22} /></button>
-        <Link href="/" className={styles.iconControl} aria-label="Close" title="Close" onNavigate={event => {
-          if ((draft.trim() || files.length || preparing !== null) && !window.confirm("Discard your unsent message and return to the homepage?")) event.preventDefault();
+        <button className={`${styles.iconControl} ${styles.mobileMenu}`} type="button" aria-label={copy.openSidebar} title={copy.openSidebar} onClick={() => drawer.current?.showModal()}><Menu size={22} /></button>
+        <Link href="/" className={styles.iconControl} aria-label={copy.close} title={copy.close} onNavigate={event => {
+          if ((draft.trim() || files.length || preparing !== null) && !window.confirm(copy.discardMessage)) event.preventDefault();
         }}><X size={22} aria-hidden="true" /></Link>
       </div>
 
@@ -549,21 +554,21 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
         <div className={styles.empty} data-hidden={hasMessages} aria-hidden={hasMessages} inert={hasMessages}>
           <BlueMindLogo className={styles.brandSymbol} solid priority />
           <h1>BlueMind AI</h1>
-          <p>What can I help you create?</p>
+          <p>{copy.heading}</p>
         </div>
-        <div ref={history} className={styles.messageScroll} data-active={hasMessages} tabIndex={hasMessages ? 0 : -1} aria-label="Chat messages">
-          <div ref={messageList} className={styles.messages} role="log" aria-label="Conversation" aria-live="polite" aria-relevant="additions text">
+        <div ref={history} className={styles.messageScroll} data-active={hasMessages} tabIndex={hasMessages ? 0 : -1} aria-label={copy.message}>
+          <div ref={messageList} className={styles.messages} role="log" aria-label={copy.conversation} aria-live="polite" aria-relevant="additions text">
             {visibleMessages.map(message => message.id === thinkingTarget ? thinkingIndicator : message.role === "assistant" ? <AssistantMessage key={message.id} id={message.id}
               text={message.text} card={message.card} complete={message.complete} stopped={message.stopped}
               animate={message.id === animatedId} pending={pending && message.id === animatedId}
               signal={message.id === animatedId ? request.current?.controller.signal : undefined} onPresented={onPresented}
               feedback={message.feedback} generating={pendingId !== null}
               onFeedback={onFeedback} onRegenerate={onRegenerate} onSaveCard={onSaveCard} />
-              : <article key={message.id} className={styles.message} data-attachments={Boolean(message.attachments?.length)} aria-label="Your message">
+              : <article key={message.id} className={styles.message} data-attachments={Boolean(message.attachments?.length)} aria-label={copy.yourMessage}>
               {message.attachments?.length ? <AttachmentList files={message.attachments} onOpen={setViewing} /> : null}
               {message.text && <div className={styles.messageText}><p dir="auto">{message.text}</p></div>}
             </article>)}
-            {active?.error && <div className={styles.replyError} role="alert"><p>{AI_ERRORS[active.error]}</p><button type="button" onClick={retry} disabled={pending}>Retry</button></div>}
+            {active?.error && <div className={styles.replyError} role="alert"><p>{copy.errors[active.error]}</p><button type="button" onClick={retry} disabled={pending}>{copy.retry}</button></div>}
           </div>
         </div>
       </div>
@@ -571,7 +576,7 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
       <div className={styles.composerArea}>
         <div className={styles.suggestionReveal} data-hidden={hasMessages} aria-hidden={hasMessages} inert={hasMessages}>
           <div className={styles.suggestionClip}><div className={styles.suggestions}>
-            {suggestions.map(suggestion => <button className={styles.chip} key={suggestion} type="button" onClick={() => { setDraft(suggestion); input.current?.focus(); }}>{suggestion}</button>)}
+            {copy.suggestions.map(suggestion => <button className={styles.chip} key={suggestion} type="button" onClick={() => { setDraft(suggestion); input.current?.focus(); }}>{suggestion}</button>)}
           </div></div>
         </div>
         <form ref={composer} className={styles.composer} data-files={files.length > 0} onSubmit={event => { event.preventDefault(); send(); }}>
@@ -580,26 +585,26 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
           <input ref={documentPicker} type="file" accept={documentAccept} multiple hidden aria-label="Upload documents" onChange={event => { void selectFiles(event.target.files); event.target.value = ""; }} />
           <input ref={cameraPicker} type="file" accept="image/jpeg,image/png,image/webp" capture="environment" hidden aria-label="Take a photo" onChange={event => { void selectFiles(event.target.files); event.target.value = ""; }} />
           <div className={styles.attachmentArea} ref={attachmentArea}>
-            <button ref={attachmentTrigger} className={styles.iconControl} type="button" aria-label="Add attachment" title="Add attachment" aria-expanded={attachmentsOpen} aria-controls={menuId} onClick={() => setAttachmentsOpen(value => !value)}><Plus size={22} /></button>
-            {attachmentsOpen && <div className={styles.attachmentMenu} id={menuId} role="group" aria-label="Attachments">
-              <button type="button" disabled={preparing !== null} onClick={() => imagePicker.current?.click()}><ImageIcon size={18} />Add image</button>
-              <button type="button" disabled={preparing !== null} onClick={() => documentPicker.current?.click()}><File size={18} />Add file</button>
-              <button type="button" disabled={preparing !== null} onClick={() => cameraPicker.current?.click()}><Camera size={18} />Take a photo</button>
-              <p>Up to 4 files, 2 MB each; 2.5 MB per chat. Files stay in this browser session and are sent privately to OpenAI for analysis.</p>
+            <button ref={attachmentTrigger} className={styles.iconControl} type="button" aria-label={copy.addAttachment} title={copy.addAttachment} aria-expanded={attachmentsOpen} aria-controls={menuId} onClick={() => setAttachmentsOpen(value => !value)}><Plus size={22} /></button>
+            {attachmentsOpen && <div className={styles.attachmentMenu} id={menuId} role="group" aria-label={copy.addAttachment}>
+              <button type="button" disabled={preparing !== null} onClick={() => imagePicker.current?.click()}><ImageIcon size={18} />{copy.addImage}</button>
+              <button type="button" disabled={preparing !== null} onClick={() => documentPicker.current?.click()}><File size={18} />{copy.addFile}</button>
+              <button type="button" disabled={preparing !== null} onClick={() => cameraPicker.current?.click()}><Camera size={18} />{copy.takePhoto}</button>
+              <p>{copy.attachmentInfo}</p>
             </div>}
           </div>
-          <textarea ref={input} className={styles.input} rows={1} aria-label="Message" placeholder="Ask BlueMind anything…" value={draft}
+          <textarea ref={input} className={styles.input} rows={1} aria-label={copy.message} placeholder={copy.placeholder} value={draft}
             maxLength={AI_LIMITS.messageChars}
             onChange={event => setDraft(event.target.value)} onKeyDown={event => {
               if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); send(); }
             }} />
           {pendingId !== null
-            ? <button key="stop" className={styles.primarySend} type="button" onClick={stopReply} aria-label="Stop response" title="Stop response"><Square size={16} fill="currentColor" aria-hidden="true" /></button>
-            : <button key="send" className={styles.primarySend} type="submit" disabled={(!draft.trim() && !files.length) || preparing !== null} aria-label="Send message" title="Send message"><ArrowUp size={21} aria-hidden="true" /></button>}
+            ? <button key="stop" className={styles.primarySend} type="button" onClick={stopReply} aria-label={copy.stopResponse} title={copy.stopResponse}><Square size={16} fill="currentColor" aria-hidden="true" /></button>
+            : <button key="send" className={styles.primarySend} type="submit" disabled={(!draft.trim() && !files.length) || preparing !== null} aria-label={copy.sendMessage} title={copy.sendMessage}><ArrowUp size={21} aria-hidden="true" /></button>}
         </form>
-        {preparing !== null && <div className={styles.fileStatus} role="status">Preparing attachments: {preparing}% <button type="button" onClick={() => { fileRead.current?.abort(); fileRead.current = null; setPreparing(null); }}>Cancel</button></div>}
+        {preparing !== null && <div className={styles.fileStatus} role="status">{copy.preparing}: {preparing}% <button type="button" onClick={() => { fileRead.current?.abort(); fileRead.current = null; setPreparing(null); }}>{copy.cancel}</button></div>}
         {fileError && <div className={styles.fileStatus} role="alert">{fileError}</div>}
-        <p className={styles.status} role="status">{available ? "Messages are sent to OpenAI. Avoid sharing sensitive information." : "AI responses are not connected"}</p>
+        <p className={styles.status} role="status">{available ? copy.availableStatus : copy.unavailableStatus}</p>
       </div>
     </main>
     {viewing && <ImageViewer file={viewing} onClose={() => setViewing(null)} />}

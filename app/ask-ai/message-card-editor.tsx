@@ -8,11 +8,15 @@ import { Markdown } from "@tiptap/markdown";
 import { X } from "lucide-react";
 import type { MessageCardContent } from "../lib/ai/message-card";
 import styles from "./message-card.module.css";
+import { chatCopy } from "./chat-copy";
+import { useLocalization } from "../../components/localization-provider";
 
 export default function MessageCardEditor({ value, maxBodyLength, onSave, onClose }: {
   value: MessageCardContent; maxBodyLength: number;
   onSave: (value: MessageCardContent) => void; onClose: () => void;
 }) {
+  const { locale } = useLocalization();
+  const copy = chatCopy[locale];
   const dialog = useRef<HTMLDialogElement>(null);
   const initial = useRef("");
   const initialBody = useRef("");
@@ -40,7 +44,7 @@ export default function MessageCardEditor({ value, maxBodyLength, onSave, onClos
     immediatelyRender: false,
     extensions: [StarterKit.configure({ link: { openOnClick: false }, underline: false }), Markdown.configure({ markedOptions: { breaks: true } })],
     textDirection: "auto",
-    editorProps: { attributes: { role: "textbox", "aria-label": "Message document", "aria-multiline": "true", class: styles.document } },
+    editorProps: { attributes: { role: "textbox", "aria-label": locale === "ar" ? "مستند الرسالة" : locale === "sv" ? "Meddelandedokument" : "Message document", "aria-multiline": "true", class: styles.document } },
     onCreate: ({ editor }) => {
       const body = editor.markdown!.parse(value.body);
       editor.commands.setContent({ type: "doc", content: [
@@ -72,13 +76,13 @@ export default function MessageCardEditor({ value, maxBodyLength, onSave, onClos
   }, []);
 
   function requestClose() {
-    if (!dirty.current || window.confirm("Discard unsaved changes?")) {
+    if (!dirty.current || window.confirm(locale === "ar" ? "هل تريد تجاهل التغييرات غير المحفوظة؟" : locale === "sv" ? "Vill du ta bort osparade ändringar?" : "Discard unsaved changes?")) {
       dialog.current?.close();
       onClose();
     }
   }
 
-  return createPortal(<dialog ref={dialog} className={styles.editorDialog} aria-label="Edit message" data-no-translate
+  return createPortal(<dialog ref={dialog} className={styles.editorDialog} aria-label={copy.editMessage} data-no-translate
     onKeyDownCapture={event => {
       if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); requestClose(); }
     }}
@@ -93,18 +97,18 @@ export default function MessageCardEditor({ value, maxBodyLength, onSave, onClos
     onCancel={event => { event.preventDefault(); requestClose(); }}>
     <div className={styles.editorLayout}>
       <header className={styles.editorHeader}>
-        <span>Message</span>
+        <span>{copy.messageCard}</span>
         <div className={styles.editorActions}>
           <button type="button" className={styles.save} disabled={!editor || !valid}
             onClick={() => {
               if (valid) { dialog.current?.close(); onSave(dirty.current ? draft : value); }
-            }}>Save changes</button>
-          <button type="button" className={styles.close} aria-label="Close editor" title="Close"
+            }}>{locale === "ar" ? "حفظ التغييرات" : locale === "sv" ? "Spara ändringar" : "Save changes"}</button>
+          <button type="button" className={styles.close} aria-label={copy.close} title={copy.close}
             onClick={requestClose}><X size={20} aria-hidden="true" /></button>
         </div>
       </header>
       <div className={styles.editorScroll}><EditorContent editor={editor} /></div>
-      {!valid && <p className={styles.validation} role="status">Include a title (up to 200 characters) and a message (up to {maxBodyLength.toLocaleString()} characters).</p>}
+      {!valid && <p className={styles.validation} role="status">{locale === "ar" ? `أدخل عنوانًا (حتى 200 حرفًا) ورسالة (حتى ${maxBodyLength.toLocaleString()} حرفًا).` : locale === "sv" ? `Ange en rubrik (högst 200 tecken) och ett meddelande (högst ${maxBodyLength.toLocaleString()} tecken).` : `Include a title (up to 200 characters) and a message (up to ${maxBodyLength.toLocaleString()} characters).`}</p>}
     </div>
   </dialog>, document.body);
 }

@@ -9,7 +9,8 @@
     "typecheck": "tsc --noEmit",
     "test:coming-soon": "playwright test --config playwright.coming-soon.config.ts",
     "check:encoding": "node scripts/check-translations-encoding.mjs",
-    "prebuild": "npm run check:encoding"
+    "check:locales": "node scripts/check-locales.mjs",
+    "prebuild": "npm run check:encoding && npm run check:locales"
   },
   "engines": {
     "node": "22.x"
