@@ -66,6 +66,7 @@
   flex-shrink: 0;
 }
 .brand .headerBrand { gap: 6px; }
+.mobileService { display: none; }
 .brandLogo { --logo-size: 72px; transform: translateY(-12px); }
 .headerControls { display: inline-flex; align-items: center; justify-content: flex-end; gap: 8px; flex-shrink: 0; }
 .signInLink { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 8px 10px; border: 0; border-radius: 999px; background: transparent; box-shadow: none; color: var(--bluemind-text); font-size: 12px; font-weight: 500; line-height: 1.4; white-space: nowrap; text-decoration: none; }
@@ -230,9 +231,28 @@
 }
 /* Touch tablets, including landscape iPads, use the fixed navigation bar. */
 @media (max-width: 1023px), (hover: none) and (pointer: coarse) {
+  .header {
+    position: static;
+    top: auto;
+    border-bottom: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .header[data-scrolled="true"] { box-shadow: none; }
+  .headerInner { min-height: 68px; }
+  .brand .mobileService {
+    display: block;
+    font-size: 8px;
+    letter-spacing: 1.15px;
+    line-height: 1;
+  }
+
   .header .signInLink,
   .header .menuToggle,
   .header .navPanel { display: none; }
+
+  :global(html:has(header[data-scrolled])) { scroll-padding-top: 0; }
 }
 @media (max-width: 430px) {
   .headerInner { width: calc(100% - 24px); gap: 10px; }

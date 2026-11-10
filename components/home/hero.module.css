@@ -206,3 +206,8 @@
   .hero .headline { font-size: 26px; }
 }
 
+/* The touch header is part of the document flow, so keep the first content close to it. */
+@media (max-width: 1023px), (hover: none) and (pointer: coarse) {
+  .inner { padding-top: 18px; }
+}
+

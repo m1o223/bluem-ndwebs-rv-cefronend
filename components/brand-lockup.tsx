@@ -3,6 +3,7 @@ import styles from "./brand-lockup.module.css";
 
 type BrandLockupProps = {
   serviceName?: string;
+  serviceClassName?: string;
   className?: string;
   logoClassName?: string;
   priority?: boolean;
@@ -11,6 +12,7 @@ type BrandLockupProps = {
 
 export function BrandLockup({
   serviceName = "Web Service",
+  serviceClassName = "",
   className = "",
   logoClassName = "",
   priority = false,
@@ -21,7 +23,7 @@ export function BrandLockup({
       <BlueMindLogo className={`${styles.logo} ${logoClassName}`} priority={priority} solid={solidLogo} />
       <span className={styles.text}>
         <span className={styles.name}>BlueMind</span>
-        <span className={styles.service}>{serviceName}</span>
+        <span className={`${styles.service} ${serviceClassName}`}>{serviceName}</span>
       </span>
     </span>
   );

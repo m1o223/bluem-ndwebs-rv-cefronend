@@ -104,7 +104,7 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
       }
     }}>
       <div className={styles.headerInner} data-expanded={expanded}>
-        <Link className={styles.brand} href="/" aria-label="BlueMind Web Service home" onClick={() => { setExpanded(false); setLanguageOpen(false); }}><BrandLockup className={styles.headerBrand} logoClassName={styles.brandLogo} priority solidLogo /></Link>
+        <Link className={styles.brand} href="/" aria-label="BlueMind Web Service home" onClick={() => { setExpanded(false); setLanguageOpen(false); }}><BrandLockup className={styles.headerBrand} logoClassName={styles.brandLogo} serviceClassName={styles.mobileService} priority solidLogo /></Link>
         {activePath !== "/sign-in" && activePath !== "/login" && <div className={styles.headerControls}>
           <Link className={styles.signInLink} href="/sign-in" aria-current={activePath === "/sign-in" ? "page" : undefined} onClick={() => { setExpanded(false); setLanguageOpen(false); }}><TextActionLabel enabled={textEffects} underline={false}>Sign in</TextActionLabel></Link>
           <div className={styles.languageSelector} ref={languageRef} data-no-translate>
