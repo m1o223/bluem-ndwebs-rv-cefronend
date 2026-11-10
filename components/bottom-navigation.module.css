@@ -57,6 +57,11 @@
 
 :global(body[data-bottom-navigation="true"]) {
   padding-bottom: 0;
+  scroll-padding-bottom: calc(112px + env(safe-area-inset-bottom));
+}
+
+:global(body[data-bottom-navigation="true"] .page-content:not(.home-content)) {
+  padding-bottom: calc(96px + env(safe-area-inset-bottom));
 }
 
 @media (max-width: 1023px), (hover: none) and (pointer: coarse) {

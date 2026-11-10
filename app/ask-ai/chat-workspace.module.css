@@ -130,6 +130,25 @@
   .composer { gap: 4px; padding: 10px; }
   .chat .status { font-size: 11px; margin-top: 8px; }
 }
+@media (max-width: 767px) {
+  /* Keep the welcome actions readable without making the chat page scroll sideways. */
+  .chat:not(.embedded)[data-welcome="true"] .suggestions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: min(100%, 420px);
+    max-width: 100%;
+    overflow: visible;
+    padding: 4px 0 10px;
+  }
+  .chat:not(.embedded)[data-welcome="true"] .chip {
+    min-width: 0;
+    width: 100%;
+    white-space: normal;
+    text-align: center;
+  }
+  .chat:not(.embedded)[data-welcome="true"] .chip:first-child,
+  .chat:not(.embedded)[data-welcome="true"] .chip:last-child { margin-inline: 0; }
+}
 @media (max-height: 580px) {
   .composerArea { padding-bottom: max(20px, env(safe-area-inset-bottom)); }
   .empty .brandSymbol { margin-bottom: 8px; }

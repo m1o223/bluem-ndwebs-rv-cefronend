@@ -1,14 +1,14 @@
-.faq { margin-top: 56px; padding-top: 30px; border-top: 1px solid #dfe4eb; }
-.faq h2 { margin: 0; font-size: 26px; font-weight: 500; letter-spacing: -.8px; line-height: 1.35; }
+.faq { margin-top: 56px; padding-top: 30px; border-top: 1px solid #dfe4eb; text-align: start; }
+.faq h2 { margin: 0; font-size: 26px; font-weight: 500; letter-spacing: -.8px; line-height: 1.35; text-wrap: balance; }
 .subtitle { margin: 12px 0 0; color: var(--bluemind-text); font-size: 14px; line-height: 1.8; }
 .questions { margin-top: 24px; max-width: 900px; }
 .questions details { border-bottom: 1px solid #dfe4eb; }
-.questions summary { position: relative; padding-block: 18px; padding-inline: 0 32px; min-height: 52px; color: var(--bluemind-text); font-size: 15px; font-weight: 500; cursor: pointer; list-style: none; line-height: 1.5; }
+.questions summary { position: relative; padding-block: 18px; padding-inline: 0 32px; min-height: 52px; color: var(--bluemind-text); font-size: 15px; font-weight: 500; cursor: pointer; list-style: none; line-height: 1.5; text-align: start; text-wrap: balance; }
 .questions summary::-webkit-details-marker { display: none; }
 .questions summary::after { content: "+"; position: absolute; inset-inline-end: 5px; font-size: 19px; font-weight: 400; }
 .questions details[open] summary::after { content: "\2212"; }
 .questions summary:focus-visible { outline: 2px solid var(--bluemind-blue); outline-offset: 3px; border-radius: 4px; }
-.questions p { max-width: 730px; margin: 0 0 18px; color: var(--bluemind-text); font-size: 13px; line-height: 1.8; }
+.questions p { max-width: 730px; margin: 0 0 18px; color: var(--bluemind-text); font-size: 13px; line-height: 1.8; text-align: start; }
 @media (max-width: 620px) {
   .faq { margin-top: 40px; padding-top: 26px; }
   .faq h2 { font-size: 23px; }
