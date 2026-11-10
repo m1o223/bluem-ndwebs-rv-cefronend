@@ -164,11 +164,272 @@ a {
   width: 100%;
 }
 
-button,
-a[class*="Button"],
-a[class*="Cta"],
-a[class*="navCta"],
-a[role="button"] {
+/* Shared button interaction: one predictable response across the site. */
+:where(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a[role="button"],
+  a[class*="Button"],
+  a[class*="button"],
+  a[class*="Cta"],
+  a[class*="cta"],
+  a[class*="navCta"],
+  a[class*="navLink"],
+  a[class*="textLink"],
+  a[class*="textButton"],
+  a[class*="signInLink"],
+  a[class*="item"],
+  [class*="homeNav"] a,
+  [class*="linkList"] a
+) {
+  text-decoration: none !important;
+  touch-action: manipulation;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    filter 160ms ease,
+    transform 90ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :where(
+    button,
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"],
+    a[role="button"],
+    a[class*="Button"],
+    a[class*="button"],
+    a[class*="Cta"],
+    a[class*="cta"],
+    a[class*="navCta"],
+    a[class*="navLink"],
+    a[class*="textLink"],
+    a[class*="textButton"],
+    a[class*="signInLink"],
+    a[class*="item"],
+    [class*="homeNav"] a,
+    [class*="linkList"] a
+  ):not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):not([class*="primary"]):not([class*="Primary"]):not([class*="Cta"]):not([class*="cta"]):not([class*="navCta"]):not([class*="button"]):not([class*="sendButton"]):hover {
+    background-color: color-mix(in srgb, currentColor 8%, transparent);
+    border-color: color-mix(in srgb, currentColor 38%, transparent);
+  }
+
+  :where(
+    button,
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"],
+    a[role="button"],
+    a[class*="Button"],
+    a[class*="button"],
+    a[class*="Cta"],
+    a[class*="cta"],
+    a[class*="navCta"],
+    a[class*="navLink"],
+    a[class*="textLink"],
+    a[class*="textButton"],
+    a[class*="signInLink"],
+    a[class*="item"],
+    [class*="homeNav"] a,
+    [class*="linkList"] a
+  ):is([class*="primary"], [class*="Primary"], [class*="Cta"], [class*="cta"], [class*="navCta"], [class*="button"], [class*="sendButton"]):not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):hover {
+    filter: brightness(0.94);
+  }
+}
+
+:where(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a[role="button"],
+  a[class*="Button"],
+  a[class*="button"],
+  a[class*="Cta"],
+  a[class*="cta"],
+  a[class*="navCta"],
+  a[class*="navLink"],
+  a[class*="textLink"],
+  a[class*="textButton"],
+  a[class*="signInLink"],
+  a[class*="item"],
+  [class*="homeNav"] a,
+  [class*="linkList"] a
+):not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):active {
+  transform: scale(0.98);
+}
+
+:where(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a[role="button"],
+  a[class*="Button"],
+  a[class*="button"],
+  a[class*="Cta"],
+  a[class*="cta"],
+  a[class*="navCta"],
+  a[class*="navLink"],
+  a[class*="textLink"],
+  a[class*="textButton"],
+  a[class*="signInLink"],
+  a[class*="item"],
+  [class*="homeNav"] a,
+  [class*="linkList"] a
+):focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--bluemind-blue) 70%, white);
+  outline-offset: 3px;
+}
+
+:where(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a[role="button"],
+  a[class*="Button"],
+  a[class*="button"],
+  a[class*="Cta"],
+  a[class*="cta"],
+  a[class*="navCta"],
+  a[class*="navLink"],
+  a[class*="textLink"],
+  a[class*="textButton"],
+  a[class*="signInLink"],
+  a[class*="item"],
+  [class*="homeNav"] a,
+  [class*="linkList"] a
+):disabled,
+:where(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a[role="button"],
+  a[class*="Button"],
+  a[class*="button"],
+  a[class*="Cta"],
+  a[class*="cta"],
+  a[class*="navCta"],
+  a[class*="navLink"],
+  a[class*="textLink"],
+  a[class*="textButton"],
+  a[class*="signInLink"],
+  a[class*="item"],
+  [class*="homeNav"] a,
+  [class*="linkList"] a
+)[aria-disabled="true"],
+:where(
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  a[role="button"],
+  a[class*="Button"],
+  a[class*="button"],
+  a[class*="Cta"],
+  a[class*="cta"],
+  a[class*="navCta"],
+  a[class*="navLink"],
+  a[class*="textLink"],
+  a[class*="textButton"],
+  a[class*="signInLink"],
+  a[class*="item"],
+  [class*="homeNav"] a,
+  [class*="linkList"] a
+)[aria-busy="true"] {
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(
+    button,
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"],
+    a[role="button"],
+    a[class*="Button"],
+    a[class*="button"],
+    a[class*="Cta"],
+    a[class*="cta"],
+    a[class*="navCta"],
+    a[class*="navLink"],
+    a[class*="textLink"],
+    a[class*="textButton"],
+    a[class*="signInLink"],
+    a[class*="item"],
+    [class*="homeNav"] a,
+    [class*="linkList"] a
+  ) {
+    transition-property: color, background-color, border-color, box-shadow, filter;
+  }
+
+  :where(
+    button,
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"],
+    a[role="button"],
+    a[class*="Button"],
+    a[class*="button"],
+    a[class*="Cta"],
+    a[class*="cta"],
+    a[class*="navCta"],
+    a[class*="navLink"],
+    a[class*="textLink"],
+    a[class*="textButton"],
+    a[class*="signInLink"],
+    a[class*="item"],
+    [class*="homeNav"] a,
+    [class*="linkList"] a
+  ):active {
+    transform: none;
+  }
+}
+
+/* Shared interaction for navigation links that are styled by their parent. */
+:where(a[class*="back"], [class*="desktopNav"] a) {
+  text-decoration: none !important;
+  touch-action: manipulation;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    filter 160ms ease,
+    transform 90ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :where(a[class*="back"], [class*="desktopNav"] a):not([aria-disabled="true"]):not([aria-busy="true"]):hover {
+    background-color: color-mix(in srgb, currentColor 8%, transparent);
+    border-color: color-mix(in srgb, currentColor 38%, transparent);
+  }
+}
+
+:where(a[class*="back"], [class*="desktopNav"] a):not([aria-disabled="true"]):not([aria-busy="true"]):active {
+  transform: scale(0.98);
+}
+
+:where(a[class*="back"], [class*="desktopNav"] a):focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--bluemind-blue) 70%, white);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(a[class*="back"], [class*="desktopNav"] a) {
+    transition-property: color, background-color, border-color, box-shadow, filter;
+  }
+
+  :where(a[class*="back"], [class*="desktopNav"] a):active {
+    transform: none;
+  }
 }
 
 @media (max-width: 760px) {
