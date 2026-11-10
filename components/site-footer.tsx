@@ -15,8 +15,8 @@ export default function SiteFooter({ textEffects = false }: { textEffects?: bool
           <Link href="/" className={styles.brand} aria-label="BlueMind Web Service home"><span>BlueMind Web Service</span></Link>
           <p>{config.brandTagline}</p>
         </div>
-        <nav aria-label="Footer explore" className={styles.linkGroup}><h2>Explore</h2><ul>{config.explore.map(([href,label]) => <li key={href}><Link href={href}><TextActionLabel enabled={textEffects}>{label}</TextActionLabel></Link></li>)}</ul></nav>
-        <nav aria-label="Footer services" className={styles.linkGroup}><h2>Services</h2><ul>{config.services.map(([href,label]) => <li key={label}><Link href={href}><TextActionLabel enabled={textEffects}>{label}</TextActionLabel></Link></li>)}</ul></nav>
+        <nav aria-label="Footer explore" className={`${styles.linkGroup} ${styles.exploreGroup}`}><h2>Explore</h2><ul>{config.explore.map(([href,label]) => <li key={href}><Link href={href}><TextActionLabel enabled={textEffects}>{label}</TextActionLabel></Link></li>)}</ul></nav>
+        <nav aria-label="Footer services" className={`${styles.linkGroup} ${styles.servicesGroup}`}><h2>Services</h2><ul>{config.services.map(([href,label]) => <li key={label}><Link href={href}><TextActionLabel enabled={textEffects}>{label}</TextActionLabel></Link></li>)}</ul></nav>
         <section className={styles.contact} aria-labelledby="footer-contact-title"><h2 id="footer-contact-title">Contact</h2>
           <dl><div><dt>Email</dt><dd><a href={`mailto:${config.contact.email}`}><TextActionLabel enabled={textEffects}>{config.contact.email}</TextActionLabel></a></dd></div></dl>
           <Link href="/contact" className={styles.contactLink}><TextActionLabel enabled={textEffects}>Contact Us</TextActionLabel> <span aria-hidden="true">→</span></Link>
