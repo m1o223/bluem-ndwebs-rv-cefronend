@@ -89,6 +89,7 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
   const [activeId, setActiveId] = useState<string | null>(null);
   const [accountAuthenticated, setAccountAuthenticated] = useState<boolean | null>(null);
   const [draft, setDraft] = useState("");
+  const [draftReady, setDraftReady] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [attachmentsOpen, setAttachmentsOpen] = useState(false);
   const [files, setFiles] = useState<LocalAttachment[]>([]);
@@ -112,6 +113,20 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
   const attachmentArea = useRef<HTMLDivElement>(null);
   const attachmentTrigger = useRef<HTMLButtonElement>(null);
   const menuId = useId();
+
+  useEffect(() => {
+    try { setDraft(sessionStorage.getItem("bluemind-ai-draft") || ""); } catch {}
+    setDraftReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!draftReady) return;
+    try {
+      if (draft) sessionStorage.setItem("bluemind-ai-draft", draft);
+      else sessionStorage.removeItem("bluemind-ai-draft");
+    } catch {}
+  }, [draft, draftReady]);
+
   const active = conversations.find(conversation => conversation.id === activeId);
   const messages = active?.messages ?? [];
   const hasMessages = messages.length > 0;

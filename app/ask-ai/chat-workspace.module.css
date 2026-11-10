@@ -119,6 +119,13 @@
   .composer { gap: 4px; padding: 10px; }
   .chat .status { font-size: 11px; margin-top: 8px; }
 }
+
+/* The persistent public navigation floats above the viewport on small screens. */
+@media (max-width: 1023px) {
+  :global(body[data-bottom-navigation="true"]) .chat:not(.embedded) {
+    --chat-height: calc(100dvh - 96px - env(safe-area-inset-bottom)) !important;
+  }
+}
 @media (max-width: 767px) {
   /* Keep the welcome actions readable without making the chat page scroll sideways. */
   .chat:not(.embedded)[data-welcome="true"] .suggestions {

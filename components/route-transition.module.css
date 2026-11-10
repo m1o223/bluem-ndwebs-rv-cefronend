@@ -1,0 +1,34 @@
+.stage {
+  min-width: 0;
+  overflow-x: clip;
+}
+
+.stage[data-direction="forward"] {
+  --route-shift: 12px;
+  animation: route-enter 320ms cubic-bezier(.22, .8, .28, 1) both;
+}
+
+.stage[data-direction="backward"] {
+  --route-shift: -12px;
+  animation: route-enter 320ms cubic-bezier(.22, .8, .28, 1) both;
+}
+
+:global(html[dir="rtl"]) .stage[data-direction="forward"] { --route-shift: -12px; }
+:global(html[dir="rtl"]) .stage[data-direction="backward"] { --route-shift: 12px; }
+
+@keyframes route-enter {
+  from { opacity: .72; transform: translateX(var(--route-shift)); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage[data-direction="forward"],
+  .stage[data-direction="backward"] {
+    animation: route-fade 140ms ease-out both;
+  }
+}
+
+@keyframes route-fade {
+  from { opacity: .82; }
+  to { opacity: 1; }
+}
