@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, Home, LogIn, Settings, Sparkles } from "lucide-react";
+import { Bell, Home, LogIn, Menu as MenuIcon, Settings, Sparkles } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import styles from "./bottom-navigation.module.css";
@@ -74,6 +74,7 @@ export default function BottomNavigation() {
       { href: "/", label: t.home, icon: Home, active: pathname === "/" },
       { href: "/ask-ai", label: t.ai, icon: Sparkles, active: pathname === "/ask-ai" },
       { href: "/sign-in", label: t.signIn, icon: LogIn, active: pathname === "/sign-in" || pathname === "/login" },
+      { href: "/menu", label: t.menu, icon: MenuIcon, active: pathname === "/menu" },
     ];
   }, [authenticated, locale, pathname]);
 

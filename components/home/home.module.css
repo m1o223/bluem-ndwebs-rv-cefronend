@@ -230,6 +230,7 @@
 }
 /* Touch tablets, including landscape iPads, use the fixed navigation bar. */
 @media (max-width: 1023px), (hover: none) and (pointer: coarse) {
+  .header .signInLink,
   .header .menuToggle,
   .header .navPanel { display: none; }
 }
@@ -305,7 +306,7 @@
   .signInLink { border: 0; background: transparent; }
 }
 @media (max-width: 380px) {
-  .headerInner { flex-wrap: wrap; gap: 2px 12px; padding-block: 4px 8px; }
-  .headerControls { width: 100%; }
+  .headerInner { flex-wrap: nowrap; gap: 8px; padding-block: 4px 8px; }
+  .headerControls { width: auto; }
 }
 
