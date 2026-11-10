@@ -8,8 +8,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import arMessages from "../messages/ar.json";
-import svMessages from "../messages/sv.json";
 
 export type Locale = "en" | "sv" | "ar";
 
@@ -37,8 +35,8 @@ const languages: Language[] = [
 ];
 const messages: Record<Locale, MessageMap> = {
   en: {},
-  sv: svMessages as MessageMap,
-  ar: arMessages as MessageMap,
+  sv: {},
+  ar: {},
 };
 
 const LocalizationContext = createContext<LocalizationContextValue | null>(null);
@@ -176,6 +174,7 @@ function translateDocument(locale: Locale) {
 
 export function LocalizationProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>("en");
+  const [loadedLocale, setLoadedLocale] = useState<Locale>("en");
 
   useEffect(() => {
     try {
@@ -185,6 +184,22 @@ export function LocalizationProvider({ children }: { children: ReactNode }) {
       setLocaleState(preferredBrowserLocale());
     }
   }, []);
+
+  useEffect(() => {
+    let active = true;
+    if (locale === "en") {
+      setLoadedLocale("en");
+      return () => { active = false; };
+    }
+    const loader = locale === "sv" ? import("../messages/sv.json") : import("../messages/ar.json");
+    loader.then((module) => {
+      messages[locale] = module.default as MessageMap;
+      if (active) setLoadedLocale(locale);
+    }).catch(() => {
+      if (active) setLoadedLocale("en");
+    });
+    return () => { active = false; };
+  }, [locale]);
 
   const value = useMemo<LocalizationContextValue>(() => ({
     locale,
@@ -198,7 +213,7 @@ export function LocalizationProvider({ children }: { children: ReactNode }) {
       setLocaleState(nextLocale);
     },
     translate: (text) => translateValue(text, locale),
-  }), [locale]);
+  }), [locale, loadedLocale]);
 
   useEffect(() => {
     let frame = 0;
@@ -219,7 +234,7 @@ export function LocalizationProvider({ children }: { children: ReactNode }) {
       cancelAnimationFrame(frame);
       observer.disconnect();
     };
-  }, [locale]);
+  }, [locale, loadedLocale]);
 
   return <LocalizationContext.Provider value={value}>{children}</LocalizationContext.Provider>;
 }
