@@ -19,14 +19,25 @@
 .codeMover { z-index: 1; left: 2%; top: 14px; width: 48%; }
 .designMover { z-index: 2; left: 19%; top: 64px; width: 62%; }
 .boardMover .codeWindow, .boardMover .websiteWindow { position: relative; inset: auto; width: 100%; }
-.ropesCanvas { position: absolute; z-index: 1; top: -122px; left: 0; width: 100%; height: calc(100% + 122px); overflow: visible; pointer-events: none; }
+.ropesCanvas { position: absolute; z-index: 4; top: -122px; left: 0; width: 100%; height: calc(100% + 122px); overflow: visible; pointer-events: none; }
 .ropeShadow, .ropeBase, .ropeFiber { vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
-.ropeShadow { stroke: #16283c3c; stroke-width: 10; filter: blur(1.2px); }
-.ropeBase { stroke: url(#ropeGradient); stroke-width: 6; }
-.ropeFiber { stroke: #fff0c27a; stroke-width: 1.35; stroke-dasharray: 2 4; }
+.ropeTwist { vector-effect: non-scaling-stroke; fill: none; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+.ropeShadow { stroke: #16283c4a; stroke-width: 10; filter: blur(1.2px); }
+.ropeBase { stroke: url(#ropeGradient); stroke-width: 5.8; }
+.ropeFiber { stroke: #fff0c2b8; stroke-width: 1.15; stroke-dasharray: 1.8 3.2; }
+.ropeTwist { stroke: #6e5031b8; stroke-width: 1.05; stroke-dasharray: 6 5; stroke-dashoffset: 2; }
 .ropeHit { pointer-events: stroke; stroke: transparent; stroke-width: 28; cursor: crosshair; outline: none; }
 .ropeHit:focus-visible { filter: drop-shadow(0 0 3px var(--bluemind-blue)); }
 .ropeCutMarker { fill: #8d704a; stroke: #fff; stroke-width: 1.5; pointer-events: none; }
+.ropeAnchor { pointer-events: none; }
+.ropeAnchorShadow { fill: #10233a3d; filter: blur(1px); }
+.ropeAnchorRing { fill: #e4e8eb; stroke: #836646; stroke-width: 1.3; }
+.ropeAnchorCore { fill: #725234; stroke: #f8e2b4; stroke-width: .9; }
+.ropeHook { pointer-events: none; }
+.ropeHook circle { fill: #e4e8eb; stroke: #836646; stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+.ropeHook path { fill: none; stroke: #725234; stroke-width: 1.5; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.ropeFray { pointer-events: none; }
+.ropeFray path { fill: none; stroke: #a98154; stroke-width: 1.45; stroke-linecap: round; vector-effect: non-scaling-stroke; }
 .websiteWindow, .codeWindow { position: absolute; overflow: hidden; border-radius: 10px; border: 1px solid #dfe4eb; }
 .websiteWindow { z-index: 2; left: 19%; top: 64px; width: 62%; background: #fff; box-shadow: 0 20px 44px #192c4911, 0 3px 10px #192c4907; }
 .codeWindow { z-index: 1; left: 2%; top: 14px; width: 48%; background: #202a3a; color: #d9e0ed; border-color: #354052; box-shadow: 0 12px 28px #13203c0e; }

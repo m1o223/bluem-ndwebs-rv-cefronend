@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import type { KeyboardEvent as ReactKeyboardEvent } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent } from "react";
 import CodePreviewWindow from "./code-preview-window";
 import WebsitePreviewWindow from "./website-preview-window";
 import MiniFeatureCard from "./mini-feature-card";
@@ -25,6 +25,9 @@ type BoardMotion = {
   ropeProgress: number;
   returnStartedAt: number | null;
   cutPoints: Partial<Record<RopeSide, CutPoint>>;
+  cutOffsets: Partial<Record<RopeSide, CutPoint>>;
+  cutAngles: Partial<Record<RopeSide, number>>;
+  cutRecoil: Partial<Record<RopeSide, number>>;
 };
 
 type BoardSnapshot = Pick<BoardMotion, "phase" | "leftConnected" | "rightConnected">;
@@ -32,6 +35,7 @@ type BoardSnapshot = Pick<BoardMotion, "phase" | "leftConnected" | "rightConnect
 const BOARD_IDS: BoardId[] = ["code", "design"];
 const ROPE_SIDES: RopeSide[] = ["left", "right"];
 const ROPE_TOP_OFFSET = 122;
+const ROPE_PANEL_INSET = 8;
 const RETURN_WAIT_MS = 280;
 const RESET_WAIT_MS = 2400;
 
@@ -48,6 +52,9 @@ const initialMotion = (): BoardMotion => ({
   ropeProgress: 1,
   returnStartedAt: null,
   cutPoints: {},
+  cutOffsets: {},
+  cutAngles: {},
+  cutRecoil: {},
 });
 
 const initialSnapshots = (): Record<BoardId, BoardSnapshot> => ({
@@ -58,6 +65,17 @@ const initialSnapshots = (): Record<BoardId, BoardSnapshot> => ({
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 const lerp = (from: number, to: number, amount: number) => from + (to - from) * amount;
 const easeOutCubic = (amount: number) => 1 - (1 - amount) ** 3;
+const rotatePoint = (point: CutPoint, angle: number): CutPoint => ({
+  x: point.x * Math.cos(angle) - point.y * Math.sin(angle),
+  y: point.x * Math.sin(angle) + point.y * Math.cos(angle),
+});
+const projectPointToSegment = (point: CutPoint, start: CutPoint, end: CutPoint): CutPoint => {
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const lengthSquared = dx * dx + dy * dy || 1;
+  const amount = clamp(((point.x - start.x) * dx + (point.y - start.y) * dy) / lengthSquared, 0.12, 0.88);
+  return { x: lerp(start.x, end.x, amount), y: lerp(start.y, end.y, amount) };
+};
 
 export default function HeroVisual() {
   const visualRef = useRef<HTMLElement | null>(null);
@@ -91,17 +109,25 @@ export default function HeroVisual() {
     return board?.querySelector<HTMLElement>(boardId === "code" ? "[data-code-preview]" : "[data-website-preview]") ?? null;
   }, [getBoardElement]);
 
-  const getCanvasPoint = useCallback((boardId: BoardId, side: RopeSide) => {
+  const getRopePoints = useCallback((boardId: BoardId, side: RopeSide) => {
     const visual = visualRef.current;
     const panel = getPanelElement(boardId);
     if (!visual || !panel) return null;
     const visualRect = visual.getBoundingClientRect();
     const panelRect = panel.getBoundingClientRect();
-    return {
-      x: (side === "left" ? panelRect.left : panelRect.right) - visualRect.left,
-      y: panelRect.top - visualRect.top + ROPE_TOP_OFFSET,
+    const end = {
+      x: (side === "left" ? panelRect.left + ROPE_PANEL_INSET : panelRect.right - ROPE_PANEL_INSET) - visualRect.left,
+      y: panelRect.top - visualRect.top + ROPE_TOP_OFFSET + ROPE_PANEL_INSET,
     };
+    return { anchor: { x: clamp(end.x, 8, Math.max(8, visualRect.width - 8)), y: 5 }, end };
   }, [getPanelElement]);
+
+  const getPointerCanvasPoint = useCallback((event: ReactPointerEvent<SVGPathElement>) => {
+    const svg = ropeSvgRef.current;
+    if (!svg) return null;
+    const rect = svg.getBoundingClientRect();
+    return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+  }, []);
 
   const getPageBottomDistance = useCallback((boardId: BoardId) => {
     const panel = getPanelElement(boardId);
@@ -127,6 +153,17 @@ export default function HeroVisual() {
     }
     element.setAttribute("cx", String(point.x));
     element.setAttribute("cy", String(point.y));
+    element.setAttribute("opacity", "1");
+  }, []);
+
+  const setRopePoint = useCallback((selector: string, point: CutPoint | null) => {
+    const element = ropeSvgRef.current?.querySelector<SVGGElement>(selector);
+    if (!element) return;
+    if (!point) {
+      element.setAttribute("opacity", "0");
+      return;
+    }
+    element.setAttribute("transform", `translate(${point.x.toFixed(2)} ${point.y.toFixed(2)})`);
     element.setAttribute("opacity", "1");
   }, []);
 
@@ -161,50 +198,58 @@ export default function HeroVisual() {
 
     BOARD_IDS.forEach((boardId) => {
       const motion = motionsRef.current[boardId];
-      const panel = getPanelElement(boardId);
-      if (!panel) return;
-      const panelRect = panel.getBoundingClientRect();
-      const panelTop = panelRect.top - visualRect.top + ROPE_TOP_OFFSET;
-      const leftEnd = { x: panelRect.left - visualRect.left, y: panelTop };
-      const rightEnd = { x: panelRect.right - visualRect.left, y: panelTop };
 
       ROPE_SIDES.forEach((side) => {
-        const end = side === "left" ? leftEnd : rightEnd;
-        const anchor = { x: clamp(end.x + (side === "left" ? -18 : 18), 8, width - 8), y: 5 };
-        const bend = side === "left" ? 12 : -12;
+        const points = getRopePoints(boardId, side);
+        if (!points) return;
+        const { anchor, end } = points;
         const isConnected = side === "left" ? motion.leftConnected : motion.rightConnected;
         const cutPoint = motion.cutPoints[side] ?? null;
+        const anchorSelector = `[data-rope-anchor="${boardId}-${side}"]`;
+        setRopePoint(anchorSelector, end);
 
         if (motion.phase === "retrieving") {
           const progressEnd = { x: lerp(anchor.x, end.x, motion.ropeProgress), y: lerp(anchor.y, end.y, motion.ropeProgress) };
-          const path = ropePath(anchor, progressEnd, bend);
-          ["shadow-upper", "base-upper", "fiber-upper"].forEach((layer) => writeRopeLayer(boardId, side, layer, path));
-          ["shadow-lower", "base-lower", "fiber-lower", "hit"].forEach((layer) => writeRopeLayer(boardId, side, layer, ""));
+          const path = ropePath(anchor, progressEnd);
+          ["shadow-upper", "base-upper", "fiber-upper", "twist-upper"].forEach((layer) => writeRopeLayer(boardId, side, layer, path));
+          ["shadow-lower", "base-lower", "fiber-lower", "twist-lower", "hit"].forEach((layer) => writeRopeLayer(boardId, side, layer, ""));
           setCircle(`[data-rope-cut="${boardId}-${side}"]`, null);
+          setRopePoint(`[data-rope-fray-upper="${boardId}-${side}"]`, null);
+          setRopePoint(`[data-rope-fray-lower="${boardId}-${side}"]`, null);
+          setRopePoint(`[data-rope-hook="${boardId}-${side}"]`, progressEnd);
           return;
         }
+        setRopePoint(`[data-rope-hook="${boardId}-${side}"]`, null);
 
-        if (isConnected) {
-          const path = ropePath(anchor, end, bend);
-          ["shadow-upper", "base-upper", "fiber-upper"].forEach((layer) => writeRopeLayer(boardId, side, layer, path));
-          ["shadow-lower", "base-lower", "fiber-lower"].forEach((layer) => writeRopeLayer(boardId, side, layer, ""));
+        if (isConnected || motion.phase === "attached" || motion.phase === "returning") {
+          const path = ropePath(anchor, end);
+          ["shadow-upper", "base-upper", "fiber-upper", "twist-upper"].forEach((layer) => writeRopeLayer(boardId, side, layer, path));
+          ["shadow-lower", "base-lower", "fiber-lower", "twist-lower"].forEach((layer) => writeRopeLayer(boardId, side, layer, ""));
           writeRopeLayer(boardId, side, "hit", motion.phase === "anchored" || motion.phase === "swinging" ? path : "");
           setCircle(`[data-rope-cut="${boardId}-${side}"]`, null);
+          setRopePoint(`[data-rope-fray-upper="${boardId}-${side}"]`, null);
+          setRopePoint(`[data-rope-fray-lower="${boardId}-${side}"]`, null);
           return;
         }
 
         const cut = cutPoint ?? { x: end.x, y: Math.max(anchor.y + 26, end.y * 0.6) };
-        const upperEnd = { x: lerp(anchor.x, cut.x, 0.98), y: lerp(anchor.y, cut.y, 0.98) };
-        const lowerStart = { x: lerp(cut.x, end.x, 0.02), y: lerp(cut.y, end.y, 0.02) };
-        const upperPath = ropePath(anchor, upperEnd, bend);
-        const lowerPath = ropePath(lowerStart, end, bend * 0.3);
-        ["shadow-upper", "base-upper", "fiber-upper"].forEach((layer) => writeRopeLayer(boardId, side, layer, upperPath));
-        ["shadow-lower", "base-lower", "fiber-lower"].forEach((layer) => writeRopeLayer(boardId, side, layer, lowerPath));
+        const recoil = motion.cutRecoil[side] ?? 0;
+        const upperCut = { x: cut.x + (side === "left" ? -recoil * 0.35 : recoil * 0.35), y: cut.y - recoil };
+        const cutOffset = motion.cutOffsets[side];
+        const cutAngle = motion.cutAngles[side] ?? motion.angle;
+        const lowerOffset = cutOffset ? rotatePoint(cutOffset, motion.angle - cutAngle) : { x: 0, y: -24 };
+        const lowerStart = { x: end.x + lowerOffset.x, y: end.y + lowerOffset.y };
+        const upperPath = ropePath(anchor, upperCut, side === "left" ? 2 : -2);
+        const lowerPath = ropePath(lowerStart, end, side === "left" ? -2 : 2);
+        ["shadow-upper", "base-upper", "fiber-upper", "twist-upper"].forEach((layer) => writeRopeLayer(boardId, side, layer, upperPath));
+        ["shadow-lower", "base-lower", "fiber-lower", "twist-lower"].forEach((layer) => writeRopeLayer(boardId, side, layer, lowerPath));
         writeRopeLayer(boardId, side, "hit", "");
-        setCircle(`[data-rope-cut="${boardId}-${side}"]`, cut);
+        setCircle(`[data-rope-cut="${boardId}-${side}"]`, upperCut);
+        setRopePoint(`[data-rope-fray-upper="${boardId}-${side}"]`, upperCut);
+        setRopePoint(`[data-rope-fray-lower="${boardId}-${side}"]`, lowerStart);
       });
     });
-  }, [getPanelElement, ropePath, setCircle, writeRopeLayer]);
+  }, [getRopePoints, ropePath, setCircle, setRopePoint, writeRopeLayer]);
 
   const applyBoardTransform = useCallback((boardId: BoardId) => {
     const board = getBoardElement(boardId);
@@ -251,6 +296,13 @@ export default function HeroVisual() {
 
     BOARD_IDS.forEach((boardId) => {
       const motion = motionsRef.current[boardId];
+      ROPE_SIDES.forEach((side) => {
+        const isConnected = side === "left" ? motion.leftConnected : motion.rightConnected;
+        if (!isConnected && (motion.phase === "swinging" || motion.phase === "falling")) {
+          const recoil = motion.cutRecoil[side] ?? 0;
+          if (recoil < 7) motion.cutRecoil[side] = Math.min(7, recoil + delta * 34);
+        }
+      });
       if (motion.phase === "swinging") {
         const target = motion.pivot === "right" ? -0.19 : 0.19;
         const stiffness = reducedMotionRef.current ? 24 : 16;
@@ -308,6 +360,9 @@ export default function HeroVisual() {
           motion.leftConnected = true;
           motion.rightConnected = true;
           motion.cutPoints = {};
+          motion.cutOffsets = {};
+          motion.cutAngles = {};
+          motion.cutRecoil = {};
           motion.ropeProgress = 1;
           setSnapshot(boardId);
         } else {
@@ -334,14 +389,20 @@ export default function HeroVisual() {
     animationFrameRef.current = requestAnimationFrame((time) => frameRef.current?.(time));
   }, []);
 
-  const cutRope = useCallback((boardId: BoardId, side: RopeSide) => {
+  const cutRope = useCallback((boardId: BoardId, side: RopeSide, event?: ReactPointerEvent<SVGPathElement>) => {
     const motion = motionsRef.current[boardId];
     if (["falling", "settled", "retrieving", "attached", "returning"].includes(motion.phase)) return;
     const isConnected = side === "left" ? motion.leftConnected : motion.rightConnected;
     if (!isConnected) return;
 
-    const cutPoint = getCanvasPoint(boardId, side);
-    if (cutPoint) motion.cutPoints = { ...motion.cutPoints, [side]: cutPoint };
+    const points = getRopePoints(boardId, side);
+    if (!points) return;
+    const pointerPoint = event ? getPointerCanvasPoint(event) : null;
+    const cutPoint = projectPointToSegment(pointerPoint ?? points.end, points.anchor, points.end);
+    motion.cutPoints = { ...motion.cutPoints, [side]: cutPoint };
+    motion.cutOffsets = { ...motion.cutOffsets, [side]: { x: cutPoint.x - points.end.x, y: cutPoint.y - points.end.y } };
+    motion.cutAngles = { ...motion.cutAngles, [side]: motion.angle };
+    motion.cutRecoil = { ...motion.cutRecoil, [side]: 0 };
     if (side === "left") motion.leftConnected = false;
     else motion.rightConnected = false;
 
@@ -360,7 +421,7 @@ export default function HeroVisual() {
     setSnapshot(boardId);
     updateRopePaths();
     ensureAnimationFrame();
-  }, [ensureAnimationFrame, getCanvasPoint, getPageBottomDistance, setSnapshot, updateRopePaths]);
+  }, [ensureAnimationFrame, getPageBottomDistance, getPointerCanvasPoint, getRopePoints, setSnapshot, updateRopePaths]);
 
   const onRopeKeyDown = useCallback((event: ReactKeyboardEvent<SVGPathElement>, boardId: BoardId, side: RopeSide) => {
     if (event.key !== "Enter" && event.key !== " ") return;
@@ -398,8 +459,8 @@ export default function HeroVisual() {
 
   const renderRope = (boardId: BoardId, side: RopeSide) => (
     <g key={`${boardId}-${side}`} aria-label={`${boardId === "code" ? "Code panel" : "Design panel"} ${side} rope`}>
-      {["shadow", "base", "fiber"].map((styleName) => {
-        const className = styles[styleName === "shadow" ? "ropeShadow" : styleName === "base" ? "ropeBase" : "ropeFiber"];
+      {["shadow", "base", "fiber", "twist"].map((styleName) => {
+        const className = styles[styleName === "shadow" ? "ropeShadow" : styleName === "base" ? "ropeBase" : styleName === "fiber" ? "ropeFiber" : "ropeTwist"];
         return (
           <g key={styleName}>
             <path className={className} data-rope-path={`${boardId}-${side}-${styleName}-upper`} fill="none" />
@@ -407,6 +468,27 @@ export default function HeroVisual() {
           </g>
         );
       })}
+      <g className={styles.ropeFray} data-rope-fray-upper={`${boardId}-${side}`} opacity="0" aria-hidden="true">
+        <path d="M -2 -1 L -8 -6" />
+        <path d="M 0 -1 L 2 -8" />
+        <path d="M 2 1 L 8 -4" />
+        <path d="M -2 2 L -7 6" />
+      </g>
+      <g className={styles.ropeFray} data-rope-fray-lower={`${boardId}-${side}`} opacity="0" aria-hidden="true">
+        <path d="M -2 -1 L -8 -6" />
+        <path d="M 0 -1 L 2 -8" />
+        <path d="M 2 1 L 8 -4" />
+        <path d="M -2 2 L -7 6" />
+      </g>
+      <g className={styles.ropeAnchor} data-rope-anchor={`${boardId}-${side}`} opacity="0" aria-hidden="true">
+        <circle className={styles.ropeAnchorShadow} cx="0" cy="2" r="8" />
+        <circle className={styles.ropeAnchorRing} cx="0" cy="0" r="6" />
+        <circle className={styles.ropeAnchorCore} cx="0" cy="0" r="2.4" />
+      </g>
+      <g className={styles.ropeHook} data-rope-hook={`${boardId}-${side}`} opacity="0" aria-hidden="true">
+        <circle cx="0" cy="0" r="4.2" />
+        <path d="M 0 4 L 0 10" />
+      </g>
       <circle className={styles.ropeCutMarker} data-rope-cut={`${boardId}-${side}`} r="4" opacity="0" />
       <path
         className={styles.ropeHit}
@@ -416,7 +498,7 @@ export default function HeroVisual() {
         role="button"
         focusable="true"
         aria-label={`Cut ${side} rope on ${boardId === "code" ? "the code panel" : "the design panel"}`}
-        onPointerDown={() => cutRope(boardId, side)}
+        onPointerDown={(event) => cutRope(boardId, side, event)}
         onKeyDown={(event) => onRopeKeyDown(event, boardId, side)}
       />
     </g>
