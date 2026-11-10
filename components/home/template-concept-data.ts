@@ -500,6 +500,59 @@ function toggleSaved(homeId: string) {
       },
     ],
   },
+  {
+    projectId: "online-store",
+    slug: "online-store",
+    liveUrl: "/templates/online-store",
+    codeTabs: [
+      {
+        key: "react",
+        label: "React",
+        filename: "verra-store.tsx",
+        code: `export default function VerraStore() {
+  const [category, setCategory] = useState("All");
+  const [cart, setCart] = useState<CartLine[]>([]);
+
+  return (
+    <main data-project="online-store">
+      <ProjectNav brand="VERRA" links={navLinks} action={\`Bag (\${cart.length})\`} />
+      <Hero title="Made for the way you move." />
+      <ProductGrid category={category} onSelect={openProduct} />
+      <DemoCheckout cart={cart} onComplete={showConfirmation} />
+    </main>
+  );
+}`,
+      },
+      {
+        key: "css",
+        label: "CSS",
+        filename: "verra-store.module.css",
+        code: `.hero {
+  display: grid;
+  grid-template-columns: .86fr 1.14fr;
+  background: #e9e4dd;
+}
+
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}`,
+      },
+      {
+        key: "logic",
+        label: "Logic",
+        filename: "verra-checkout.ts",
+        code: `function addToBag(product, size, color, quantity) {
+  const key = [product.id, size, color].join("-");
+  setCart((current) => ({
+    ...current,
+    [key]: { product, size, color, quantity },
+  }));
+}`,
+      },
+    ],
+  },
 ] satisfies TemplateConceptDetail[];
 
 export const templateConceptDetails = details;

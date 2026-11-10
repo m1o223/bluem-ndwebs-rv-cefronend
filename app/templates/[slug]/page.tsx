@@ -6,6 +6,7 @@ import FurnitureProject from "../../../components/portfolio/furniture";
 import PhotographyProject from "../../../components/portfolio/photography";
 import RealEstateProject from "../../../components/portfolio/real-estate";
 import RestaurantProject from "../../../components/portfolio/restaurant";
+import OnlineStoreProject from "../../../components/portfolio/online-store";
 import { ProjectViewport } from "../../../components/portfolio/shared";
 import {
   templateConceptBySlug,
@@ -22,6 +23,7 @@ const projectComponents: Record<ProjectId, ComponentType> = {
   furniture: FurnitureProject,
   "real-estate": RealEstateProject,
   restaurant: RestaurantProject,
+  "online-store": OnlineStoreProject,
 };
 
 export function generateStaticParams() {

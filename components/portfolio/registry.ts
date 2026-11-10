@@ -77,6 +77,17 @@ export const projects = [
     ink: "#743d32",
     image: "pesto",
   },
+  {
+    id: "online-store",
+    brand: "VERRA",
+    category: "Online Store",
+    title: "Made for the way you move.",
+    description:
+      "A considered fashion store for everyday layers, confident colour and shoes that go further.",
+    color: "#eeeae4",
+    ink: "#252324",
+    image: "objects",
+  },
 ] as const;
 export type ProjectId = (typeof projects)[number]["id"];
 export const projectComponents = {
@@ -93,6 +104,9 @@ export const projectComponents = {
     loading: ProjectLoading,
   }),
   restaurant: dynamic(() => import("./restaurant"), {
+    loading: ProjectLoading,
+  }),
+  "online-store": dynamic(() => import("./online-store"), {
     loading: ProjectLoading,
   }),
 };

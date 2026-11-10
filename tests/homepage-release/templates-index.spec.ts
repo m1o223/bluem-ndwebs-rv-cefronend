@@ -12,13 +12,13 @@ for (const width of [390, 768, 1440]) {
     await link.click();
     await expect(page).toHaveURL(/\/templates$/);
     await expect(page.getByRole("heading", { name: "Website Concepts", level: 1 })).toBeVisible();
-    await expect(page.locator("[data-project-card]")).toHaveCount(7);
-    expect(await page.locator("[data-project-card]").evaluateAll(cards => cards.map(card => card.getAttribute("data-project-card")))).toEqual(["ecommerce", "ai-platform", "photography", "corporate", "furniture", "real-estate", "restaurant"]);
+    await expect(page.locator("[data-project-card]")).toHaveCount(8);
+    expect(await page.locator("[data-project-card]").evaluateAll(cards => cards.map(card => card.getAttribute("data-project-card")))).toEqual(["ecommerce", "ai-platform", "photography", "corporate", "furniture", "real-estate", "restaurant", "online-store"]);
     await page.evaluate(() => document.fonts.ready);
     await page.screenshot({ path: info.outputPath("templates.png") });
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
     expect((await page.reload())?.status()).toBe(200);
-    await expect(page.locator("[data-project-card]")).toHaveCount(7);
+    await expect(page.locator("[data-project-card]")).toHaveCount(8);
     await page.locator("header").getByRole("link", { name: "BlueMind Web Service home" }).click();
     await expect(page).toHaveURL(/\/$/);
     await expect(page.locator("[data-project-card]")).toHaveCount(0);
