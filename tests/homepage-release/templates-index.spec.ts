@@ -25,12 +25,12 @@ for (const width of [390, 768, 1440]) {
     await page.goto("/");
     await expect(page.locator("[data-payment-methods]")).toBeVisible();
     await expect(page.locator("#what-we-do-title")).toBeVisible();
-    await expect(page.locator('section[aria-labelledby="about-summary-title"]')).toBeVisible();
+    await expect(page.locator("[data-home-faq]")).toBeVisible();
     const paymentTop = (await page.locator("[data-payment-methods]").boundingBox())!.y;
     const whatWeDoTop = (await page.locator("#what-we-do-title").boundingBox())!.y;
-    const aboutTop = (await page.locator('section[aria-labelledby="about-summary-title"]').boundingBox())!.y;
+    const faqTop = (await page.locator("[data-home-faq]").boundingBox())!.y;
     expect(whatWeDoTop).toBeGreaterThan(paymentTop);
-    expect(aboutTop).toBeGreaterThan(whatWeDoTop);
+    expect(faqTop).toBeGreaterThan(whatWeDoTop);
     await expect(page.locator("#home-how-we-work, #home-meet-ai")).toHaveCount(0);
   });
 }
