@@ -2,16 +2,16 @@
 
 import Link from "next/link";
 import { Check, ChevronDown, Globe2, Menu, X } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BrandLockup } from "../brand-lockup";
 import { useLocalization, type Locale } from "../localization-provider";
 import styles from "./home.module.css";
 import TextActionLabel from "../text-action-label";
 
 const languageUi = {
-  en: { search: "Search languages", empty: "No matching languages", selected: "Selected language: ", languages: "Languages", openMenu: "Open menu", closeMenu: "Close menu", mainNavigation: "Main navigation" },
-  sv: { search: "Sök språk", empty: "Inga matchande språk", selected: "Valt språk: ", languages: "Språk", openMenu: "Öppna meny", closeMenu: "Stäng meny", mainNavigation: "Huvudnavigation" },
-  ar: { search: "ابحث عن لغة", empty: "لا توجد لغات مطابقة", selected: "اللغة المختارة: ", languages: "اللغات", openMenu: "فتح القائمة", closeMenu: "إغلاق القائمة", mainNavigation: "التنقل الرئيسي" },
+  en: { selected: "Selected language: ", languages: "Languages", openMenu: "Open menu", closeMenu: "Close menu", mainNavigation: "Main navigation" },
+  sv: { selected: "Valt språk: ", languages: "Språk", openMenu: "Öppna meny", closeMenu: "Stäng meny", mainNavigation: "Huvudnavigation" },
+  ar: { selected: "اللغة المختارة: ", languages: "اللغات", openMenu: "فتح القائمة", closeMenu: "إغلاق القائمة", mainNavigation: "التنقل الرئيسي" },
 } as const;
 
 const links = [["/", "Home"], ["/about", "About Us"], ["/services", "Services"], ["/templates", "Website Concepts"], ["/how-we-work", "How We Work"], ["/care", "Website Care"], ["/contact", "Contact"]];
@@ -20,18 +20,12 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
   const { locale, languages, setLocale } = useLocalization();
   const [expanded, setExpanded] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
-  const [languageQuery, setLanguageQuery] = useState("");
   const [scrolled, setScrolled] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   const languageToggleRef = useRef<HTMLButtonElement>(null);
   const languageRef = useRef<HTMLDivElement>(null);
   const selectedLanguage = languages.find((language) => language.code === locale) ?? languages[0];
-  const visibleLanguages = useMemo(() => {
-    const query = languageQuery.trim().toLocaleLowerCase();
-    if (!query) return languages;
-    return languages.filter((language) => [language.label, language.nativeName, language.short].some((value) => value.toLocaleLowerCase().includes(query)));
-  }, [languageQuery, languages]);
   const languageText = languageUi[locale];
   const textEffects = activePath === "/";
 
@@ -127,25 +121,8 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
               else return;
               event.preventDefault();
               buttons[next]?.focus();
-            }} onBlur={(event) => { if (!languageRef.current?.contains(event.relatedTarget)) setLanguageOpen(false); }}>
-              <label className={styles.languageSearchLabel} htmlFor="language-search">{languageText.search}</label>
-              <input
-                id="language-search"
-                className={styles.languageSearch}
-                type="search"
-                value={languageQuery}
-                placeholder={languageText.search}
-                aria-label={languageText.search}
-                onChange={(event) => setLanguageQuery(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Escape") {
-                    event.preventDefault();
-                    setLanguageOpen(false);
-                    languageToggleRef.current?.focus();
-                  }
-                }}
-              />
-              {visibleLanguages.map((language) => (
+            }}>
+              {languages.map((language) => (
                 <button
                   key={language.code}
                   type="button"
@@ -162,7 +139,6 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
                   {locale === language.code ? <Check size={15} aria-hidden="true" /> : <small>{language.short}</small>}
                 </button>
               ))}
-              {!visibleLanguages.length && <p className={styles.languageEmpty}>{languageText.empty}</p>}
             </div>
           </div>
           <button ref={toggleRef} className={styles.menuToggle} type="button" aria-label={expanded ? languageText.closeMenu : languageText.openMenu} aria-expanded={expanded} aria-controls="home-navigation" data-expanded={expanded} onClick={() => { setExpanded((open) => !open); setLanguageOpen(false); }}>
