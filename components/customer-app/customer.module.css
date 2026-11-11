@@ -2,10 +2,24 @@
 .header { position: sticky; top: 12px; z-index: 30; width: min(calc(100% - 48px), 1180px); min-height: 72px; box-sizing: border-box; margin: 12px auto 0; padding-inline: 24px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border: 1px solid rgba(186, 198, 212, .82); border-radius: 999px; background: rgba(255, 255, 255, .86); box-shadow: 0 16px 40px rgba(20, 45, 78, .12), 0 2px 8px rgba(20, 45, 78, .05); -webkit-backdrop-filter: blur(18px) saturate(1.15); backdrop-filter: blur(18px) saturate(1.15); }
 .header a { text-decoration: none; color: inherit; }
 .brand { gap: 6px; }
+.brandText { transform: translateY(3px); }
+.customerService { display: block; }
 .logo { --logo-size: 62px; }
+.headerActions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; min-width: 0; }
 .desktopNav { display: flex; align-items: center; justify-content: flex-end; gap: 6px; min-width: 0; }
 .desktopNav a { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 15px; border: 1px solid transparent; border-radius: 999px; color: #4b5563; font-size: 13px; font-weight: 500; white-space: nowrap; }
 .desktopNav a[aria-current="page"] { color: var(--bluemind-blue); background: #edf3fa; border-color: rgba(20, 45, 78, .12); font-weight: 600; }
+.languageSelector { position: relative; display: inline-flex; align-items: center; flex: 0 0 auto; }
+.languageButton { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; padding: 8px 11px; border: 1px solid #dce3eb; border-radius: 999px; background: rgba(255, 255, 255, .74); color: #142d4e; font: inherit; font-size: 12px; font-weight: 600; letter-spacing: .02em; cursor: pointer; }
+.languageButton svg:first-child { color: #3679b3; }
+.languageButton svg:last-child { color: #7b8795; }
+.languageMenu { position: absolute; inset-inline-end: 0; top: calc(100% + 10px); z-index: 35; display: none; min-width: 168px; gap: 4px; padding: 8px; border: 1px solid #dfe5ed; border-radius: 16px; background: #fff; box-shadow: 0 18px 44px #1118271f; pointer-events: none; }
+.languageMenu[data-open="true"] { display: grid; pointer-events: auto; }
+.app[dir="rtl"] .languageMenu { inset-inline-end: auto; inset-inline-start: 0; }
+.languageMenu button { width: 100%; min-height: 40px; display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 9px 10px; border: 0; border-radius: 999px; background: transparent; color: #142d4e; font: inherit; font-size: 12px; cursor: pointer; text-align: start; }
+.languageMenu button[data-selected="true"] { background: #edf3fa; color: #3679b3; font-weight: 600; }
+.languageMenu small { color: #87909d; font-size: 10px; font-weight: 700; letter-spacing: .8px; }
+.languageMenu button[data-selected="true"] small { color: #3679b3; }
 .main { position: relative; isolation: isolate; width: min(100%, 1100px); margin-inline: auto; padding: 36px; overflow-wrap: anywhere; }
 .main h1 { margin: 0; font-size: 24px; font-weight: 500; letter-spacing: 0; }
 .error { font-size: 13px; line-height: 1.6; }
@@ -124,7 +138,10 @@
 @media (max-width: 1023px), (hover: none) and (pointer: coarse) {
   .header { width: calc(100% - 32px); min-height: 70px; margin-top: 10px; padding-inline: 16px; }
   .desktopNav { display: none; }
+  .headerActions { gap: 0; }
+  .languageButton { min-width: 64px; }
+  .brandText { transform: translateY(2px); }
 }
 @media (max-width: 760px) { .messagesPage { padding-top: 8px; } .messageWorkspace { min-height: calc(100dvh - 190px); border-radius: 16px; } .messageList { min-height: calc(100dvh - 190px); } .messageListHeading { padding-inline: 18px; } .messageHint { padding-inline: 18px; } .thread { grid-template-columns: 42px minmax(0, 1fr) auto; gap: 11px; padding-inline: 16px; } .threadAvatar { width: 40px; height: 40px; } .threadPreview { max-width: 52vw; } .conversation { min-height: calc(100dvh - 190px); } .conversationHeader { padding-inline: 16px; } .backToMessages { padding-inline: 11px; font-size: 12px; } .conversationMessages { padding: 18px 16px; } .demoMessage { max-width: 90%; } .demoComposer { padding: 14px 16px calc(18px + env(safe-area-inset-bottom)); } .messageNotice { margin-inline: 16px; } .voiceAction { margin-inline-start: 0; } }
 @media (max-width: 780px) { .steps { grid-template-columns: 1fr; } .details { grid-template-columns: repeat(2,minmax(0,1fr)); } }
-@media (max-width: 620px) { .formGrid { grid-template-columns: 1fr; } .profileHeading { align-items: flex-start; } .header { gap: 4px; } .brand { gap: 2px; } .logo { --logo-size: 46px; } .steps small { max-width: 90px; } .main { padding: 28px 20px calc(124px + env(safe-area-inset-bottom)); } }
+@media (max-width: 620px) { .formGrid { grid-template-columns: 1fr; } .profileHeading { align-items: flex-start; } .header { gap: 4px; } .brand { gap: 2px; } .logo { --logo-size: 46px; } .languageButton { min-width: 58px; padding-inline: 9px; } .steps small { max-width: 90px; } .main { padding: 28px 20px calc(124px + env(safe-area-inset-bottom)); } }

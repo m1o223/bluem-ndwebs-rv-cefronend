@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { Home, Sparkles, MessageCircle, Settings } from "lucide-react";
+import { Check, ChevronDown, Globe2, Home, Sparkles, MessageCircle, Settings } from "lucide-react";
 import Image from "next/image";
 import { BrandLockup } from "../brand-lockup";
-import { useLocalization } from "../localization-provider";
+import { useLocalization, type Locale } from "../localization-provider";
 import { type Customer, type CustomerPage } from "../../app/lib/customer/routes";
 import { customerCopy } from "./copy";
 import styles from "./customer.module.css";
@@ -18,8 +18,13 @@ const demoOverview: Overview = {
   project: null,
   notifications: [],
 };
+const languageUi = {
+  en: { selected: "Selected language: ", languages: "Languages" },
+  sv: { selected: "Valt språk: ", languages: "Språk" },
+  ar: { selected: "اللغة المختارة: ", languages: "اللغات" },
+} as const;
 export default function CustomerShell({ user, page }: { user: Customer; page: CustomerPage }) {
-  const { locale } = useLocalization();
+  const { locale, languages, setLocale } = useLocalization();
   const text = customerCopy[locale];
   const pending = useRef(false);
   const [busy, setBusy] = useState(false);
@@ -32,6 +37,35 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
   const [loadError, setLoadError] = useState(false);
   const [reload, setReload] = useState(0);
   const workspaceText = workspaceCopy[locale];
+  const [languageOpen, setLanguageOpen] = useState(false);
+  const languageToggleRef = useRef<HTMLButtonElement>(null);
+  const languageRef = useRef<HTMLDivElement>(null);
+  const selectedLanguage = languages.find((language) => language.code === locale) ?? languages[0];
+  const languageText = languageUi[locale];
+
+  useEffect(() => {
+    setLanguageOpen(false);
+  }, [page]);
+
+  useEffect(() => {
+    if (!languageOpen) return;
+    languageRef.current?.querySelector<HTMLButtonElement>('[aria-checked="true"]')?.focus();
+    const closeOutside = (event: MouseEvent) => {
+      if (languageRef.current?.contains(event.target as Node)) return;
+      setLanguageOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setLanguageOpen(false);
+      languageToggleRef.current?.focus();
+    };
+    document.addEventListener("mousedown", closeOutside);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("mousedown", closeOutside);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [languageOpen]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -104,13 +138,75 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
   const messagesLabel = locale === "sv" ? "Meddelanden" : locale === "ar" ? "\u0627\u0644\u0631\u0633\u0627\u0626\u0644" : "Messages";
   return <div ref={shell} className={styles.app} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate>
     <header className={styles.header}>
-      <Link href="/dashboard" aria-label="BlueMind"><BrandLockup solidLogo className={styles.brand} logoClassName={styles.logo} /></Link>
-      <nav className={styles.desktopNav} aria-label="Account navigation">
-        <Link href="/dashboard" aria-current={page === "home" ? "page" : undefined}><Home size={18} aria-hidden="true" /><TextActionLabel underline={false}>{text.home}</TextActionLabel></Link>
-        <Link href="/blue-mind-ai" aria-current={page === "ai" ? "page" : undefined}><Sparkles size={18} aria-hidden="true" /><TextActionLabel underline={false}>{text.ai}</TextActionLabel></Link>
-        <Link href="/notifications" aria-current={page === "notifications" ? "page" : undefined}><MessageCircle size={18} aria-hidden="true" /><TextActionLabel underline={false}>{messagesLabel}</TextActionLabel></Link>
-        <Link href="/account" aria-current={page === "account" ? "page" : undefined}><Settings size={18} aria-hidden="true" /><TextActionLabel underline={false}>{accountLabel}</TextActionLabel></Link>
-      </nav>
+      <Link href="/dashboard" aria-label="BlueMind"><BrandLockup serviceName="WEB SERVICE" solidLogo className={styles.brand} textClassName={styles.brandText} serviceClassName={styles.customerService} logoClassName={styles.logo} /></Link>
+      <div className={styles.headerActions}>
+        <nav className={styles.desktopNav} aria-label="Account navigation">
+          <Link href="/dashboard" aria-current={page === "home" ? "page" : undefined}><Home size={18} aria-hidden="true" /><TextActionLabel underline={false}>{text.home}</TextActionLabel></Link>
+          <Link href="/blue-mind-ai" aria-current={page === "ai" ? "page" : undefined}><Sparkles size={18} aria-hidden="true" /><TextActionLabel underline={false}>{text.ai}</TextActionLabel></Link>
+          <Link href="/notifications" aria-current={page === "notifications" ? "page" : undefined}><MessageCircle size={18} aria-hidden="true" /><TextActionLabel underline={false}>{messagesLabel}</TextActionLabel></Link>
+          <Link href="/account" aria-current={page === "account" ? "page" : undefined}><Settings size={18} aria-hidden="true" /><TextActionLabel underline={false}>{accountLabel}</TextActionLabel></Link>
+        </nav>
+        <div className={styles.languageSelector} ref={languageRef}>
+          <button
+            ref={languageToggleRef}
+            className={styles.languageButton}
+            type="button"
+            aria-label={`${languageText.selected}${selectedLanguage.nativeName}`}
+            aria-haspopup="menu"
+            aria-controls="customer-languages"
+            aria-expanded={languageOpen}
+            onClick={() => setLanguageOpen(open => !open)}
+            onKeyDown={(event) => {
+              if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+                event.preventDefault();
+                setLanguageOpen(true);
+              }
+            }}
+          >
+            <Globe2 aria-hidden="true" size={18} strokeWidth={1.7} />
+            <span>{selectedLanguage.short}</span>
+            <ChevronDown aria-hidden="true" size={12} />
+          </button>
+          <div
+            id="customer-languages"
+            className={styles.languageMenu}
+            role="menu"
+            aria-label={languageText.languages}
+            data-open={languageOpen}
+            inert={!languageOpen}
+            onKeyDown={(event) => {
+              const buttons = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>("button"));
+              const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
+              let next: number;
+              if (event.key === "ArrowDown") next = (index + 1) % buttons.length;
+              else if (event.key === "ArrowUp") next = (index + buttons.length - 1) % buttons.length;
+              else if (event.key === "Home") next = 0;
+              else if (event.key === "End") next = buttons.length - 1;
+              else return;
+              event.preventDefault();
+              buttons[next]?.focus();
+            }}
+          >
+            {languages.map(language => (
+              <button
+                key={language.code}
+                type="button"
+                role="menuitemradio"
+                aria-checked={locale === language.code}
+                data-selected={locale === language.code}
+                onClick={() => {
+                  setLocale(language.code as Locale);
+                  setLanguageOpen(false);
+                  languageToggleRef.current?.focus();
+                }}
+              >
+                <span>{language.nativeName}</span>
+                {locale === language.code ? <Check size={15} aria-hidden="true" /> : <small>{language.short}</small>}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
     </header>
     <main className={styles.main}>
       <Image className={styles.watermark} src="/images/brand/bluemind-original-logo-transparent.png" width={1065} height={1212} alt="" aria-hidden="true" />
