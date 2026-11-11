@@ -547,7 +547,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
         {accountFullScreen ? <>
           <Link href="/dashboard" className={styles.accountBrand} aria-label="BlueMind AI">
             <BlueMindLogo className={styles.accountBrandLogo} solid aria-hidden="true" />
-            <span>BlueMind AI</span>
+            <span>BlueMind</span>
           </Link>
           <div className={styles.accountTopActions}>
             <button className={`${styles.iconControl} ${styles.accountHistoryButton}`} type="button" aria-label={copy.conversations} title={copy.conversations} aria-expanded={drawerOpen} aria-controls="ai-chat-history" onClick={openDrawer}>
