@@ -136,6 +136,7 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
   if (!verified) return <div className={styles.checking} role="status" aria-label={text.session} />;
   const pageTitle = page === "notifications" ? workspaceText.notifications : text[page];
   const isAi = page === "ai";
+  const isHome = page === "home";
   const accountLabel = text.account.split(" /")[0];
   const messagesLabel = locale === "sv" ? "Meddelanden" : locale === "ar" ? "\u0627\u0644\u0631\u0633\u0627\u0626\u0644" : "Messages";
   return <div ref={shell} className={styles.app} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate>
@@ -212,7 +213,7 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
     </header>
     <main className={`${styles.main} ${isAi ? styles.aiMain : ""}`}>
       {!isAi && <Image className={styles.watermark} src="/images/brand/bluemind-original-logo-transparent.png" width={1065} height={1212} alt="" aria-hidden="true" />}
-      {!isAi && <h1>{pageTitle}</h1>}
+      {!isAi && !isHome && <h1>{pageTitle}</h1>}
       {isAi ? <ChatWorkspace available account /> : page !== "notifications" && loadError ? <div role="alert"><p>{workspaceText.loadError}</p><button className={styles.secondary} onClick={() => setReload(value => value + 1)}><TextActionLabel underline={false}>{workspaceText.retry}</TextActionLabel></button></div> : page !== "notifications" && !overview ? <p role="status">{workspaceText.loading}</p> : <WorkspaceContent key={page} page={page} overview={overview || demoOverview} user={user} locale={locale} signOut={() => void signOut()} signingOut={busy} />}
       {notice && <p className={styles.error} role="alert">{text.error}</p>}
     </main>

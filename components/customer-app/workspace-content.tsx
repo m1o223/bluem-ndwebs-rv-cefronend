@@ -21,7 +21,11 @@ function Empty({ children, icon = "project" }: { children: ReactNode; icon?: "pr
   const Icon = icon === "ai" ? Sparkles : Folder;
   return <div className={styles.empty}><Icon size={28} strokeWidth={1.5} aria-hidden="true" /><p>{children}</p></div>;
 }
-function dateLabel(value: string | null, locale: Locale, fallback: string) { return value ? new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(value)) : fallback; }
+function dateLabel(value: string | null, locale: Locale, fallback: string) {
+  if (!value) return fallback;
+  const parsed = new Date(value);
+  return Number.isFinite(parsed.getTime()) ? new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(parsed) : fallback;
+}
 function ProjectProgress({ project, locale }: { project: Project; locale: Locale }) {
   const t = workspaceCopy[locale];
   return <>
@@ -33,14 +37,83 @@ function ProjectProgress({ project, locale }: { project: Project; locale: Locale
     })}</ol>
   </>;
 }
+function projectMoney(project: Project, amount: number | null, locale: Locale, fallback: string) {
+  if (amount === null || !project.currency) return fallback;
+  try {
+    const format = new Intl.NumberFormat(locale, { style: "currency", currency: project.currency });
+    return format.format(amount / 10 ** (format.resolvedOptions().maximumFractionDigits ?? 2));
+  } catch { return fallback; }
+}
+function ProjectPreview({ project, t }: { project: Project; t: WorkspaceCopy }) {
+  if (!project.previewUrl && !project.previewImageUrl) return null;
+  return <div className={styles.projectPreview}>
+    <p className={styles.eyebrow}>{t.projectPreview}</p>
+    {project.previewImageUrl ? <img src={project.previewImageUrl} alt={`${project.name || t.current} ${t.projectPreview}`} /> : <iframe title={`${project.name || t.current} ${t.projectPreview}`} src={project.previewUrl || "about:blank"} loading="lazy" referrerPolicy="no-referrer" />}
+    {project.previewUrl && <a href={project.previewUrl} target="_blank" rel="noreferrer" className={styles.previewLink}>{t.viewPreview}<ArrowRight size={16} aria-hidden="true" /></a>}
+  </div>;
+}
+function HomeProjectCard({ project, overview, locale }: { project: Project; overview: Overview; locale: Locale }) {
+  const t = workspaceCopy[locale];
+  const description = (project.idea || project.description).trim();
+  const isLongDescription = description.length > 260;
+  const summary = isLongDescription ? `${description.slice(0, 260).trimEnd()}…` : description;
+  const detailRows: [string, ReactNode][] = [
+    [t.order, project.orderNumber || t.notProvided],
+    project.createdAt ? [t.created, dateLabel(project.createdAt, locale, t.notProvided)] : [t.start, dateLabel(project.startedAt, locale, t.notProvided)],
+    [t.expectedDuration, project.expectedDuration || t.notProvided],
+    [t.deliveryDate, dateLabel(project.expectedDeliveryDate || null, locale, t.notProvided)],
+    [t.type, project.type || t.notProvided],
+    ...(overview.profile.customerType ? [[t.customerType, t[overview.profile.customerType]] as [string, ReactNode]] : []),
+    ...(overview.profile.customerType === "company" && overview.profile.companyName ? [[t.companyName, overview.profile.companyName] as [string, ReactNode]] : []),
+    ...(project.packageName ? [[t.packageName, project.packageName] as [string, ReactNode]] : []),
+    ...(project.services?.length ? [[t.services, project.services.join(", ")] as [string, ReactNode]] : []),
+  ];
+  const paymentRows: [string, ReactNode][] = [
+    [t.total, projectMoney(project, project.totalMinor, locale, t.notProvided)],
+    [t.paid, projectMoney(project, project.paidMinor, locale, t.notProvided)],
+    ...(project.remainingMinor !== null ? [[t.balance, projectMoney(project, project.remainingMinor, locale, t.notProvided)] as [string, ReactNode]] : []),
+    ...(project.paymentStatus ? [[t.paymentStatus, project.paymentStatus] as [string, ReactNode]] : []),
+    ...(project.paymentMethod ? [[t.paymentMethod, project.paymentMethod] as [string, ReactNode]] : []),
+  ];
+  return <section className={`${styles.section} ${styles.projectCard}`}>
+    <div className={styles.projectCardHeader}>
+      <div><p className={styles.eyebrow}>{t.current}</p><h2>{project.name || t.current}</h2>{project.type && <p className={styles.projectType}>{project.type}</p>}</div>
+      <span className={styles.projectStatus}>{project.status || t.notProvided}</span>
+    </div>
+    <div className={`${styles.projectCardGrid} ${!project.previewUrl && !project.previewImageUrl ? styles.projectCardGridSingle : ""}`}>
+      <ProjectPreview project={project} t={t} />
+      <div className={styles.projectStage}>
+        <div className={styles.stageSummary}><span>{t.status}</span><strong>{project.status || t.notProvided}</strong><span>{t.updated}: {dateLabel(project.updatedAt, locale, t.noUpdates)}</span></div>
+        <ProjectProgress project={project} locale={locale} />
+      </div>
+    </div>
+    <div className={styles.projectInfoGrid}>
+      <section className={styles.projectInfoGroup}><h3>{t.orderDetails}</h3><dl className={styles.details}>{detailRows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></section>
+      <section className={styles.projectInfoGroup}><h3>{t.payment}</h3><dl className={styles.details}>{paymentRows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>{project.invoiceUrl && <div className={styles.invoiceActions}><a href={project.invoiceUrl} target="_blank" rel="noreferrer">{t.invoice}</a><a href={project.invoiceUrl} download>{t.downloadInvoice}</a></div>}</section>
+    </div>
+    {description && <section className={styles.projectDescription}><h3>{t.ideaLabel}</h3>{isLongDescription ? <details><summary>{t.viewDetails}</summary><p>{description}</p></details> : <p>{summary}</p>}</section>}
+    {(project.requirements?.length || project.attachments?.length) ? <div className={styles.projectExtras}>
+      {project.requirements?.length ? <section className={styles.projectInfoGroup}><h3>{t.requirements}</h3><ul>{project.requirements.map(requirement => <li key={requirement}>{requirement}</li>)}</ul></section> : null}
+      {project.attachments?.length ? <section className={styles.projectInfoGroup}><h3>{t.attachments}</h3><ul>{project.attachments.map(attachment => <li key={attachment.name}>{attachment.url ? <a href={attachment.url} target="_blank" rel="noreferrer">{attachment.name}</a> : attachment.name}</li>)}</ul></section> : null}
+    </div> : null}
+    {project.actionRequired && <aside className={styles.clientAction}><div><p className={styles.eyebrow}>{t.actionRequired}</p><p>{project.actionRequired}</p></div><Link href={project.actionUrl || "/my-project"}>{t.openAction}<ArrowRight size={16} aria-hidden="true" /></Link></aside>}
+    <div className={styles.actions}><Link href="/my-project"><Folder size={17} /><TextActionLabel underline={false}>{t.view}</TextActionLabel></Link>{project.previewUrl && <a href={project.previewUrl} target="_blank" rel="noreferrer"><ArrowRight size={17} /><TextActionLabel underline={false}>{t.viewPreview}</TextActionLabel></a>}<Link href="/dashboard/contact"><MessageCircle size={17} /><TextActionLabel underline={false}>{t.contactTeam}</TextActionLabel></Link></div>
+  </section>;
+}
+function ProjectDashboard({ overview, locale }: { overview: Overview; locale: Locale }) {
+  const t = workspaceCopy[locale];
+  const projects = overview.projects?.length ? overview.projects : overview.project ? [overview.project] : [];
+  const name = overview.profile.fullName.trim();
+  return <div className={styles.homeDashboard}>
+    <p className={styles.homeEyebrow}>{t.home}</p>
+    <h1 className={styles.welcomeTitle}>{t.welcome}{name ? `, ${name}` : ""}</h1>
+    {projects.length ? <div className={styles.homeProjects}>{projects.map((project, index) => <HomeProjectCard key={project.id || project.orderNumber || `${project.name}-${index}`} project={project} overview={overview} locale={locale} />)}</div> : <section className={`${styles.section} ${styles.emptyProject}`}><p className={styles.eyebrow}>{t.current}</p><Empty>{t.noProject}</Empty><Link className={styles.primary} href="/blue-mind-ai"><Sparkles size={17} /><TextActionLabel light underline={false}>{t.startProject}</TextActionLabel></Link></section>}
+  </div>;
+}
 function ProjectContent({ overview, locale, home }: { overview: Overview; locale: Locale; home: boolean }) {
   const t = workspaceCopy[locale];
   const project = overview.project;
   if (!project) return <section className={styles.section}><h2>{t.current}</h2><Empty>{t.noProject}</Empty><Link className={styles.textLink} href={home ? "/my-project" : "/dashboard/contact"}><TextActionLabel>{home ? t.view : t.contactTeam}</TextActionLabel><ArrowRight size={17} aria-hidden="true" /></Link></section>;
-  function money(amount: number | null) {
-    if (amount === null || !project?.currency) return t.notProvided;
-    try { const format = new Intl.NumberFormat(locale, { style: "currency", currency: project.currency }); return format.format(amount / 10 ** (format.resolvedOptions().maximumFractionDigits ?? 2)); } catch { return t.notProvided; }
-  }
   return <>
     <section className={styles.section}>
       <div className={styles.sectionHeading}><h2>{project.name || t.current}</h2><span className={styles.muted}>{project.status || t.notProvided}</span></div>
@@ -50,7 +123,7 @@ function ProjectContent({ overview, locale, home }: { overview: Overview; locale
           [t.type, project.type], [t.order, project.orderNumber], [t.start, dateLabel(project.startedAt, locale, t.notProvided)],
           ...(overview.profile.customerType ? [[t.customerType, t[overview.profile.customerType]]] : []),
           ...(overview.profile.customerType === "company" && overview.profile.companyName ? [[t.companyName, overview.profile.companyName]] : []),
-          [t.total, money(project.totalMinor)], [t.paid, money(project.paidMinor)], ...(project.remainingMinor !== null ? [[t.balance, money(project.remainingMinor)]] : []),
+          [t.total, projectMoney(project, project.totalMinor, locale, t.notProvided)], [t.paid, projectMoney(project, project.paidMinor, locale, t.notProvided)], ...(project.remainingMinor !== null ? [[t.balance, projectMoney(project, project.remainingMinor, locale, t.notProvided)]] : []),
         ].map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value || t.notProvided}</dd></div>)}</dl>
       </>}
       <ProjectProgress project={project} locale={locale} />
@@ -125,7 +198,7 @@ function Contact({ overview, user, locale }: { overview: Overview; user: Custome
 export default function WorkspaceContent({ page, overview, user, locale, signOut, signingOut }: { page: CustomerPage; overview: Overview; user: Customer; locale: Locale; signOut: () => void; signingOut: boolean }) {
   const t = workspaceCopy[locale];
   if (page === "notifications") return <NotificationsMessages locale={locale} />;
-  if (page === "home") return <><p className={styles.welcome}>{t.welcome}{overview.profile.fullName ? `, ${overview.profile.fullName}` : ""}</p><ProjectContent overview={overview} locale={locale} home /></>;
+  if (page === "home") return <ProjectDashboard overview={overview} locale={locale} />;
   if (page === "project") return <ProjectContent overview={overview} locale={locale} home={false} />;
   if (page === "contact") return <Contact overview={overview} user={user} locale={locale} />;
   if (page === "account") return <Account overview={overview} user={user} locale={locale} signOut={signOut} signingOut={signingOut} />;
