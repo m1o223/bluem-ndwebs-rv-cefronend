@@ -20,6 +20,11 @@
 .languageMenu button[data-selected="true"] { background: #edf3fa; color: #3679b3; font-weight: 600; }
 .languageMenu small { color: #87909d; font-size: 10px; font-weight: 700; letter-spacing: .8px; }
 .languageMenu button[data-selected="true"] small { color: #3679b3; }
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .headerActions { flex: 1 1 auto; margin-inline-start: clamp(36px, 7vw, 112px); }
+  .desktopNav { flex: 1 1 auto; justify-content: space-between; gap: clamp(8px, 1.5vw, 24px); }
+  .languageSelector { margin-inline-start: clamp(12px, 2vw, 28px); }
+}
 .main { position: relative; isolation: isolate; width: min(100%, 1100px); margin-inline: auto; padding: 36px; overflow-wrap: anywhere; }
 .main h1 { margin: 0; font-size: 24px; font-weight: 500; letter-spacing: 0; }
 .error { font-size: 13px; line-height: 1.6; }
