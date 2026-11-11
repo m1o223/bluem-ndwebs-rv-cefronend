@@ -143,15 +143,14 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
     </div>
   </div>;
   const accountLabel = text.account.split(" /")[0];
-  const messagesLabel = locale === "sv" ? "Meddelanden" : locale === "ar" ? "\u0627\u0644\u0631\u0633\u0627\u0626\u0644" : "Messages";
   return <div ref={shell} className={styles.app} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate>
     <header className={styles.header} data-account-header="true">
       <Link href="/dashboard" aria-label="BlueMind"><BrandLockup serviceName="WEB SERVICE" solidLogo className={styles.brand} textClassName={styles.brandText} serviceClassName={styles.customerService} logoClassName={styles.logo} /></Link>
       <div className={styles.headerActions}>
-        <nav className={styles.desktopNav} aria-label="Account navigation">
+        <nav className={styles.desktopNav} aria-label={text.accountNavigation}>
           <Link href="/dashboard" aria-current={page === "home" ? "page" : undefined}><Home size={18} aria-hidden="true" /><TextActionLabel underline={false}>{text.home}</TextActionLabel></Link>
           <Link href="/blue-mind-ai"><Sparkles size={18} aria-hidden="true" /><TextActionLabel underline={false}>{text.ai}</TextActionLabel></Link>
-          <Link href="/notifications" aria-current={page === "notifications" ? "page" : undefined}><MessageCircle size={18} aria-hidden="true" /><TextActionLabel underline={false}>{messagesLabel}</TextActionLabel></Link>
+          <Link href="/notifications" aria-current={page === "notifications" ? "page" : undefined}><MessageCircle size={18} aria-hidden="true" /><TextActionLabel underline={false}>{text.messages}</TextActionLabel></Link>
           <Link href="/account" aria-current={page === "account" ? "page" : undefined}><Settings size={18} aria-hidden="true" /><TextActionLabel underline={false}>{accountLabel}</TextActionLabel></Link>
         </nav>
         <div className={styles.languageSelector} ref={languageRef}>

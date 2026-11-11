@@ -24,6 +24,16 @@
 .accountDrawerBrand { display: flex; min-width: 0; align-items: center; gap: 9px; color: #142d4e; }
 .accountDrawerBrand h2 { margin: 0; overflow: hidden; font-size: 18px; font-weight: 650; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
 .accountDrawerLogo { --logo-size: 34px; flex: 0 0 auto; }
+.accountDrawerActions { display: flex; align-items: center; gap: 6px; margin-inline-start: auto; }
+.accountLanguage { position: relative; }
+.accountLanguageButton { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-width: 58px; height: 38px; padding: 0 9px; border: 1px solid #dce3eb; border-radius: 999px; background: #fff; color: #142d4e; font: inherit; font-size: 11px; font-weight: 650; letter-spacing: .03em; cursor: pointer; }
+.accountLanguageButton svg:first-child { color: #3679b3; }
+.accountLanguageButton svg:last-child { color: #7b8795; }
+.accountLanguageMenu { position: absolute; inset-inline-end: 0; top: calc(100% + 8px); z-index: 4; display: none; min-width: 154px; padding: 6px; border: 1px solid #dfe5ed; border-radius: 14px; background: #fff; box-shadow: 0 14px 32px #142d4e1c; }
+.accountLanguageMenu[data-open="true"] { display: grid; gap: 3px; }
+.accountLanguageMenu button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 36px; padding: 8px 10px; border: 0; border-radius: 999px; background: transparent; color: #142d4e; font: inherit; font-size: 12px; text-align: start; cursor: pointer; }
+.accountLanguageMenu button[data-selected="true"] { background: #edf3fa; color: #3679b3; font-weight: 650; }
+.accountLanguageMenu button:focus-visible, .accountLanguageButton:focus-visible { outline: 2px solid #142d4e; outline-offset: 2px; }
 @media (min-width: 768px) {
   .accountFullScreen:has(.drawer[data-open="true"]) .main,
   .accountFullScreen:has(.drawer[data-closing="true"]) .main {
@@ -163,6 +173,7 @@
   .accountFullScreen .content { padding-top: 0; }
   .accountFullScreen .composerArea { padding: 12px max(12px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
   .accountFullScreen .drawer { width: min(300px, calc(100vw - 48px)); }
+  .accountLanguageMenu { inset-inline-end: 0; }
   .accountMenuButton { width: 38px !important; height: 38px !important; flex-basis: 38px !important; }
   .accountFullScreen .accountHistoryButton, .accountFullScreen .accountBack { width: 40px; height: 40px; min-height: 40px; padding: 0; justify-content: center; }
   .accountFullScreen .accountHistoryButton span, .accountFullScreen .accountBack span { display: none; }

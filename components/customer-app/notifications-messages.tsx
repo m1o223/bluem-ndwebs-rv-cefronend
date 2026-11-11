@@ -68,6 +68,7 @@ export default function NotificationsMessages({ locale }: { locale: Locale }) {
   const [sending, setSending] = useState(false);
   const composerRef = useRef<HTMLTextAreaElement>(null);
   const messagesRef = useRef<HTMLDivElement>(null);
+  const loadedOnce = useRef(false);
   const latest = useMemo(() => messages.at(-1) || null, [messages]);
   const unread = useMemo(() => messages.filter(message => message.sender === "team" && !message.read).length, [messages]);
 
@@ -112,11 +113,14 @@ export default function NotificationsMessages({ locale }: { locale: Locale }) {
   useEffect(() => {
     const controller = new AbortController();
     setSelected(new URL(window.location.href).searchParams.get("conversation") === "team");
-    setDraft("");
+    if (!loadedOnce.current) {
+      setDraft("");
+      loadedOnce.current = true;
+    }
     setSendError(false);
     void loadMessages(controller.signal);
     return () => controller.abort();
-  }, []);
+  }, [locale]);
 
   useEffect(() => {
     if (!selected) return;

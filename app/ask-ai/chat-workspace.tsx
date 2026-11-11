@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
-import { ArrowUp, Camera, File, Home, ImageIcon, Menu, MessageCircle, MessageSquare, PanelLeftClose, PanelLeftOpen, Plus, Settings, Sparkles, Square, SquarePen, X } from "lucide-react";
+import { ArrowUp, Camera, Check, ChevronDown, File, Globe2, Home, ImageIcon, Menu, MessageCircle, MessageSquare, PanelLeftClose, PanelLeftOpen, Plus, Settings, Sparkles, Square, SquarePen, X } from "lucide-react";
 import { BlueMindLogo } from "../../components/blue-mind-logo";
 import { AI_LIMITS, boundedContext, type AiErrorCode } from "../lib/ai/contract";
 import { ChatRequestError, requestReply } from "../lib/ai/client";
@@ -55,6 +55,43 @@ function serverConversation(value: unknown): Conversation | null {
   const id = typeof (value as { id?: unknown }).id === "string" ? (value as { id: string }).id : "";
   if (!id) return null;
   return { id, title: typeof (value as { title?: unknown }).title === "string" ? (value as { title: string }).title : "Website idea", messages, ...(source ? { source } : {}) };
+}
+
+function AccountLanguageSelector() {
+  const { locale, languages, setLocale } = useLocalization();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const selected = languages.find(language => language.code === locale) ?? languages[0];
+  const selectedLabel = locale === "sv" ? "Valt språk" : locale === "ar" ? "اللغة المختارة" : "Selected language";
+  const menuLabel = locale === "sv" ? "Språk" : locale === "ar" ? "اللغات" : "Languages";
+
+  useEffect(() => {
+    if (!open) return;
+    const closeOutside = (event: PointerEvent) => {
+      if (!ref.current?.contains(event.target as Node)) setOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setOpen(false);
+    };
+    document.addEventListener("pointerdown", closeOutside);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOutside);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [open]);
+
+  return <div ref={ref} className={styles.accountLanguage}>
+    <button type="button" className={styles.accountLanguageButton} aria-haspopup="menu" aria-expanded={open} aria-label={`${selectedLabel}: ${selected.nativeName}`} onClick={() => setOpen(value => !value)}>
+      <Globe2 size={16} aria-hidden="true" /><span>{selected.short}</span><ChevronDown size={12} aria-hidden="true" />
+    </button>
+    <div className={styles.accountLanguageMenu} role="menu" aria-label={menuLabel} data-open={open}>
+      {languages.map(language => <button key={language.code} type="button" role="menuitemradio" aria-checked={locale === language.code} data-selected={locale === language.code} tabIndex={open ? 0 : -1} onClick={() => { setLocale(language.code); setOpen(false); }}>
+        <span>{language.nativeName}</span>{locale === language.code && <Check size={14} aria-hidden="true" />}
+      </button>)}
+    </div>
+  </div>;
 }
 
 function History({ conversations, activeId, compact = false, onSelect, onNew, accountAuthenticated, accountMode = false }: {
@@ -593,7 +630,8 @@ export default function ChatWorkspace({ available, embedded = false, account = f
             <BlueMindLogo className={styles.accountDrawerLogo} solid aria-hidden="true" />
             <h2>BlueMind AI</h2>
           </div>}
-          <button className={styles.iconControl} type="button" aria-label={copy.closeSidebar} title={copy.closeSidebar} onClick={closeDrawer}><X size={20} /></button>
+          {accountFullScreen && <div className={styles.accountDrawerActions}><AccountLanguageSelector /><button className={styles.iconControl} type="button" aria-label={copy.closeSidebar} title={copy.closeSidebar} onClick={closeDrawer}><X size={20} /></button></div>}
+          {!accountFullScreen && <button className={styles.iconControl} type="button" aria-label={copy.closeSidebar} title={copy.closeSidebar} onClick={closeDrawer}><X size={20} /></button>}
         </div>
         <History {...historyProps} accountMode={accountFullScreen} />
       </div>
