@@ -72,7 +72,7 @@ function History({ conversations, activeId, compact = false, onSelect, onNew, ac
     </button>
     <nav className={styles.history} aria-label={copy.conversations}>
       {!compact && <p className={styles.historyLabel}>{copy.conversations}</p>}
-      {!compact && accountAuthenticated === false && activeId && <Link className={styles.saveChatLink} href={`/sign-in?returnTo=${encodeURIComponent(`/ask-ai?conversation=${activeId}`)}`}><span>{copy.saveChat}</span><ArrowUp size={15} aria-hidden="true" /></Link>}
+      {!compact && accountAuthenticated === false && activeId && <Link className={styles.saveChatLink} href={`/sign-in?returnTo=${encodeURIComponent(`/blue-mind-ai?conversation=${activeId}`)}`}><span>{copy.saveChat}</span><ArrowUp size={15} aria-hidden="true" /></Link>}
       {conversations.map(conversation => <button key={conversation.id} type="button" className={styles.historyItem}
         aria-current={activeId === conversation.id ? "page" : undefined} aria-label={conversation.title} title={conversation.title}
         onClick={() => onSelect(conversation.id)}>
@@ -82,7 +82,7 @@ function History({ conversations, activeId, compact = false, onSelect, onNew, ac
   </>;
 }
 
-export default function ChatWorkspace({ available, embedded = false }: { available: boolean; embedded?: boolean }) {
+export default function ChatWorkspace({ available, embedded = false, account = false }: { available: boolean; embedded?: boolean; account?: boolean }) {
   const { locale } = useLocalization();
   const copy = chatCopy[locale];
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -113,6 +113,14 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
   const attachmentArea = useRef<HTMLDivElement>(null);
   const attachmentTrigger = useRef<HTMLButtonElement>(null);
   const menuId = useId();
+
+  function syncConversationUrl(id: string | null) {
+    const params = new URLSearchParams(window.location.search);
+    if (id) params.set("conversation", id);
+    else params.delete("conversation");
+    const query = params.toString();
+    window.history.replaceState(null, "", `${window.location.pathname}${query ? `?${query}` : ""}`);
+  }
 
   useEffect(() => {
     try { setDraft(sessionStorage.getItem("bluemind-ai-draft") || ""); } catch {}
@@ -233,8 +241,9 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
     // Keep the composer inside the visible viewport when a mobile keyboard opens.
     const resize = () => {
       if (!root.current || viewport.scale !== 1) return;
-      root.current.style.setProperty("--chat-height", `${viewport.height}px`);
-      root.current.style.setProperty("--chat-top", `${viewport.offsetTop}px`);
+      const top = account ? Math.max(0, root.current.getBoundingClientRect().top) : 0;
+      root.current.style.setProperty("--chat-height", `${Math.max(320, viewport.height - top)}px`);
+      if (!account) root.current.style.setProperty("--chat-top", `${viewport.offsetTop}px`);
     };
     resize();
     viewport.addEventListener("resize", resize);
@@ -277,12 +286,16 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
   function chooseConversation(id: string | null) {
     const selected = conversations.find(conversation => conversation.id === id);
     if (id && selected && !selected.messages.length) {
+      fileRead.current?.abort(); fileRead.current = null;
+      setFiles([]); setFileError(""); setPreparing(null); setViewing(null);
+      setAnimatedId(null); setThinkingReply(null); setDraft(""); setAttachmentsOpen(false); drawer.current?.close();
       void fetch(`/api/ai/conversations/${encodeURIComponent(id)}`, { credentials: "same-origin", cache: "no-store" }).then(async response => {
         if (!response.ok) throw new Error("conversation");
         const loaded = serverConversation((await response.json()).conversation);
         if (!loaded) throw new Error("conversation");
         setConversations(current => current.map(conversation => conversation.id === id ? loaded : conversation));
         setActiveId(id);
+        syncConversationUrl(id);
       }).catch(() => {});
       return;
     }
@@ -301,6 +314,7 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
         ? freezeReply(conversation, running, true) : conversation));
     }
     setActiveId(id);
+    syncConversationUrl(id);
     if (id === null) sourceFromQuery.current = null;
     setDraft("");
     setAttachmentsOpen(false);
@@ -423,6 +437,7 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
       setConversations(current => [{ id, title: (text || files[0]?.name || "Attachments").replace(/\s+/g, " ").slice(0, 80), messages: [message], ...(source ? { source } : {}) }, ...current]);
       setActiveId(id);
     }
+    syncConversationUrl(id);
     setDraft("");
     setFiles([]); setFileError("");
     setAttachmentsOpen(false);
@@ -492,7 +507,7 @@ export default function ChatWorkspace({ available, embedded = false }: { availab
     <div className={styles.thinkingIndicator} data-ready={contentArrived && thinkingReply?.ready} aria-hidden="true"><span className={styles.thinkingDot} /></div>
   </div>;
 
-  return <div ref={root} className={`${styles.chat} ${embedded ? styles.embedded : ""}`} data-embedded={embedded || undefined} data-collapsed={collapsed} data-welcome={!hasMessages} data-no-translate dir={locale === "ar" ? "rtl" : "ltr"}>
+  return <div ref={root} className={`${styles.chat} ${embedded ? styles.embedded : ""} ${account ? styles.account : ""}`} data-embedded={embedded || undefined} data-account={account || undefined} data-collapsed={collapsed} data-welcome={!hasMessages} data-no-translate dir={locale === "ar" ? "rtl" : "ltr"}>
     <aside id="ai-chat-sidebar" className={styles.sidebar} aria-label={copy.chatSidebar}>
       <div className={styles.sidebarTop}>
         <span className={styles.sidebarTitle}>BlueMind AI</span>

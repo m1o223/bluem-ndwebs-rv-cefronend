@@ -3,7 +3,7 @@ import { randomBytes } from "node:crypto";
 import { FILE_LIMITS } from "./attachments";
 
 const BACKEND = "https://bluemind-web-service-backend.onrender.com";
-const SITE = "https://bluemind-web-service.vercel.app";
+const SITE = "https://bluemindwebservice.com";
 const ALLOWED_SITES = new Set([SITE, "https://bluemindwebservice.com", "https://www.bluemindwebservice.com"]);
 export const AI_VISITOR_COOKIE = "__Host-bluemind_ai_visitor";
 const CUSTOMER_COOKIE = "__Host-bluemind_customer";
@@ -102,7 +102,11 @@ export async function proxyAi(request: NextRequest) {
 
 export async function proxyConversations(request: NextRequest, path = "") {
   const origin = request.headers.get("origin");
-  if (!origin || (secure ? !ALLOWED_SITES.has(origin) : origin !== new URL(request.url).origin)) return error(403, "invalid");
+  // Same-origin GET requests commonly omit Origin (notably in Safari). The
+  // backend still requires the customer/visitor identity, so an absent
+  // Origin is safe here; explicit cross-site origins remain rejected.
+  const fetchSite = request.headers.get("sec-fetch-site");
+  if (fetchSite === "cross-site" || (origin && (secure ? !ALLOWED_SITES.has(origin) : origin !== new URL(request.url).origin))) return error(403, "invalid");
   if (request.method !== "GET") return error(405, "invalid");
   const visitorToken = cookieValue(request, AI_VISITOR_COOKIE);
   try {

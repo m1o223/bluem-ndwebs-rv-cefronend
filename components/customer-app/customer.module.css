@@ -26,6 +26,8 @@
   .languageSelector { margin-inline-start: clamp(12px, 2vw, 28px); }
 }
 .main { position: relative; isolation: isolate; width: min(100%, 1100px); margin-inline: auto; padding: 36px; overflow-wrap: anywhere; }
+.aiMain { display: flex; flex-direction: column; width: min(100%, 1280px); height: calc(100dvh - 100px); min-height: 0; box-sizing: border-box; padding: 20px 24px calc(104px + env(safe-area-inset-bottom)); overflow: hidden; }
+.aiMain > :global([data-account="true"]) { flex: 1 1 auto; min-height: 0; }
 .main h1 { margin: 0; font-size: 24px; font-weight: 500; letter-spacing: 0; }
 .error { font-size: 13px; line-height: 1.6; }
 .app :is(a, button):focus-visible { outline: 2px solid #477bad; outline-offset: 3px; }
@@ -150,3 +152,4 @@
 @media (max-width: 760px) { .messagesPage { padding-top: 8px; } .messageWorkspace { min-height: calc(100dvh - 190px); border-radius: 16px; } .messageList { min-height: calc(100dvh - 190px); } .messageListHeading { padding-inline: 18px; } .messageHint { padding-inline: 18px; } .thread { grid-template-columns: 42px minmax(0, 1fr) auto; gap: 11px; padding-inline: 16px; } .threadAvatar { width: 40px; height: 40px; } .threadPreview { max-width: 52vw; } .conversation { min-height: calc(100dvh - 190px); } .conversationHeader { padding-inline: 16px; } .backToMessages { padding-inline: 11px; font-size: 12px; } .conversationMessages { padding: 18px 16px; } .demoMessage { max-width: 90%; } .demoComposer { padding: 14px 16px calc(18px + env(safe-area-inset-bottom)); } .messageNotice { margin-inline: 16px; } .voiceAction { margin-inline-start: 0; } }
 @media (max-width: 780px) { .steps { grid-template-columns: 1fr; } .details { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 @media (max-width: 620px) { .formGrid { grid-template-columns: 1fr; } .profileHeading { align-items: flex-start; } .header { gap: 4px; } .brand { gap: 2px; } .logo { --logo-size: 46px; } .languageButton { min-width: 58px; padding-inline: 9px; } .steps small { max-width: 90px; } .main { padding: 28px 20px calc(124px + env(safe-area-inset-bottom)); } }
+@media (max-width: 1023px) { .aiMain { width: 100%; height: calc(100dvh - 88px); padding: 14px 16px calc(104px + env(safe-area-inset-bottom)); } }
