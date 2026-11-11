@@ -11,6 +11,7 @@ import SecuritySettings from "./security-settings";
 import ProfilePhoto from "./profile-photo";
 import { authCopy } from "../../app/sign-in/auth-copy";
 import NotificationsMessages from "./notifications-messages";
+import AccountSettings from "./account-settings";
 
 type Locale = keyof typeof workspaceCopy;
 function Field({ label, children }: { label: string; children: ReactNode }) { return <label className={styles.field}><span>{label}</span>{children}</label>; }
@@ -201,6 +202,6 @@ export default function WorkspaceContent({ page, overview, user, locale, signOut
   if (page === "home") return <ProjectDashboard overview={overview} locale={locale} />;
   if (page === "project") return <ProjectContent overview={overview} locale={locale} home={false} />;
   if (page === "contact") return <Contact overview={overview} user={user} locale={locale} />;
-  if (page === "account") return <Account overview={overview} user={user} locale={locale} signOut={signOut} signingOut={signingOut} />;
+  if (page === "account") return <AccountSettings overview={overview} user={user} locale={locale} signOut={signOut} signingOut={signingOut} />;
   return null;
 }
