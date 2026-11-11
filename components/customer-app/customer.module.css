@@ -138,34 +138,40 @@
 .settingRow input { width: 18px; height: 18px; flex-shrink: 0; accent-color: #142d4e; cursor: pointer; }
 .settingRow:last-of-type { margin-bottom: 20px; }
 .messagesPage { padding-top: 20px; }
-.messageWorkspace { position: relative; min-height: min(760px, calc(100dvh - 190px)); border: 1px solid #e2e8f0; border-radius: 18px; overflow: hidden; background: #fff; box-shadow: 0 14px 34px #142d4e0b; }
-.messageList { min-width: 0; min-height: min(760px, calc(100dvh - 190px)); background: #f8fafc; }
+.messageWorkspace { position: relative; min-height: calc(100dvh - 190px); overflow: hidden; background: transparent; }
+.messageList { min-width: 0; min-height: calc(100dvh - 190px); background: transparent; }
 .messageList[data-hidden="true"], .conversation[data-visible="false"] { display: none; }
-.messageListHeading { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 26px 28px 8px; }
-.messageListHeading h2 { margin: 0; font-size: 20px; }
+.messageListHeading { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 0 0 16px; border-bottom: 1px solid #e8ecf1; }
 .eyebrow { margin: 0 0 6px !important; color: #3679b3; font-size: 11px !important; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
 .messageListHeading > svg { color: #6a7a8e; }
-.messageHint { margin: 0; padding: 0 28px 18px; color: #637083; font-size: 13px !important; }
+.messageHint { margin: 0 !important; padding: 0; color: #637083; font-size: 13px !important; }
 .threadList { display: grid; }
-.thread { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; align-items: center; gap: 14px; width: 100%; padding: 16px 28px; border: 0; border-top: 1px solid #e8ecf1; background: transparent; color: #142d4e; font: inherit; text-align: start; cursor: pointer; }
+.thread { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; align-items: center; gap: 14px; width: 100%; padding: 19px 0; border: 0; border-bottom: 1px solid #e8ecf1; background: transparent; color: #142d4e; font: inherit; text-align: start; cursor: pointer; }
 .threadAvatar, .conversationAvatar { display: grid; place-items: center; flex: 0 0 auto; width: 44px; height: 44px; border: 1px solid #c9dced; border-radius: 50%; background: #edf3fa; color: #3679b3; font-size: 12px; font-weight: 700; letter-spacing: .02em; }
+.teamAvatar { display: grid; place-items: center; flex: 0 0 auto; width: 48px; height: 48px; overflow: hidden; border: 1px solid #c9dced; border-radius: 50%; background: #edf3fa; }
+.teamAvatar img { width: 30px; height: 34px; object-fit: contain; }
 .threadCopy { display: grid; min-width: 0; gap: 6px; }
 .threadTop { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .threadTop strong { min-width: 0; overflow: hidden; font-size: 14px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
 .threadPreview { overflow: hidden; color: #637083; font-size: 12px; line-height: 1.5; text-overflow: ellipsis; white-space: nowrap; }
 .thread time { align-self: start; color: #7b8795; font-size: 11px; white-space: nowrap; }
 .unreadLabel { flex: 0 0 auto; padding: 3px 8px; border-radius: 999px; background: #e4f0fb; color: #3679b3; font-size: 11px; font-weight: 600; }
-.conversation { display: flex; min-width: 0; min-height: min(760px, calc(100dvh - 190px)); flex-direction: column; background: #fff; }
+.conversation { display: flex; min-width: 0; min-height: calc(100dvh - 190px); flex-direction: column; background: transparent; }
 .conversationHeader { display: flex; align-items: center; gap: 14px; min-height: 82px; padding: 14px 28px; border-bottom: 1px solid #e8ecf1; }
 .conversationHeader h2 { margin: 0 0 5px; font-size: 18px; }
 .conversationHeader .conversationAvatar { width: 40px; height: 40px; }
-.demoBadge { display: inline-flex; align-items: center; min-height: 22px; padding: 2px 8px; border-radius: 999px; background: #edf3fa; color: #3679b3; font-size: 11px; }
+.conversationTeamAvatar { width: 40px; height: 40px; }
+.conversationTeamAvatar img { width: 25px; height: 29px; }
+.teamSubtitle { color: #637083; font-size: 12px; }
 .backToMessages { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 7px; min-height: 42px; padding: 8px 14px; border-radius: 999px; }
 .conversationMessages { display: flex; min-height: 0; flex: 1; flex-direction: column; gap: 16px; overflow: auto; padding: 28px; overscroll-behavior: contain; }
 .demoMessage { max-width: min(78%, 680px); padding: 14px 16px; border: 1px solid #e2e8f0; border-radius: 16px; background: #f8fafc; }
 .demoMessage[data-sender="customer"] { align-self: flex-end; border-color: #c9dced; background: #edf5fb; }
 .demoMessage p { margin: 0; white-space: pre-wrap; }
+.demoMessage[data-sender="team"] { align-self: flex-start; }
+.orderReference { display: block; margin-top: 10px; color: #3679b3; font-size: 12px; font-weight: 600; }
 .demoMessage time { display: inline-flex; align-items: center; gap: 5px; margin-top: 9px; color: #7b8795; font-size: 11px; }
+.messageSender { margin-inline-start: 6px; }
 .audioMessage { display: grid; gap: 6px; }
 .audioMessage audio, .voiceDraft audio { width: min(100%, 360px); height: 36px; }
 .audioMessage span, .voiceDraft span { color: #637083; font-size: 12px; }
@@ -180,8 +186,10 @@
 .recordingDot { width: 9px; height: 9px; border-radius: 50%; background: #c34d4d; box-shadow: 0 0 0 4px #c34d4d22; }
 .voiceAction { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; margin-inline-start: auto; padding: 7px 11px; border: 1px solid #c9dced; border-radius: 999px; background: #fff; color: #3679b3; cursor: pointer; font: inherit; font-size: 12px; }
 .voiceAction + .voiceAction { margin-inline-start: 0; }
-.conversationEmpty { display: grid; min-height: min(760px, calc(100dvh - 190px)); place-items: center; align-content: center; gap: 10px; color: #637083; }
+.conversationEmpty { display: grid; min-height: min(460px, calc(100dvh - 310px)); place-items: center; align-content: center; gap: 10px; color: #637083; text-align: center; }
 .conversationEmpty p { margin: 0; }
+.messageState { display: grid; min-height: 240px; place-items: center; align-content: center; gap: 14px; color: #637083; text-align: center; }
+.messageState p { margin: 0; }
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 @media (max-width: 1023px), (hover: none) and (pointer: coarse) {
@@ -191,7 +199,8 @@
   .languageButton { min-width: 64px; }
   .brandText { transform: translateY(2px); }
 }
-@media (max-width: 760px) { .messagesPage { padding-top: 8px; } .messageWorkspace { min-height: calc(100dvh - 190px); border-radius: 16px; } .messageList { min-height: calc(100dvh - 190px); } .messageListHeading { padding-inline: 18px; } .messageHint { padding-inline: 18px; } .thread { grid-template-columns: 42px minmax(0, 1fr) auto; gap: 11px; padding-inline: 16px; } .threadAvatar { width: 40px; height: 40px; } .threadPreview { max-width: 52vw; } .conversation { min-height: calc(100dvh - 190px); } .conversationHeader { padding-inline: 16px; } .backToMessages { padding-inline: 11px; font-size: 12px; } .conversationMessages { padding: 18px 16px; } .demoMessage { max-width: 90%; } .demoComposer { padding: 14px 16px calc(18px + env(safe-area-inset-bottom)); } .messageNotice { margin-inline: 16px; } .voiceAction { margin-inline-start: 0; } }
+@media (max-width: 1023px), (hover: none) and (pointer: coarse) { .messageWorkspace, .messageList, .conversation { min-height: calc(100dvh - 270px); } }
+@media (max-width: 760px) { .messagesPage { padding-top: 8px; } .messageWorkspace, .messageList, .conversation { min-height: calc(100dvh - 270px); } .thread { grid-template-columns: 42px minmax(0, 1fr) auto; gap: 11px; } .teamAvatar { width: 40px; height: 40px; } .teamAvatar img { width: 25px; height: 29px; } .threadPreview { max-width: 52vw; } .conversationHeader { padding-inline: 0; } .backToMessages { padding-inline: 11px; font-size: 12px; } .conversationMessages { padding: 18px 0; } .demoMessage { max-width: 90%; } .demoComposer { padding: 14px 0 calc(18px + env(safe-area-inset-bottom)); } .messageNotice { margin-inline: 0; } }
 @media (max-width: 780px) {
   .welcomeTitle { font-size: 32px !important; }
   .projectCard { padding: 22px 18px; }

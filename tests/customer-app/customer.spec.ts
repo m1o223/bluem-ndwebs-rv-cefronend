@@ -97,15 +97,14 @@ test("existing authentication API still rejects invalid credentials and CSRF", a
   await login(page, 4);
 });
 
-test("optional customer type, account persistence, demo messages and contact receipt", async ({ page }, info) => {
+test("optional customer type, account persistence, team messages and contact receipt", async ({ page }, info) => {
   await login(page, 6);
   await expect(page.getByText("No project linked to your account yet.")).toBeVisible();
   await page.getByRole("link", { name: "Notifications", exact: true }).click();
   await expect(page).toHaveURL(/\/notifications$/);
-  await expect(page.locator("main h1")).toHaveText("Notifications & messages");
-  await page.getByRole("button", { name: "Design direction updated", exact: true }).click();
-  await expect(page.getByText("Demo conversation", { exact: true })).toBeVisible();
-  await page.getByPlaceholder("Write a demo reply...").fill("A test-only reply.");
+  await expect(page.locator("main h1")).toHaveText("Messages");
+  await page.getByRole("button", { name: "Start a conversation", exact: true }).click();
+  await page.getByPlaceholder("Write your message...").fill("A test-only reply.");
   await page.getByRole("button", { name: "Send", exact: true }).click();
   await expect(page.getByText("A test-only reply.", { exact: true })).toBeVisible();
   await visitCustomerPage(page, "/account");
@@ -143,14 +142,14 @@ test("optional customer type, account persistence, demo messages and contact rec
 for (const width of [1440, 390]) {
   test(`notifications page supports desktop and mobile conversations at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
-    await authenticate(page, width);
+    await authenticate(page, width === 1440 ? 8 : 10);
     await closeCustomerMenu(page);
     await page.getByRole("link", { name: "Notifications", exact: true }).click();
     await expect(page).toHaveURL(/\/notifications$/);
-    await expect(page.getByRole("button", { name: "Design direction updated", exact: true })).toBeVisible();
-    if (width === 1440) await expect(page.getByText("Demo conversation", { exact: true })).toBeVisible();
-    await page.getByRole("button", { name: "Design direction updated", exact: true }).click();
-    await expect(page.getByPlaceholder("Write a demo reply...")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Messages", exact: true })).toBeVisible();
+    if (width === 1440) await expect(page.getByText("Fixture project updated", { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: /BlueMind Web Service Team/ }).click();
+    await expect(page.getByPlaceholder("Write your message...")).toBeVisible();
     if (width === 390) {
       await expect(page.locator(".messageList")).toBeHidden();
       await page.getByRole("button", { name: "Back to messages", exact: true }).click();
@@ -167,7 +166,7 @@ test("real project projection, seven stages, amounts, notifications and responsi
   await expect(page.getByText("5 steps remaining until your website is ready.")).toBeVisible();
   await page.getByRole("link", { name: "Notifications", exact: true }).click();
   await expect(page).toHaveURL(/\/notifications$/);
-  await expect(page.getByText("Design direction updated", { exact: true })).toBeVisible();
+  await expect(page.getByText("Fixture project updated", { exact: true })).toBeVisible();
   for (const width of [1440, 768, 390, 320]) {
     await page.setViewportSize({ width, height: 900 });
     for (const path of ["/dashboard", "/my-project", "/dashboard/contact", "/account", "/blue-mind-ai"]) {

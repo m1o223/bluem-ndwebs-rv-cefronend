@@ -6,8 +6,8 @@ const result = (body: object, status = 200) => NextResponse.json(body, { status,
 const cookie = { httpOnly: true, secure: true, sameSite: "lax" as const, path: "/" };
 async function handler(request: NextRequest, context: { params: Promise<{ action: string }> }) {
   const { action } = await context.params;
-  if (action !== "login" && action !== "logout" && action !== "session" && action !== "overview" && action !== "profile" && action !== "contact" && action !== "password") return result({ code: "missing" }, 404);
-  const readOnly = action === "session" || action === "overview";
+  if (action !== "login" && action !== "logout" && action !== "session" && action !== "overview" && action !== "messages" && action !== "messages-read" && action !== "message" && action !== "profile" && action !== "contact" && action !== "password") return result({ code: "missing" }, 404);
+  const readOnly = action === "session" || action === "overview" || action === "messages";
   if (request.method !== (readOnly ? "GET" : "POST")) return result({ code: "method" }, 405);
   if (!readOnly) {
     const origin = request.headers.get("origin");
@@ -17,7 +17,7 @@ async function handler(request: NextRequest, context: { params: Promise<{ action
   const token = request.cookies.get(CUSTOMER_COOKIE)?.value;
   if (action !== "login" && action !== "logout" && !token) return result({ code: "credentials" }, 401);
   let body: string | undefined;
-  if (action === "login" || action === "profile" || action === "contact" || action === "password") {
+  if (action === "login" || action === "profile" || action === "contact" || action === "password" || action === "message" || action === "messages-read") {
     const maximum = action === "login" ? 2048 : 20000;
     if (request.headers.get("content-type")?.split(";")[0] !== "application/json" || Number(request.headers.get("content-length")) > maximum) return result({ code: "invalid" }, 400);
     const reader = request.body?.getReader();
@@ -58,6 +58,9 @@ async function handler(request: NextRequest, context: { params: Promise<{ action
     }
     const data = await upstream.json();
     if (action === "overview") return result({ profile: data.profile, project: data.project, notifications: data.notifications });
+    if (action === "messages") return result({ messages: Array.isArray(data.messages) ? data.messages : [], unread: Number.isSafeInteger(data.unread) ? data.unread : 0 });
+    if (action === "messages-read") return result({ success: data.success === true });
+    if (action === "message") return result({ message: data.message, duplicate: data.duplicate === true });
     if (action === "profile" || action === "contact") return result({ success: data.success === true, ...(action === "contact" ? { emailNotified: data.emailNotified === true } : {}) });
     if (!isCustomer(data.user)) return result({ code: "unavailable" }, 503);
     const response = result({ user: data.user });

@@ -12,6 +12,8 @@ const passwordHash = await bcrypt.hash("Isolated-browser-test-123!", 12);
 for (let i = 0; i < 12; i++) await db.collection("customerAccounts").insertOne({ _id: "test-" + i, displayName: "UI test", email: `customer-${i}@example.invalid`, passwordHash, enabled: true });
 await db.collection("customerProjects").insertOne({ _id: "fixture-project", customerId: "test-8", current: true, name: "Isolated fixture project", description: "Only used by automated tests.", orderNumber: "TEST-8", type: "Website", currency: "SEK", totalMinor: 10000, paidMinor: 2500, remainingMinor: 7500, steps: { idea: "completed", review: "completed", direction: "in_progress", development: "not_started", testing: "not_started", finalReview: "not_started", delivery: "not_started" }, updatedAt: new Date(), timeline: [{ text: "Fixture review completed", date: new Date() }] });
 await db.collection("customerNotifications").insertOne({ _id: "fixture-notice", customerId: "test-8", text: "Fixture project updated", createdAt: new Date() });
+await db.collection("customerNotifications").insertOne({ _id: "fixture-notice-9", customerId: "test-9", text: "Fixture team update", createdAt: new Date() });
+await db.collection("customerNotifications").insertOne({ _id: "fixture-notice-10", customerId: "test-10", text: "Fixture review update", createdAt: new Date() });
 // Isolated test double: never contacts Google or production MongoDB.
 const googleClientFactory = options => {
   const client = new OAuth2Client(options);
