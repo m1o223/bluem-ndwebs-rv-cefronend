@@ -59,10 +59,18 @@ for (const width of [1440, 390]) {
     expect(chatBox?.width).toBe(width);
     expect(chatBox?.height).toBeGreaterThanOrEqual(899);
 
-    await page.getByRole("button", { name: "Conversations", exact: true }).click();
+    await expect(page.getByRole("link", { name: "Back to account", exact: true })).toHaveCount(0);
+    await page.getByRole("button", { name: "Open menu", exact: true }).click();
     await expect(page.locator("dialog")).toBeVisible();
     await expect(page.getByRole("button", { name: "Cafe website", exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "New chat", exact: true })).toBeVisible();
+    await expect(page.locator("dialog").getByRole("link", { name: "Home", exact: true })).toBeVisible();
+    await expect(page.locator("dialog").getByRole("link", { name: "BlueMind AI", exact: true })).toHaveAttribute("aria-current", "page");
+    await expect(page.locator("dialog").getByRole("link", { name: "Messages", exact: true })).toBeVisible();
+    await expect(page.locator("dialog").getByRole("link", { name: "Account", exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "New chat", exact: true }).click();
+    await expect(page.getByText("How can I help with your website?", { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Open menu", exact: true }).click();
     await page.getByRole("button", { name: "Close sidebar", exact: true }).click();
     await expect(page.locator("dialog")).not.toBeVisible();
 
@@ -73,8 +81,27 @@ for (const width of [1440, 390]) {
     await page.screenshot({ path: info.outputPath(`account-ai-chat-viewport-${width}.png`) });
     await page.screenshot({ path: info.outputPath(`account-ai-chat-${width}.png`), fullPage: true });
 
-    await page.getByRole("link", { name: "Back to account", exact: true }).click();
-    await expect(page).toHaveURL(/\/dashboard$/);
+    await page.getByRole("button", { name: "Open menu", exact: true }).click();
+    await page.locator("dialog").getByRole("link", { name: "Account", exact: true }).click();
+    await expect(page).toHaveURL(/\/account$/);
     await page.screenshot({ path: info.outputPath(`account-ai-${width}.png`), fullPage: true });
+  });
+}
+
+for (const locale of [
+  { code: "sv", heading: "Hur kan jag hjälpa dig med din webbplats?", menu: "Öppna menyn", home: "Hem", dir: "ltr" },
+  { code: "ar", heading: "كيف يمكنني مساعدتك في موقعك؟", menu: "فتح القائمة", home: "الرئيسية", dir: "rtl" },
+]) {
+  test(`account AI chat keeps the ${locale.code} interface localized`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 900 });
+    await page.addInitScript(value => localStorage.setItem("bluemind-language", value), locale.code);
+    await authenticate(page);
+    await mockAiApi(page);
+    await page.goto("/blue-mind-ai");
+
+    await expect(page.getByText(locale.heading, { exact: true })).toBeVisible();
+    await expect(page.locator('[data-account-fullscreen="true"]')).toHaveAttribute("dir", locale.dir);
+    await page.getByRole("button", { name: locale.menu, exact: true }).click();
+    await expect(page.locator("dialog").getByRole("link", { name: locale.home, exact: true })).toBeVisible();
   });
 }

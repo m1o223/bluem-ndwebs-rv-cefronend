@@ -4,17 +4,26 @@
 .accountFullScreen.chat { position: fixed; inset: 0; width: 100%; height: var(--chat-height, 100dvh); max-height: none; grid-template-columns: minmax(0, 1fr); border: 0; border-radius: 0; --chat-height: 100dvh; }
 .accountFullScreen .sidebar { display: none; }
 .accountFullScreen .main { position: relative; display: flex; flex-direction: column; }
-.accountFullScreen .topbar { position: absolute; z-index: 5; top: max(14px, env(safe-area-inset-top)); inset-inline: 16px; width: min(calc(100% - 32px), 920px); min-height: 56px; box-sizing: border-box; margin-inline: auto; justify-content: space-between; gap: 16px; padding: 7px 10px; border: 1px solid rgba(186, 198, 212, .82); border-radius: 999px; background: rgba(255, 255, 255, .84); box-shadow: 0 14px 36px rgba(20, 45, 78, .1), 0 2px 8px rgba(20, 45, 78, .05); -webkit-backdrop-filter: blur(18px) saturate(1.12); backdrop-filter: blur(18px) saturate(1.12); }
+.accountFullScreen .topbar { position: absolute; z-index: 5; top: max(14px, env(safe-area-inset-top)); inset-inline: 16px; display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; width: min(calc(100% - 32px), 660px); min-height: 58px; box-sizing: border-box; margin-inline: auto; align-items: center; gap: 12px; padding: 7px 10px; border: 1px solid rgba(186, 198, 212, .82); border-radius: 999px; background: rgba(255, 255, 255, .84); box-shadow: 0 14px 36px rgba(20, 45, 78, .1), 0 2px 8px rgba(20, 45, 78, .05); -webkit-backdrop-filter: blur(18px) saturate(1.12); backdrop-filter: blur(18px) saturate(1.12); }
 .accountFullScreen .content { box-sizing: border-box; flex: 1 1 auto; height: auto; min-height: 0; padding-top: 88px; }
 .accountFullScreen .composerArea { width: min(100%, 920px); flex: 0 0 auto; padding-bottom: max(24px, env(safe-area-inset-bottom)); }
 .accountBrand, .accountTopActions, .accountHistoryButton, .accountBack { display: inline-flex; align-items: center; }
-.accountBrand { min-width: 0; gap: 8px; color: #142d4e; font-size: 15px; font-weight: 650; text-decoration: none; white-space: nowrap; }
-.accountBrandLogo { --logo-size: 34px; flex: 0 0 auto; }
+.accountBrand { position: absolute; left: 50%; min-width: 0; gap: 9px; transform: translateX(-50%); color: #142d4e; font-size: 17px; font-weight: 650; text-decoration: none; white-space: nowrap; }
+.accountBrandLogo { --logo-size: 42px; flex: 0 0 auto; }
+.accountMenuButton { grid-column: 1; justify-self: start; width: 42px !important; height: 42px !important; flex-basis: 42px !important; border: 1px solid #dce3eb !important; border-radius: 50% !important; background: rgba(255, 255, 255, .62) !important; }
+.accountTopSpacer { grid-column: 3; width: 42px; height: 42px; }
 .accountTopActions { min-width: 0; gap: 10px; }
 .accountFullScreen .accountHistoryButton, .accountFullScreen .accountBack { width: auto; height: 42px; min-height: 42px; flex: 0 0 auto; gap: 7px; padding: 0 13px; border: 1px solid #dce3eb; border-radius: 999px; background: rgba(255, 255, 255, .62); color: #142d4e; font: inherit; font-size: 12px; font-weight: 600; text-decoration: none; }
 .accountFullScreen .accountHistoryButton:hover, .accountFullScreen .accountBack:hover { background: #edf3fa; }
 .accountFullScreen .accountHistoryButton:focus-visible, .accountFullScreen .accountBack:focus-visible { outline: 2px solid #477bad; outline-offset: 3px; }
 .accountFullScreen .drawer { width: min(340px, calc(100vw - 32px)); }
+.accountFullScreen .drawerInner { background: #fff; }
+.accountFullScreen .drawer .sidebarTop { justify-content: flex-end; margin-bottom: 10px; }
+.accountMenuNav { display: grid; gap: 5px; padding-bottom: 16px; border-bottom: 1px solid #e8ecf1; }
+.accountMenuNav a { display: flex; align-items: center; gap: 11px; min-height: 44px; padding: 10px 12px; border-radius: 12px; color: #142d4e; font-size: 14px; font-weight: 500; text-decoration: none; }
+.accountMenuNav a[aria-current="page"] { background: #edf3fa; color: #3679b3; font-weight: 650; }
+.accountMenuNav a svg { flex: 0 0 auto; color: #607086; }
+.accountMenuNav a[aria-current="page"] svg { color: #3679b3; }
 .embedded .drawer { position: absolute; inset: 0 auto 0 0; width: min(288px, calc(100% - 48px)); height: 100%; }
 .embedded .drawerInner { height: 100%; }
 .embedded .messageScroll { min-height: 0; }
@@ -46,6 +55,7 @@
 .empty .brandSymbol::before { mask-size: calc(88px * 1065 / 896) calc(88px * 1212 / 896); mask-position: calc(88px * -86 / 896) calc(88px * -300 / 896); }
 .chat .empty h1 { margin: 0; color: #000; font-size: 32px; line-height: 1.2; font-weight: 600; letter-spacing: 0; }
 .chat .empty p { margin: 12px 0 0; font-size: 17px; color: #525e6d; line-height: 1.5; }
+.chat .empty .emptyIntro { max-width: 52ch; margin-top: 6px; font-size: 14px; color: #697482; }
 .messageScroll { height: 100%; overflow-y: auto; overscroll-behavior: contain; overflow-anchor: none; scrollbar-gutter: stable; padding: 16px 28px 28px; visibility: hidden; }
 .messageScroll[data-active="true"] { visibility: visible; }
 .messages { display: flex; flex-direction: column; gap: 20px; width: min(100%, 800px); margin: 0 auto; }
@@ -113,6 +123,9 @@
 .drawer::backdrop { background: #142d4e33; }
 .drawer[open] { }
 .drawerInner { height: 100%; padding-top: max(12px, env(safe-area-inset-top)); padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+.accountFullScreen.chat[data-welcome="true"] .empty { justify-content: flex-end; padding-bottom: clamp(32px, 5vh, 56px); }
+.accountFullScreen.chat[data-welcome="true"] .empty .brandSymbol { --logo-size: 104px; margin-bottom: 20px; }
+.accountFullScreen.chat[data-welcome="true"] .empty .brandSymbol::before { mask-size: calc(104px * 1065 / 896) calc(104px * 1212 / 896); mask-position: calc(104px * -86 / 896) calc(104px * -300 / 896); }
 @media (max-width: 767px) {
   .chat, .chat[data-collapsed="true"] { grid-template-columns: minmax(0, 1fr); }
   .sidebar { display: none; }
@@ -137,10 +150,16 @@
   .accountFullScreen .topbar { top: max(8px, env(safe-area-inset-top)); inset-inline: 10px; width: calc(100% - 20px); min-height: 52px; padding: 6px 7px; }
   .accountFullScreen .content { padding-top: 76px; }
   .accountFullScreen .composerArea { padding: 12px max(12px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
-  .accountBrand { gap: 6px; font-size: 14px; }
-  .accountBrandLogo { --logo-size: 30px; }
+  .accountBrand { gap: 7px; font-size: 15px; }
+  .accountBrandLogo { --logo-size: 38px; }
+  .accountMenuButton { width: 38px !important; height: 38px !important; flex-basis: 38px !important; }
+  .accountTopSpacer { width: 38px; height: 38px; }
   .accountFullScreen .accountHistoryButton, .accountFullScreen .accountBack { width: 40px; height: 40px; min-height: 40px; padding: 0; justify-content: center; }
   .accountFullScreen .accountHistoryButton span, .accountFullScreen .accountBack span { display: none; }
+  .accountFullScreen.chat[data-welcome="true"] .empty { padding-bottom: clamp(28px, 4vh, 44px); }
+  .accountFullScreen.chat[data-welcome="true"] .empty .brandSymbol { --logo-size: 84px; margin-bottom: 16px; }
+  .accountFullScreen.chat[data-welcome="true"] .empty .brandSymbol::before { mask-size: calc(84px * 1065 / 896) calc(84px * 1212 / 896); mask-position: calc(84px * -86 / 896) calc(84px * -300 / 896); }
+  .chat .empty .emptyIntro { max-width: 34ch; font-size: 13px; }
 }
 
 /* The persistent public navigation floats above the viewport on small screens. */

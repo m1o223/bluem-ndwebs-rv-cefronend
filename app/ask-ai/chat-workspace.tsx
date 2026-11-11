@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
-import { ArrowLeft, ArrowUp, Camera, File, ImageIcon, Menu, MessageSquare, PanelLeftClose, PanelLeftOpen, Plus, Square, SquarePen, X } from "lucide-react";
+import { ArrowUp, Camera, File, Home, ImageIcon, Menu, MessageCircle, MessageSquare, PanelLeftClose, PanelLeftOpen, Plus, Settings, Sparkles, Square, SquarePen, X } from "lucide-react";
 import { BlueMindLogo } from "../../components/blue-mind-logo";
 import { AI_LIMITS, boundedContext, type AiErrorCode } from "../lib/ai/contract";
 import { ChatRequestError, requestReply } from "../lib/ai/client";
@@ -57,9 +57,9 @@ function serverConversation(value: unknown): Conversation | null {
   return { id, title: typeof (value as { title?: unknown }).title === "string" ? (value as { title: string }).title : "Website idea", messages, ...(source ? { source } : {}) };
 }
 
-function History({ conversations, activeId, compact = false, onSelect, onNew, accountAuthenticated }: {
+function History({ conversations, activeId, compact = false, onSelect, onNew, accountAuthenticated, accountMode = false }: {
   conversations: Conversation[]; activeId: string | null; compact?: boolean;
-  onSelect: (id: string) => void; onNew: () => void; accountAuthenticated: boolean | null;
+  onSelect: (id: string) => void; onNew: () => void; accountAuthenticated: boolean | null; accountMode?: boolean;
 }) {
   const { locale } = useLocalization();
   const copy = chatCopy[locale];
@@ -70,6 +70,12 @@ function History({ conversations, activeId, compact = false, onSelect, onNew, ac
     <button className={styles.newChat} type="button" onClick={startChat} title={copy.newChat} aria-label={copy.newChat}>
       <SquarePen size={20} aria-hidden="true" /><span hidden={compact}>{copy.newChat}</span>
     </button>
+    {accountMode && !compact && <nav className={styles.accountMenuNav} aria-label={copy.accountNavigation}>
+      <Link href="/dashboard"><Home size={17} aria-hidden="true" /><span>{copy.home}</span></Link>
+      <Link href="/blue-mind-ai" aria-current="page"><Sparkles size={17} aria-hidden="true" /><span>BlueMind AI</span></Link>
+      <Link href="/notifications"><MessageCircle size={17} aria-hidden="true" /><span>{copy.messages}</span></Link>
+      <Link href="/account"><Settings size={17} aria-hidden="true" /><span>{copy.account}</span></Link>
+    </nav>}
     <nav className={styles.history} aria-label={copy.conversations}>
       {!compact && <p className={styles.historyLabel}>{copy.conversations}</p>}
       {!compact && accountAuthenticated === false && activeId && <Link className={styles.saveChatLink} href={`/sign-in?returnTo=${encodeURIComponent(`/blue-mind-ai?conversation=${activeId}`)}`}><span>{copy.saveChat}</span><ArrowUp size={15} aria-hidden="true" /></Link>}
@@ -527,7 +533,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
         {collapsed && <BlueMindLogo className={styles.toggleLogo} solid />}
         {collapsed ? <PanelLeftOpen className={styles.toggleGlyph} size={20} aria-hidden="true" /> : <PanelLeftClose size={20} aria-hidden="true" />}
       </button></div>
-      <History {...historyProps} compact={collapsed} />
+          <History {...historyProps} compact={collapsed} />
     </aside>
 
     <dialog id="ai-chat-history" ref={drawer} className={styles.drawer} aria-label={copy.chatSidebar} onClose={() => setDrawerOpen(false)} onCancel={() => setDrawerOpen(false)} onClick={event => {
@@ -538,25 +544,19 @@ export default function ChatWorkspace({ available, embedded = false, account = f
     }}>
       <div className={styles.drawerInner}>
         <div className={styles.sidebarTop}><button className={styles.iconControl} type="button" aria-label={copy.closeSidebar} title={copy.closeSidebar} onClick={closeDrawer}><X size={20} /></button></div>
-        <History {...historyProps} />
+        <History {...historyProps} accountMode={accountFullScreen} />
       </div>
     </dialog>
 
     <main className={styles.main}>
       <div className={styles.topbar}>
         {accountFullScreen ? <>
+          <button className={`${styles.iconControl} ${styles.accountMenuButton}`} type="button" aria-label={copy.menu} title={copy.menu} aria-expanded={drawerOpen} aria-controls="ai-chat-history" onClick={openDrawer}><Menu size={21} aria-hidden="true" /></button>
           <Link href="/dashboard" className={styles.accountBrand} aria-label="BlueMind AI">
             <BlueMindLogo className={styles.accountBrandLogo} solid aria-hidden="true" />
             <span>BlueMind</span>
           </Link>
-          <div className={styles.accountTopActions}>
-            <button className={`${styles.iconControl} ${styles.accountHistoryButton}`} type="button" aria-label={copy.conversations} title={copy.conversations} aria-expanded={drawerOpen} aria-controls="ai-chat-history" onClick={openDrawer}>
-              <MessageSquare size={18} aria-hidden="true" /><span>{copy.conversations}</span>
-            </button>
-            <Link href="/dashboard" className={styles.accountBack} aria-label={copy.backToAccount} title={copy.backToAccount}>
-              <ArrowLeft size={18} aria-hidden="true" /><span>{copy.backToAccount}</span>
-            </Link>
-          </div>
+          <span className={styles.accountTopSpacer} aria-hidden="true" />
         </> : <>
           <button className={`${styles.iconControl} ${styles.mobileMenu}`} type="button" aria-label={copy.openSidebar} title={copy.openSidebar} onClick={openDrawer}><Menu size={22} /></button>
           <Link href="/" className={styles.iconControl} aria-label={copy.close} title={copy.close} onNavigate={event => {
@@ -570,6 +570,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
           <BlueMindLogo className={styles.brandSymbol} solid priority />
           <h1>BlueMind AI</h1>
           <p>{copy.heading}</p>
+          <p className={styles.emptyIntro}>{copy.intro}</p>
         </div>
         <div ref={history} className={styles.messageScroll} data-active={hasMessages} tabIndex={hasMessages ? 0 : -1} aria-label={copy.message}>
           <div ref={messageList} className={styles.messages} role="log" aria-label={copy.conversation} aria-live="polite" aria-relevant="additions text">

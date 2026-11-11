@@ -10,10 +10,16 @@ export type ChatCopy = {
   collapseSidebar: string;
   openSidebar: string;
   closeSidebar: string;
+  menu: string;
+  home: string;
+  messages: string;
+  account: string;
+  accountNavigation: string;
   backToAccount: string;
   close: string;
   discardMessage: string;
   heading: string;
+  intro: string;
   prompt: string;
   suggestions: string[];
   message: string;
@@ -63,10 +69,10 @@ export type ChatCopy = {
 const en: ChatCopy = {
   newChat: "New chat", conversations: "Conversations", saveChat: "Sign in to save this chat",
   chatSidebar: "Chat sidebar", expandSidebar: "Expand sidebar", collapseSidebar: "Collapse sidebar",
-  openSidebar: "Open sidebar", closeSidebar: "Close sidebar", backToAccount: "Back to account", close: "Close",
+  openSidebar: "Open sidebar", closeSidebar: "Close sidebar", menu: "Open menu", home: "Home", messages: "Messages", account: "Account", accountNavigation: "Account navigation", backToAccount: "Back to account", close: "Close",
   discardMessage: "Discard your unsent message and return to the homepage?",
-  heading: "What can I help you create?", prompt: "Ask BlueMind anything...",
-  suggestions: ["Create a website", "Design a page", "Improve my website", "Business ideas", "Help me get started", "Explore our services"],
+  heading: "How can I help with your website?", intro: "Plan your idea, shape the requirements, and prepare your request with BlueMind AI.", prompt: "Ask BlueMind anything...",
+  suggestions: ["Plan a website", "Design a page", "Improve my website", "Explore our services", "Start with an idea", "Prepare my request"],
   message: "Message", conversation: "Conversation", yourMessage: "Your message", aiResponse: "BlueMind AI response", retry: "Retry",
   addAttachment: "Add attachment", selectedAttachments: "Selected attachments", messageAttachments: "Message attachments",
   addImage: "Add image", addFile: "Add file", takePhoto: "Take a photo",
@@ -128,7 +134,57 @@ const ar: ChatCopy = {
   attachmentReadError: "تعذر تجهيز المرفقات.",
 };
 
-export const chatCopy: Record<Locale, ChatCopy> = { en, sv, ar };
+const localizedSv: ChatCopy = {
+  ...sv,
+  newChat: "Ny chatt",
+  conversations: "Konversationer",
+  chatSidebar: "Chattmeny",
+  openSidebar: "Öppna sidofält",
+  closeSidebar: "Stäng sidofält",
+  menu: "Öppna menyn",
+  home: "Hem",
+  messages: "Meddelanden",
+  account: "Konto",
+  accountNavigation: "Kontonavigering",
+  heading: "Hur kan jag hjälpa dig med din webbplats?",
+  intro: "Planera idén, tydliggör kraven och förbered din förfrågan med BlueMind AI.",
+  prompt: "Fråga BlueMind vad som helst...",
+  suggestions: ["Planera din webbplats", "Designa en sida", "Förbättra din webbplats", "Utforska våra tjänster", "Börja med din idé", "Förbered din förfrågan"],
+  addAttachment: "Lägg till bilaga",
+  addImage: "Lägg till bild",
+  addFile: "Lägg till fil",
+  takePhoto: "Ta ett foto",
+  placeholder: "Fråga om din webbplats...",
+  sendMessage: "Skicka meddelande",
+  cancel: "Avbryt",
+};
+
+const localizedAr: ChatCopy = {
+  ...ar,
+  newChat: "\u0645\u062d\u0627\u062f\u062b\u0629 \u062c\u062f\u064a\u062f\u0629",
+  conversations: "\u0627\u0644\u0645\u062d\u0627\u062f\u062b\u0627\u062a",
+  chatSidebar: "\u0642\u0627\u0626\u0645\u0629 \u0627\u0644\u0645\u062d\u0627\u062f\u062b\u0629",
+  openSidebar: "\u0641\u062a\u062d \u0627\u0644\u0634\u0631\u064a\u0637 \u0627\u0644\u062c\u0627\u0646\u0628\u064a",
+  closeSidebar: "\u0625\u063a\u0644\u0627\u0642 \u0627\u0644\u0634\u0631\u064a\u0637 \u0627\u0644\u062c\u0627\u0646\u0628\u064a",
+  menu: "\u0641\u062a\u062d \u0627\u0644\u0642\u0627\u0626\u0645\u0629",
+  home: "\u0627\u0644\u0631\u0626\u064a\u0633\u064a\u0629",
+  messages: "\u0627\u0644\u0631\u0633\u0627\u0626\u0644",
+  account: "\u0627\u0644\u062d\u0633\u0627\u0628",
+  accountNavigation: "\u062a\u0646\u0642\u0651\u0644 \u0627\u0644\u062d\u0633\u0627\u0628",
+  heading: "\u0643\u064a\u0641 \u064a\u0645\u0643\u0646\u0646\u064a \u0645\u0633\u0627\u0639\u062f\u062a\u0643 \u0641\u064a \u0645\u0648\u0642\u0639\u0643\u061f",
+  intro: "\u0631\u062a\u0651\u0628 \u0641\u0643\u0631\u062a\u0643\u060c \u062d\u062f\u0651\u062f \u0645\u062a\u0637\u0644\u0628\u0627\u062a\u0643\u060c \u0648\u062c\u0647\u0651\u0632 \u0637\u0644\u0628\u0643 \u0645\u0639 BlueMind AI.",
+  prompt: "\u0627\u0633\u0623\u0644 BlueMind \u0639\u0646 \u0623\u064a \u0634\u064a\u0621...",
+  suggestions: ["\u062e\u0637\u0651\u0637 \u0644\u0645\u0648\u0642\u0639\u0643", "\u0635\u0645\u0651\u0645 \u0635\u0641\u062d\u0629", "\u062d\u0633\u0651\u0646 \u0645\u0648\u0642\u0639\u0643", "\u0627\u0633\u062a\u0643\u0634\u0641 \u062e\u062f\u0645\u0627\u062a\u0646\u0627", "\u0627\u0628\u062f\u0623 \u0628\u0641\u0643\u0631\u062a\u0643", "\u062c\u0647\u0651\u0632 \u0637\u0644\u0628\u0643"],
+  addAttachment: "\u0625\u0636\u0627\u0641\u0629 \u0645\u0631\u0641\u0642",
+  addImage: "\u0625\u0636\u0627\u0641\u0629 \u0635\u0648\u0631\u0629",
+  addFile: "\u0625\u0636\u0627\u0641\u0629 \u0645\u0644\u0641",
+  takePhoto: "\u0627\u0644\u062a\u0642\u0627\u0637 \u0635\u0648\u0631\u0629",
+  placeholder: "\u0627\u0633\u0623\u0644 \u0639\u0646 \u0645\u0648\u0642\u0639\u0643...",
+  sendMessage: "\u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0631\u0633\u0627\u0644\u0629",
+  cancel: "\u0625\u0644\u063a\u0627\u0621",
+};
+
+export const chatCopy: Record<Locale, ChatCopy> = { en, sv: localizedSv, ar: localizedAr };
 
 export function attachmentErrorMessage(value: unknown, locale: Locale) {
   const message = value instanceof Error ? value.message : "Unable to prepare attachments.";
