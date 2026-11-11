@@ -98,6 +98,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
   const [draftReady, setDraftReady] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerClosing, setDrawerClosing] = useState(false);
   const [attachmentsOpen, setAttachmentsOpen] = useState(false);
   const [files, setFiles] = useState<LocalAttachment[]>([]);
   const [fileError, setFileError] = useState("");
@@ -117,18 +118,49 @@ export default function ChatWorkspace({ available, embedded = false, account = f
   const sourceFromQuery = useRef<GuidedSource | null>(null);
   const { viewport: history, content: messageList, followBottom } = useChatScroll(activeId);
   const drawer = useRef<HTMLDialogElement>(null);
+  const drawerCloseTimer = useRef<number | null>(null);
   const attachmentArea = useRef<HTMLDivElement>(null);
   const attachmentTrigger = useRef<HTMLButtonElement>(null);
   const menuId = useId();
 
+  function clearDrawerCloseTimer() {
+    if (drawerCloseTimer.current !== null) {
+      window.clearTimeout(drawerCloseTimer.current);
+      drawerCloseTimer.current = null;
+    }
+  }
+
   function openDrawer() {
-    drawer.current?.showModal();
+    clearDrawerCloseTimer();
+    setDrawerClosing(false);
+    if (drawer.current && !drawer.current.open) {
+      // The account drawer stays non-modal so the composer remains usable while it is open.
+      if (accountFullScreen) drawer.current.show();
+      else drawer.current.showModal();
+    }
     setDrawerOpen(true);
   }
 
   function closeDrawer() {
-    drawer.current?.close();
+    clearDrawerCloseTimer();
+    if (!accountFullScreen) {
+      drawer.current?.close();
+      setDrawerOpen(false);
+      return;
+    }
+    const node = drawer.current;
+    if (!node?.open) {
+      setDrawerOpen(false);
+      setDrawerClosing(false);
+      return;
+    }
     setDrawerOpen(false);
+    setDrawerClosing(true);
+    drawerCloseTimer.current = window.setTimeout(() => {
+      if (drawer.current === node && node.open) node.close();
+      setDrawerClosing(false);
+      drawerCloseTimer.current = null;
+    }, 280);
   }
 
   function syncConversationUrl(id: string | null) {
@@ -143,6 +175,13 @@ export default function ChatWorkspace({ available, embedded = false, account = f
     try { setDraft(sessionStorage.getItem("bluemind-ai-draft") || ""); } catch {}
     setDraftReady(true);
   }, []);
+
+  useEffect(() => {
+    if (!accountFullScreen || !drawer.current) return;
+    if (!drawer.current.open) drawer.current.show();
+    setDrawerClosing(false);
+    setDrawerOpen(true);
+  }, [accountFullScreen]);
 
   useEffect(() => {
     if (!draftReady) return;
@@ -249,6 +288,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
     window.clearTimeout(running?.thinkingTimer);
     running?.controller.abort();
     fileRead.current?.abort();
+    clearDrawerCloseTimer();
   }, []);
 
   useEffect(() => {
@@ -279,10 +319,10 @@ export default function ChatWorkspace({ available, embedded = false, account = f
 
   useEffect(() => {
     const media = matchMedia("(min-width: 768px)");
-    const closeOnDesktop = () => { if (media.matches) closeDrawer(); };
+    const closeOnDesktop = () => { if (media.matches && !accountFullScreen) closeDrawer(); };
     media.addEventListener("change", closeOnDesktop);
     return () => media.removeEventListener("change", closeOnDesktop);
-  }, []);
+  }, [accountFullScreen]);
 
   useEffect(() => {
     if (!attachmentsOpen) return;
@@ -305,7 +345,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
     if (id && selected && !selected.messages.length) {
       fileRead.current?.abort(); fileRead.current = null;
       setFiles([]); setFileError(""); setPreparing(null); setViewing(null);
-      setAnimatedId(null); setThinkingReply(null); setDraft(""); setAttachmentsOpen(false); closeDrawer();
+      setAnimatedId(null); setThinkingReply(null); setDraft(""); setAttachmentsOpen(false); if (!accountFullScreen) closeDrawer();
       void fetch(`/api/ai/conversations/${encodeURIComponent(id)}`, { credentials: "same-origin", cache: "no-store" }).then(async response => {
         if (!response.ok) throw new Error("conversation");
         const loaded = serverConversation((await response.json()).conversation);
@@ -335,7 +375,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
     if (id === null) sourceFromQuery.current = null;
     setDraft("");
     setAttachmentsOpen(false);
-    closeDrawer();
+    if (!accountFullScreen) closeDrawer();
   }
 
   function restoreReply(conversation: Conversation, running: RunningReply, error: AiErrorCode): Conversation {
@@ -536,14 +576,25 @@ export default function ChatWorkspace({ available, embedded = false, account = f
           <History {...historyProps} compact={collapsed} />
     </aside>
 
-    <dialog id="ai-chat-history" ref={drawer} className={styles.drawer} aria-label={copy.chatSidebar} onClose={() => setDrawerOpen(false)} onCancel={() => setDrawerOpen(false)} onClick={event => {
+    <dialog id="ai-chat-history" ref={drawer} className={styles.drawer} aria-label={copy.chatSidebar} data-open={drawerOpen ? "true" : "false"} data-closing={drawerClosing ? "true" : "false"} onClose={() => { setDrawerOpen(false); setDrawerClosing(false); }} onCancel={event => {
+      if (accountFullScreen) {
+        event.preventDefault();
+        closeDrawer();
+      } else setDrawerOpen(false);
+    }} onClick={event => {
       if (event.target === event.currentTarget) {
         const bounds = event.currentTarget.getBoundingClientRect();
         if (event.clientX > bounds.right || event.clientX < bounds.left) closeDrawer();
       }
     }}>
       <div className={styles.drawerInner}>
-        <div className={styles.sidebarTop}><button className={styles.iconControl} type="button" aria-label={copy.closeSidebar} title={copy.closeSidebar} onClick={closeDrawer}><X size={20} /></button></div>
+        <div className={`${styles.sidebarTop} ${accountFullScreen ? styles.accountDrawerTop : ""}`}>
+          {accountFullScreen && <div className={styles.accountDrawerBrand}>
+            <BlueMindLogo className={styles.accountDrawerLogo} solid aria-hidden="true" />
+            <h2>BlueMind AI</h2>
+          </div>}
+          <button className={styles.iconControl} type="button" aria-label={copy.closeSidebar} title={copy.closeSidebar} onClick={closeDrawer}><X size={20} /></button>
+        </div>
         <History {...historyProps} accountMode={accountFullScreen} />
       </div>
     </dialog>
@@ -551,12 +602,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
     <main className={styles.main}>
       <div className={styles.topbar}>
         {accountFullScreen ? <>
-          <button className={`${styles.iconControl} ${styles.accountMenuButton}`} type="button" aria-label={copy.menu} title={copy.menu} aria-expanded={drawerOpen} aria-controls="ai-chat-history" onClick={openDrawer}><Menu size={21} aria-hidden="true" /></button>
-          <Link href="/dashboard" className={styles.accountBrand} aria-label="BlueMind AI">
-            <BlueMindLogo className={styles.accountBrandLogo} solid aria-hidden="true" />
-            <span>BlueMind</span>
-          </Link>
-          <span className={styles.accountTopSpacer} aria-hidden="true" />
+          <button className={`${styles.iconControl} ${styles.accountMenuButton}`} type="button" aria-label={drawerOpen ? copy.closeSidebar : copy.menu} title={drawerOpen ? copy.closeSidebar : copy.menu} aria-expanded={drawerOpen} aria-controls="ai-chat-history" onClick={drawerOpen ? closeDrawer : openDrawer}><Menu size={21} aria-hidden="true" /></button>
         </> : <>
           <button className={`${styles.iconControl} ${styles.mobileMenu}`} type="button" aria-label={copy.openSidebar} title={copy.openSidebar} onClick={openDrawer}><Menu size={22} /></button>
           <Link href="/" className={styles.iconControl} aria-label={copy.close} title={copy.close} onNavigate={event => {

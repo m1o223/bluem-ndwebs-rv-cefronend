@@ -60,8 +60,14 @@ for (const width of [1440, 390]) {
     expect(chatBox?.height).toBeGreaterThanOrEqual(899);
 
     await expect(page.getByRole("link", { name: "Back to account", exact: true })).toHaveCount(0);
-    await page.getByRole("button", { name: "Open menu", exact: true }).click();
     await expect(page.locator("dialog")).toBeVisible();
+    await expect(page.locator("dialog").getByRole("heading", { name: "BlueMind AI", exact: true })).toBeVisible();
+    await expect(page.locator("main .topbar a")).toHaveCount(0);
+    await page.waitForTimeout(300);
+    const drawerBox = await page.locator("dialog").boundingBox();
+    expect((drawerBox?.x || 0) + (drawerBox?.width || 0) / 2).toBeGreaterThan(width / 2);
+    expect((drawerBox?.x || 0) + (drawerBox?.width || 0)).toBeCloseTo(width, 0);
+    await page.screenshot({ path: info.outputPath(`account-ai-menu-open-${width}.png`) });
     await expect(page.getByRole("button", { name: "Cafe website", exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "New chat", exact: true })).toBeVisible();
     await expect(page.locator("dialog").getByRole("link", { name: "Home", exact: true })).toBeVisible();
@@ -70,8 +76,14 @@ for (const width of [1440, 390]) {
     await expect(page.locator("dialog").getByRole("link", { name: "Account", exact: true })).toBeVisible();
     await page.getByRole("button", { name: "New chat", exact: true }).click();
     await expect(page.getByText("How can I help with your website?", { exact: true })).toBeVisible();
+    await page.locator("dialog").getByRole("button", { name: "Close sidebar", exact: true }).click();
+    await expect(page.locator("dialog")).not.toBeVisible();
+
+    await page.getByPlaceholder("Ask BlueMind anything...").fill("Draft while the menu is closed.");
     await page.getByRole("button", { name: "Open menu", exact: true }).click();
-    await page.getByRole("button", { name: "Close sidebar", exact: true }).click();
+    await expect(page.locator("dialog")).toBeVisible();
+    await expect(page.getByPlaceholder("Ask BlueMind anything...")).toHaveValue("Draft while the menu is closed.");
+    await page.locator("dialog").getByRole("button", { name: "Close sidebar", exact: true }).click();
     await expect(page.locator("dialog")).not.toBeVisible();
 
     await page.getByPlaceholder("Ask BlueMind anything...").fill("Please add a menu page.");
@@ -101,7 +113,6 @@ for (const locale of [
 
     await expect(page.getByText(locale.heading, { exact: true })).toBeVisible();
     await expect(page.locator('[data-account-fullscreen="true"]')).toHaveAttribute("dir", locale.dir);
-    await page.getByRole("button", { name: locale.menu, exact: true }).click();
     await expect(page.locator("dialog").getByRole("link", { name: locale.home, exact: true })).toBeVisible();
   });
 }
