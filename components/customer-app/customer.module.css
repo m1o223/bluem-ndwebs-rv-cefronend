@@ -26,6 +26,8 @@
   .languageSelector { margin-inline-start: clamp(12px, 2vw, 28px); }
 }
 .main { position: relative; isolation: isolate; width: min(100%, 1100px); margin-inline: auto; padding: 36px; overflow-wrap: anywhere; }
+.aiApp { width: 100%; height: 100dvh; overflow: hidden; }
+.aiFullMain { width: 100%; height: 100dvh; min-height: 0; padding: 0; overflow: hidden; }
 .aiMain { display: flex; flex-direction: column; width: min(100%, 1280px); height: calc(100dvh - 100px); min-height: 0; box-sizing: border-box; padding: 20px 24px calc(104px + env(safe-area-inset-bottom)); overflow: hidden; }
 .aiMain > :global([data-account="true"]) { flex: 1 1 auto; min-height: 0; }
 .main h1 { margin: 0; font-size: 24px; font-weight: 500; letter-spacing: 0; }

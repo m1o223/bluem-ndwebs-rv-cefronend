@@ -137,6 +137,11 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
   const pageTitle = page === "notifications" ? workspaceText.notifications : text[page];
   const isAi = page === "ai";
   const isHome = page === "home";
+  if (isAi) return <div ref={shell} className={`${styles.app} ${styles.aiApp}`} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate>
+    <div className={styles.aiFullMain}>
+      <ChatWorkspace available account accountFullScreen />
+    </div>
+  </div>;
   const accountLabel = text.account.split(" /")[0];
   const messagesLabel = locale === "sv" ? "Meddelanden" : locale === "ar" ? "\u0627\u0644\u0631\u0633\u0627\u0626\u0644" : "Messages";
   return <div ref={shell} className={styles.app} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate>
@@ -145,7 +150,7 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
       <div className={styles.headerActions}>
         <nav className={styles.desktopNav} aria-label="Account navigation">
           <Link href="/dashboard" aria-current={page === "home" ? "page" : undefined}><Home size={18} aria-hidden="true" /><TextActionLabel underline={false}>{text.home}</TextActionLabel></Link>
-          <Link href="/blue-mind-ai" aria-current={page === "ai" ? "page" : undefined}><Sparkles size={18} aria-hidden="true" /><TextActionLabel underline={false}>{text.ai}</TextActionLabel></Link>
+          <Link href="/blue-mind-ai"><Sparkles size={18} aria-hidden="true" /><TextActionLabel underline={false}>{text.ai}</TextActionLabel></Link>
           <Link href="/notifications" aria-current={page === "notifications" ? "page" : undefined}><MessageCircle size={18} aria-hidden="true" /><TextActionLabel underline={false}>{messagesLabel}</TextActionLabel></Link>
           <Link href="/account" aria-current={page === "account" ? "page" : undefined}><Settings size={18} aria-hidden="true" /><TextActionLabel underline={false}>{accountLabel}</TextActionLabel></Link>
         </nav>
@@ -211,10 +216,10 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
         </div>
       </div>
     </header>
-    <main className={`${styles.main} ${isAi ? styles.aiMain : ""}`}>
+    <main className={styles.main}>
       {!isAi && <Image className={styles.watermark} src="/images/brand/bluemind-original-logo-transparent.png" width={1065} height={1212} alt="" aria-hidden="true" />}
       {!isAi && !isHome && <h1>{pageTitle}</h1>}
-      {isAi ? <ChatWorkspace available account /> : page !== "notifications" && loadError ? <div role="alert"><p>{workspaceText.loadError}</p><button className={styles.secondary} onClick={() => setReload(value => value + 1)}><TextActionLabel underline={false}>{workspaceText.retry}</TextActionLabel></button></div> : page !== "notifications" && !overview ? <p role="status">{workspaceText.loading}</p> : <WorkspaceContent key={page} page={page} overview={overview || demoOverview} user={user} locale={locale} signOut={() => void signOut()} signingOut={busy} />}
+      {page !== "notifications" && loadError ? <div role="alert"><p>{workspaceText.loadError}</p><button className={styles.secondary} onClick={() => setReload(value => value + 1)}><TextActionLabel underline={false}>{workspaceText.retry}</TextActionLabel></button></div> : page !== "notifications" && !overview ? <p role="status">{workspaceText.loading}</p> : <WorkspaceContent key={page} page={page} overview={overview || demoOverview} user={user} locale={locale} signOut={() => void signOut()} signingOut={busy} />}
       {notice && <p className={styles.error} role="alert">{text.error}</p>}
     </main>
   </div>;

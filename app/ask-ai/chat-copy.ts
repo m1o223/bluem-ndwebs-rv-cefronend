@@ -10,6 +10,7 @@ export type ChatCopy = {
   collapseSidebar: string;
   openSidebar: string;
   closeSidebar: string;
+  backToAccount: string;
   close: string;
   discardMessage: string;
   heading: string;
@@ -62,7 +63,7 @@ export type ChatCopy = {
 const en: ChatCopy = {
   newChat: "New chat", conversations: "Conversations", saveChat: "Sign in to save this chat",
   chatSidebar: "Chat sidebar", expandSidebar: "Expand sidebar", collapseSidebar: "Collapse sidebar",
-  openSidebar: "Open sidebar", closeSidebar: "Close sidebar", close: "Close",
+  openSidebar: "Open sidebar", closeSidebar: "Close sidebar", backToAccount: "Back to account", close: "Close",
   discardMessage: "Discard your unsent message and return to the homepage?",
   heading: "What can I help you create?", prompt: "Ask BlueMind anything...",
   suggestions: ["Create a website", "Design a page", "Improve my website", "Business ideas", "Help me get started", "Explore our services"],
@@ -93,6 +94,7 @@ const en: ChatCopy = {
 
 const sv: ChatCopy = {
   ...en,
+  backToAccount: "Tillbaka till kontot",
   newChat: "Ny chatt", conversations: "Konversationer", saveChat: "Logga in för att spara chatten",
   chatSidebar: "Chattmeny", expandSidebar: "Visa sidofält", collapseSidebar: "Dölj sidofält", openSidebar: "Öppna sidofält", closeSidebar: "Stäng sidofält", close: "Stäng",
   discardMessage: "Vill du ta bort det oskickade meddelandet och gå tillbaka till startsidan?",
@@ -110,6 +112,7 @@ const sv: ChatCopy = {
 
 const ar: ChatCopy = {
   ...en,
+  backToAccount: "\u0627\u0644\u0639\u0648\u062f\u0629 \u0625\u0644\u0649 \u0627\u0644\u062d\u0633\u0627\u0628",
   newChat: "محادثة جديدة", conversations: "المحادثات", saveChat: "سجّل الدخول لحفظ هذه المحادثة",
   chatSidebar: "قائمة المحادثة", expandSidebar: "فتح الشريط الجانبي", collapseSidebar: "طيّ الشريط الجانبي", openSidebar: "فتح الشريط الجانبي", closeSidebar: "إغلاق الشريط الجانبي", close: "إغلاق",
   discardMessage: "هل تريد تجاهل رسالتك غير المرسلة والعودة إلى الصفحة الرئيسية؟",

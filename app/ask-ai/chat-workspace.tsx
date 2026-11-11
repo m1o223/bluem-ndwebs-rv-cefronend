@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
-import { ArrowUp, Camera, File, ImageIcon, Menu, MessageSquare, PanelLeftClose, PanelLeftOpen, Plus, Square, SquarePen, X } from "lucide-react";
+import { ArrowLeft, ArrowUp, Camera, File, ImageIcon, Menu, MessageSquare, PanelLeftClose, PanelLeftOpen, Plus, Square, SquarePen, X } from "lucide-react";
 import { BlueMindLogo } from "../../components/blue-mind-logo";
 import { AI_LIMITS, boundedContext, type AiErrorCode } from "../lib/ai/contract";
 import { ChatRequestError, requestReply } from "../lib/ai/client";
@@ -82,7 +82,7 @@ function History({ conversations, activeId, compact = false, onSelect, onNew, ac
   </>;
 }
 
-export default function ChatWorkspace({ available, embedded = false, account = false }: { available: boolean; embedded?: boolean; account?: boolean }) {
+export default function ChatWorkspace({ available, embedded = false, account = false, accountFullScreen = false }: { available: boolean; embedded?: boolean; account?: boolean; accountFullScreen?: boolean }) {
   const { locale } = useLocalization();
   const copy = chatCopy[locale];
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -91,6 +91,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
   const [draft, setDraft] = useState("");
   const [draftReady, setDraftReady] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [attachmentsOpen, setAttachmentsOpen] = useState(false);
   const [files, setFiles] = useState<LocalAttachment[]>([]);
   const [fileError, setFileError] = useState("");
@@ -113,6 +114,16 @@ export default function ChatWorkspace({ available, embedded = false, account = f
   const attachmentArea = useRef<HTMLDivElement>(null);
   const attachmentTrigger = useRef<HTMLButtonElement>(null);
   const menuId = useId();
+
+  function openDrawer() {
+    drawer.current?.showModal();
+    setDrawerOpen(true);
+  }
+
+  function closeDrawer() {
+    drawer.current?.close();
+    setDrawerOpen(false);
+  }
 
   function syncConversationUrl(id: string | null) {
     const params = new URLSearchParams(window.location.search);
@@ -262,7 +273,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
 
   useEffect(() => {
     const media = matchMedia("(min-width: 768px)");
-    const closeOnDesktop = () => { if (media.matches) drawer.current?.close(); };
+    const closeOnDesktop = () => { if (media.matches) closeDrawer(); };
     media.addEventListener("change", closeOnDesktop);
     return () => media.removeEventListener("change", closeOnDesktop);
   }, []);
@@ -288,7 +299,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
     if (id && selected && !selected.messages.length) {
       fileRead.current?.abort(); fileRead.current = null;
       setFiles([]); setFileError(""); setPreparing(null); setViewing(null);
-      setAnimatedId(null); setThinkingReply(null); setDraft(""); setAttachmentsOpen(false); drawer.current?.close();
+      setAnimatedId(null); setThinkingReply(null); setDraft(""); setAttachmentsOpen(false); closeDrawer();
       void fetch(`/api/ai/conversations/${encodeURIComponent(id)}`, { credentials: "same-origin", cache: "no-store" }).then(async response => {
         if (!response.ok) throw new Error("conversation");
         const loaded = serverConversation((await response.json()).conversation);
@@ -318,7 +329,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
     if (id === null) sourceFromQuery.current = null;
     setDraft("");
     setAttachmentsOpen(false);
-    drawer.current?.close();
+    closeDrawer();
   }
 
   function restoreReply(conversation: Conversation, running: RunningReply, error: AiErrorCode): Conversation {
@@ -507,7 +518,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
     <div className={styles.thinkingIndicator} data-ready={contentArrived && thinkingReply?.ready} aria-hidden="true"><span className={styles.thinkingDot} /></div>
   </div>;
 
-  return <div ref={root} className={`${styles.chat} ${embedded ? styles.embedded : ""} ${account ? styles.account : ""}`} data-embedded={embedded || undefined} data-account={account || undefined} data-collapsed={collapsed} data-welcome={!hasMessages} data-no-translate dir={locale === "ar" ? "rtl" : "ltr"}>
+  return <div ref={root} className={`${styles.chat} ${embedded ? styles.embedded : ""} ${account ? styles.account : ""} ${accountFullScreen ? styles.accountFullScreen : ""}`} data-embedded={embedded || undefined} data-account={account || undefined} data-account-fullscreen={accountFullScreen || undefined} data-collapsed={collapsed} data-welcome={!hasMessages} data-no-translate dir={locale === "ar" ? "rtl" : "ltr"}>
     <aside id="ai-chat-sidebar" className={styles.sidebar} aria-label={copy.chatSidebar}>
       <div className={styles.sidebarTop}>
         <span className={styles.sidebarTitle}>BlueMind AI</span>
@@ -519,24 +530,39 @@ export default function ChatWorkspace({ available, embedded = false, account = f
       <History {...historyProps} compact={collapsed} />
     </aside>
 
-    <dialog ref={drawer} className={styles.drawer} aria-label={copy.chatSidebar} onClick={event => {
+    <dialog id="ai-chat-history" ref={drawer} className={styles.drawer} aria-label={copy.chatSidebar} onClose={() => setDrawerOpen(false)} onCancel={() => setDrawerOpen(false)} onClick={event => {
       if (event.target === event.currentTarget) {
         const bounds = event.currentTarget.getBoundingClientRect();
-        if (event.clientX > bounds.right || event.clientX < bounds.left) event.currentTarget.close();
+        if (event.clientX > bounds.right || event.clientX < bounds.left) closeDrawer();
       }
     }}>
       <div className={styles.drawerInner}>
-        <div className={styles.sidebarTop}><button className={styles.iconControl} type="button" aria-label={copy.closeSidebar} title={copy.closeSidebar} onClick={() => drawer.current?.close()}><X size={20} /></button></div>
+        <div className={styles.sidebarTop}><button className={styles.iconControl} type="button" aria-label={copy.closeSidebar} title={copy.closeSidebar} onClick={closeDrawer}><X size={20} /></button></div>
         <History {...historyProps} />
       </div>
     </dialog>
 
     <main className={styles.main}>
       <div className={styles.topbar}>
-        <button className={`${styles.iconControl} ${styles.mobileMenu}`} type="button" aria-label={copy.openSidebar} title={copy.openSidebar} onClick={() => drawer.current?.showModal()}><Menu size={22} /></button>
-        <Link href="/" className={styles.iconControl} aria-label={copy.close} title={copy.close} onNavigate={event => {
-          if ((draft.trim() || files.length || preparing !== null) && !window.confirm(copy.discardMessage)) event.preventDefault();
-        }}><X size={22} aria-hidden="true" /></Link>
+        {accountFullScreen ? <>
+          <Link href="/dashboard" className={styles.accountBrand} aria-label="BlueMind AI">
+            <BlueMindLogo className={styles.accountBrandLogo} solid aria-hidden="true" />
+            <span>BlueMind AI</span>
+          </Link>
+          <div className={styles.accountTopActions}>
+            <button className={`${styles.iconControl} ${styles.accountHistoryButton}`} type="button" aria-label={copy.conversations} title={copy.conversations} aria-expanded={drawerOpen} aria-controls="ai-chat-history" onClick={openDrawer}>
+              <MessageSquare size={18} aria-hidden="true" /><span>{copy.conversations}</span>
+            </button>
+            <Link href="/dashboard" className={styles.accountBack} aria-label={copy.backToAccount} title={copy.backToAccount}>
+              <ArrowLeft size={18} aria-hidden="true" /><span>{copy.backToAccount}</span>
+            </Link>
+          </div>
+        </> : <>
+          <button className={`${styles.iconControl} ${styles.mobileMenu}`} type="button" aria-label={copy.openSidebar} title={copy.openSidebar} onClick={openDrawer}><Menu size={22} /></button>
+          <Link href="/" className={styles.iconControl} aria-label={copy.close} title={copy.close} onNavigate={event => {
+            if ((draft.trim() || files.length || preparing !== null) && !window.confirm(copy.discardMessage)) event.preventDefault();
+          }}><X size={22} aria-hidden="true" /></Link>
+        </>}
       </div>
 
       <div className={styles.content}>

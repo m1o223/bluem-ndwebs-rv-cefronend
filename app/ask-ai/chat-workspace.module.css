@@ -1,6 +1,20 @@
 .chat { position: fixed; inset: var(--chat-top, 0px) 0 auto; display: grid; grid-template-columns: 248px minmax(0, 1fr); height: var(--chat-height, 100dvh); overflow: hidden; background: #fff; color: #111; font-family: var(--font-body-family); }
 .embedded.chat { position: relative; inset: auto; width: 100%; height: 100%; min-height: 0; max-height: none; border-radius: inherit; }
 .account.chat { position: relative; inset: auto; width: 100%; height: var(--chat-height, 100%); min-height: 0; max-height: none; border: 1px solid #e8ecf1; border-radius: 18px; }
+.accountFullScreen.chat { position: fixed; inset: 0; width: 100%; height: var(--chat-height, 100dvh); max-height: none; grid-template-columns: minmax(0, 1fr); border: 0; border-radius: 0; --chat-height: 100dvh; }
+.accountFullScreen .sidebar { display: none; }
+.accountFullScreen .main { position: relative; display: flex; flex-direction: column; }
+.accountFullScreen .topbar { position: absolute; z-index: 5; top: max(14px, env(safe-area-inset-top)); inset-inline: 16px; width: min(calc(100% - 32px), 920px); min-height: 56px; box-sizing: border-box; margin-inline: auto; justify-content: space-between; gap: 16px; padding: 7px 10px; border: 1px solid rgba(186, 198, 212, .82); border-radius: 999px; background: rgba(255, 255, 255, .84); box-shadow: 0 14px 36px rgba(20, 45, 78, .1), 0 2px 8px rgba(20, 45, 78, .05); -webkit-backdrop-filter: blur(18px) saturate(1.12); backdrop-filter: blur(18px) saturate(1.12); }
+.accountFullScreen .content { box-sizing: border-box; flex: 1 1 auto; height: auto; min-height: 0; padding-top: 88px; }
+.accountFullScreen .composerArea { width: min(100%, 920px); flex: 0 0 auto; padding-bottom: max(24px, env(safe-area-inset-bottom)); }
+.accountBrand, .accountTopActions, .accountHistoryButton, .accountBack { display: inline-flex; align-items: center; }
+.accountBrand { min-width: 0; gap: 8px; color: #142d4e; font-size: 15px; font-weight: 650; text-decoration: none; white-space: nowrap; }
+.accountBrandLogo { --logo-size: 34px; flex: 0 0 auto; }
+.accountTopActions { min-width: 0; gap: 10px; }
+.accountFullScreen .accountHistoryButton, .accountFullScreen .accountBack { width: auto; height: 42px; min-height: 42px; flex: 0 0 auto; gap: 7px; padding: 0 13px; border: 1px solid #dce3eb; border-radius: 999px; background: rgba(255, 255, 255, .62); color: #142d4e; font: inherit; font-size: 12px; font-weight: 600; text-decoration: none; }
+.accountFullScreen .accountHistoryButton:hover, .accountFullScreen .accountBack:hover { background: #edf3fa; }
+.accountFullScreen .accountHistoryButton:focus-visible, .accountFullScreen .accountBack:focus-visible { outline: 2px solid #477bad; outline-offset: 3px; }
+.accountFullScreen .drawer { width: min(340px, calc(100vw - 32px)); }
 .embedded .drawer { position: absolute; inset: 0 auto 0 0; width: min(288px, calc(100% - 48px)); height: 100%; }
 .embedded .drawerInner { height: 100%; }
 .embedded .messageScroll { min-height: 0; }
@@ -119,6 +133,14 @@
   .composerArea { padding: 12px max(12px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
   .composer { gap: 4px; padding: 10px; }
   .chat .status { font-size: 11px; margin-top: 8px; }
+
+  .accountFullScreen .topbar { top: max(8px, env(safe-area-inset-top)); inset-inline: 10px; width: calc(100% - 20px); min-height: 52px; padding: 6px 7px; }
+  .accountFullScreen .content { padding-top: 76px; }
+  .accountFullScreen .composerArea { padding: 12px max(12px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); }
+  .accountBrand { gap: 6px; font-size: 14px; }
+  .accountBrandLogo { --logo-size: 30px; }
+  .accountFullScreen .accountHistoryButton, .accountFullScreen .accountBack { width: 40px; height: 40px; min-height: 40px; padding: 0; justify-content: center; }
+  .accountFullScreen .accountHistoryButton span, .accountFullScreen .accountBack span { display: none; }
 }
 
 /* The persistent public navigation floats above the viewport on small screens. */
@@ -126,6 +148,7 @@
   :global(body[data-bottom-navigation="true"]) .chat:not(.embedded) {
     --chat-height: calc(100dvh - 96px - env(safe-area-inset-bottom)) !important;
   }
+  .accountFullScreen.chat:not(.embedded) { --chat-height: 100dvh !important; }
 }
 @media (max-width: 767px) {
   /* Keep the welcome actions readable without making the chat page scroll sideways. */
@@ -204,3 +227,7 @@
 .embedded .sidebarTitle { display: none; opacity: 1; visibility: visible; }
 .embedded .sidebar .sidebarToggle { position: static; background: transparent; color: #142d4e; }
 .embedded .sidebar .newChat { border: 1px solid #e0e5eb; background: #fff; color: #142d4e; }
+
+@media (min-width: 1024px) {
+  .accountFullScreen .composerArea { align-self: center; width: min(100%, 920px); padding: 16px 28px max(24px, env(safe-area-inset-bottom)); }
+}

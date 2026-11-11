@@ -20,7 +20,7 @@ export default function WebsiteShell({ children }: { children: ReactNode }) {
 
   useEffect(() => { setMenuOpen(false); }, [pathname]);
 
-  if (customer) return <><RouteScrollState /><RouteTransition>{children}</RouteTransition><BottomNavigation /></>;
+  if (customer) return <><RouteScrollState /><RouteTransition>{children}</RouteTransition>{pathname !== "/blue-mind-ai" && <BottomNavigation />}</>;
   if (excluded) return children;
   if (pathname === "/sign-in" || pathname === "/login") return <main className="auth-page-main"><RouteScrollState /><RouteTransition>{children}</RouteTransition></main>;
   if (pathname === "/ask-ai") return <>
