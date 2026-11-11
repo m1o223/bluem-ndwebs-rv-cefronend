@@ -23,6 +23,9 @@ for (const [width, customer] of [[1440, 8], [768, 9], [390, 10]] as const) {
     await expect(page.locator("[data-message-conversation]").getByText("Welcome to BlueMind Web Service. How can I help you today?", { exact: true })).toBeVisible();
     await expect(page.getByPlaceholder("Write your message...")).toBeVisible();
     await expect(page).toHaveURL(/conversation=team/);
+    await page.reload();
+    await expect(page.locator("[data-message-list]")).toBeHidden();
+    await expect(page.locator("[data-message-conversation-header]")).toBeVisible();
     await page.getByPlaceholder("Write your message...").fill("A test-only reply.");
     await page.getByRole("button", { name: "Send", exact: true }).click();
     await expect(page.locator("[data-message-conversation]").getByText("A test-only reply.", { exact: true })).toBeVisible();

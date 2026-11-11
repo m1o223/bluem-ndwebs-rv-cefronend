@@ -111,7 +111,7 @@ export default function NotificationsMessages({ locale }: { locale: Locale }) {
 
   useEffect(() => {
     const controller = new AbortController();
-    setSelected(false);
+    setSelected(new URL(window.location.href).searchParams.get("conversation") === "team");
     setDraft("");
     setSendError(false);
     void loadMessages(controller.signal);
