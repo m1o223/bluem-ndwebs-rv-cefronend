@@ -208,7 +208,8 @@
 .messageListHeading > svg { color: #6a7a8e; }
 .messageHint { margin: 0 !important; padding: 0; color: #637083; font-size: 13px !important; }
 .threadList { display: grid; }
-.thread { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; align-items: center; gap: 14px; width: 100%; padding: 19px 0; border: 0; border-bottom: 1px solid #e8ecf1; background: transparent; color: #142d4e; font: inherit; text-align: start; cursor: pointer; }
+.thread { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; align-items: center; gap: 14px; width: 100%; margin-top: 16px; padding: 18px; border: 1px solid #dce3eb; border-radius: 18px; background: #fff; box-shadow: 0 10px 28px rgba(20, 45, 78, .06); color: #142d4e; font: inherit; text-align: start; cursor: pointer; }
+.thread:focus-visible { outline: 2px solid #477bad; outline-offset: 3px; }
 .threadAvatar, .conversationAvatar { display: grid; place-items: center; flex: 0 0 auto; width: 44px; height: 44px; border: 1px solid #c9dced; border-radius: 50%; background: #edf3fa; color: #3679b3; font-size: 12px; font-weight: 700; letter-spacing: .02em; }
 .teamAvatar { display: grid; place-items: center; flex: 0 0 auto; width: 48px; height: 48px; overflow: hidden; border: 1px solid #c9dced; border-radius: 50%; background: #edf3fa; }
 .teamAvatar img { width: 30px; height: 34px; object-fit: contain; }
@@ -220,19 +221,21 @@
 .unreadLabel { flex: 0 0 auto; padding: 3px 8px; border-radius: 999px; background: #e4f0fb; color: #3679b3; font-size: 11px; font-weight: 600; }
 .conversation { display: flex; min-width: 0; min-height: calc(100dvh - 190px); flex-direction: column; background: transparent; }
 .conversationHeader { display: flex; align-items: center; gap: 14px; min-height: 82px; padding: 14px 28px; border-bottom: 1px solid #e8ecf1; }
-.conversationHeader h2 { margin: 0 0 5px; font-size: 18px; }
+.conversationHeader h2 { margin: 0; font-size: 18px; }
 .conversationHeader .conversationAvatar { width: 40px; height: 40px; }
 .conversationTeamAvatar { width: 40px; height: 40px; }
 .conversationTeamAvatar img { width: 25px; height: 29px; }
 .teamSubtitle { color: #637083; font-size: 12px; }
 .backToMessages { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 7px; min-height: 42px; padding: 8px 14px; border-radius: 999px; }
-.conversationMessages { display: flex; min-height: 0; flex: 1; flex-direction: column; gap: 16px; overflow: auto; padding: 28px; overscroll-behavior: contain; }
-.demoMessage { max-width: min(78%, 680px); padding: 14px 16px; border: 1px solid #e2e8f0; border-radius: 16px; background: #f8fafc; }
-.demoMessage[data-sender="customer"] { align-self: flex-end; border-color: #c9dced; background: #edf5fb; }
+.conversationMessages { display: flex; min-height: 0; flex: 1; flex-direction: column; gap: 16px; overflow: auto; padding: 28px; overscroll-behavior: contain; background: #f8fbfe; }
+.demoMessage { max-width: min(78%, 680px); padding: 14px 16px; border: 1px solid #e2e8f0; border-radius: 16px; background: #fff; color: #142d4e; }
+.demoMessage[data-sender="customer"] { align-self: flex-end; border-color: #3679b3; background: #3679b3; color: #fff; }
 .demoMessage p { margin: 0; white-space: pre-wrap; }
 .demoMessage[data-sender="team"] { align-self: flex-start; }
 .orderReference { display: block; margin-top: 10px; color: #3679b3; font-size: 12px; font-weight: 600; }
+.demoMessage[data-sender="customer"] .orderReference { color: rgba(255, 255, 255, .82); }
 .demoMessage time { display: inline-flex; align-items: center; gap: 5px; margin-top: 9px; color: #7b8795; font-size: 11px; }
+.demoMessage[data-sender="customer"] time { color: rgba(255, 255, 255, .78); }
 .messageSender { margin-inline-start: 6px; }
 .audioMessage { display: grid; gap: 6px; }
 .audioMessage audio, .voiceDraft audio { width: min(100%, 360px); height: 36px; }
@@ -253,6 +256,12 @@
 .messageState { display: grid; min-height: 240px; place-items: center; align-content: center; gap: 14px; color: #637083; text-align: center; }
 .messageState p { margin: 0; }
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+:global(body[data-customer-messages-open="true"]) .app .header { display: none; }
+:global(body[data-customer-messages-open="true"]) .app .main { width: 100%; min-height: 100dvh; height: 100dvh; padding: 0; overflow: hidden; }
+:global(body[data-customer-messages-open="true"]) .app .main > h1, :global(body[data-customer-messages-open="true"]) .app .watermark { display: none; }
+:global(body[data-customer-messages-open="true"]) .messagesPage { height: 100dvh; padding: 0; }
+:global(body[data-customer-messages-open="true"]) .messageWorkspace, :global(body[data-customer-messages-open="true"]) .conversation { min-height: 100dvh; height: 100dvh; }
+:global(body[data-customer-messages-open="true"]) { overflow: hidden; }
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 @media (max-width: 1023px), (hover: none) and (pointer: coarse) {
   .header { width: calc(100% - 32px); min-height: 70px; margin-top: 10px; padding-inline: 16px; }
@@ -262,7 +271,7 @@
   .brandText { transform: translateY(2px); }
 }
 @media (max-width: 1023px), (hover: none) and (pointer: coarse) { .messageWorkspace, .messageList, .conversation { min-height: calc(100dvh - 270px); } }
-@media (max-width: 760px) { .messagesPage { padding-top: 8px; } .messageWorkspace, .messageList, .conversation { min-height: calc(100dvh - 270px); } .thread { grid-template-columns: 42px minmax(0, 1fr) auto; gap: 11px; } .teamAvatar { width: 40px; height: 40px; } .teamAvatar img { width: 25px; height: 29px; } .threadPreview { max-width: 52vw; } .conversationHeader { padding-inline: 0; } .backToMessages { padding-inline: 11px; font-size: 12px; } .conversationMessages { padding: 18px 0; } .demoMessage { max-width: 90%; } .demoComposer { padding: 14px 0 calc(18px + env(safe-area-inset-bottom)); } .messageNotice { margin-inline: 0; } }
+@media (max-width: 760px) { .messagesPage { padding-top: 8px; } .messageWorkspace, .messageList, .conversation { min-height: calc(100dvh - 270px); } .thread { grid-template-columns: 42px minmax(0, 1fr) auto; gap: 11px; padding: 15px; } .teamAvatar { width: 40px; height: 40px; } .teamAvatar img { width: 25px; height: 29px; } .threadTop { align-items: flex-start; flex-wrap: wrap; } .threadTop strong { overflow: visible; text-overflow: clip; white-space: normal; } .threadPreview { max-width: 52vw; } .conversationHeader { padding: 14px 0; } .backToMessages { padding-inline: 11px; font-size: 12px; } .conversationMessages { padding: 18px 0; } .demoMessage { max-width: 90%; } .demoComposer { padding: 14px 0 calc(18px + env(safe-area-inset-bottom)); } .messageNotice { margin-inline: 0; } }
 @media (max-width: 780px) {
   .welcomeTitle { font-size: 32px !important; }
   .projectCard { padding: 22px 18px; }

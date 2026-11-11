@@ -145,7 +145,7 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
   const accountLabel = text.account.split(" /")[0];
   const messagesLabel = locale === "sv" ? "Meddelanden" : locale === "ar" ? "\u0627\u0644\u0631\u0633\u0627\u0626\u0644" : "Messages";
   return <div ref={shell} className={styles.app} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate>
-    <header className={styles.header}>
+    <header className={styles.header} data-account-header="true">
       <Link href="/dashboard" aria-label="BlueMind"><BrandLockup serviceName="WEB SERVICE" solidLogo className={styles.brand} textClassName={styles.brandText} serviceClassName={styles.customerService} logoClassName={styles.logo} /></Link>
       <div className={styles.headerActions}>
         <nav className={styles.desktopNav} aria-label="Account navigation">

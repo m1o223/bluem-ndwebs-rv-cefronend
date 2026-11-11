@@ -103,7 +103,8 @@ test("optional customer type, account persistence, team messages and contact rec
   await page.getByRole("link", { name: "Notifications", exact: true }).click();
   await expect(page).toHaveURL(/\/notifications$/);
   await expect(page.locator("main h1")).toHaveText("Messages");
-  await page.getByRole("button", { name: "Start a conversation", exact: true }).click();
+  await page.getByRole("button", { name: /BlueMind Web Service/ }).click();
+  await expect(page.getByText("Welcome to BlueMind Web Service. How can I help you today?", { exact: true })).toBeVisible();
   await page.getByPlaceholder("Write your message...").fill("A test-only reply.");
   await page.getByRole("button", { name: "Send", exact: true }).click();
   await expect(page.getByText("A test-only reply.", { exact: true })).toBeVisible();
@@ -148,11 +149,11 @@ for (const width of [1440, 390]) {
     await expect(page).toHaveURL(/\/notifications$/);
     await expect(page.getByRole("heading", { name: "Messages", exact: true })).toBeVisible();
     if (width === 1440) await expect(page.getByText("Fixture project updated", { exact: true })).toBeVisible();
-    await page.getByRole("button", { name: /BlueMind Web Service Team/ }).click();
+    await page.getByRole("button", { name: /BlueMind Web Service/ }).click();
     await expect(page.getByPlaceholder("Write your message...")).toBeVisible();
     if (width === 390) {
       await expect(page.locator(".messageList")).toBeHidden();
-      await page.getByRole("button", { name: "Back to messages", exact: true }).click();
+      await page.getByRole("button", { name: "Back", exact: true }).click();
       await expect(page.locator(".messageList")).toBeVisible();
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);

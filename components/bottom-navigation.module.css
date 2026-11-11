@@ -18,6 +18,8 @@
   backdrop-filter: blur(18px) saturate(1.15);
 }
 
+:global(body[data-customer-messages-open="true"]) .navigation { display: none !important; }
+
 .items {
   position: relative;
   display: grid;
