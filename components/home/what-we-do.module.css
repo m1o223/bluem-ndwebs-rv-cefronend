@@ -1,7 +1,7 @@
 .section { width: 100%; border-block: 1px solid #edf0f4; background: #fff; color: var(--bluemind-text); }
-.inner { width: min(1040px, calc(100% - 48px)); margin-inline: auto; padding: 74px 0 78px; text-align: center; }
+.inner { width: min(1040px, calc(100% - 48px)); margin-inline: auto; padding: 84px 0 78px; text-align: center; }
 .eyebrow { margin: 0 0 12px; color: #72819a; font-size: 10px; font-weight: 600; letter-spacing: 1.8px; }
-.title { margin: 0; color: var(--bluemind-text); font-size: 42px; font-weight: 600; line-height: 1.2; }
+.title { margin: 0; color: var(--bluemind-text); font-size: 38px; font-weight: 600; line-height: 1.2; text-align: center; text-wrap: balance; }
 .folioDevices { width: min(100%, 900px); margin: 24px auto 32px; display: flex; align-items: center; justify-content: center; direction: ltr; isolation: isolate; }
 .folioDevice { position: relative; min-width: 0; flex: 0 0 auto; }
 .folioDevice img { display: block; width: 100%; height: auto; object-fit: contain; }
@@ -30,5 +30,5 @@
 .cta { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 50px; padding: 12px 22px; border: 1px solid var(--bluemind-blue); border-radius: 8px; background: var(--bluemind-blue); color: #fff; text-decoration: none; font-size: 14px; }
 .cta:focus-visible { outline: 2px solid #477bad; outline-offset: 4px; }
 .section[dir="rtl"] .cta svg { transform: scaleX(-1); }
-@media (max-width: 1024px) { .inner { padding-block: 60px 64px; } .title { font-size: 36px; } .description { font-size: 18px; } .invitationTitle { font-size: 28px; } .invitationBody { font-size: 17px; } }
-@media (max-width: 620px) { .inner { width: calc(100% - 40px); padding-block: 48px 52px; } .title { font-size: 30px; } .folioDevices { width: 100%; margin-block: 18px 24px; } .folioDesktop { width: 54%; } .folioTablet { width: 34%; margin-inline-start: -4%; } .folioPhone { width: 16%; margin-inline-start: -4%; } .description { margin-block: 14px 22px; font-size: 17px; } .types { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; } .typeButton { padding-block: 11px; font-size: 14px; } .features { margin-top: 22px; font-size: 15px; } .invitation { margin-top: 38px; } .invitationTitle { font-size: 24px; } .invitationBody { font-size: 16px; } }
+@media (max-width: 1024px) { .inner { padding-block: 68px 64px; } .title { font-size: 33px; } .description { font-size: 18px; } .invitationTitle { font-size: 28px; } .invitationBody { font-size: 17px; } }
+@media (max-width: 620px) { .inner { width: calc(100% - 40px); padding-block: 54px 52px; } .title { font-size: 28px; } .folioDevices { width: 100%; margin-block: 20px 24px; } .folioDesktop { width: 54%; } .folioTablet { width: 34%; margin-inline-start: -4%; } .folioPhone { width: 16%; margin-inline-start: -4%; } .description { margin-block: 14px 22px; font-size: 17px; } .types { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; } .typeButton { padding-block: 11px; font-size: 14px; } .features { margin-top: 22px; font-size: 15px; } .invitation { margin-top: 38px; } .invitationTitle { font-size: 24px; } .invitationBody { font-size: 16px; } }

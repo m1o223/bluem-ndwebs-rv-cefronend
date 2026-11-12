@@ -1,34 +1,40 @@
-.paymentMethods { width: min(100%, 1040px); margin: 0 auto; text-align: center; }
+.paymentMethods { width: min(100%, 1040px); margin: 8px auto 12px; text-align: center; }
 .paymentTitle { margin: 0 0 10px; color: #263b55; font-size: 15px; font-weight: 600; line-height: 1.4; }
 .paymentViewport { width: 100%; overflow: hidden; padding: 10px 0; }
 .paymentTrack { display: flex; width: max-content; align-items: center; animation: payment-marquee 72s linear infinite; will-change: transform; }
 .paymentSet { display: flex; flex: 0 0 auto; align-items: center; gap: 20px; padding-right: 20px; }
 .paymentItem { display: flex; width: 112px; min-width: 112px; height: 56px; flex: 0 0 auto; align-items: center; justify-content: center; padding: 8px 10px; }
-.paymentItem img { display: block; width: auto; height: auto; max-width: 94px; max-height: 32px; object-fit: contain; flex-shrink: 0; }
-.paymentItem[data-payment-name="Google Pay"] img,
-.paymentItem[data-payment-name="Apple Pay"] img { max-width: 76px; max-height: 38px; }
-.invoiceMark { display: inline-flex; align-items: center; gap: 7px; color: #263b55; font-size: 15px; font-weight: 600; line-height: 1; white-space: nowrap; }
+.paymentItem img { display: block; width: auto; height: auto; max-width: 88px; max-height: 29px; object-fit: contain; flex-shrink: 0; }
+.paymentItem[data-payment-name="Google Pay"] img { max-width: 72px; max-height: 30px; }
+.paymentItem[data-payment-name="Apple Pay"] img { max-width: 68px; max-height: 30px; }
+.paymentItem[data-payment-name="Visa"] img { max-width: 82px; max-height: 27px; }
+.invoiceMark { display: inline-flex; align-items: center; gap: 5px; color: #263b55; font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap; }
+.invoiceMark svg { width: 16px; height: 16px; flex: 0 0 auto; }
 @keyframes payment-marquee { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
 @media (max-width: 620px) {
-  .paymentMethods { width: 100%; }
+  .paymentMethods { width: 100%; margin-top: 6px; margin-bottom: 10px; }
   .paymentTitle { font-size: 14px; }
   .paymentSet { gap: 14px; padding-right: 14px; }
   .paymentItem { width: 92px; min-width: 92px; height: 50px; padding-inline: 5px; }
-  .paymentItem img { max-width: 78px; max-height: 27px; }
-  .paymentItem[data-payment-name="Google Pay"] img,
-  .paymentItem[data-payment-name="Apple Pay"] img { max-width: 66px; max-height: 34px; }
-  .invoiceMark { gap: 5px; font-size: 13px; }
+  .paymentItem img { max-width: 70px; max-height: 24px; }
+  .paymentItem[data-payment-name="Google Pay"] img { max-width: 62px; max-height: 30px; }
+  .paymentItem[data-payment-name="Apple Pay"] img { max-width: 60px; max-height: 30px; }
+  .paymentItem[data-payment-name="Visa"] img { max-width: 66px; max-height: 23px; }
+  .invoiceMark { gap: 4px; font-size: 12px; }
+  .invoiceMark svg { width: 14px; height: 14px; }
 }
 @media (min-width: 621px) and (hover: none) and (pointer: coarse) {
-  .paymentMethods { margin-top: -16px; }
-  .paymentTitle { margin-bottom: 4px; font-size: 13px; }
+  .paymentMethods { margin-top: -10px; margin-bottom: 8px; }
+  .paymentTitle { margin-bottom: 2px; font-size: 13px; }
   .paymentViewport { padding-block: 0; }
   .paymentSet { gap: 12px; padding-right: 12px; }
-  .paymentItem { width: 92px; min-width: 92px; height: 40px; padding: 4px; }
-  .paymentItem img { max-width: 78px; max-height: 25px; }
-  .paymentItem[data-payment-name="Google Pay"] img,
-  .paymentItem[data-payment-name="Apple Pay"] img { max-width: 66px; max-height: 30px; }
-  .invoiceMark { gap: 4px; font-size: 13px; }
+  .paymentItem { width: 92px; min-width: 92px; height: 36px; padding: 4px; }
+  .paymentItem img { max-width: 74px; max-height: 23px; }
+  .paymentItem[data-payment-name="Google Pay"] img { max-width: 64px; max-height: 28px; }
+  .paymentItem[data-payment-name="Apple Pay"] img { max-width: 62px; max-height: 28px; }
+  .paymentItem[data-payment-name="Visa"] img { max-width: 70px; max-height: 22px; }
+  .invoiceMark { gap: 4px; font-size: 12px; }
+  .invoiceMark svg { width: 14px; height: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .paymentTrack { animation: none; }
