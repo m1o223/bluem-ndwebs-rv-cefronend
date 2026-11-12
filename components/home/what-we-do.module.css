@@ -2,7 +2,7 @@
 .inner { width: min(1040px, calc(100% - 48px)); margin-inline: auto; padding: 84px 0 78px; text-align: center; }
 .eyebrow { margin: 0 0 12px; color: #72819a; font-size: 10px; font-weight: 600; letter-spacing: 1.8px; }
 .title { margin: 0; color: var(--bluemind-text); font-size: 38px; font-weight: 600; line-height: 1.2; text-align: center; text-wrap: balance; }
-.folioDevices { width: min(100%, 900px); margin: 24px auto 32px; display: flex; align-items: center; justify-content: center; direction: ltr; isolation: isolate; }
+.folioDevices { width: min(100%, 900px); margin: 24px auto 40px; display: flex; align-items: center; justify-content: center; direction: ltr; isolation: isolate; }
 .folioDevice { position: relative; min-width: 0; flex: 0 0 auto; }
 .folioDevice img { display: block; width: 100%; height: auto; object-fit: contain; }
 .folioDesktop { z-index: 1; width: 52%; }
@@ -24,12 +24,12 @@
   .typeButton:hover > span { color: var(--bluemind-blue); text-decoration-line: underline; text-decoration-color: currentColor; }
 }
 .section[dir="rtl"] .typeButton svg { transform: scaleX(-1); }
-.features { max-width: 800px; margin: 28px auto 0; color: #607085; font-size: 17px; line-height: 1.7; }
-.invitation { max-width: 900px; margin: 58px auto 25px; text-wrap: balance; }
+.features { max-width: 800px; margin: 38px auto 0; color: #607085; font-size: 17px; line-height: 1.7; }
+.invitation { max-width: 900px; margin: 70px auto 25px; text-wrap: balance; }
 .invitationTitle { margin: 0; font-size: 32px; font-weight: 600; line-height: 1.35; }
 .invitationBody { max-width: 760px; margin: 12px auto 0; color: #607085; font-size: 18px; line-height: 1.65; }
 .cta { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 50px; padding: 12px 22px; border: 1px solid var(--bluemind-blue); border-radius: 8px; background: var(--bluemind-blue); color: #fff; text-decoration: none; font-size: 14px; }
 .cta:focus-visible { outline: 2px solid #477bad; outline-offset: 4px; }
 .section[dir="rtl"] .cta svg { transform: scaleX(-1); }
-@media (max-width: 1024px) { .inner { padding-block: 68px 64px; } .title { font-size: 33px; } .examplesCard { width: min(100%, 840px); padding: 18px 20px 10px; } .examplesTitle { font-size: 20px; } .invitationTitle { font-size: 28px; } .invitationBody { font-size: 17px; } }
-@media (max-width: 620px) { .inner { width: calc(100% - 40px); padding-block: 54px 52px; } .title { font-size: 28px; } .folioDevices { width: 100%; margin-block: 20px 24px; } .folioDesktop { width: 54%; } .folioTablet { width: 34%; margin-inline-start: -4%; } .folioPhone { width: 16%; margin-inline-start: -4%; } .examplesCard { width: 100%; padding: 14px 14px 8px; border-radius: 10px; } .examplesTitle { margin-bottom: 6px; font-size: 18px; } .types { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); column-gap: 14px; } .typeButton { padding-block: 11px; font-size: 14px; } .features { margin-top: 22px; font-size: 15px; } .invitation { margin-top: 38px; } .invitationTitle { font-size: 24px; } .invitationBody { font-size: 16px; } }
+@media (max-width: 1024px) { .inner { padding-block: 68px 64px; } .title { font-size: 33px; } .folioDevices { margin-bottom: 36px; } .examplesCard { width: min(100%, 840px); padding: 18px 20px 10px; } .examplesTitle { font-size: 20px; } .features { margin-top: 34px; } .invitation { margin-top: 64px; } .invitationTitle { font-size: 28px; } .invitationBody { font-size: 17px; } }
+@media (max-width: 620px) { .inner { width: calc(100% - 40px); padding-block: 54px 52px; } .title { font-size: 28px; } .folioDevices { width: 100%; margin-block: 20px 30px; } .folioDesktop { width: 54%; } .folioTablet { width: 34%; margin-inline-start: -4%; } .folioPhone { width: 16%; margin-inline-start: -4%; } .examplesCard { width: 100%; padding: 14px 14px 8px; border-radius: 10px; } .examplesTitle { margin-bottom: 6px; font-size: 18px; } .types { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); column-gap: 14px; } .typeButton { padding-block: 11px; font-size: 14px; } .features { margin-top: 30px; font-size: 15px; } .invitation { margin-top: 48px; } .invitationTitle { font-size: 24px; } .invitationBody { font-size: 16px; } }
