@@ -8,8 +8,9 @@
 .folioDesktop { z-index: 1; width: 52%; }
 .folioTablet { z-index: 2; width: 38%; margin-inline-start: -5%; }
 .folioPhone { z-index: 3; width: 14%; margin-inline-start: -4%; }
-.description { max-width: 700px; margin: 16px auto 30px; color: #607085; font-size: 20px; line-height: 1.6; }
-.types { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 32px; margin: 0; padding: 0; text-align: start; }
+.examplesCard { width: min(100%, 920px); margin: 0 auto; padding: 20px 24px 12px; border: 1px solid #e0e8f2; border-radius: 12px; background: #f5f8fc; text-align: start; }
+.examplesTitle { margin: 0 0 8px; color: var(--bluemind-text); font-size: 21px; font-weight: 600; line-height: 1.3; text-align: center; }
+.types { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0 24px; margin: 0; padding: 0; text-align: start; }
 .typeButton { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 14px 0; border: 0; background: transparent; color: var(--bluemind-text); cursor: pointer; font: inherit; font-size: 16px; line-height: 1.55; text-align: start; transition: color 160ms ease; }
 .typeButton > span { color: inherit; text-decoration: none; text-decoration-color: transparent; text-decoration-thickness: 1px; text-underline-offset: 4px; transition: color 160ms ease, text-decoration-color 160ms ease; }
 .typeButton svg { flex: 0 0 auto; color: #91a0b1; }
@@ -30,5 +31,5 @@
 .cta { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 50px; padding: 12px 22px; border: 1px solid var(--bluemind-blue); border-radius: 8px; background: var(--bluemind-blue); color: #fff; text-decoration: none; font-size: 14px; }
 .cta:focus-visible { outline: 2px solid #477bad; outline-offset: 4px; }
 .section[dir="rtl"] .cta svg { transform: scaleX(-1); }
-@media (max-width: 1024px) { .inner { padding-block: 68px 64px; } .title { font-size: 33px; } .description { font-size: 18px; } .invitationTitle { font-size: 28px; } .invitationBody { font-size: 17px; } }
-@media (max-width: 620px) { .inner { width: calc(100% - 40px); padding-block: 54px 52px; } .title { font-size: 28px; } .folioDevices { width: 100%; margin-block: 20px 24px; } .folioDesktop { width: 54%; } .folioTablet { width: 34%; margin-inline-start: -4%; } .folioPhone { width: 16%; margin-inline-start: -4%; } .description { margin-block: 14px 22px; font-size: 17px; } .types { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; } .typeButton { padding-block: 11px; font-size: 14px; } .features { margin-top: 22px; font-size: 15px; } .invitation { margin-top: 38px; } .invitationTitle { font-size: 24px; } .invitationBody { font-size: 16px; } }
+@media (max-width: 1024px) { .inner { padding-block: 68px 64px; } .title { font-size: 33px; } .examplesCard { width: min(100%, 840px); padding: 18px 20px 10px; } .examplesTitle { font-size: 20px; } .invitationTitle { font-size: 28px; } .invitationBody { font-size: 17px; } }
+@media (max-width: 620px) { .inner { width: calc(100% - 40px); padding-block: 54px 52px; } .title { font-size: 28px; } .folioDevices { width: 100%; margin-block: 20px 24px; } .folioDesktop { width: 54%; } .folioTablet { width: 34%; margin-inline-start: -4%; } .folioPhone { width: 16%; margin-inline-start: -4%; } .examplesCard { width: 100%; padding: 14px 14px 8px; border-radius: 10px; } .examplesTitle { margin-bottom: 6px; font-size: 18px; } .types { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); column-gap: 14px; } .typeButton { padding-block: 11px; font-size: 14px; } .features { margin-top: 22px; font-size: 15px; } .invitation { margin-top: 38px; } .invitationTitle { font-size: 24px; } .invitationBody { font-size: 16px; } }

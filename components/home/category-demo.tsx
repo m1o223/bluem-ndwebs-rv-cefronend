@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { ArrowRight, Check, ChevronDown, Menu, Plus, X } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type FormEvent } from "react";
+import { createPortal } from "react-dom";
 import { useLocalization } from "../localization-provider";
 import {
   demoCategories,
@@ -167,7 +168,7 @@ export default function CategoryDemoViewer({
   const size = deviceSizes[device];
   const frameStyle = { width: size.width, height: size.height, transform: `scale(${scale})` };
 
-  return (
+  const viewer = (
     <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="demo-viewer-title" data-demo-phase="open">
       <div className={styles.viewer}>
         <header className={styles.viewerHeader}>
@@ -211,6 +212,7 @@ export default function CategoryDemoViewer({
       </div>
     </div>
   );
+  return typeof document === "undefined" ? null : createPortal(viewer, document.body);
 }
 
 function DemoSite({

@@ -13,6 +13,7 @@ import { demoCategories, type DemoCategoryId } from "./category-demo-data";
 import styles from "./what-we-do.module.css";
 
 const titles = { en: "What We Do", ar: "شو منعمل؟", sv: "Vad vi gör" } as const;
+const exampleTitles = { en: "Website Examples", ar: "\u0623\u0645\u062b\u0644\u0629 \u0645\u0648\u0627\u0642\u0639", sv: "Exempel p\u00e5 webbplatser" } as const;
 
 export default function WhatWeDo() {
   const { locale } = useLocalization();
@@ -39,20 +40,22 @@ export default function WhatWeDo() {
           <Image src="/images/folio-books/folio-phone.webp" alt={text.phone} width={640} height={1296} sizes="(max-width: 620px) 16vw, 140px" />
         </div>
       </div>
-      <p className={styles.description}>{text.description}</p>
-      <div className={styles.types} aria-label={titles[locale]} data-demo-categories>
-        {demoCategories.map(category => <button
-          key={category.id}
-          ref={element => { if (selectedCategory === category.id) opener.current = element; }}
-          type="button"
-          className={styles.typeButton}
-          data-demo-category={category.id}
-          data-active={selectedCategory === category.id}
-          aria-pressed={selectedCategory === category.id}
-          onClick={(event) => { opener.current = event.currentTarget; setSelectedCategory(category.id); }}
-        >
-          <span>{category.label[locale]}</span><ArrowRight size={15} aria-hidden="true" />
-        </button>)}
+      <div className={styles.examplesCard} data-demo-examples>
+        <h3 className={styles.examplesTitle}>{exampleTitles[locale]}</h3>
+        <div className={styles.types} aria-label={exampleTitles[locale]} data-demo-categories>
+          {demoCategories.map(category => <button
+            key={category.id}
+            ref={element => { if (selectedCategory === category.id) opener.current = element; }}
+            type="button"
+            className={styles.typeButton}
+            data-demo-category={category.id}
+            data-active={selectedCategory === category.id}
+            aria-pressed={selectedCategory === category.id}
+            onClick={(event) => { opener.current = event.currentTarget; setSelectedCategory(category.id); }}
+          >
+            <span>{category.label[locale]}</span><ArrowRight size={15} aria-hidden="true" />
+          </button>)}
+        </div>
       </div>
       <p className={styles.features}>{text.features}</p>
       <div className={styles.invitation}>
