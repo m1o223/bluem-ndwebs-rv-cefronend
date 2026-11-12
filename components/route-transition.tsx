@@ -1,51 +1,20 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { usePathname } from "next/navigation";
 import styles from "./route-transition.module.css";
-
-const routeOrder = [
-  "/",
-  "/about",
-  "/services",
-  "/templates",
-  "/how-we-work",
-  "/care",
-  "/our-work",
-  "/contact",
-  "/quote",
-  "/faq",
-  "/ask-ai",
-  "/dashboard",
-  "/my-project",
-  "/blue-mind-ai",
-  "/notifications",
-  "/account",
-];
-
-function routeIndex(pathname: string) {
-  const index = routeOrder.indexOf(pathname);
-  return index === -1 ? routeOrder.length : index;
-}
+import revealStyles from "./reveal-scope.module.css";
+import { useRevealScope } from "./reveal-scope";
 
 export default function RouteTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const previousPath = useRef(pathname);
-  const [direction, setDirection] = useState<"forward" | "backward" | null>(null);
+  const stage = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (previousPath.current === pathname) return;
-    const from = previousPath.current;
-    const nextDirection = routeIndex(pathname) >= routeIndex(from) ? "forward" : "backward";
-    previousPath.current = pathname;
-    setDirection(nextDirection);
-    const timer = window.setTimeout(() => setDirection(null), 360);
-    return () => window.clearTimeout(timer);
-  }, [pathname]);
+  useRevealScope(stage, pathname, pathname === "/ask-ai" || pathname === "/blue-mind-ai");
 
   return (
-    <div className={styles.stage} data-direction={direction || undefined} data-route={pathname}>
+    <div ref={stage} className={`${styles.stage} ${revealStyles.stage}`} data-route={pathname}>
       {children}
     </div>
   );

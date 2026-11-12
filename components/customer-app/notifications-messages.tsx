@@ -169,9 +169,9 @@ export default function NotificationsMessages({ locale }: { locale: Locale }) {
     }
   }
 
-  return <section className={styles.messagesPage} aria-label={t.title}>
+  return <section className={styles.messagesPage} data-reveal-skip aria-label={t.title}>
     <div className={styles.messageWorkspace} data-mode={selected ? "conversation" : "list"}>
-      <section className={styles.messageList} data-message-list="true" data-hidden={selected ? "true" : "false"} aria-label={t.title}>
+      <section className={styles.messageList} data-reveal-group="messages-list" data-message-list="true" data-hidden={selected ? "true" : "false"} aria-label={t.title}>
         <div className={styles.messageListHeading}><p className={styles.messageHint}>{t.listHint}</p><Mail size={22} aria-hidden="true" /></div>
         {loading && <p className={styles.messageState} role="status">{t.loading}</p>}
         {error && <div className={styles.messageState} role="alert"><p>{t.loadFailed}</p><button type="button" className={styles.secondary} onClick={() => void loadMessages()}>{t.retry}</button></div>}
@@ -183,7 +183,7 @@ export default function NotificationsMessages({ locale }: { locale: Locale }) {
           </button>
         </div>}
       </section>
-      <section className={styles.conversation} data-message-conversation="true" data-visible={selected} aria-label={t.teamName}>
+      <section className={styles.conversation} data-reveal-group="messages-conversation" data-message-conversation="true" data-visible={selected} aria-label={t.teamName}>
         {selected && <>
           <header className={styles.conversationHeader} data-message-conversation-header="true"><button type="button" className={`${styles.backToMessages} ${styles.secondary}`} onClick={leaveConversation} aria-label={t.back}><ArrowLeft size={17} aria-hidden="true" />{t.back}</button><div className={styles.conversationHeading}><TeamAvatar className={styles.conversationTeamAvatar} /><h2>{t.teamName}</h2></div><LanguageSelector rootClassName={`${styles.languageSelector} ${styles.conversationLanguage}`} buttonClassName={styles.languageButton} menuClassName={styles.languageMenu} /></header>
           <div className={styles.conversationMessages} ref={messagesRef} aria-live="polite">

@@ -55,13 +55,13 @@ export default function SignInScreen() {
   const googleError = google.error === "cancelled" ? text.googleCancelled : google.error === "link_required" ? text.googleLink : google.error === "failed" ? text.googleFailed : text.googleUnavailable;
   const status = google.busy ? text.googleLoading : google.error ? googleError : mode === "login" && email.status !== "idle" ? authText[email.status] : "";
 
-  return <section className={styles.page} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate aria-labelledby="sign-in-title">
+  return <section className={styles.page} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate data-reveal-skip aria-labelledby="sign-in-title">
     <Image className={styles.watermark} src="/images/brand/bluemind-original-logo-transparent.png" width={1065} height={1212} alt="" aria-hidden="true" sizes="(max-width: 620px) 80vw, 560px" />
     <div className={styles.topbar}>
       <Link href="/" className={styles.brand} aria-label="BlueMind Web Service home"><BrandLockup className={styles.brandLockup} logoClassName={styles.brandLogo} priority solidLogo /></Link>
       <Link href="/" className={styles.back}><ArrowLeft size={18} aria-hidden="true" /><TextActionLabel>{text.back}</TextActionLabel></Link>
     </div>
-    <div className={styles.stage}>
+    <div className={styles.stage} data-reveal-group="auth-content">
       <WebsiteOrbits />
       <div className={styles.center}>
         <div className={styles.formArea} data-auth-card data-mode={mode}>

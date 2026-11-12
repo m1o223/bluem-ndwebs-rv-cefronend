@@ -132,7 +132,7 @@ function ProjectDashboard({ overview, locale }: { overview: Overview; locale: Lo
   const t = workspaceCopy[locale];
   const projects = overview.projects?.length ? overview.projects : overview.project ? [overview.project] : [];
   const name = overview.profile.fullName.trim();
-  return <div className={styles.homeDashboard}>
+  return <div className={styles.homeDashboard} data-reveal-group="account-home">
     <p className={styles.homeEyebrow}>{t.home}</p>
     <h1 className={styles.welcomeTitle}>{t.welcome}{name ? `, ${name}` : ""}</h1>
     {projects.length ? <div className={styles.homeProjects}>{projects.map((project, index) => <HomeProjectCard key={project.id || project.orderNumber || `${project.name}-${index}`} project={project} overview={overview} locale={locale} />)}</div> : <section className={`${styles.section} ${styles.emptyProject}`}><p className={styles.eyebrow}>{t.current}</p><Empty>{t.noProject}</Empty><Link className={styles.primary} href="/blue-mind-ai"><Sparkles size={17} /><TextActionLabel light underline={false}>{t.startProject}</TextActionLabel></Link></section>}
