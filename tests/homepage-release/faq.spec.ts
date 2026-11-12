@@ -48,4 +48,20 @@ test.describe("homepage FAQ", () => {
     await expect(footer.getByRole("link", { name: "FAQ" })).toHaveAttribute("href", "/faq");
     await expect(footer.getByText("Coming soon", { exact: true })).toHaveCount(0);
   });
+
+  test("links each social icon to the matching BlueMind account", async ({ page }) => {
+    const footer = page.locator("footer");
+    const socialLinks = [
+      ["TikTok", "https://www.tiktok.com/@bluemind_ai?_r=1&_t=ZN-9BLvODcOezm"],
+      ["Instagram", "https://www.instagram.com/bluemind_ai?srtk=NmlsbG52bjBneDQ3&utm_source=qr"],
+      ["X", "https://x.com/bluemind_ai?s=11"],
+    ] as const;
+
+    for (const [name, href] of socialLinks) {
+      const link = footer.getByRole("link", { name: `BlueMind Web Service on ${name}` });
+      await expect(link).toHaveAttribute("href", href);
+      await expect(link).toHaveAttribute("target", "_blank");
+      await expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    }
+  });
 });

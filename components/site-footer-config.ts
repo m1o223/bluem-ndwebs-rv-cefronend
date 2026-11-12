@@ -14,9 +14,9 @@ export const footerConfig = {
   ],
   services: [["/services", "Website Design"], ["/quote", "Business Websites"], ["/quote", "Online Stores"], ["/quote", "Custom Websites"], ["/care", "BlueMind Care"]],
   social: [
-    { name: "TikTok", icon: "/images/footer/tiktok.svg", url: null },
-    { name: "Instagram", icon: "/images/footer/instagram.svg", url: null },
-    { name: "X", icon: "/images/footer/x.svg", url: null },
+    { name: "TikTok", icon: "/images/footer/tiktok.svg", url: "https://www.tiktok.com/@bluemind_ai?_r=1&_t=ZN-9BLvODcOezm" },
+    { name: "Instagram", icon: "/images/footer/instagram.svg", url: "https://www.instagram.com/bluemind_ai?srtk=NmlsbG52bjBneDQ3&utm_source=qr" },
+    { name: "X", icon: "/images/footer/x.svg", url: "https://x.com/bluemind_ai?s=11" },
   ] satisfies Social[],
   paymentMethods: [
     { name: "Klarna", asset: "/images/footer/klarna.svg" },
