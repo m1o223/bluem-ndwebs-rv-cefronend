@@ -1,64 +1,149 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowUp } from "lucide-react";
-import { useLocalization } from "../localization-provider";
+import { useEffect, useState } from "react";
+import { useLocalization, type Locale } from "../localization-provider";
 import styles from "./bluemind-ai-demo.module.css";
 
-type Locale = "en" | "ar" | "sv";
+type PlannerCopy = {
+  title: string;
+  prompts: [string, string, string];
+  fieldLabel: string;
+};
 
-const copy: Record<Locale, { title: string; helpTitle: string; helpBody: string; ask: string }> = {
+const copy: Record<Locale, PlannerCopy> = {
   en: {
-    title: "BlueMind AI",
-    helpTitle: "How can BlueMind AI help you?",
-    helpBody: "Tell it about your website idea in your own words. It helps you prepare your request and walks you through the plans and payment options so you can choose what works for you. Once your request is sent to the team, it tracks your website's progress and keeps you updated until delivery.",
-    ask: "Ask BlueMind AI",
-  },
-  ar: {
-    title: "BlueMind AI",
-    helpTitle: "كيف بيساعدك BlueMind AI؟",
-    helpBody: "احكيله فكرة موقعك بكلماتك. بيساعدك ترتّبها وتجهّز طلبك، وبيشرحلك الخطط وطرق الدفع حتى تختار اللي بناسبك. وبعد ما يرسل طلبك للفريق، بيتابع تقدّم موقعك خطوة بخطوة وبيبعتلك تحديثات لحد ما تستلمه.",
-    ask: "جرّب BlueMind AI",
+    title: "Let’s plan your website",
+    prompts: [
+      "Help me plan a café website",
+      "What pages do I need?",
+      "Help me plan my online store",
+    ],
+    fieldLabel: "Website planning prompt preview",
   },
   sv: {
-    title: "BlueMind AI",
-    helpTitle: "Hur kan BlueMind AI hjälpa dig?",
-    helpBody: "Berätta om din webbplatsidé med dina egna ord. BlueMind AI hjälper dig att förbereda din förfrågan och guidar dig genom planer och betalningsalternativ. När förfrågan skickas till teamet följer den projektets framsteg och håller dig uppdaterad tills leverans.",
-    ask: "Fråga BlueMind AI",
+    title: "Vi planerar din webbplats",
+    prompts: [
+      "Hjälp mig planera en sida för mitt kafé",
+      "Vilka sidor behöver jag?",
+      "Hjälp mig planera min webbutik",
+    ],
+    fieldLabel: "Förhandsvisning av planeringsfråga",
+  },
+  ar: {
+    title: "خلّينا نخطّط لموقعك",
+    prompts: [
+      "ساعدني أخطّط لموقع الكافيه",
+      "شو الصفحات اللي بحتاجها؟",
+      "ساعدني أخطّط لمتجري الإلكتروني",
+    ],
+    fieldLabel: "معاينة سؤال تخطيط الموقع",
   },
 };
 
-export default function BlueMindAiDemo() {
-  const { locale: selectedLocale } = useLocalization();
-  const locale = (selectedLocale === "ar" || selectedLocale === "sv" ? selectedLocale : "en") as Locale;
-  const text = copy[locale];
+function useReducedMotion() {
+  const [reducedMotion, setReducedMotion] = useState(false);
 
-  return <section className={styles.section} data-bluemind-ai data-no-translate dir={locale === "ar" ? "rtl" : "ltr"} aria-labelledby="bluemind-ai-title">
-    <div className={styles.inner}>
-      <div className={styles.demo} data-ai-demo>
-        <div className={styles.tabletFrame}>
-          <div className={styles.tabletScreen} dir="ltr">
-            <video
-              className={styles.video}
-              src="/videos/bluemind-ai-demo.webm"
-              poster="/videos/bluemind-ai-demo-poster.png"
-              autoPlay
-              controls
-              loop
-              muted
-              playsInline
-              preload="metadata"
-              aria-label="BlueMind AI chat demo"
-            />
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(media.matches);
+    update();
+    if (typeof media.addEventListener === "function") {
+      media.addEventListener("change", update);
+      return () => media.removeEventListener("change", update);
+    }
+    const legacyMedia = media as MediaQueryList & {
+      addListener?: (listener: () => void) => void;
+      removeListener?: (listener: () => void) => void;
+    };
+    legacyMedia.addListener?.(update);
+    return () => legacyMedia.removeListener?.(update);
+  }, []);
+
+  return reducedMotion;
+}
+
+export default function BlueMindAiDemo() {
+  const { locale } = useLocalization();
+  const text = copy[locale];
+  const reducedMotion = useReducedMotion();
+  const [displayed, setDisplayed] = useState("");
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let cancelled = false;
+
+    if (reducedMotion) {
+      setDisplayed(text.prompts[0]);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    setDisplayed("");
+    let promptIndex = 0;
+    let deleting = false;
+    let current = "";
+
+    const tick = () => {
+      if (cancelled) return;
+      const prompt = text.prompts[promptIndex];
+
+      if (!deleting) {
+        current = prompt.slice(0, current.length + 1);
+        setDisplayed(current);
+        if (current === prompt) {
+          deleting = true;
+          timer = setTimeout(tick, 300);
+        } else {
+          timer = setTimeout(tick, 45);
+        }
+        return;
+      }
+
+      current = current.slice(0, -1);
+      setDisplayed(current);
+      if (!current) {
+        deleting = false;
+        promptIndex = (promptIndex + 1) % text.prompts.length;
+        tick();
+      } else {
+        timer = setTimeout(tick, 25);
+      }
+    };
+
+    tick();
+    return () => {
+      cancelled = true;
+      if (timer !== undefined) clearTimeout(timer);
+    };
+  }, [locale, reducedMotion, text.prompts]);
+
+  return (
+    <section
+      className={styles.section}
+      data-bluemind-ai
+      data-no-translate
+      dir={locale === "ar" ? "rtl" : "ltr"}
+      aria-labelledby="bluemind-ai-title"
+    >
+      <div className={styles.inner}>
+        <h2 id="bluemind-ai-title" className={styles.title}>
+          {text.title}
+        </h2>
+        <div className={styles.plannerStage} data-ai-demo>
+          <div className={styles.plannerGlow} aria-hidden="true" />
+          <div
+            className={styles.plannerField}
+            data-planner-field
+            role="status"
+            aria-live="polite"
+            aria-label={text.fieldLabel}
+          >
+            <span className={styles.plannerText}>{displayed}</span>
+            <span className={styles.caret} aria-hidden="true" />
           </div>
         </div>
       </div>
-      <div className={styles.copy}>
-        <h2 id="bluemind-ai-title" className={styles.title}>{text.title}</h2>
-        <h3>{text.helpTitle}</h3>
-        <p>{text.helpBody}</p>
-        <Link href="/ask-ai?source=what-we-build&new=1" className={styles.mobileCta}>{text.ask}<ArrowUp size={16} /></Link>
-      </div>
-    </div>
-  </section>;
+    </section>
+  );
 }
