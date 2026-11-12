@@ -72,11 +72,11 @@
 .studioContact { color: #282f3b; }
 .studioHero { display: grid; grid-template-columns: 1.12fr 1fr; align-items: center; gap: 10px; padding: 16px 25px 20px; }
 .studioCopy { min-width: 0; }
-.studioEyebrow { font-size: 6px; line-height: 1.6; letter-spacing: .9px; color: #9298a1; margin: 0 0 10px; }
-.studioHeadline { font-family: var(--font-body-family); font-size: clamp(32px, 5.4cqw, 38px); line-height: 1.03; font-weight: 400; letter-spacing: -1.5px; margin: 0; color: #242833; }
+.studioEyebrow { font-size: 6px; line-height: 1.6 !important; letter-spacing: .9px; color: #9298a1; margin: 0 0 10px; }
+.studioHeadline { font-family: var(--font-body-family); font-size: clamp(32px, 5.4cqw, 38px); line-height: .98 !important; font-weight: 400; letter-spacing: -1.5px; margin: 0; color: #242833; }
 .studioHeadline em { font-style: normal; color: var(--bluemind-blue); }
-.studioDescription { font-size: 8px; line-height: 1.5; color: #88909b; margin: 10px 0 12px; }
-.studioButton { display: inline-flex; align-items: center; justify-content: space-between; gap: 26px; padding: 8px 12px; border-radius: 3px; color: #fff; background: #262e3a; font-size: 8px; }
+.studioDescription { font-size: 8px; line-height: 1.5 !important; color: #88909b; margin: 6px 0 10px; }
+.studioButton { display: inline-flex; align-items: center; justify-content: space-between; gap: 26px; min-height: 32px; box-sizing: border-box; padding: 9px 12px; border-radius: 3px; color: #fff; background: #262e3a; font-size: 8px; line-height: 1.2; white-space: nowrap; }
 .studioButton > span { font-size: 12px; }
 .designStudy { position: relative; height: 205px; min-width: 0; }
 .studyGrid { position: absolute; inset: 2px 0 3px; border-radius: 5px; background-color: #f3f5f8; background-image: linear-gradient(#e8ecf140 1px, transparent 1px), linear-gradient(90deg, #e8ecf140 1px, transparent 1px); background-size: 23px 23px; }
@@ -105,8 +105,8 @@
 .studioFooter i { width: 4px; height: 4px; background: #97a8c8; border-radius: 50%; }
 .studioFooter b { font-weight: 400; padding-left: 10px; color: #364560; }
 .miniCard { position: absolute; z-index: 3; padding: 14px; border: 1px solid #e1e7ee; border-radius: 8px; background: #fff; box-shadow: 0 9px 24px #23385a0b; }
-.designCard { width: 160px; right: 4%; bottom: 64px; }
-.performanceCard { width: 146px; right: 2%; top: 40px; }
+.designCard { width: 160px; right: 5.5%; bottom: 64px; }
+.performanceCard { width: 146px; right: 5%; top: 40px; }
 .miniHeading { display: flex; align-items: center; gap: 7px; font-size: 9px; font-weight: 500; color: #495369; white-space: nowrap; }
 .miniHeading svg { color: #5b75a9; flex-shrink: 0; }
 .miniHeading > i { width: 3px; height: 3px; margin-left: auto; border-radius: 50%; background: #a5b1c3; }
@@ -143,8 +143,8 @@
   .typeTile > strong { font-size: 51px; }
   .layoutTile { right: -2%; padding: 8px; }
   .studioFooter { padding-inline: 20px; }
-  .designCard { width: 146px; right: 0; bottom: 52px; }
-  .performanceCard { width: 130px; right: 0; }
+  .designCard { width: 146px; right: 4%; bottom: 52px; }
+  .performanceCard { width: 130px; right: 3.5%; }
 }
 @media (max-width: 959px) {
   .hero .headline { font-size: 40px; }
@@ -163,8 +163,8 @@
   .designStudy { height: 197px; }
   .typeTile { height: 145px; }
   .typeTile > strong { font-size: 60px; }
-  .designCard { right: 0; bottom: 36px; }
-  .performanceCard { width: 130px; right: 0; top: 12px; }
+  .designCard { right: 2.5%; bottom: 36px; }
+  .performanceCard { width: 130px; right: 2%; top: 12px; }
   .planet { top: 52px; width: min(560px, 72vw); right: -96px; opacity: .18; }
 }
 @media (max-width: 620px) {
@@ -177,7 +177,7 @@
   .designMover { top: 74px; left: 4%; width: 92%; }
   .codeMover { left: 0; width: 84%; }
   .websiteWindow { top: 74px; left: 4%; width: 92%; border-radius: 7px; }
-  .heroFlipCard { height: 254px; }
+  .heroFlipCard { height: 266px; }
   .heroFlipFace { border-radius: 7px; }
   .heroCodeMeta { padding: 10px 11px 0; gap: 9px; font-size: 7px; }
   .heroCodeBlock { font-size: clamp(8px, 2.4cqw, 10px); line-height: 1.65; padding-inline: 11px; margin-block: 11px 8px; }
@@ -234,11 +234,11 @@
 }
 
 @media (min-width: 621px) and (hover: none) and (pointer: coarse) {
-  .visual { height: 360px; }
+  .visual { height: 396px; }
   .designMover { top: 52px; left: 14%; width: 72%; }
   .codeMover { top: 4px; left: 0; width: 56%; }
   .websiteWindow { top: 52px; left: 14%; width: 72%; }
-  .heroFlipCard { height: 300px; }
+  .heroFlipCard { height: 344px; }
 }
 
 /* The touch header is part of the document flow, so keep the first content close to it. */
