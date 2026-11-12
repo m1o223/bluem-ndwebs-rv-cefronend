@@ -186,6 +186,15 @@ export function LocalizationProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    const syncStoredLocale = (event: StorageEvent) => {
+      if (event.key !== storageKey || event.newValue === null) return;
+      setLocaleState(normalizeLocale(event.newValue));
+    };
+    window.addEventListener("storage", syncStoredLocale);
+    return () => window.removeEventListener("storage", syncStoredLocale);
+  }, []);
+
+  useEffect(() => {
     let active = true;
     if (locale === "en") {
       setLoadedLocale("en");
@@ -207,6 +216,7 @@ export function LocalizationProvider({ children }: { children: ReactNode }) {
     setLocale: (nextLocale) => {
       try {
         window.localStorage.setItem(storageKey, nextLocale);
+        document.cookie = `${storageKey}=${nextLocale}; path=/; max-age=31536000; samesite=lax`;
       } catch {
         // Browsers can block storage in private or restricted contexts.
       }

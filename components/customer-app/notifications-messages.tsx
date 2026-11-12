@@ -4,6 +4,7 @@ import Image from "next/image";
 import { ArrowLeft, Clock3, Mail, Send } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import type { Locale } from "../localization-provider";
+import LanguageSelector from "../language-selector";
 import styles from "./customer.module.css";
 
 type TeamMessage = {
@@ -184,7 +185,7 @@ export default function NotificationsMessages({ locale }: { locale: Locale }) {
       </section>
       <section className={styles.conversation} data-message-conversation="true" data-visible={selected} aria-label={t.teamName}>
         {selected && <>
-          <header className={styles.conversationHeader} data-message-conversation-header="true"><button type="button" className={`${styles.backToMessages} ${styles.secondary}`} onClick={leaveConversation} aria-label={t.back}><ArrowLeft size={17} aria-hidden="true" />{t.back}</button><TeamAvatar className={styles.conversationTeamAvatar} /><h2>{t.teamName}</h2></header>
+          <header className={styles.conversationHeader} data-message-conversation-header="true"><button type="button" className={`${styles.backToMessages} ${styles.secondary}`} onClick={leaveConversation} aria-label={t.back}><ArrowLeft size={17} aria-hidden="true" />{t.back}</button><div className={styles.conversationHeading}><TeamAvatar className={styles.conversationTeamAvatar} /><h2>{t.teamName}</h2></div><LanguageSelector rootClassName={`${styles.languageSelector} ${styles.conversationLanguage}`} buttonClassName={styles.languageButton} menuClassName={styles.languageMenu} /></header>
           <div className={styles.conversationMessages} ref={messagesRef} aria-live="polite">
             {(messages.length ? messages : [{ id: "welcome-preview", sender: "team" as const, body: t.welcome, createdAt: null, read: true }]).map(message => <article key={message.id} className={styles.demoMessage} data-sender={message.sender}><p>{message.body}</p>{message.orderNumber && <span className={styles.orderReference}>{t.order}: {message.orderNumber}</span>}<time><Clock3 size={13} aria-hidden="true" />{formatTime(message.createdAt, locale)}<span className={styles.messageSender}>{message.sender === "customer" ? t.you : t.team}</span></time></article>)}
           </div>

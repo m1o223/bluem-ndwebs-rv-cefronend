@@ -1,17 +1,17 @@
 import { expect, test } from "@playwright/test";
 import { openEmailLogin } from "./menu-helpers";
 
-async function login(page: import("@playwright/test").Page) {
+async function login(page: import("@playwright/test").Page, email = "customer-11@example.invalid") {
   const response = await page.request.post("/api/customer/login", {
     headers: { Origin: "http://localhost:3199" },
-    data: { email: "customer-11@example.invalid", password: "Isolated-browser-test-123!" },
+    data: { email, password: "Isolated-browser-test-123!" },
   });
   expect(response.status()).toBe(200);
   await page.goto("/account");
   await page.waitForURL(/\/(account|sign-in|login)$/);
   if (/\/(sign-in|login)$/.test(page.url())) {
     await openEmailLogin(page);
-    await page.getByLabel("Email", { exact: true }).fill("customer-11@example.invalid");
+    await page.getByLabel("Email", { exact: true }).fill(email);
     await page.getByLabel("Password", { exact: true }).fill("Isolated-browser-test-123!");
     await page.getByRole("button", { name: "Sign in", exact: true }).click();
     await page.goto("/account");
@@ -73,4 +73,39 @@ test("the saved team welcome follows the account language without duplicating", 
   await language.click();
   await page.getByRole("menuitemradio", { name: "English" }).click();
   await expect(page.locator("[data-message-list]").getByText(/Welcome to BlueMind Web Service/)).toHaveCount(1);
+});
+
+test("messages language control keeps the open conversation and draft", async ({ page }) => {
+  await login(page, "customer-10@example.invalid");
+  await page.goto("/notifications");
+  await page.locator("[data-message-list] button").click();
+  await expect(page.locator("[data-message-conversation]")).toBeVisible();
+
+  const draft = "Keep this draft while the account language changes.";
+  await page.locator("[data-message-conversation] textarea").fill(draft);
+  const language = page.locator("[data-message-conversation-header] button[aria-haspopup='menu']");
+  await language.click();
+  await page.getByRole("menuitemradio", { name: "العربية" }).click();
+
+  await expect(page.locator("[data-message-conversation]").getByText("مرحباً بك في BlueMind Web Service. كيف يمكنني مساعدتك اليوم?", { exact: true })).toBeVisible();
+  await expect(page.locator("[data-message-conversation] textarea")).toHaveValue(draft);
+  await expect(page).toHaveURL(/\/notifications\?conversation=team$/);
+});
+
+test("the selected language follows every account route and a refresh", async ({ page }) => {
+  await login(page, "customer-9@example.invalid");
+  await page.getByRole("button", { name: /Selected language/ }).click();
+  await page.getByRole("menuitemradio", { name: "Svenska" }).click();
+
+  await page.goto("/dashboard");
+  await expect(page.getByRole("heading", { name: "Välkommen, UI test", exact: true })).toBeVisible();
+  await page.goto("/notifications");
+  await expect(page.getByRole("heading", { name: "Meddelanden", exact: true })).toBeVisible();
+  await page.goto("/blue-mind-ai");
+  await expect(page.locator("main p").first()).toContainText("Hur kan jag");
+  await page.goto("/account");
+  await expect(page.getByRole("heading", { name: "Profil", exact: true })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Profil", exact: true })).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute("lang", "sv");
 });

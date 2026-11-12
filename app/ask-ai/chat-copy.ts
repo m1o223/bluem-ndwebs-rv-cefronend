@@ -26,6 +26,8 @@ export type ChatCopy = {
   conversation: string;
   yourMessage: string;
   aiResponse: string;
+  thinking: string;
+  codeBlock: string;
   retry: string;
   addAttachment: string;
   selectedAttachments: string;
@@ -73,7 +75,7 @@ const en: ChatCopy = {
   discardMessage: "Discard your unsent message and return to the homepage?",
   heading: "How can I help with your website?", intro: "Plan your idea, shape the requirements, and prepare your request with BlueMind AI.", prompt: "Ask BlueMind anything...",
   suggestions: ["Plan a website", "Design a page", "Improve my website", "Explore our services", "Start with an idea", "Prepare my request"],
-  message: "Message", conversation: "Conversation", yourMessage: "Your message", aiResponse: "BlueMind AI response", retry: "Retry",
+  message: "Message", conversation: "Conversation", yourMessage: "Your message", aiResponse: "BlueMind AI response", thinking: "BlueMind AI is preparing a response", codeBlock: "Code block", retry: "Retry",
   addAttachment: "Add attachment", selectedAttachments: "Selected attachments", messageAttachments: "Message attachments",
   addImage: "Add image", addFile: "Add file", takePhoto: "Take a photo",
   attachmentInfo: "Up to 4 files, 2 MB each; 2.5 MB per chat. Files stay in this browser session and are sent privately to OpenAI for analysis.",
@@ -106,7 +108,7 @@ const sv: ChatCopy = {
   discardMessage: "Vill du ta bort det oskickade meddelandet och gå tillbaka till startsidan?",
   heading: "Vad kan jag hjälpa dig att skapa?", prompt: "Fråga BlueMind vad som helst...",
   suggestions: ["Skapa en webbplats", "Designa en sida", "Förbättra min webbplats", "Affärsidéer", "Hjälp mig att komma igång", "Utforska våra tjänster"],
-  message: "Meddelande", conversation: "Konversation", yourMessage: "Ditt meddelande", aiResponse: "BlueMind AI-svar", retry: "Försök igen",
+  message: "Meddelande", conversation: "Konversation", yourMessage: "Ditt meddelande", aiResponse: "BlueMind AI-svar", thinking: "BlueMind AI förbereder ett svar", codeBlock: "Kodblock", retry: "Försök igen",
   addAttachment: "Lägg till bilaga", selectedAttachments: "Valda bilagor", messageAttachments: "Meddelandebilagor", addImage: "Lägg till bild", addFile: "Lägg till fil", takePhoto: "Ta ett foto",
   attachmentInfo: "Upp till 4 filer, 2 MB per fil och 2,5 MB per chatt. Filerna stannar i den här webbläsarsessionen och skickas privat till OpenAI för analys.", placeholder: "Fråga BlueMind vad som helst...", sendMessage: "Skicka meddelande", stopResponse: "Stoppa svaret",
   preparing: "Förbereder bilagor", cancel: "Avbryt", availableStatus: "Meddelanden skickas till OpenAI. Undvik att dela känslig information.", unavailableStatus: "AI-svar är inte anslutna", responseActions: "Svarsåtgärder", like: "Gilla svaret", dislike: "Ogilla svaret", copy: "Kopiera", copied: "Kopierat!", share: "Dela", regenerate: "Skapa om", wait: "Vänta på det aktuella svaret", showInstantly: "Visa direkt", messageCard: "Meddelande", messageCardActions: "Åtgärder för meddelandekort", editMessage: "Redigera meddelande", copyMessage: "Kopiera meddelande", shareMessage: "Dela meddelande", edit: "Redigera", closeImage: "Stäng bild", zoomOut: "Zooma ut", zoomIn: "Zooma in", resetZoom: "Återställ zoom",
@@ -124,7 +126,7 @@ const ar: ChatCopy = {
   discardMessage: "هل تريد تجاهل رسالتك غير المرسلة والعودة إلى الصفحة الرئيسية؟",
   heading: "ماذا يمكنني أن أساعدك على إنشائه؟", prompt: "اسأل BlueMind عن أي شيء...",
   suggestions: ["أنشئ موقعًا", "صمّم صفحة", "حسّن موقعي", "أفكار لمشروع", "ساعدني على البدء", "استكشف خدماتنا"],
-  message: "رسالة", conversation: "محادثة", yourMessage: "رسالتك", aiResponse: "رد BlueMind AI", retry: "إعادة المحاولة",
+  message: "رسالة", conversation: "محادثة", yourMessage: "رسالتك", aiResponse: "رد BlueMind AI", thinking: "جارٍ تجهيز رد BlueMind AI", codeBlock: "كتلة برمجية", retry: "إعادة المحاولة",
   addAttachment: "إضافة مرفق", selectedAttachments: "المرفقات المحددة", messageAttachments: "مرفقات الرسالة", addImage: "إضافة صورة", addFile: "إضافة ملف", takePhoto: "التقاط صورة",
   attachmentInfo: "يمكنك إضافة 4 ملفات كحد أقصى، بحجم 2 ميغابايت للملف و2.5 ميغابايت للمحادثة. تبقى الملفات في جلسة المتصفح وتُرسل بشكل خاص إلى OpenAI للتحليل.", placeholder: "اسأل BlueMind عن أي شيء...", sendMessage: "إرسال الرسالة", stopResponse: "إيقاف الرد",
   preparing: "جارٍ تجهيز المرفقات", cancel: "إلغاء", availableStatus: "تُرسل الرسائل إلى OpenAI. تجنّب مشاركة المعلومات الحساسة.", unavailableStatus: "ردود الذكاء الاصطناعي غير متصلة", responseActions: "إجراءات الرد", like: "أعجبني الرد", dislike: "لم يعجبني الرد", copy: "نسخ", copied: "تم النسخ!", share: "مشاركة", regenerate: "إنشاء رد جديد", wait: "انتظر حتى يكتمل الرد الحالي", showInstantly: "إظهار الرد فورًا", messageCard: "رسالة", messageCardActions: "إجراءات بطاقة الرسالة", editMessage: "تعديل الرسالة", copyMessage: "نسخ الرسالة", shareMessage: "مشاركة الرسالة", edit: "تعديل", closeImage: "إغلاق الصورة", zoomOut: "تصغير", zoomIn: "تكبير", resetZoom: "إعادة ضبط التكبير",

@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { Check, ChevronDown, Globe2, Home, Sparkles, MessageCircle, Settings } from "lucide-react";
+import { Home, Sparkles, MessageCircle, Settings } from "lucide-react";
 import Image from "next/image";
 import { BrandLockup } from "../brand-lockup";
-import { useLocalization, type Locale } from "../localization-provider";
+import { useLocalization } from "../localization-provider";
 import { type Customer, type CustomerPage } from "../../app/lib/customer/routes";
 import { customerCopy } from "./copy";
 import styles from "./customer.module.css";
@@ -14,18 +14,14 @@ import type { Overview } from "./workspace-types";
 import TextActionLabel from "../text-action-label";
 import SessionRecovery from "./session-recovery";
 import ChatWorkspace from "../../app/ask-ai/chat-workspace";
+import LanguageSelector from "../language-selector";
 const demoOverview: Overview = {
   profile: { fullName: "", customerType: null, companyName: "", companyNumber: "", preferences: { project: false, team: false, billing: false, email: false }, loginMethods: [] },
   project: null,
   notifications: [],
 };
-const languageUi = {
-  en: { selected: "Selected language: ", languages: "Languages" },
-  sv: { selected: "Valt språk: ", languages: "Språk" },
-  ar: { selected: "اللغة المختارة: ", languages: "اللغات" },
-} as const;
 export default function CustomerShell({ user, page }: { user: Customer; page: CustomerPage }) {
-  const { locale, languages, setLocale } = useLocalization();
+  const { locale } = useLocalization();
   const text = customerCopy[locale];
   const pending = useRef(false);
   const [busy, setBusy] = useState(false);
@@ -38,36 +34,6 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
   const [loadError, setLoadError] = useState(false);
   const [reload, setReload] = useState(0);
   const workspaceText = workspaceCopy[locale];
-  const [languageOpen, setLanguageOpen] = useState(false);
-  const languageToggleRef = useRef<HTMLButtonElement>(null);
-  const languageRef = useRef<HTMLDivElement>(null);
-  const selectedLanguage = languages.find((language) => language.code === locale) ?? languages[0];
-  const languageText = languageUi[locale];
-
-  useEffect(() => {
-    setLanguageOpen(false);
-  }, [page]);
-
-  useEffect(() => {
-    if (!languageOpen) return;
-    languageRef.current?.querySelector<HTMLButtonElement>('[aria-checked="true"]')?.focus();
-    const closeOutside = (event: MouseEvent) => {
-      if (languageRef.current?.contains(event.target as Node)) return;
-      setLanguageOpen(false);
-    };
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      setLanguageOpen(false);
-      languageToggleRef.current?.focus();
-    };
-    document.addEventListener("mousedown", closeOutside);
-    document.addEventListener("keydown", closeOnEscape);
-    return () => {
-      document.removeEventListener("mousedown", closeOutside);
-      document.removeEventListener("keydown", closeOnEscape);
-    };
-  }, [languageOpen]);
-
   useEffect(() => {
     const controller = new AbortController();
     setOverview(null); setLoadError(false);
@@ -153,66 +119,7 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
           <Link href="/notifications" aria-current={page === "notifications" ? "page" : undefined}><MessageCircle size={18} aria-hidden="true" /><TextActionLabel underline={false}>{text.messages}</TextActionLabel></Link>
           <Link href="/account" aria-current={page === "account" ? "page" : undefined}><Settings size={18} aria-hidden="true" /><TextActionLabel underline={false}>{accountLabel}</TextActionLabel></Link>
         </nav>
-        <div className={styles.languageSelector} ref={languageRef}>
-          <button
-            ref={languageToggleRef}
-            className={styles.languageButton}
-            type="button"
-            aria-label={`${languageText.selected}${selectedLanguage.nativeName}`}
-            aria-haspopup="menu"
-            aria-controls="customer-languages"
-            aria-expanded={languageOpen}
-            onClick={() => setLanguageOpen(open => !open)}
-            onKeyDown={(event) => {
-              if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-                event.preventDefault();
-                setLanguageOpen(true);
-              }
-            }}
-          >
-            <Globe2 aria-hidden="true" size={18} strokeWidth={1.7} />
-            <span>{selectedLanguage.short}</span>
-            <ChevronDown aria-hidden="true" size={12} />
-          </button>
-          <div
-            id="customer-languages"
-            className={styles.languageMenu}
-            role="menu"
-            aria-label={languageText.languages}
-            data-open={languageOpen}
-            inert={!languageOpen}
-            onKeyDown={(event) => {
-              const buttons = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>("button"));
-              const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
-              let next: number;
-              if (event.key === "ArrowDown") next = (index + 1) % buttons.length;
-              else if (event.key === "ArrowUp") next = (index + buttons.length - 1) % buttons.length;
-              else if (event.key === "Home") next = 0;
-              else if (event.key === "End") next = buttons.length - 1;
-              else return;
-              event.preventDefault();
-              buttons[next]?.focus();
-            }}
-          >
-            {languages.map(language => (
-              <button
-                key={language.code}
-                type="button"
-                role="menuitemradio"
-                aria-checked={locale === language.code}
-                data-selected={locale === language.code}
-                onClick={() => {
-                  setLocale(language.code as Locale);
-                  setLanguageOpen(false);
-                  languageToggleRef.current?.focus();
-                }}
-              >
-                <span>{language.nativeName}</span>
-                {locale === language.code ? <Check size={15} aria-hidden="true" /> : <small>{language.short}</small>}
-              </button>
-            ))}
-          </div>
-        </div>
+        <LanguageSelector rootClassName={styles.languageSelector} buttonClassName={styles.languageButton} menuClassName={styles.languageMenu} resetKey={page} />
       </div>
     </header>
     <main className={styles.main}>

@@ -27,6 +27,33 @@ function dateLabel(value: string | null, locale: Locale, fallback: string) {
   const parsed = new Date(value);
   return Number.isFinite(parsed.getTime()) ? new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(parsed) : fallback;
 }
+
+function normalizedValue(value: string) {
+  return value.trim().toLowerCase().replace(/[\s-]+/g, "_");
+}
+
+function projectStatusLabel(value: string | null | undefined, t: WorkspaceCopy) {
+  if (!value) return t.notProvided;
+  const key = {
+    received: "idea", submitted: "idea", order_received: "idea",
+    in_progress: "in_progress", active: "in_progress", working: "in_progress",
+    design: "direction", designing: "direction", design_direction: "direction",
+    development: "development", developing: "development", build: "development",
+    testing: "testing", test: "testing", review: "finalReview", awaiting_review: "finalReview",
+    completed: "completed", complete: "completed", delivered: "completed", not_started: "not_started",
+  }[normalizedValue(value)] as keyof WorkspaceCopy | undefined;
+  return key ? t[key] : value;
+}
+
+function paymentStatusLabel(value: string | null | undefined, t: WorkspaceCopy) {
+  if (!value) return t.notProvided;
+  const key = {
+    paid: "paidStatus", complete: "paidStatus", completed: "paidStatus",
+    pending: "pendingStatus", awaiting: "pendingStatus", awaiting_payment: "pendingStatus",
+    unpaid: "unpaidStatus", due: "unpaidStatus", failed: "unpaidStatus",
+  }[normalizedValue(value)] as keyof WorkspaceCopy | undefined;
+  return key ? t[key] : value;
+}
 function ProjectProgress({ project, locale }: { project: Project; locale: Locale }) {
   const t = workspaceCopy[locale];
   return <>
@@ -73,18 +100,18 @@ function HomeProjectCard({ project, overview, locale }: { project: Project; over
     [t.total, projectMoney(project, project.totalMinor, locale, t.notProvided)],
     [t.paid, projectMoney(project, project.paidMinor, locale, t.notProvided)],
     ...(project.remainingMinor !== null ? [[t.balance, projectMoney(project, project.remainingMinor, locale, t.notProvided)] as [string, ReactNode]] : []),
-    ...(project.paymentStatus ? [[t.paymentStatus, project.paymentStatus] as [string, ReactNode]] : []),
+    ...(project.paymentStatus ? [[t.paymentStatus, paymentStatusLabel(project.paymentStatus, t)] as [string, ReactNode]] : []),
     ...(project.paymentMethod ? [[t.paymentMethod, project.paymentMethod] as [string, ReactNode]] : []),
   ];
   return <section className={`${styles.section} ${styles.projectCard}`}>
     <div className={styles.projectCardHeader}>
       <div><p className={styles.eyebrow}>{t.current}</p><h2>{project.name || t.current}</h2>{project.type && <p className={styles.projectType}>{project.type}</p>}</div>
-      <span className={styles.projectStatus}>{project.status || t.notProvided}</span>
+      <span className={styles.projectStatus}>{projectStatusLabel(project.status, t)}</span>
     </div>
     <div className={`${styles.projectCardGrid} ${!project.previewUrl && !project.previewImageUrl ? styles.projectCardGridSingle : ""}`}>
       <ProjectPreview project={project} t={t} />
       <div className={styles.projectStage}>
-        <div className={styles.stageSummary}><span>{t.status}</span><strong>{project.status || t.notProvided}</strong><span>{t.updated}: {dateLabel(project.updatedAt, locale, t.noUpdates)}</span></div>
+        <div className={styles.stageSummary}><span>{t.status}</span><strong>{projectStatusLabel(project.status, t)}</strong><span>{t.updated}: {dateLabel(project.updatedAt, locale, t.noUpdates)}</span></div>
         <ProjectProgress project={project} locale={locale} />
       </div>
     </div>
@@ -117,8 +144,8 @@ function ProjectContent({ overview, locale, home }: { overview: Overview; locale
   if (!project) return <section className={styles.section}><h2>{t.current}</h2><Empty>{t.noProject}</Empty><Link className={styles.textLink} href={home ? "/my-project" : "/dashboard/contact"}><TextActionLabel>{home ? t.view : t.contactTeam}</TextActionLabel><ArrowRight size={17} aria-hidden="true" /></Link></section>;
   return <>
     <section className={styles.section}>
-      <div className={styles.sectionHeading}><h2>{project.name || t.current}</h2><span className={styles.muted}>{project.status || t.notProvided}</span></div>
-      {home ? <p>{project.progress === 100 ? t.finished : project.steps.some(step => step.status === "in_progress") ? t.ongoing : project.progress === 0 ? t.not_started : project.status || t.notProvided}</p> : <>
+      <div className={styles.sectionHeading}><h2>{project.name || t.current}</h2><span className={styles.muted}>{projectStatusLabel(project.status, t)}</span></div>
+      {home ? <p>{project.progress === 100 ? t.finished : project.steps.some(step => step.status === "in_progress") ? t.ongoing : project.progress === 0 ? t.not_started : projectStatusLabel(project.status, t)}</p> : <>
         <p className={styles.description}>{project.description || t.notProvided}</p>
         <dl className={styles.details}>{[
           [t.type, project.type], [t.order, project.orderNumber], [t.start, dateLabel(project.startedAt, locale, t.notProvided)],

@@ -9,12 +9,14 @@ import { chatCopy } from "./chat-copy";
 import { useLocalization } from "../../components/localization-provider";
 import styles from "./chat-workspace.module.css";
 
-const markdownComponents: Components = {
-  a: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer">{children}</a>,
-  // Do not fetch remote images or tracking URLs from generated Markdown.
-  img: ({ alt }) => <span>{alt}</span>,
-  pre: ({ children }) => <pre tabIndex={0} aria-label="Code block">{children}</pre>,
-};
+function markdownComponents(codeBlock: string): Components {
+  return {
+    a: ({ href, children }) => <a href={href} target="_blank" rel="noopener noreferrer">{children}</a>,
+    // Do not fetch remote images or tracking URLs from generated Markdown.
+    img: ({ alt }) => <span>{alt}</span>,
+    pre: ({ children }) => <pre tabIndex={0} aria-label={codeBlock}>{children}</pre>,
+  };
+}
 
 function usePresentedText(text: string, _animate: boolean, _signal?: AbortSignal) {
   return { visible: text };
@@ -36,7 +38,7 @@ export const AssistantMessage = memo(function AssistantMessage({ id, text, card,
   }, [id, visible, complete, revealing, onPresented]);
   return <article className={`${styles.message} ${styles.assistant}`} aria-label={copy.aiResponse} aria-busy={revealing || (!complete && pending)}>
     {visible && <div className={styles.markdown} dir="auto">
-      <Markdown skipHtml components={markdownComponents}>{visible}</Markdown>
+      <Markdown skipHtml components={markdownComponents(copy.codeBlock)}>{visible}</Markdown>
     </div>}
     {complete && card && !revealing && <MessageCard value={card} maxBodyLength={Math.min(11000, 12000 - text.length - 204)} onSave={value => onSaveCard(id, value)} />}
     {complete && !card && !revealing && <MessageActions text={text} feedback={feedback} generating={generating}
