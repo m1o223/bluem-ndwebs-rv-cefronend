@@ -120,10 +120,16 @@ export default function CategoryDemoViewer({
   const [selectedItem, setSelectedItem] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [formMessage, setFormMessage] = useState("");
+  const [phase, setPhase] = useState<"open" | "closing">("open");
+  const phaseRef = useRef<"open" | "closing">("open");
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const opener = useRef<HTMLElement | null>(null);
 
   const handleClose = useCallback(() => {
-    onClose();
+    if (phaseRef.current === "closing") return;
+    phaseRef.current = "closing";
+    setPhase("closing");
+    closeTimer.current = setTimeout(onClose, 250);
   }, [onClose]);
 
   useEffect(() => {
@@ -141,6 +147,7 @@ export default function CategoryDemoViewer({
     return () => {
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", onKeyDown);
+      if (closeTimer.current !== null) clearTimeout(closeTimer.current);
       opener.current?.focus({ preventScroll: true });
     };
   }, [handleClose]);
@@ -169,7 +176,7 @@ export default function CategoryDemoViewer({
   const frameStyle = { width: size.width, height: size.height, transform: `scale(${scale})` };
 
   const viewer = (
-    <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="demo-viewer-title" data-demo-phase="open">
+    <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="demo-viewer-title" data-demo-phase={phase}>
       <div className={styles.viewer}>
         <header className={styles.viewerHeader}>
           <div className={styles.viewerIdentity}>
