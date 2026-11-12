@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { ArrowUp } from "lucide-react";
-import ChatWorkspace from "../../app/ask-ai/chat-workspace";
 import { useLocalization } from "../localization-provider";
 import styles from "./bluemind-ai-demo.module.css";
 
@@ -39,7 +38,18 @@ export default function BlueMindAiDemo() {
       <div className={styles.demo} data-ai-demo>
         <div className={styles.tabletFrame}>
           <div className={styles.tabletScreen} dir="ltr">
-            <ChatWorkspace available embedded />
+            <video
+              className={styles.video}
+              src="/videos/bluemind-ai-demo.webm"
+              poster="/videos/bluemind-ai-demo-poster.png"
+              autoPlay
+              controls
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              aria-label="BlueMind AI chat demo"
+            />
           </div>
         </div>
       </div>
