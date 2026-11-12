@@ -65,9 +65,9 @@
   letter-spacing: 0;
   flex-shrink: 0;
 }
-.brand .headerBrand { gap: 6px; }
-.mobileService { display: none; }
-.brandLogo { --logo-size: 72px; transform: translateY(-12px); }
+.brand .headerBrand { gap: 4px; }
+.mobileService { display: block; }
+.brandLogo { --logo-size: 64px; transform: none; }
 .headerControls { display: inline-flex; align-items: center; justify-content: flex-end; gap: 8px; flex-shrink: 0; }
 .signInLink { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 8px 10px; border: 0; border-radius: 999px; background: transparent; box-shadow: none; color: var(--bluemind-text); font-size: 12px; font-weight: 500; line-height: 1.4; white-space: nowrap; text-decoration: none; }
 .signInLink[aria-current="page"] { color: var(--bluemind-blue); }
@@ -80,7 +80,7 @@
 .homeNav .navCta { display: inline-flex; align-items: center; padding: 11px 17px; justify-content: center; border: 1px solid var(--bluemind-blue); border-radius: 999px; color: #fff; background: var(--bluemind-blue); margin-left: 0; }
 .homeNav .navCta[aria-current="page"] { border-color: var(--bluemind-blue); background: var(--bluemind-blue-hover); color: var(--bluemind-text); }
 .languageSelector { position: relative; display: inline-flex; align-items: center; }
-.languageButton { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 8px 10px; border: 1px solid #dfe3e9; border-radius: 999px; background: #fff; color: var(--bluemind-text); font-size: 12px !important; font-weight: 500; letter-spacing: 0; cursor: pointer; }
+.languageButton { width: auto; min-width: 68px; height: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 0 12px; border: 1px solid #dfe3e9; border-radius: 999px; background: #fff; color: var(--bluemind-text); font-size: 12px !important; font-weight: 500; letter-spacing: 0; line-height: 1; cursor: pointer; }
 .languageIcon { color: var(--bluemind-blue); flex-shrink: 0; filter: drop-shadow(0 1px 1px #142d4e15); }
 .languageChevron { color: #7d8794; margin-left: 1px; }
 .languageMenu { position: absolute; top: calc(100% + 10px); right: 0; z-index: 25; display: none; gap: 4px; min-width: 168px; padding: 8px; border: 1px solid #dfe5ed; border-radius: 16px; background: #fff; box-shadow: 0 18px 44px #1118271f; pointer-events: none; }
@@ -91,7 +91,7 @@
 .languageMenu button[data-selected="true"] small { color: var(--bluemind-blue); }
 .header a:focus-visible,
 .header button:focus-visible { outline-color: var(--bluemind-blue); }
-.menuToggle { min-height: 44px; min-width: 86px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 1px solid #dfe3e9; border-radius: 999px; background: #fff; color: var(--bluemind-text); padding: 8px 12px; font-size: 12px !important; cursor: pointer; }
+.menuToggle { width: 86px; min-width: 86px; height: 44px; min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid #dfe3e9; border-radius: 999px; background: #fff; color: var(--bluemind-text); padding: 0 12px; font-size: 12px !important; line-height: 1; cursor: pointer; }
 .menuLabel, .menuSymbol { display: grid; }
 .menuLabel > span, .menuSymbol > span { grid-area: 1 / 1; }
 .menuLabel > span:last-child, .menuSymbol > span:last-child { display: none; }
@@ -164,7 +164,7 @@
 @media (max-width: 1240px) {
   .headerInner { width: calc(100% - 48px); gap: 15px; }
   .brand { font-size: 19px; }
-  .brandLogo { --logo-size: 64px; }
+  .brandLogo { --logo-size: 60px; }
   .brandSub { font-size: 10.5px; letter-spacing: 1.2px; }
 }
 @media (max-width: 1240px) {
@@ -256,7 +256,7 @@
   .headerInner { width: calc(100% - 24px); gap: 10px; }
   .navPanel { left: -12px; right: -12px; }
   .brand { font-size: 17px; gap: 7px; letter-spacing: 0; }
-  .brandLogo { --logo-size: 48px; transform: translateY(-5px); }
+  .brandLogo { --logo-size: 48px; transform: none; }
   .brandSub { display: none; }
   .headerControls { gap: 6px; }
   .languageMenu { min-width: 168px; max-width: calc(100vw - 24px); right: 0; }
@@ -277,7 +277,7 @@
     min-height: 68px;
     padding: 0 20px;
     border: 1px solid rgba(210, 218, 228, .9);
-    border-radius: 24px;
+    border-radius: 9999px;
     background: rgba(255, 255, 255, .88);
     box-shadow: 0 10px 28px rgba(20, 45, 78, .07);
     -webkit-backdrop-filter: blur(16px);
