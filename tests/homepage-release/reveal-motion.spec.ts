@@ -56,4 +56,44 @@ test.describe("shared content reveal", () => {
     const backward = await page.evaluate(() => document.querySelector("[data-route='/']")?.getAnimations().flatMap(animation => animation.effect instanceof KeyframeEffect ? animation.effect.getKeyframes() : []).map(frame => String(frame.transform || "")) || []);
     expect(backward.some(transform => transform.includes("translateX(-12px)"))).toBe(true);
   });
+
+  test("restores the Forma flip on mouse, touch, and keyboard without rope remnants", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/");
+    const card = page.locator("[data-website-preview]");
+    const inner = card.locator("[data-flip-inner]");
+    await expect(card).toHaveAttribute("data-flipped", "false");
+    await expect(card.locator('[data-flip-face="back"]')).toBeVisible();
+    expect(await page.locator("[data-rope-path], [data-rope-anchor], [data-hanging-scene]").count()).toBe(0);
+
+    await card.hover();
+    expect(await inner.evaluate((element) => getComputedStyle(element).transform)).not.toBe("none");
+    await page.mouse.move(12, 12);
+    await expect.poll(() => inner.evaluate((element) => getComputedStyle(element).transform)).toBe("none");
+
+    await card.focus();
+    await page.keyboard.press("Enter");
+    await expect(card).toHaveAttribute("data-flipped", "true");
+    await page.keyboard.press(" ");
+    await expect(card).toHaveAttribute("data-flipped", "false");
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    const touchCard = page.locator("[data-website-preview]");
+    await touchCard.evaluate((element) => element.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, pointerType: "touch" })));
+    await expect(touchCard).toHaveAttribute("data-flipped", "true");
+    await touchCard.evaluate((element) => element.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, pointerType: "touch" })));
+    await expect(touchCard).toHaveAttribute("data-flipped", "false");
+
+    await page.setViewportSize({ width: 768, height: 1024 });
+    await page.goto("/");
+    const tabletCard = page.locator("[data-website-preview]");
+    await tabletCard.evaluate((element) => element.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, pointerType: "touch" })));
+    await expect(tabletCard).toHaveAttribute("data-flipped", "true");
+    expect(await page.locator("[data-rope-path], [data-rope-anchor], [data-hanging-scene]").count()).toBe(0);
+    expect(await page.evaluate(() => {
+      const rect = document.querySelector<HTMLElement>("[data-hero-visual]")?.getBoundingClientRect();
+      return Boolean(rect && rect.left >= -1 && rect.right <= window.innerWidth + 1);
+    })).toBe(true);
+  });
 });

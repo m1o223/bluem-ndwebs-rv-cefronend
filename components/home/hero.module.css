@@ -15,29 +15,10 @@
 .planetImage { display: block; width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: contain; background: transparent; }
 .visual { position: relative; z-index: 0; width: min(1100px, 100%); min-width: 0; height: 466px; margin: 0; container-type: inline-size; overflow: visible; }
 .windows { position: absolute; inset: 0; }
-.boardMover { position: absolute; min-width: 0; pointer-events: none; transform-origin: 0 0; will-change: transform; }
+.boardMover { position: absolute; min-width: 0; transform-origin: 0 0; }
 .codeMover { z-index: 1; left: 2%; top: 14px; width: 48%; }
 .designMover { z-index: 2; left: 19%; top: 64px; width: 62%; }
 .boardMover .codeWindow, .boardMover .websiteWindow { position: relative; inset: auto; width: 100%; }
-.ropesCanvas { position: absolute; z-index: 4; top: -122px; left: 0; width: 100%; height: calc(100% + 122px); overflow: visible; pointer-events: none; }
-.ropeShadow, .ropeBase, .ropeFiber { vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
-.ropeTwist { vector-effect: non-scaling-stroke; fill: none; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
-.ropeShadow { stroke: #16283c4a; stroke-width: 10; filter: blur(1.2px); }
-.ropeBase { stroke: url(#ropeGradient); stroke-width: 5.8; }
-.ropeFiber { stroke: #fff0c2b8; stroke-width: 1.15; stroke-dasharray: 1.8 3.2; }
-.ropeTwist { stroke: #6e5031b8; stroke-width: 1.05; stroke-dasharray: 6 5; stroke-dashoffset: 2; }
-.ropeHit { pointer-events: stroke; stroke: transparent; stroke-width: 28; cursor: crosshair; outline: none; }
-.ropeHit:focus-visible { filter: drop-shadow(0 0 3px var(--bluemind-blue)); }
-.ropeCutMarker { fill: #8d704a; stroke: #fff; stroke-width: 1.5; pointer-events: none; }
-.ropeAnchor { pointer-events: none; }
-.ropeAnchorShadow { fill: #10233a3d; filter: blur(1px); }
-.ropeAnchorRing { fill: #e4e8eb; stroke: #836646; stroke-width: 1.3; }
-.ropeAnchorCore { fill: #725234; stroke: #f8e2b4; stroke-width: .9; }
-.ropeHook { pointer-events: none; }
-.ropeHook circle { fill: #e4e8eb; stroke: #836646; stroke-width: 1.2; vector-effect: non-scaling-stroke; }
-.ropeHook path { fill: none; stroke: #725234; stroke-width: 1.5; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-.ropeFray { pointer-events: none; }
-.ropeFray path { fill: none; stroke: #a98154; stroke-width: 1.45; stroke-linecap: round; vector-effect: non-scaling-stroke; }
 .websiteWindow, .codeWindow { position: absolute; overflow: hidden; border-radius: 10px; border: 1px solid #dfe4eb; }
 .websiteWindow { z-index: 2; left: 19%; top: 64px; width: 62%; background: #fff; box-shadow: 0 20px 44px #192c4911, 0 3px 10px #192c4907; }
 .codeWindow { z-index: 1; left: 2%; top: 14px; width: 48%; background: #202a3a; color: #d9e0ed; border-color: #354052; box-shadow: 0 12px 28px #13203c0e; }
@@ -46,11 +27,25 @@
 .windowDots i { width: 5px; height: 5px; border-radius: 50%; background: #cfd5df; }
 .windowTitle { flex: 1; font-size: 9px; color: #8a939f; letter-spacing: .15px; }
 .windowLabel { color: #7b8696; font-size: 7px; letter-spacing: 1px; white-space: nowrap; }
-.heroFlipCard { height: 374px; padding: 0; overflow: visible; border: 0; background: transparent; box-shadow: none; color: inherit; text-align: left; touch-action: manipulation; }
+.heroFlipCard { height: 374px; padding: 0; overflow: visible; border: 0; background: transparent; box-shadow: none; color: inherit; text-align: left; cursor: pointer; perspective: 1200px; transform: translateZ(0); touch-action: manipulation; }
 .heroFlipCard:focus-visible { outline: 2px solid var(--bluemind-blue); outline-offset: 6px; }
-.heroFlipInner { position: relative; display: block; width: 100%; height: 100%; transform-style: preserve-3d; }
+.heroFlipInner { position: relative; display: block; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 780ms cubic-bezier(.2, .8, .2, 1); }
+.heroFlipCard[data-flipped="true"] .heroFlipInner { transform: rotateY(180deg); }
 .heroFlipFace { position: absolute; inset: 0; display: block; overflow: hidden; border: 1px solid #dfe4eb; border-radius: 10px; backface-visibility: hidden; transform-style: preserve-3d; box-shadow: 0 20px 44px #192c4911, 0 3px 10px #192c4907; }
 .heroFlipFront { background: #fff; }
+.heroFlipBack { display: flex; flex-direction: column; background: linear-gradient(145deg, #172232, #0d1420); color: #d9e4f4; border-color: #2d394b; transform: rotateY(180deg); box-shadow: 0 24px 48px #0c152633; }
+.heroCodeMeta { display: flex; align-items: center; gap: 12px; padding: 12px 16px 0; color: #95a6be; font-size: 8px; }
+.heroCodeMeta span:first-child { color: #b8d2ff; }
+.heroCodeMeta i { margin-left: auto; font-style: normal; color: #adc5ea; font-size: 8px; }
+.heroCodeBlock { flex: 1; margin: 14px 0 10px; padding: 0 16px; overflow: hidden; font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: clamp(10px, 1.8cqw, 12px); line-height: 1.9; }
+.heroCodeBlock span { display: block; white-space: pre; }
+.heroCodeBlock b { display: inline-block; width: 26px; color: #687b95; font-weight: 400; user-select: none; }
+.heroCodeBlock em { color: #c4a8ed; font-style: normal; }
+.heroCodeBlock i { color: #a0c4f6; font-style: normal; }
+.heroCodeBlock strong { color: #b6dcb7; font-weight: 400; }
+.heroCodeStatus { display: flex; justify-content: space-between; gap: 10px; padding: 8px 16px 12px; color: #94a8c1; font-size: 7px; border-top: 1px solid #2d394b; }
+.heroCodeStatus span:first-child { display: inline-flex; align-items: center; gap: 6px; }
+.heroCodeStatus i { width: 4px; height: 4px; border-radius: 50%; background: #9fc7ad; }
 .codeWindow .windowChrome { background: #253042; border-color: #384355; }
 .codeWindow .windowDots i { background: #5c6779; }
 .codeWindow .windowTitle { color: #d3dce9; }
@@ -127,6 +122,9 @@
 .visualCaption > span { width: 3px; height: 3px; background: #7292cc; border-radius: 50%; }
 .scrollCue { display: inline-flex; align-items: center; justify-content: center; gap: 12px; font-size: 10px; letter-spacing: 0; color: var(--bluemind-text); min-height: 44px; }
 .scrollCue > span[aria-hidden="true"] { color: #445269; font-size: 19px; letter-spacing: 0; }
+@media (hover: hover) and (pointer: fine) {
+  .heroFlipCard:hover .heroFlipInner { transform: rotateY(180deg); }
+}
 @media (max-width: 1120px) {
   .inner { width: calc(100% - 56px); gap: 22px; padding-block: 28px 20px; }
   .hero .headline { font-size: 52px; }
@@ -238,5 +236,9 @@
 /* The touch header is part of the document flow, so keep the first content close to it. */
 @media (max-width: 1023px), (hover: none) and (pointer: coarse) {
   .inner { padding-top: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroFlipInner { transition: none; }
 }
 

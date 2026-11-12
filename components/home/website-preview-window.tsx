@@ -1,16 +1,37 @@
 "use client";
 
+import { type KeyboardEvent, type PointerEvent, useState } from "react";
 import PreviewWindowChrome from "./preview-window-chrome";
 import styles from "./hero.module.css";
 
 export default function WebsitePreviewWindow() {
+  const [flipped, setFlipped] = useState(false);
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    setFlipped((current) => !current);
+  };
+
+  const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "mouse") return;
+    setFlipped((current) => !current);
+  };
+
   return (
     <div
       className={`${styles.websiteWindow} ${styles.heroFlipCard}`}
       data-website-preview
+      data-flipped={flipped}
+      role="button"
+      tabIndex={0}
+      aria-pressed={flipped}
+      aria-label="Flip website preview between page design and code view"
+      onPointerUp={handlePointerUp}
+      onKeyDown={handleKeyDown}
     >
-      <div className={styles.heroFlipInner}>
-        <div className={`${styles.heroFlipFace} ${styles.heroFlipFront}`}>
+      <div className={styles.heroFlipInner} data-flip-inner>
+        <div className={`${styles.heroFlipFace} ${styles.heroFlipFront}`} data-flip-face="front">
           <PreviewWindowChrome title="forma.studio" label="WEBSITE DESIGN" />
           <div className={styles.studioNavigation}>
             <span className={styles.studioBrand}>forma<span>(R)</span></span>
@@ -31,6 +52,21 @@ export default function WebsitePreviewWindow() {
             </div>
           </div>
           <div className={styles.studioFooter}><span><i /> Made for what&apos;s next.</span><span>Design that works. <b>-&gt;</b></span></div>
+        </div>
+        <div className={`${styles.heroFlipFace} ${styles.heroFlipBack}`} data-flip-face="back">
+          <PreviewWindowChrome title="forma-card.tsx" label="CODE VIEW" />
+          <div className={styles.heroCodeMeta}><span>React</span><span>Next.js</span><span>TypeScript</span><i>CSS MODULE</i></div>
+          <pre className={styles.heroCodeBlock}><code>
+            <span><b>01</b><em>const</em> FormaHero = () =&gt; (</span>
+            <span><b>02</b>  &lt;<i>section</i> className=<strong>&quot;studioHero&quot;</strong>&gt;</span>
+            <span><b>03</b>    &lt;<i>BrandNav</i> name=<strong>&quot;forma&quot;</strong> /&gt;</span>
+            <span><b>04</b>    &lt;<i>Headline</i>&gt;Ideas into real websites&lt;/<i>Headline</i>&gt;</span>
+            <span><b>05</b>    &lt;<i>DesignStudy</i> grid typeScale layout /&gt;</span>
+            <span><b>06</b>  &lt;/<i>section</i>&gt;</span>
+            <span><b>07</b>);</span>
+            <span><b>08</b><em>export default</em> FormaHero;</span>
+          </code></pre>
+          <div className={styles.heroCodeStatus}><span><i /> Design system mapped to components.</span><span>front-end ready</span></div>
         </div>
       </div>
     </div>
