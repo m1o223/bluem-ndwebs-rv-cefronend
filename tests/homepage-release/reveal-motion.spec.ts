@@ -40,4 +40,20 @@ test.describe("shared content reveal", () => {
     await expect(hero).toBeVisible();
     expect(await hero.evaluate((element) => ({ opacity: getComputedStyle(element).opacity, animation: getComputedStyle(element).animationName }))).toEqual({ opacity: "1", animation: "none" });
   });
+
+  test("uses one horizontal transition for a page change and reverses on browser back", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/");
+    await page.locator('a[href="/about"]:visible').first().click();
+    await expect(page).toHaveURL(/\/about$/);
+    await expect.poll(() => page.evaluate(() => document.querySelector("[data-route-transition-direction='forward']") !== null)).toBe(true);
+    const forward = await page.evaluate(() => document.querySelector("[data-route='/about']")?.getAnimations().flatMap(animation => animation.effect instanceof KeyframeEffect ? animation.effect.getKeyframes() : []).map(frame => String(frame.transform || "")) || []);
+    expect(forward.some(transform => transform.includes("translateX(12px)"))).toBe(true);
+
+    await page.goBack({ waitUntil: "commit" });
+    await expect(page).toHaveURL(/\/$/);
+    await expect.poll(() => page.evaluate(() => document.querySelector("[data-route-transition-direction='backward']") !== null)).toBe(true);
+    const backward = await page.evaluate(() => document.querySelector("[data-route='/']")?.getAnimations().flatMap(animation => animation.effect instanceof KeyframeEffect ? animation.effect.getKeyframes() : []).map(frame => String(frame.transform || "")) || []);
+    expect(backward.some(transform => transform.includes("translateX(-12px)"))).toBe(true);
+  });
 });

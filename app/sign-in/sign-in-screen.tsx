@@ -61,7 +61,7 @@ export default function SignInScreen() {
       <Link href="/" className={styles.brand} aria-label="BlueMind Web Service home"><BrandLockup className={styles.brandLockup} logoClassName={styles.brandLogo} priority solidLogo /></Link>
       <Link href="/" className={styles.back}><ArrowLeft size={18} aria-hidden="true" /><TextActionLabel>{text.back}</TextActionLabel></Link>
     </div>
-    <div className={styles.stage} data-reveal-group="auth-content">
+    <div className={styles.stage} data-reveal-group="auth-content" data-page-transition-surface>
       <WebsiteOrbits />
       <div className={styles.center}>
         <div className={styles.formArea} data-auth-card data-mode={mode}>

@@ -7,6 +7,12 @@
   animation: reveal-content 280ms cubic-bezier(.22, .8, .28, 1) both;
 }
 
+.stage[data-route-transition="true"] :global([data-reveal-state="visible"]) {
+  opacity: 1;
+  translate: none;
+  animation: none;
+}
+
 @keyframes reveal-content {
   from {
     opacity: 0;
