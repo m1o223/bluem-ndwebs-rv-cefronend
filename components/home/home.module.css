@@ -39,7 +39,7 @@
   top: 0;
   z-index: 30;
   flex-shrink: 0;
-  border-bottom: 1px solid #edf0f4;
+  border-bottom: 1px solid var(--bluemind-divider);
   background: #fff;
 }
 .header[data-scrolled="true"] { box-shadow: 0 4px 18px #142d4e0a; }

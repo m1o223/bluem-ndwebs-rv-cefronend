@@ -1,8 +1,8 @@
-.faq { margin-top: 56px; padding-top: 30px; border-top: 1px solid #dfe4eb; text-align: start; }
+.faq { margin-top: 56px; padding-top: 30px; border-top: 1px solid var(--bluemind-border); text-align: start; }
 .faq h2 { margin: 0; font-size: 26px; font-weight: 500; letter-spacing: -.8px; line-height: 1.35; text-wrap: balance; }
 .subtitle { margin: 12px 0 0; color: var(--bluemind-text); font-size: 14px; line-height: 1.8; }
 .questions { margin-top: 24px; max-width: 900px; }
-.questions details { border-bottom: 1px solid #dfe4eb; }
+.questions details { border-bottom: 1px solid var(--bluemind-border); }
 .questions summary { position: relative; padding-block: 18px; padding-inline: 0 32px; min-height: 52px; color: var(--bluemind-text); font-size: 15px; font-weight: 500; cursor: pointer; list-style: none; line-height: 1.5; text-align: start; text-wrap: balance; }
 .questions summary::-webkit-details-marker { display: none; }
 .questions summary::after { content: "+"; position: absolute; inset-inline-end: 5px; font-size: 19px; font-weight: 400; }

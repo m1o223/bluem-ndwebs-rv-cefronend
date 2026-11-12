@@ -1,4 +1,4 @@
-.section { width: 100%; border-block: 1px solid #edf0f4; background: #fff; color: var(--bluemind-text); }
+.section { width: 100%; border-block: 1px solid var(--bluemind-divider); background: #fff; color: var(--bluemind-text); }
 .inner { width: min(1040px, calc(100% - 48px)); margin-inline: auto; padding: 84px 0 78px; text-align: center; }
 .eyebrow { margin: 0 0 12px; color: #72819a; font-size: 10px; font-weight: 600; letter-spacing: 1.8px; }
 .title { margin: 0; color: var(--bluemind-text); font-size: 38px; font-weight: 600; line-height: 1.2; text-align: center; text-wrap: balance; }

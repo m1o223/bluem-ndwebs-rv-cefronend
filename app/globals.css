@@ -6,7 +6,9 @@
   --bluemind-text: #111111;
   --bluemind-blue: #142D4E;
   --bluemind-blue-hover: #EDF3FA;
-  --bluemind-border: #dfe4eb;
+  --bluemind-border: #d5dfeb;
+  --bluemind-divider: #d9e3ed;
+  --bluemind-divider-subtle: #d7e1eb;
   --bluemind-surface: #ffffff;
   --text-readable: clamp(0.95rem, 0.9rem + 0.2vw, 1.05rem);
   --text-small-readable: clamp(0.86rem, 0.82rem + 0.16vw, 0.95rem);

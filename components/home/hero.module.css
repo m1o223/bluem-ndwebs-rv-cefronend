@@ -22,7 +22,7 @@
 .websiteWindow, .codeWindow { position: absolute; overflow: hidden; border-radius: 10px; border: 1px solid #dfe4eb; }
 .websiteWindow { z-index: 2; left: 19%; top: 64px; width: 62%; background: #fff; box-shadow: 0 20px 44px #192c4911, 0 3px 10px #192c4907; }
 .codeWindow { z-index: 1; left: 2%; top: 14px; width: 48%; background: #202a3a; color: #d9e0ed; border-color: #354052; box-shadow: 0 12px 28px #13203c0e; }
-.windowChrome { height: 34px; padding-inline: 14px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #edf0f4; background: #fbfcfd; }
+.windowChrome { height: 34px; padding-inline: 14px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--bluemind-divider); background: #fbfcfd; }
 .windowDots { display: inline-flex; gap: 4px; flex-shrink: 0; }
 .windowDots i { width: 5px; height: 5px; border-radius: 50%; background: #cfd5df; }
 .windowTitle { flex: 1; font-size: 9px; color: #8a939f; letter-spacing: .15px; }

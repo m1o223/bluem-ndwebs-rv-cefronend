@@ -3,14 +3,14 @@
 .intro .headline + p { margin-top: 14px; max-width: 590px; }
 .timeline { list-style: none; margin: 0; padding: 0; }
 .step { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 24px; }
-.step:not(:last-child)::after { content: ""; position: absolute; left: 21px; top: 38px; width: 1px; height: 100%; background: #dfe4eb; }
+.step:not(:last-child)::after { content: ""; position: absolute; left: 21px; top: 38px; width: 1px; height: 100%; background: var(--bluemind-border); }
 .number { position: relative; z-index: 1; align-self: start; margin-top: 24px; padding-block: 6px; background: #fff; text-align: center; color: var(--bluemind-text); font-size: 11px; line-height: 16px; letter-spacing: .5px; }
-.stepContent { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); align-items: center; gap: 40px; padding-block: 24px 28px; border-top: 1px solid #dfe4eb; min-height: 108px; background: #fff; }
+.stepContent { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); align-items: center; gap: 40px; padding-block: 24px 28px; border-top: 1px solid var(--bluemind-border); min-height: 108px; background: #fff; }
 .stepHeading { display: flex; align-items: center; gap: 16px; min-width: 0; }
 .icon { width: 52px; height: auto; flex-shrink: 0; object-fit: contain; }
 .step h2 { margin: 0; font-size: 21px; font-weight: 500; line-height: 1.35; letter-spacing: -.6px; }
 .step p { margin: 0; max-width: 480px; color: var(--bluemind-text); font-size: 14px; line-height: 1.8; }
-.cta { display: flex; align-items: center; justify-content: space-between; gap: 28px; margin-top: 12px; padding-top: 32px; border-top: 1px solid #dfe4eb; }
+.cta { display: flex; align-items: center; justify-content: space-between; gap: 28px; margin-top: 12px; padding-top: 32px; border-top: 1px solid var(--bluemind-border); }
 .cta h2 { margin: 0; font-size: 24px; font-weight: 500; letter-spacing: -.7px; line-height: 1.35; }
 .cta p { margin: 12px 0 0; color: var(--bluemind-text); font-size: 14px; line-height: 1.8; }
 .cta a:focus-visible { outline: 2px solid var(--bluemind-blue); outline-offset: 4px; }

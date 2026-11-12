@@ -1,4 +1,4 @@
-.footer { background: #fff; border-top: 1px solid #dfe4eb; padding-block: 48px 26px; text-align: left; }
+.footer { background: #fff; border-top: 1px solid var(--bluemind-border); padding-block: 48px 26px; text-align: left; }
 .columns { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.1fr; gap: 36px; padding-bottom: 36px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--bluemind-text); font-size: 24px; font-weight: 600; letter-spacing: -.7px; }
 .brandSection > p { max-width: 240px; margin: 18px 0 0; color: var(--bluemind-text); font-size: 14px; line-height: 1.8; }
@@ -14,7 +14,7 @@
 .contact dd a { display: inline-flex; min-height: 34px; max-width: 100%; align-items: center; color: inherit; overflow-wrap: anywhere; }
 .contactLink { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; margin-top: 10px; color: var(--bluemind-text); font-size: 13px; font-weight: 500; }
 .footer .note { margin: 12px 0 0; color: var(--bluemind-text); font-size: 11px; line-height: 1.8; }
-.middle { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; padding-block: 30px; border-block: 1px solid #dfe4eb; }
+.middle { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; padding-block: 30px; border-block: 1px solid var(--bluemind-border); }
 .social { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
 .social a, .pendingSocial { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 999px; color: var(--bluemind-blue); }
 .social img { width: 20px; height: 20px; object-fit: contain; filter: brightness(0) saturate(100%) invert(14%) sepia(24%) saturate(1907%) hue-rotate(175deg) brightness(92%) contrast(94%); }
