@@ -11,5 +11,5 @@ export const homepagePaymentMethods: readonly HomepagePaymentMethod[] = [
   { name: "Mastercard", asset: "/images/footer/mastercard.svg" },
   { name: "Google Pay", asset: "/images/footer/google-pay.svg" },
   { name: "Apple Pay", asset: "/images/footer/apple-pay.svg" },
-  { name: "PayPal", asset: "/images/footer/paypal.svg" },
+  { name: "PayPal", asset: "/images/footer/paypal-wordmark.svg" },
 ] as const;

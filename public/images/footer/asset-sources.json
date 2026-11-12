@@ -1,4 +1,13 @@
 {
+  "paypal-wordmark": {
+    "source": "https://raw.githubusercontent.com/datatrans/payment-logos/master/assets/apm/paypal.svg",
+    "provider": "Datatrans payment-logos",
+    "format": "SVG",
+    "purpose": "Homepage payment strip wordmark",
+    "modifications": "Cropped the supplied whitespace-only viewBox; logo paths and colors unchanged.",
+    "license": "CC-BY-SA-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+  },
   "instagram": {
     "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/instagram.svg",
     "provider": "Simple Icons",
