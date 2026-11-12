@@ -19,6 +19,17 @@
   .paymentItem[data-payment-name="Apple Pay"] img { max-width: 66px; max-height: 34px; }
   .invoiceMark { gap: 5px; font-size: 13px; }
 }
+@media (min-width: 621px) and (hover: none) and (pointer: coarse) {
+  .paymentMethods { margin-top: -16px; }
+  .paymentTitle { margin-bottom: 4px; font-size: 13px; }
+  .paymentViewport { padding-block: 0; }
+  .paymentSet { gap: 12px; padding-right: 12px; }
+  .paymentItem { width: 92px; min-width: 92px; height: 40px; padding: 4px; }
+  .paymentItem img { max-width: 78px; max-height: 25px; }
+  .paymentItem[data-payment-name="Google Pay"] img,
+  .paymentItem[data-payment-name="Apple Pay"] img { max-width: 66px; max-height: 30px; }
+  .invoiceMark { gap: 4px; font-size: 13px; }
+}
 @media (prefers-reduced-motion: reduce) {
   .paymentTrack { animation: none; }
   .paymentSet[data-payment-set="duplicate"] { display: none; }

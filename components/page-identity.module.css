@@ -9,8 +9,8 @@
 @media (max-width: 1050px) { .page { min-height: calc(100dvh - 79px); } }
 @media (max-width: 620px) {
   .page { min-height: calc(100dvh - 76px); }
-  .body { padding-block: 34px 44px; }
-  .intro { margin-bottom: 30px; }
-  .intro h1 { letter-spacing: -1.5px; }
+  .body { padding-block: 30px 42px; }
+  .intro { margin-bottom: 26px; }
+  .intro h1 { font-size: clamp(34px, 8.8vw, 40px); letter-spacing: -1.25px; }
   .intro p { margin-top: 16px; }
 }

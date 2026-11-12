@@ -96,4 +96,28 @@ test.describe("shared content reveal", () => {
       return Boolean(rect && rect.left >= -1 && rect.right <= window.innerWidth + 1);
     })).toBe(true);
   });
+
+  test.describe("responsive hero sizing", () => {
+    test.use({ hasTouch: true, isMobile: true, reducedMotion: "reduce" });
+
+    test("keeps the hero and payment strip inside touch viewports", async ({ page }) => {
+      for (const width of [390, 768, 1024]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto("/");
+
+        const metrics = await page.evaluate(() => {
+          const payment = document.querySelector<HTMLElement>("[data-payment-methods]")?.getBoundingClientRect();
+          const navigation = document.querySelector<HTMLElement>("body > nav")?.getBoundingClientRect();
+          return {
+            overflow: document.documentElement.scrollWidth - window.innerWidth,
+            paymentBottom: payment?.bottom ?? 0,
+            navigationTop: navigation?.top ?? window.innerHeight,
+          };
+        });
+
+        expect(metrics.overflow).toBeLessThanOrEqual(0);
+        if (width >= 768) expect(metrics.paymentBottom).toBeLessThanOrEqual(metrics.navigationTop + 1);
+      }
+    });
+  });
 });
