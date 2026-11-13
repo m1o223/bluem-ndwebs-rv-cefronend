@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { Footer } from "./home/sections";
@@ -15,6 +15,7 @@ import SiteMenuOverlay from "./site-menu-overlay";
 export default function WebsiteShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
   const customer = isCustomerPath(pathname);
   const excluded = pathname === "/dashboard-preview" || pathname === "/menu";
 
@@ -27,15 +28,15 @@ export default function WebsiteShell({ children }: { children: ReactNode }) {
     <RouteScrollState />
     <RouteTransition>{children}</RouteTransition>
     <BottomNavigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpen} />
-    <SiteMenuOverlay open={menuOpen} onClose={() => setMenuOpen(false)} />
+    <SiteMenuOverlay open={menuOpen} onClose={closeMenu} />
   </>;
 
   return <>
     <RouteScrollState />
-    <Navigation />
+    <Navigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpen} />
     <PageContent><RouteTransition>{children}</RouteTransition></PageContent>
     <Footer textEffects={pathname === "/"} />
     <BottomNavigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpen} />
-    <SiteMenuOverlay open={menuOpen} onClose={() => setMenuOpen(false)} />
+    <SiteMenuOverlay open={menuOpen} onClose={closeMenu} />
   </>;
 }

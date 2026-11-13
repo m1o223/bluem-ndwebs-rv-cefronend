@@ -14,11 +14,14 @@ const languageUi = {
   ar: { selected: "اللغة المختارة: ", languages: "اللغات", openMenu: "فتح القائمة", closeMenu: "إغلاق القائمة", mainNavigation: "التنقل الرئيسي" },
 } as const;
 
-const links = [["/", "Home"], ["/about", "About Us"], ["/services", "Services"], ["/templates", "Website Concepts"], ["/how-we-work", "How We Work"], ["/care", "Website Care"], ["/contact", "Contact"]];
+type NavbarProps = {
+  activePath?: string;
+  menuOpen?: boolean;
+  onMenuOpenChange?: (open: boolean) => void;
+};
 
-export default function Navbar({ activePath = "/" }: { activePath?: string }) {
+export default function Navbar({ activePath = "/", menuOpen = false, onMenuOpenChange = () => {} }: NavbarProps) {
   const { locale, languages, setLocale } = useLocalization();
-  const [expanded, setExpanded] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
@@ -47,28 +50,10 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
   }, []);
 
   useEffect(() => {
-    setExpanded(false);
+    onMenuOpenChange(false);
     setLanguageOpen(false);
     setScrolled(window.scrollY > 8);
-  }, [activePath]);
-
-  useEffect(() => {
-    if (!expanded) return;
-    const closeOutside = (event: PointerEvent) => {
-      if (!headerRef.current?.contains(event.target as Node)) setExpanded(false);
-    };
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      setExpanded(false);
-      toggleRef.current?.focus();
-    };
-    document.addEventListener("keydown", closeOnEscape);
-    document.addEventListener("pointerdown", closeOutside);
-    return () => {
-      document.removeEventListener("keydown", closeOnEscape);
-      document.removeEventListener("pointerdown", closeOutside);
-    };
-  }, [expanded]);
+  }, [activePath, onMenuOpenChange]);
 
   useEffect(() => {
     if (!languageOpen) return;
@@ -92,18 +77,18 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
 
   return (
     <header ref={headerRef} className={styles.header} data-scrolled={scrolled} onKeyDown={(event) => {
-      if (event.key === "Escape" && expanded) {
-        setExpanded(false);
+      if (event.key === "Escape" && menuOpen) {
+        onMenuOpenChange(false);
         toggleRef.current?.focus();
       }
     }}>
-      <div className={styles.headerInner} data-expanded={expanded}>
-        <Link className={styles.brand} href="/" aria-label="BlueMind Web Service home" onClick={() => { setExpanded(false); setLanguageOpen(false); }}><BrandLockup className={styles.headerBrand} logoClassName={styles.brandLogo} serviceClassName={styles.mobileService} priority solidLogo /></Link>
+      <div className={styles.headerInner}>
+        <Link className={styles.brand} href="/" aria-label="BlueMind Web Service home" onClick={() => { onMenuOpenChange(false); setLanguageOpen(false); }}><BrandLockup className={styles.headerBrand} logoClassName={styles.brandLogo} serviceClassName={styles.mobileService} priority solidLogo /></Link>
         {activePath !== "/sign-in" && activePath !== "/login" && <div className={styles.headerControls}>
-          <Link className={styles.signInLink} href="/sign-in" aria-current={activePath === "/sign-in" ? "page" : undefined} onClick={() => { setExpanded(false); setLanguageOpen(false); }}><TextActionLabel enabled={textEffects} underline={false}>Sign in</TextActionLabel></Link>
+          <Link className={styles.signInLink} href="/sign-in" aria-current={activePath === "/sign-in" ? "page" : undefined} onClick={() => { onMenuOpenChange(false); setLanguageOpen(false); }}><TextActionLabel enabled={textEffects} underline={false}>Sign in</TextActionLabel></Link>
           <div className={styles.languageSelector} ref={languageRef} data-no-translate>
-            <button ref={languageToggleRef} className={styles.languageButton} type="button" aria-label={`${languageText.selected}${selectedLanguage.nativeName}`} aria-haspopup="menu" aria-controls="header-languages" aria-expanded={languageOpen} onClick={() => { setLanguageOpen((open) => !open); setExpanded(false); }} onKeyDown={(event) => {
-              if (event.key === "ArrowDown" || event.key === "ArrowUp") { event.preventDefault(); setLanguageOpen(true); setExpanded(false); }
+            <button ref={languageToggleRef} className={styles.languageButton} type="button" aria-label={`${languageText.selected}${selectedLanguage.nativeName}`} aria-haspopup="menu" aria-controls="header-languages" aria-expanded={languageOpen} onClick={() => { setLanguageOpen((open) => !open); onMenuOpenChange(false); }} onKeyDown={(event) => {
+              if (event.key === "ArrowDown" || event.key === "ArrowUp") { event.preventDefault(); setLanguageOpen(true); onMenuOpenChange(false); }
             }}>
               <Globe2 aria-hidden="true" className={styles.languageIcon} size={19} strokeWidth={1.6} />
               <span className={styles.languageShort}><TextActionLabel enabled={textEffects} underline={false}>{selectedLanguage.short}</TextActionLabel></span>
@@ -141,19 +126,13 @@ export default function Navbar({ activePath = "/" }: { activePath?: string }) {
               ))}
             </div>
           </div>
-          <button ref={toggleRef} className={styles.menuToggle} type="button" aria-label={expanded ? languageText.closeMenu : languageText.openMenu} aria-expanded={expanded} aria-controls="home-navigation" data-expanded={expanded} onClick={() => { setExpanded((open) => !open); setLanguageOpen(false); }}>
+          <button ref={toggleRef} className={styles.menuToggle} type="button" aria-label={menuOpen ? languageText.closeMenu : languageText.openMenu} aria-expanded={menuOpen} aria-controls="site-navigation-panel" data-expanded={menuOpen} onClick={() => { onMenuOpenChange(!menuOpen); setLanguageOpen(false); }}>
             <span className={styles.menuLabel} aria-hidden="true"><span><TextActionLabel enabled={textEffects} underline={false}>Menu</TextActionLabel></span><span><TextActionLabel enabled={textEffects} underline={false}>Close</TextActionLabel></span></span>
             <span className={styles.menuSymbol} aria-hidden="true">
               <Menu className={styles.menuOpenIcon} size={20} />
               <X className={styles.menuCloseIcon} size={20} />
             </span>
           </button>
-        </div>}
-        {activePath !== "/sign-in" && activePath !== "/login" && <div className={`${styles.navPanel} ${expanded ? styles.navExpanded : ""}`}>
-          <nav id="home-navigation" aria-label={languageText.mainNavigation} className={styles.homeNav} inert={!expanded} aria-hidden={!expanded ? true : undefined}>
-            {links.map(([href, label]) => <Link key={href} href={href} onClick={() => setExpanded(false)} aria-current={href === activePath ? "page" : undefined}>{textEffects ? <TextActionLabel underline={false}>{label}</TextActionLabel> : <span className={styles.navLabel}>{label}</span>}</Link>)}
-            <Link href="/quote" className={styles.navCta} onClick={() => setExpanded(false)} aria-current={activePath === "/quote" ? "page" : undefined}><TextActionLabel enabled={textEffects} light underline={false}>Request a Quote</TextActionLabel></Link>
-          </nav>
         </div>}
       </div>
     </header>

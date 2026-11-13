@@ -71,14 +71,6 @@
 .headerControls { display: inline-flex; align-items: center; justify-content: flex-end; gap: 8px; flex-shrink: 0; }
 .signInLink { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 8px 10px; border: 0; border-radius: 999px; background: transparent; box-shadow: none; color: var(--bluemind-text); font-size: 12px; font-weight: 500; line-height: 1.4; white-space: nowrap; text-decoration: none; }
 .signInLink[aria-current="page"] { color: var(--bluemind-blue); }
-.navPanel { display: none; position: absolute; left: 0; right: 0; top: 100%; z-index: 10; overflow: hidden; pointer-events: none; }
-.homeNav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: center; gap: 8px 20px; padding: 22px 28px; border: 1px solid #e0e6ee; border-top: 0; border-radius: 0 0 12px 12px; background: #fff; box-shadow: 0 18px 44px #11182712; }
-.navExpanded { display: block; pointer-events: auto; }
-.homeNav a { display: inline-flex; align-items: center; justify-content: flex-start; min-height: 40px; padding: 6px 12px; border-radius: 999px; color: var(--bluemind-text); font-size: 13px; white-space: nowrap; }
-.homeNav a[aria-current="page"] { font-weight: 600; }
-.navLabel { position: relative; }
-.homeNav .navCta { display: inline-flex; align-items: center; padding: 11px 17px; justify-content: center; border: 1px solid var(--bluemind-blue); border-radius: 999px; color: #fff; background: var(--bluemind-blue); margin-left: 0; }
-.homeNav .navCta[aria-current="page"] { border-color: var(--bluemind-blue); background: var(--bluemind-blue-hover); color: var(--bluemind-text); }
 .languageSelector { position: relative; display: inline-flex; align-items: center; }
 .languageButton { width: auto; min-width: 68px; height: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 0 12px; border: 1px solid #dfe3e9; border-radius: 999px; background: #fff; color: var(--bluemind-text); font-size: 12px !important; font-weight: 500; letter-spacing: 0; line-height: 1; cursor: pointer; }
 .languageIcon { color: var(--bluemind-blue); flex-shrink: 0; filter: drop-shadow(0 1px 1px #142d4e15); }
@@ -103,7 +95,6 @@
 .menuToggle[data-expanded="true"] .menuOpenIcon { display: none; }
 .menuToggle[data-expanded="true"] .menuLabel > span:last-child,
 .menuToggle[data-expanded="true"] .menuCloseIcon { display: block; }
-.homeNav { max-height: calc(100dvh - var(--website-header-height, 87px)); overflow-y: auto; overscroll-behavior: contain; }
 .eyebrow { display: flex; align-items: center; gap: 9px; color: var(--bluemind-text); font-size: 10px; line-height: 1.5; font-weight: 600; letter-spacing: 1.8px; margin: 0 0 24px; }
 .blueDot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--bluemind-blue); flex-shrink: 0; }
 .actions { display: flex; align-items: center; flex-wrap: wrap; gap: 26px; }
@@ -169,8 +160,6 @@
 }
 @media (max-width: 1240px) {
   .headerInner { position: relative; min-height: 78px; }
-  .navPanel { left: -24px; right: -24px; }
-  .homeNav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 1120px) {
   .container { width: calc(100% - 56px); }
@@ -190,8 +179,6 @@
   .menuLabel, .languageChevron { display: none; }
   .languageShort { display: inline; }
   .signInLink { padding-inline: 12px; }
-  .navPanel { left: -16px; right: -16px; }
-  .homeNav { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 15px; padding: 22px 24px; }
   .eyebrow { font-size: 8px; letter-spacing: 1.5px; margin-bottom: 20px; }
   .desktopBreak { display: none; }
   .showcase { padding-block: 42px 35px; }
@@ -248,13 +235,11 @@
 
   .header .signInLink,
   .header .menuToggle,
-  .header .navPanel { display: none; }
 
   :global(html:has(header[data-scrolled])) { scroll-padding-top: 0; }
 }
 @media (max-width: 430px) {
   .headerInner { width: calc(100% - 24px); gap: 10px; }
-  .navPanel { left: -12px; right: -12px; }
   .brand { font-size: 17px; gap: 7px; letter-spacing: 0; }
   .brandLogo { --logo-size: 48px; transform: none; }
   .brandSub { display: none; }
@@ -280,30 +265,6 @@
     border-radius: 9999px;
     background: rgba(255, 255, 255, .88);
     box-shadow: 0 10px 28px rgba(20, 45, 78, .07);
-    -webkit-backdrop-filter: blur(16px);
-    backdrop-filter: blur(16px);
-  }
-
-  .headerInner[data-expanded="true"] {
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0;
-    box-shadow: 0 10px 28px rgba(20, 45, 78, .09);
-  }
-
-  .headerInner[data-expanded="true"] .navPanel { left: -1px; right: -1px; }
-
-  .navPanel {
-    top: calc(100% - 1px);
-    left: -1px;
-    right: -1px;
-  }
-
-  .homeNav {
-    border: 1px solid rgba(210, 218, 228, .9);
-    border-top: 0;
-    border-radius: 0 0 24px 24px;
-    background: rgba(255, 255, 255, .99);
-    box-shadow: 0 18px 38px rgba(20, 45, 78, .09);
     -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
   }

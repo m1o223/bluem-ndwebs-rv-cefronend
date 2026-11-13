@@ -2,41 +2,57 @@
   position: fixed;
   z-index: 120;
   inset: 0;
-  overflow: auto;
-  padding: 14px;
-  background: rgba(248, 250, 253, .92);
-  animation: menu-in 180ms ease-out both;
+  display: flex;
+  justify-content: flex-end;
+  overflow: hidden;
+  background: rgba(20, 45, 78, .2);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  animation: backdrop-in 240ms cubic-bezier(.22, .8, .28, 1) both;
 }
+
+.overlay[data-closing="true"] { animation: backdrop-out 240ms cubic-bezier(.22, .8, .28, 1) both; }
 
 .panel {
-  min-height: calc(100dvh - 28px);
-  padding: 22px max(22px, 5vw) 72px;
-  border: 1px solid rgba(186, 198, 212, .82);
-  border-radius: 30px;
+  width: min(460px, calc(100vw - 16px));
+  height: 100dvh;
+  padding: 24px 28px calc(30px + env(safe-area-inset-bottom));
+  border-inline-start: 1px solid rgba(186, 198, 212, .9);
+  border-radius: 24px 0 0 24px;
   background: rgba(255, 255, 255, .96);
-  box-shadow: 0 24px 70px rgba(20, 45, 78, .14);
+  box-shadow: -18px 0 60px rgba(20, 45, 78, .18);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  animation: panel-in 240ms cubic-bezier(.22, .8, .28, 1) both;
 }
 
-.header { display: flex; align-items: center; justify-content: space-between; gap: 20px; max-width: 1180px; margin: 0 auto; }
+.overlay[data-closing="true"] .panel { animation: panel-out 240ms cubic-bezier(.22, .8, .28, 1) both; }
+
+.header { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .brand { display: inline-flex; text-decoration: none; }
-.close { display: inline-flex; align-items: center; gap: 7px; min-height: 42px; padding: 8px 15px; border: 1px solid rgba(186, 198, 212, .86); border-radius: 999px; color: #263342; background: rgba(255,255,255,.8); font: inherit; cursor: pointer; }
-.content { width: min(760px, 100%); margin: clamp(64px, 13vh, 136px) auto 0; }
-.eyebrow { margin: 0 0 18px; color: var(--bluemind-blue); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
-.content h2 { margin: 0; color: #171a20; font-size: clamp(40px, 7vw, 74px); font-weight: 600; line-height: 1.02; letter-spacing: -2px; }
-.intro { margin: 22px 0 40px; color: #7b8490; font-size: 18px; }
+.close { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 8px 14px; border: 1px solid rgba(186, 198, 212, .86); border-radius: 999px; color: #263342; background: rgba(255,255,255,.8); font: inherit; cursor: pointer; }
+.content { width: 100%; margin: clamp(62px, 12vh, 116px) 0 0; }
+.content h2 { margin: 0 0 28px; color: #171a20; font-size: clamp(32px, 5vw, 46px); font-weight: 600; line-height: 1.05; letter-spacing: -1px; }
 .linkList { display: grid; border-top: 1px solid #e4e8ee; }
-.linkList a { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 66px; border-bottom: 1px solid #e4e8ee; color: #242b35; font-size: 18px; text-decoration: none; }
+.linkList a { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 62px; border-bottom: 1px solid #e4e8ee; color: #242b35; font-size: 17px; text-decoration: none; }
 .linkList a svg { color: #93a0af; }
 [dir="rtl"] .linkList a svg { transform: rotate(180deg); }
 
-@keyframes menu-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes backdrop-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes panel-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes panel-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
 
-@media (prefers-reduced-motion: reduce) { .overlay { animation: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .overlay[data-closing="true"],
+  .panel,
+  .overlay[data-closing="true"] .panel { animation: none; }
+}
+
 @media (max-width: 620px) {
-  .overlay { padding: 8px; }
-  .panel { min-height: calc(100dvh - 16px); padding: 16px 18px 60px; border-radius: 24px; }
-  .content { margin-top: 74px; }
-  .intro { font-size: 16px; margin-bottom: 30px; }
+  .panel { width: min(420px, calc(100vw - 10px)); padding: 18px 18px calc(24px + env(safe-area-inset-bottom)); border-radius: 20px 0 0 20px; }
+  .content { margin-top: 72px; }
+  .content h2 { margin-bottom: 22px; font-size: 32px; }
   .linkList a { min-height: 60px; font-size: 16px; }
-  .close span { display: none; }
 }
