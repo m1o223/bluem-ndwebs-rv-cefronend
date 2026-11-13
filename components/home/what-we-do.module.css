@@ -28,8 +28,16 @@
 .invitation { max-width: 900px; margin: 70px auto 25px; text-wrap: balance; }
 .invitationTitle { margin: 0; font-size: 32px; font-weight: 600; line-height: 1.35; }
 .invitationBody { max-width: 760px; margin: 12px auto 0; color: #607085; font-size: 18px; line-height: 1.65; }
-.cta { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 50px; padding: 12px 22px; border: 1px solid var(--bluemind-blue); border-radius: 8px; background: var(--bluemind-blue); color: #fff; text-decoration: none; font-size: 14px; }
+.cta { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 50px; padding: 12px 22px; border: 1px solid var(--bluemind-blue); border-radius: 8px; background: var(--bluemind-blue); color: #fff; text-decoration: none; font-size: 14px; transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease, color 160ms ease, filter 160ms ease; }
 .cta:focus-visible { outline: 2px solid #477bad; outline-offset: 4px; }
 .section[dir="rtl"] .cta svg { transform: scaleX(-1); }
+@media (hover: hover) and (pointer: fine) {
+  .cta:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):hover { transform: translateY(-2px); background: #10243f; border-color: #10243f; color: #fff; filter: none; }
+}
+.cta:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):active { transform: scale(.98); }
+@media (prefers-reduced-motion: reduce) {
+  .cta { transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, filter 160ms ease; }
+  .cta:hover, .cta:active { transform: none !important; }
+}
 @media (max-width: 1024px) { .inner { padding-block: 68px 64px; } .title { font-size: 33px; } .folioDevices { margin-bottom: 36px; } .examplesCard { width: min(100%, 840px); padding: 18px 20px 10px; } .examplesTitle { font-size: 20px; } .features { margin-top: 34px; } .invitation { margin-top: 64px; } .invitationTitle { font-size: 28px; } .invitationBody { font-size: 17px; } }
 @media (max-width: 620px) { .inner { width: calc(100% - 40px); padding-block: 54px 52px; } .title { font-size: 28px; } .folioDevices { width: 100%; margin-block: 20px 30px; } .folioDesktop { width: 54%; } .folioTablet { width: 34%; margin-inline-start: -4%; } .folioPhone { width: 16%; margin-inline-start: -4%; } .examplesCard { width: 100%; padding: 14px 14px 8px; border-radius: 10px; } .examplesTitle { margin-bottom: 6px; font-size: 18px; } .types { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); column-gap: 14px; } .typeButton { padding-block: 11px; font-size: 14px; } .features { margin-top: 30px; font-size: 15px; } .invitation { margin-top: 48px; } .invitationTitle { font-size: 24px; } .invitationBody { font-size: 16px; } }

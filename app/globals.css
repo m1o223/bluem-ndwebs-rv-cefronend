@@ -194,7 +194,7 @@ a {
     border-color 160ms ease,
     box-shadow 160ms ease,
     filter 160ms ease,
-    transform 90ms ease;
+    transform 160ms ease;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -219,6 +219,7 @@ a {
   ):not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):not([class*="primary"]):not([class*="Primary"]):not([class*="Cta"]):not([class*="cta"]):not([class*="navCta"]):not([class*="button"]):not([class*="sendButton"]):hover {
     background-color: color-mix(in srgb, currentColor 8%, transparent);
     border-color: color-mix(in srgb, currentColor 38%, transparent);
+    transform: translateY(-2px);
   }
 
   :where(
@@ -241,6 +242,27 @@ a {
     [class*="linkList"] a
   ):is([class*="primary"], [class*="Primary"], [class*="Cta"], [class*="cta"], [class*="navCta"], [class*="button"], [class*="sendButton"]):not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):hover {
     filter: brightness(0.94);
+    transform: translateY(-2px);
+  }
+
+  /* Outlined and light action controls share the homepage CTA treatment. */
+  :is(
+    button[class*="ctaButton"],
+    a[class*="ctaButton"],
+    button[class*="secondary"],
+    a[class*="secondary"],
+    button[class*="outline"],
+    a[class*="outline"],
+    button[class*="lightButton"],
+    a[class*="lightButton"],
+    button[class*="heroButton"],
+    a[class*="heroButton"]
+  ):not([class*="primary"]):not([class*="Primary"]):not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):hover {
+    background-color: var(--bluemind-blue) !important;
+    border-color: var(--bluemind-blue) !important;
+    color: #fff !important;
+    filter: none;
+    transform: translateY(-2px);
   }
 }
 
@@ -264,6 +286,7 @@ a {
   [class*="linkList"] a
 ):not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):active {
   transform: scale(0.98);
+  filter: brightness(0.97);
 }
 
 :where(
@@ -391,6 +414,21 @@ a {
     [class*="homeNav"] a,
     [class*="linkList"] a
   ):active {
+    transform: none !important;
+  }
+
+  button:hover,
+  input[type="button"]:hover,
+  input[type="submit"]:hover,
+  input[type="reset"]:hover,
+  a[role="button"]:hover,
+  a[class*="Button"]:hover,
+  a[class*="button"]:hover,
+  a[class*="Cta"]:hover,
+  a[class*="cta"]:hover,
+  a[class*="navCta"]:hover,
+  a[class*="signInLink"]:hover,
+  a[class*="item"]:hover {
     transform: none !important;
   }
 }

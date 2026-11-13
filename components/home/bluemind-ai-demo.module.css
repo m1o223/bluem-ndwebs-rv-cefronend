@@ -42,6 +42,7 @@
 .plannerGlow {
   position: absolute;
   z-index: 0;
+  pointer-events: none;
   top: 88px;
   left: 50%;
   width: 88%;
@@ -81,23 +82,39 @@
 
 .cta {
   display: inline-flex;
+  margin-top: 8px;
   min-height: 50px;
   align-items: center;
   justify-content: center;
   padding: 12px 26px;
   border: 1px solid #174a87;
   border-radius: 9999px;
-  background: #174a87;
-  color: #fff;
+  background: #fff;
+  color: #174a87;
   font-size: 15px;
   font-weight: 600;
   line-height: 1.2;
   text-decoration: none;
+  transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease, color 160ms ease, filter 160ms ease;
 }
 
 .cta:focus-visible {
   outline: 2px solid #477bad;
   outline-offset: 4px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cta:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):hover {
+    transform: translateY(-2px);
+    background: #174a87;
+    border-color: #174a87;
+    color: #fff;
+    filter: none;
+  }
+}
+
+.cta:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):active {
+  transform: scale(.98);
 }
 
 .plannerText {
@@ -209,6 +226,7 @@
   .cta {
     min-height: 48px;
     padding-inline: 24px;
+    margin-top: 6px;
   }
 }
 
@@ -220,5 +238,14 @@
 
   .caret {
     opacity: 1;
+  }
+
+  .cta {
+    transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, filter 160ms ease;
+  }
+
+  .cta:hover,
+  .cta:active {
+    transform: none !important;
   }
 }
