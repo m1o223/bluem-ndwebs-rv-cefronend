@@ -258,10 +258,18 @@ a {
     button[class*="heroButton"],
     a[class*="heroButton"]
   ):not([class*="primary"]):not([class*="Primary"]):not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):hover {
-    background-color: var(--bluemind-blue) !important;
-    border-color: var(--bluemind-blue) !important;
-    color: #fff !important;
+    background-color: var(--bluemind-blue-hover) !important;
+    border-color: color-mix(in srgb, var(--bluemind-blue) 28%, var(--bluemind-border)) !important;
     filter: none;
+    transform: translateY(-2px);
+  }
+}
+
+/* Pill-shaped account navigation links use the same light hover surface as header controls. */
+@media (hover: hover) and (pointer: fine) {
+  :where([class*="desktopNav"] a):not([aria-disabled="true"]):not([aria-busy="true"]):hover {
+    background-color: var(--bluemind-blue-hover);
+    border-color: color-mix(in srgb, var(--bluemind-blue) 28%, var(--bluemind-border));
     transform: translateY(-2px);
   }
 }

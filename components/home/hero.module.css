@@ -17,7 +17,7 @@
 @media (hover: hover) and (pointer: fine) {
   .hero .ctaButton:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):hover { transform: translateY(-2px); }
   .hero .primaryCta:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):hover { background: #10243f; border-color: #10243f; filter: none; }
-  .hero .ctaButton[href="/ask-ai"]:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):hover { background: var(--bluemind-blue); border-color: var(--bluemind-blue); color: #fff; filter: none; }
+  .hero .ctaButton[href="/ask-ai"]:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):hover { background: var(--bluemind-blue-hover); border-color: var(--bluemind-blue); filter: none; }
 }
 .hero .ctaButton:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):active { transform: scale(.98); }
 .planet { position: absolute; z-index: -1; display: block; width: clamp(460px, 45vw, 680px); aspect-ratio: 1 / 1; top: -86px; right: clamp(-110px, -6vw, -58px); opacity: .22; pointer-events: none; user-select: none; background: transparent; border: 0; box-shadow: none; }

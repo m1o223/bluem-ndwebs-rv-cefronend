@@ -106,9 +106,8 @@
 @media (hover: hover) and (pointer: fine) {
   .cta:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):hover {
     transform: translateY(-2px);
-    background: #174a87;
+    background: #edf3fa;
     border-color: #174a87;
-    color: #fff;
     filter: none;
   }
 }

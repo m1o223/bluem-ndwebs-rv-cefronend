@@ -9,10 +9,16 @@
 .desktopNav { display: flex; align-items: center; justify-content: flex-end; gap: 6px; min-width: 0; }
 .desktopNav a { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 15px; border: 1px solid transparent; border-radius: 999px; color: #4b5563; font-size: 13px; font-weight: 500; white-space: nowrap; }
 .desktopNav a[aria-current="page"] { color: var(--bluemind-blue); background: #edf3fa; border-color: rgba(20, 45, 78, .12); font-weight: 600; }
+@media (hover: hover) and (pointer: fine) {
+  .desktopNav a:not([aria-current="page"]):hover { background: #edf3fa; border-color: rgba(20, 45, 78, .28); transform: translateY(-2px); }
+}
 .languageSelector { position: relative; display: inline-flex; align-items: center; flex: 0 0 auto; }
 .languageButton { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; padding: 8px 11px; border: 1px solid #dce3eb; border-radius: 999px; background: rgba(255, 255, 255, .74); color: #142d4e; font: inherit; font-size: 12px; font-weight: 600; letter-spacing: .02em; cursor: pointer; }
 .languageButton svg:first-child { color: #3679b3; }
 .languageButton svg:last-child { color: #7b8795; }
+@media (hover: hover) and (pointer: fine) {
+  .languageButton:hover { background: #edf3fa; border-color: rgba(20, 45, 78, .28); transform: translateY(-2px); }
+}
 .languageMenu { position: absolute; inset-inline-end: 0; top: calc(100% + 10px); z-index: 35; display: none; min-width: 168px; gap: 4px; padding: 8px; border: 1px solid #dfe5ed; border-radius: 16px; background: #fff; box-shadow: 0 18px 44px #1118271f; pointer-events: none; }
 .languageMenu[data-open="true"] { display: grid; pointer-events: auto; }
 .app[dir="rtl"] .languageMenu { inset-inline-end: auto; inset-inline-start: 0; }

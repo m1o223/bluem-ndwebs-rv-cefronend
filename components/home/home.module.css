@@ -95,7 +95,6 @@
     transform: translateY(-2px);
     background: #edf3fa !important;
     border-color: var(--bluemind-blue) !important;
-    color: var(--bluemind-blue) !important;
     box-shadow: 0 0 0 1px rgb(20 45 78 / 8%);
   }
 }
