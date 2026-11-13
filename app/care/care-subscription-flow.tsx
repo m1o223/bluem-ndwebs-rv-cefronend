@@ -49,7 +49,7 @@ function createAttemptId() {
 }
 
 function planIdForName(name: PlanName) {
-  return name === "Care Basic" ? "care-basic" : name === "Care Pro" ? "care-pro" : "care-plus";
+  return name === "BlueMind Essential" ? "care-basic" : name === "BlueMind Pro" ? "care-pro" : "care-plus";
 }
 
 function billingToApi(value: Billing): "monthly" | "yearly" {
@@ -74,7 +74,7 @@ function subscriptionStatusText(subscription: CareSubscription) {
 
 export default function CareSubscriptionFlow() {
   const [billing, setBilling] = useState<Billing>("Monthly");
-  const [plan, setPlan] = useState<PlanName>("Care Plus");
+  const [plan, setPlan] = useState<PlanName>("BlueMind Plus");
   const [orderNumber, setOrderNumber] = useState("");
   const [orderEmail, setOrderEmail] = useState("");
   const [attemptId, setAttemptId] = useState(createAttemptId);

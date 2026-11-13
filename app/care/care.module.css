@@ -5,10 +5,10 @@
 .plansSection { border-top: 1px solid var(--bluemind-border); padding-top: 28px; background: #fff; }
 .plansIntro h2, .faq > h2, .formSection > h2 { margin: 0; font-size: 26px; font-weight: 500; letter-spacing: -.8px; line-height: 1.35; }
 .plansIntro p, .formIntro { margin: 12px 0 0; color: var(--bluemind-text); font-size: 14px; line-height: 1.8; }
-.billingToggle { display: flex; width: fit-content; max-width: 100%; gap: 4px; margin: 26px 0 0; padding: 5px; border: 1px solid #dfe4eb; border-radius: 12px; }
+.billingToggle { display: flex; width: fit-content; max-width: 100%; gap: 4px; margin: 26px 0 0; padding: 5px; border: 1px solid #dfe4eb; border-radius: 9999px; overflow: hidden; }
 .billingOption { position: relative; cursor: pointer; }
 .billingOption input { position: absolute; width: 1px; height: 1px; opacity: 0; }
-.billingOption > span { min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px 20px; border-radius: 8px; color: var(--bluemind-text); font-size: 14px; font-weight: 500; }
+.billingOption > span { min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px 20px; border-radius: 9999px; color: var(--bluemind-text); font-size: 14px; font-weight: 500; }
 .billingOption small { padding: 4px 6px; border: 1px solid #dfe4eb; border-radius: 5px; color: var(--bluemind-text); font-size: 9px; white-space: nowrap; }
 .billingOption input:checked + span { background: var(--bluemind-blue); color: #fff; }
 .billingOption input:checked + span small { color: #fff; border-color: #757b86; }

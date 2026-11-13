@@ -60,7 +60,7 @@ function PaymentMethodCard({ method, selected, onSelect }: { method: PaymentMeth
 
 export default function CareSubscriptionDemoFlow() {
   const [billing, setBilling] = useState<Billing>("Monthly");
-  const [selectedPlanName, setSelectedPlanName] = useState<PlanName>("Care Plus");
+  const [selectedPlanName, setSelectedPlanName] = useState<PlanName>("BlueMind Plus");
   const [purchaseOpen, setPurchaseOpen] = useState(false);
   const [purchaseStep, setPurchaseStep] = useState<PurchaseStep>("details");
   const [orderEmail, setOrderEmail] = useState("");
@@ -225,7 +225,7 @@ export default function CareSubscriptionDemoFlow() {
         {cancelStep === "subscription" && <div className={styles.careReview}>
           <p className={styles.modalEyebrow}>Demo subscription data</p>
           <h2 id="care-cancel-title">Your subscription</h2>
-          <dl><div><dt>Plan</dt><dd>Care Basic</dd></div><div><dt>Price</dt><dd>250 SEK / month</dd></div><div><dt>Status</dt><dd>Active</dd></div><div><dt>Next Renewal</dt><dd>{nextRenewalDate("Monthly")}</dd></div></dl>
+          <dl><div><dt>Plan</dt><dd>BlueMind Essential</dd></div><div><dt>Price</dt><dd>250 SEK / month</dd></div><div><dt>Status</dt><dd>Active</dd></div><div><dt>Next Renewal</dt><dd>{nextRenewalDate("Monthly")}</dd></div></dl>
           <p className={styles.demoNotice}>Preview data only. No account subscription was loaded.</p>
           <div className={styles.checkoutActions}><button type="button" className={`${buttonClass} ${buttonStyles.primaryCta}`} onClick={() => setCancelStep("reason")}>Cancel Subscription</button></div>
         </div>}
@@ -237,7 +237,7 @@ export default function CareSubscriptionDemoFlow() {
         </>}
         {cancelStep === "confirm" && <div className={styles.careReview}>
           <h2 id="care-cancel-title">Confirm Cancellation</h2>
-          <dl><div><dt>Plan</dt><dd>Care Basic</dd></div><div><dt>Billing</dt><dd>Monthly</dd></div><div><dt>Reason</dt><dd>{cancelReason}</dd></div></dl>
+          <dl><div><dt>Plan</dt><dd>BlueMind Essential</dd></div><div><dt>Billing</dt><dd>Monthly</dd></div><div><dt>Reason</dt><dd>{cancelReason}</dd></div></dl>
           <p className={styles.demoNotice}>Future renewal will stop, but the current paid period remains active until its end. Annual plans keep the already-paid 12-month coverage and only stop the next renewal.</p>
           <div className={styles.checkoutActions}><button type="button" className={buttonClass} onClick={closeCancel}>Keep Subscription</button><button type="button" className={`${buttonClass} ${buttonStyles.primaryCta}`} onClick={confirmCancellation}>Confirm Cancellation</button></div>
         </div>}
