@@ -19,7 +19,7 @@ export const footerConfig = {
     { name: "X", icon: "/images/footer/x.svg", url: "https://x.com/bluemind_ai?s=11" },
   ] satisfies Social[],
   paymentMethods: [
-    { name: "PayPal", asset: "/images/footer/paypal.svg" },
+    { name: "PayPal", asset: "/images/footer/paypal-wordmark.svg" },
     { name: "Google Pay", asset: "/images/footer/google-pay.svg" },
     { name: "Apple Pay", asset: "/images/footer/apple-pay.svg" },
     { name: "Visa", asset: "/images/footer/visa.png" },

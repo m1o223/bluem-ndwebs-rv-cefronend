@@ -31,6 +31,7 @@
 .payments img[alt="Visa"] { max-width: 72px; height: 26px; }
 .payments img[alt="Mastercard"] { max-width: 66px; height: 32px; }
 .payments img[alt="Klarna"] { max-width: 90px; height: 34px; }
+.payments img[alt="PayPal"] { max-width: 90px; height: 30px; }
 .payments li > span { color: var(--bluemind-blue); font-size: 13px; font-weight: 700; letter-spacing: -.1px; }
 .payments li small { padding: 1px 6px; border-radius: 999px; background: #edf3fa; color: var(--bluemind-blue); font-size: 9px; font-weight: 600; line-height: 1.5; }
 .bottom { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; padding-top: 24px; }
@@ -71,5 +72,6 @@
   .payments li { flex-basis: calc(33.333% - 6px); }
   .payments img { max-width: 82px; height: 30px; }
   .payments img[alt="Google Pay"] { max-width: 92px; height: 33px; }
+  .payments img[alt="PayPal"] { max-width: 82px; height: 28px; }
 }
 
