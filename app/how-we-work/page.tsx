@@ -19,7 +19,7 @@ export default function HowWeWorkPage() {
   return (
     <div id="top" className={`${homeStyles.home} ${pageStyles.page}`}>
       <div className={pageStyles.body}>
-        <div className={`${homeStyles.container} ${pageStyles.content}`}>
+        <div className={`${homeStyles.container} ${pageStyles.content} ${styles.content}`}>
           <div className={`${pageStyles.intro} ${pageStyles.enter} ${styles.intro}`}>
             <h1>How We Work</h1>
             <p className={styles.headline}>From your idea to a finished website.</p>
@@ -44,7 +44,7 @@ export default function HowWeWorkPage() {
               <h2 id="process-cta-title">Ready to start your website?</h2>
               <p>Tell us what you have in mind, and we’ll take it from there.</p>
             </div>
-            <Link href="/quote" className={`${buttonStyles.ctaButton} ${buttonStyles.primaryCta}`}>Request a Quote</Link>
+            <Link href="/ask-ai" className={`${buttonStyles.ctaButton} ${buttonStyles.primaryCta}`}>Start with BlueMind AI</Link>
           </section>
         </div>
       </div>
