@@ -1,9 +1,5 @@
 .page { position: relative; isolation: isolate; display: grid; grid-template-rows: auto minmax(0, 1fr); box-sizing: border-box; width: 100%; height: 100dvh; min-height: 100dvh; overflow: hidden; padding: 18px max(24px, calc((100% - 1140px) / 2)); background: #fff; color: #142d4e; }
-.watermark { position: absolute; z-index: -1; width: min(560px, 80%); height: auto; top: 50%; right: -100px; transform: translateY(-50%); opacity: .025; pointer-events: none; user-select: none; object-fit: contain; }
-.topbar { position: relative; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 20px; min-width: 0; }
-.brand { display: inline-flex; align-items: center; min-width: 0; color: inherit; text-decoration: none; }
-.brandLockup { gap: 10px; }
-.brandLogo { --logo-size: 56px; }
+.topbar { position: relative; z-index: 3; display: flex; align-items: center; justify-content: flex-end; gap: 20px; min-width: 0; }
 .back { position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0; border: 0; background: transparent; box-shadow: none; color: inherit; text-decoration: none; font-size: 14px; }
 .stage { position: relative; width: 100vw; min-height: 0; height: auto; margin-inline: calc((100% - 100vw) / 2); display: grid; grid-template-rows: minmax(0, 1fr); align-items: center; overflow: hidden; }
 .center { position: relative; z-index: 1; display: grid; place-items: center; min-height: 0; height: 100%; overflow-y: auto; padding: 12px 16px; pointer-events: none; }
@@ -38,10 +34,8 @@
 .page[dir="rtl"] .stepBack svg, .page[dir="rtl"] .back svg { transform: rotate(180deg); }
 @media (max-width: 767px), (max-width: 1100px) and (orientation: portrait), (hover: none) and (pointer: coarse) and (orientation: portrait) {
   .page { padding: 10px 16px; }
-  .brandLogo { --logo-size: 50px; }
   .center { width: 100%; padding: 8px 12px; }
   .formArea { padding: 20px 18px; }
   .formArea h1 { font-size: 28px; }
-  .watermark { right: -60px; width: min(420px, 90%); }
 }
 @media (max-width: 380px) { .formArea { padding: 14px 10px; } .providers button { padding-inline: 34px 24px; font-size: 12px; } .formArea h1 { font-size: 25px; } .subtitle { margin-bottom: 20px; } .providers { gap: 10px; } .providers button { min-height: 48px; } }

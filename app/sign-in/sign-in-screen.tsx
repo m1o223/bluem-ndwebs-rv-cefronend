@@ -5,7 +5,6 @@ import Link from "next/link";
 import { ArrowLeft, LoaderCircle, Mail } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useLocalization } from "../../components/localization-provider";
-import { BrandLockup } from "../../components/brand-lockup";
 import TextActionLabel from "../../components/text-action-label";
 import { useGoogleSignIn } from "./use-google-sign-in";
 import { useEmailSignIn } from "./use-email-sign-in";
@@ -56,9 +55,7 @@ export default function SignInScreen() {
   const status = google.busy ? text.googleLoading : google.error ? googleError : mode === "login" && email.status !== "idle" ? authText[email.status] : "";
 
   return <section className={styles.page} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate data-reveal-skip aria-labelledby="sign-in-title">
-    <Image className={styles.watermark} src="/images/brand/bluemind-original-logo-transparent.png" width={1065} height={1212} alt="" aria-hidden="true" sizes="(max-width: 620px) 80vw, 560px" />
     <div className={styles.topbar}>
-      <Link href="/" className={styles.brand} aria-label="BlueMind Web Service home"><BrandLockup className={styles.brandLockup} logoClassName={styles.brandLogo} priority solidLogo /></Link>
       <Link href="/" className={styles.back}><ArrowLeft size={18} aria-hidden="true" /><TextActionLabel>{text.back}</TextActionLabel></Link>
     </div>
     <div className={styles.stage} data-reveal-group="auth-content" data-page-transition-surface>
