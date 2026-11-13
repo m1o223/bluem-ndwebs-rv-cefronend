@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { Footer } from "./home/sections";
@@ -16,6 +16,13 @@ export default function WebsiteShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = useCallback(() => setMenuOpen(false), []);
+  const menuScrollPosition = useRef({ x: 0, y: 0 });
+  const setMenuOpenWithPosition = useCallback((nextOpen: boolean) => {
+    if (nextOpen) {
+      menuScrollPosition.current = { x: window.scrollX, y: window.scrollY };
+    }
+    setMenuOpen(nextOpen);
+  }, []);
   const customer = isCustomerPath(pathname);
   const excluded = pathname === "/dashboard-preview" || pathname === "/menu";
 
@@ -27,16 +34,16 @@ export default function WebsiteShell({ children }: { children: ReactNode }) {
   if (pathname === "/ask-ai") return <>
     <RouteScrollState />
     <RouteTransition>{children}</RouteTransition>
-    <BottomNavigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpen} />
-    <SiteMenuOverlay open={menuOpen} onClose={closeMenu} />
+    <BottomNavigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpenWithPosition} />
+    <SiteMenuOverlay open={menuOpen} onClose={closeMenu} scrollPosition={menuScrollPosition.current} />
   </>;
 
   return <>
     <RouteScrollState />
-    <Navigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpen} />
+    <Navigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpenWithPosition} />
     <PageContent><RouteTransition>{children}</RouteTransition></PageContent>
     <Footer textEffects={pathname === "/"} />
-    <BottomNavigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpen} />
-    <SiteMenuOverlay open={menuOpen} onClose={closeMenu} />
+    <BottomNavigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpenWithPosition} />
+    <SiteMenuOverlay open={menuOpen} onClose={closeMenu} scrollPosition={menuScrollPosition.current} />
   </>;
 }

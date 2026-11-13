@@ -85,17 +85,9 @@
 .header button:focus-visible { outline-color: var(--bluemind-blue); }
 .menuToggle { width: 86px; min-width: 86px; height: 44px; min-height: 44px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid #dfe3e9; border-radius: 999px; background: #fff; color: var(--bluemind-text); padding: 0 12px; font-size: 12px !important; line-height: 1; cursor: pointer; transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease; }
 .menuToggle[data-expanded="true"] { border-color: var(--bluemind-blue); background: #edf3fa; color: var(--bluemind-blue); }
-.menuLabel, .menuSymbol { display: grid; }
-.menuLabel > span, .menuSymbol > span { grid-area: 1 / 1; }
-.menuLabel > span:last-child, .menuSymbol > span:last-child { display: none; }
+.menuLabel, .menuSymbol { display: inline-flex; align-items: center; }
 .menuSymbol { width: 20px; height: 20px; place-items: center; color: var(--bluemind-blue); flex-shrink: 0; }
-.menuSymbol svg { grid-area: 1 / 1; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.menuOpenIcon { transform: rotate(0) scale(1); }
-.menuCloseIcon { display: none; }
-.menuToggle[data-expanded="true"] .menuLabel > span:first-child,
-.menuToggle[data-expanded="true"] .menuOpenIcon { display: none; }
-.menuToggle[data-expanded="true"] .menuLabel > span:last-child,
-.menuToggle[data-expanded="true"] .menuCloseIcon { display: block; }
+.menuSymbol svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 @media (hover: hover) and (pointer: fine) {
   .header .signInLink:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):hover,
   .header .languageButton:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):hover,

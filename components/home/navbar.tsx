@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import Link from "next/link";
-import { Check, ChevronDown, Globe2, Menu, X } from "lucide-react";
+import { Check, ChevronDown, Globe2, Menu } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { BrandLockup } from "../brand-lockup";
 import { useLocalization, type Locale } from "../localization-provider";
@@ -126,12 +126,9 @@ export default function Navbar({ activePath = "/", menuOpen = false, onMenuOpenC
               ))}
             </div>
           </div>
-          <button ref={toggleRef} className={styles.menuToggle} type="button" aria-label={menuOpen ? languageText.closeMenu : languageText.openMenu} aria-expanded={menuOpen} aria-controls="site-navigation-panel" data-expanded={menuOpen} onClick={() => { onMenuOpenChange(!menuOpen); setLanguageOpen(false); }}>
-            <span className={styles.menuLabel} aria-hidden="true"><span><TextActionLabel enabled={textEffects} underline={false}>Menu</TextActionLabel></span><span><TextActionLabel enabled={textEffects} underline={false}>Close</TextActionLabel></span></span>
-            <span className={styles.menuSymbol} aria-hidden="true">
-              <Menu className={styles.menuOpenIcon} size={20} />
-              <X className={styles.menuCloseIcon} size={20} />
-            </span>
+          <button ref={toggleRef} className={styles.menuToggle} type="button" aria-label={languageText.openMenu} aria-expanded={menuOpen} aria-controls="site-navigation-panel" data-expanded={menuOpen} onClick={() => { onMenuOpenChange(!menuOpen); setLanguageOpen(false); }}>
+            <span className={styles.menuLabel} aria-hidden="true"><TextActionLabel enabled={textEffects} underline={false}>Menu</TextActionLabel></span>
+            <span className={styles.menuSymbol} aria-hidden="true"><Menu size={20} /></span>
           </button>
         </div>}
       </div>
