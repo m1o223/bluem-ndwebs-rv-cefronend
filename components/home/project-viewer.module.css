@@ -168,8 +168,8 @@
   z-index: 0;
   width: calc((100% - 16px) / 3);
   border-radius: 999px;
-  background: var(--bluemind-blue, #142d4e);
-  box-shadow: 0 3px 10px rgb(45 102 230 / 18%);
+  background: #17365d;
+  box-shadow: none;
   transform: translateX(calc(var(--active-index, 2) * (100% + 4px)));
   transition: transform 280ms cubic-bezier(.22, .75, .26, 1);
 }
@@ -186,8 +186,9 @@
   background: none;
   font-size: 12px;
   font-weight: 500;
-  color: #17365d;
+  color: #111827;
   cursor: pointer;
+  transform: none;
   transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
 }
 .deviceOption {
@@ -201,17 +202,19 @@
 .orientationControls button:not([aria-pressed="true"]):hover {
   border-color: #cfe4f5;
   background: #edf5fc;
-  color: #4a8dcc;
+  color: #111827;
+  transform: none;
 }
 .deviceControls button[aria-pressed="true"] {
   border-color: transparent;
   background: transparent;
-  color: #fff;
+  color: #fff !important;
 }
 .deviceControls button[aria-pressed="true"]:hover {
   border-color: transparent;
-  background: transparent;
-  color: #fff;
+  background: transparent !important;
+  color: #fff !important;
+  transform: none !important;
 }
 .orientationControls {
   position: relative;
@@ -242,8 +245,8 @@
   z-index: 0;
   width: calc((100% - 12px) / 2);
   border-radius: 999px;
-  background: var(--bluemind-blue, #142d4e);
-  box-shadow: 0 3px 10px rgb(20 45 78 / 18%);
+  background: #17365d;
+  box-shadow: none;
   transform: translateX(calc(var(--active-index, 0) * (100% + 4px)));
   transition: transform 280ms cubic-bezier(.22, .75, .26, 1);
 }
@@ -256,24 +259,31 @@
   border-color: transparent;
   background: transparent;
   font-size: 11px;
-  color: #17365d;
+  color: #111827;
   cursor: pointer;
 }
 .orientationControls button[aria-pressed="true"],
 .orientationControls button[aria-pressed="true"]:hover {
   border-color: transparent;
-  color: #fff;
-  background: transparent;
+  color: #fff !important;
+  background: transparent !important;
+  transform: none !important;
+}
+.deviceBar button:hover,
+.deviceBar button:active {
+  transform: none !important;
+  filter: none !important;
 }
 @media (hover: hover) and (pointer: fine) {
-  .dialog .deviceBar button:not([aria-pressed="true"]):hover {
+  .deviceBar button:not([aria-pressed="true"]):hover {
     border-color: #cfe4f5 !important;
     background: #edf5fc !important;
-    color: #4a8dcc !important;
+    color: #111827 !important;
     transform: none !important;
+    filter: none !important;
   }
-  .dialog .deviceBar button[aria-pressed="true"],
-  .dialog .deviceBar button[aria-pressed="true"]:hover {
+  .deviceBar button[aria-pressed="true"],
+  .deviceBar button[aria-pressed="true"]:hover {
     border-color: transparent !important;
     background: transparent !important;
     color: #fff !important;
