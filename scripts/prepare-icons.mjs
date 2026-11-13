@@ -23,15 +23,33 @@ const iconFiles = new Map([
 await mkdir(new URL("../public/icons/", import.meta.url), { recursive: true });
 const icons = new Map();
 const icoFrames = [];
+const logoBounds = { left: 86, top: 310, width: 896, height: 876 };
+
+function roundedIconBackground(size) {
+  const radius = Math.max(2, Math.round(size * 0.16));
+  return Buffer.from(`<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg"><rect width="${size}" height="${size}" rx="${radius}" fill="#ffffff"/></svg>`);
+}
+
+async function makeIcon(size) {
+  const logoSize = Math.max(10, Math.round(size * 0.66));
+  const logo = await sharp(source)
+    .extract(logoBounds)
+    .resize(logoSize, logoSize, { fit: "contain", position: "center", kernel: "lanczos3" })
+    .png()
+    .toBuffer();
+  return sharp({ create: { width: size, height: size, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+    .composite([{ input: roundedIconBackground(size), blend: "over" }, { input: logo, gravity: "centre", blend: "over" }])
+    .png({ compressionLevel: 9, palette: false })
+    .toBuffer();
+}
 
 for (const [size, filename] of iconFiles) {
-  const resized = sharp(source).resize(size, size, { fit: "contain", position: "center", kernel: "lanczos3", background: { r: 0, g: 0, b: 0, alpha: 0 } });
-  const png = await resized.clone().png({ compressionLevel: 9, palette: false }).toBuffer();
+  const png = await makeIcon(size);
   await writeFile(`${publicDirectory}icons/${filename}`, png);
   icons.set(size, { url: `/icons/${filename}`, sizes: `${size}x${size}`, type: "image/png" });
 
   if (size <= 64) {
-    const rgba = await resized.clone().ensureAlpha().raw().toBuffer();
+    const rgba = await sharp(png).ensureAlpha().raw().toBuffer();
     const maskRowBytes = Math.ceil(size / 32) * 4;
     const frame = Buffer.alloc(40 + size * size * 4 + maskRowBytes * size);
     frame.writeUInt32LE(40, 0);
