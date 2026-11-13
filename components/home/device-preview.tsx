@@ -20,7 +20,7 @@ export const deviceModes = [
 ] as const;
 export type DeviceMode = (typeof deviceModes)[number]["id"];
 export type TabletOrientation = "portrait" | "landscape";
-type FrameMotion = "settled" | "forward" | "backward" | "rotate";
+type FrameMotion = "settled" | "forward" | "backward";
 
 function deviceIndex(device: DeviceMode) {
   return device === "mobile" ? 0 : device === "ipad" ? 1 : 2;
@@ -49,7 +49,6 @@ export default function DevicePreview({
   const frame = useRef<HTMLDivElement>(null);
   const initialized = useRef(false);
   const previousDevice = useRef<DeviceMode | null>(null);
-  const previousOrientation = useRef<TabletOrientation>(orientation);
   const motionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [motion, setMotion] = useState<FrameMotion>("settled");
   const [available, setAvailable] = useState({ width: 0, height: 0, touch: false });
@@ -72,25 +71,26 @@ export default function DevicePreview({
   const framePadding = device === "mobile" ? 16 : device === "ipad" ? 18 : 16;
   const screenTop = device === "mobile" ? 26 : framePadding;
   const baseHeight = device === "desktop" ? 48 : 0;
-  const frameWidth = contentWidth + framePadding * 2;
-  const frameHeight = contentHeight + screenTop + framePadding + baseHeight;
+  const normalFrameWidth = contentWidth + framePadding * 2;
+  const normalFrameHeight = contentHeight + screenTop + framePadding + baseHeight;
+  const rotatedTablet = device === "ipad" && orientation === "landscape";
+  const frameWidth = device === "ipad" ? deviceModes[1].width + framePadding * 2 : normalFrameWidth;
+  const frameHeight = device === "ipad" ? deviceModes[1].height + screenTop + framePadding : normalFrameHeight;
+  const frameLeft = rotatedTablet ? (frameHeight - frameWidth) / 2 : 0;
+  const frameTop = rotatedTablet ? (frameWidth - frameHeight) / 2 : 0;
+  const screenWidth = device === "ipad" ? deviceModes[1].width : contentWidth;
+  const screenHeight = device === "ipad" ? deviceModes[1].height : contentHeight;
 
   useEffect(() => {
     if (!device) return;
     const oldDevice = previousDevice.current;
-    const oldOrientation = previousOrientation.current;
     if (oldDevice && oldDevice !== device) {
       setMotion(deviceIndex(device) > deviceIndex(oldDevice) ? "forward" : "backward");
       if (motionTimer.current !== null) clearTimeout(motionTimer.current);
       motionTimer.current = setTimeout(() => setMotion("settled"), 360);
-    } else if (oldDevice === "ipad" && device === "ipad" && oldOrientation !== orientation) {
-      setMotion("rotate");
-      if (motionTimer.current !== null) clearTimeout(motionTimer.current);
-      motionTimer.current = setTimeout(() => setMotion("settled"), 420);
     }
     previousDevice.current = device;
-    previousOrientation.current = orientation;
-  }, [device, orientation]);
+  }, [device]);
 
   useEffect(() => () => {
     if (motionTimer.current !== null) clearTimeout(motionTimer.current);
@@ -104,11 +104,14 @@ export default function DevicePreview({
       const w = element.clientWidth;
       const h = element.clientHeight;
       if (!w || !h || !host.clientWidth || !host.clientHeight) return;
-      const scale = Math.min(1, host.clientWidth / w, host.clientHeight / h);
+      const rotated = element.dataset.rotated === "true";
+      const visualWidth = rotated ? h : w;
+      const visualHeight = rotated ? w : h;
+      const scale = Math.min(1, host.clientWidth / visualWidth, host.clientHeight / visualHeight);
       element.style.transform = `scale(${scale})`;
       element.dataset.scale = String(scale);
-      box.style.width = `${w * scale}px`;
-      box.style.height = `${h * scale}px`;
+      box.style.width = `${visualWidth * scale}px`;
+      box.style.height = `${visualHeight * scale}px`;
     }
     const sizeObserver = new ResizeObserver(() => {
       if (!host.clientWidth || !host.clientHeight) return;
@@ -126,16 +129,17 @@ export default function DevicePreview({
     const frameObserver = new ResizeObserver(fit);
     sizeObserver.observe(host);
     frameObserver.observe(element);
+    fit();
     return () => {
       sizeObserver.disconnect();
       frameObserver.disconnect();
     };
-  }, [initializeDevice]);
+  }, [initializeDevice, device, frameWidth, frameHeight, rotatedTablet]);
 
   useLayoutEffect(() => {
     if (!device || !available.width || !available.height || !frame.current) return;
     frame.current.dataset.ready = "true";
-  }, [device, available, frameWidth, frameHeight]);
+  }, [device, available, frameWidth, frameHeight, rotatedTablet]);
 
   return (
     <div className={styles.stage}>
@@ -147,17 +151,23 @@ export default function DevicePreview({
             data-device-frame={device || "preparing"}
             data-orientation={orientation}
             data-native-mobile={nativeMobile}
-            style={{ width: `${Math.max(1, frameWidth)}px`, height: `${Math.max(1, frameHeight)}px` }}
+            data-rotated={rotatedTablet || undefined}
+            style={{
+              width: `${Math.max(1, frameWidth)}px`,
+              height: `${Math.max(1, frameHeight)}px`,
+              left: `${frameLeft}px`,
+              top: `${frameTop}px`,
+            }}
           >
             <div className={styles.deviceBezel}>
               {device === "mobile" && <span className={styles.phoneSpeaker} aria-hidden="true" />}
               <div
                 className={styles.deviceScreen}
                 style={{
-                  width: `${Math.max(1, contentWidth)}px`,
-                  height: `${Math.max(1, contentHeight)}px`,
-                  top: `${screenTop}px`,
-                  left: `${framePadding}px`,
+                  width: `${Math.max(1, screenWidth)}px`,
+                  height: `${Math.max(1, screenHeight)}px`,
+                  top: rotatedTablet ? "50%" : `${screenTop}px`,
+                  left: rotatedTablet ? "50%" : `${framePadding}px`,
                 }}
               >
                 <div
@@ -171,8 +181,8 @@ export default function DevicePreview({
                   </ProjectViewport>
                 </div>
               </div>
-              {device === "desktop" && <div className={styles.laptopBase} aria-hidden="true" />}
             </div>
+            {device === "desktop" && <div className={styles.laptopBase} aria-hidden="true" />}
           </div>
         </div>
       </div>

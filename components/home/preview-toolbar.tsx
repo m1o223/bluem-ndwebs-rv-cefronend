@@ -147,12 +147,16 @@ export default function PreviewToolbar({
         <div
           className={styles.orientationControls}
           data-visible={activeDevice === "ipad"}
+          data-active-index={orientation === "landscape" ? 1 : 0}
           role="group"
           aria-label="iPad orientation"
           aria-hidden={activeDevice !== "ipad"}
+          style={{ "--active-index": orientation === "landscape" ? 1 : 0 } as CSSProperties}
         >
+          <span className={styles.orientationIndicator} aria-hidden="true" />
           <button
             type="button"
+            className={styles.orientationOption}
             aria-pressed={orientation === "portrait"}
             disabled={disabled || activeDevice !== "ipad"}
             onClick={() => onOrientationChange("portrait")}
@@ -162,6 +166,7 @@ export default function PreviewToolbar({
           </button>
           <button
             type="button"
+            className={styles.orientationOption}
             aria-pressed={orientation === "landscape"}
             disabled={disabled || activeDevice !== "ipad"}
             onClick={() => onOrientationChange("landscape")}
