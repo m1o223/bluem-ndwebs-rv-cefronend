@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Home, Sparkles, MessageCircle, Settings } from "lucide-react";
 import Image from "next/image";
 import { BrandLockup } from "../brand-lockup";
+import { AiComingSoonLink, AiComingSoonPage } from "../ai-coming-soon";
 import { useLocalization } from "../localization-provider";
 import { type Customer, type CustomerPage } from "../../app/lib/customer/routes";
 import { customerCopy } from "./copy";
@@ -13,7 +14,6 @@ import { workspaceCopy } from "./workspace-copy";
 import type { Overview } from "./workspace-types";
 import TextActionLabel from "../text-action-label";
 import SessionRecovery from "./session-recovery";
-import ChatWorkspace from "../../app/ask-ai/chat-workspace";
 import LanguageSelector from "../language-selector";
 const demoOverview: Overview = {
   profile: { fullName: "", customerType: null, companyName: "", companyNumber: "", preferences: { project: false, team: false, billing: false, email: false }, loginMethods: [] },
@@ -104,9 +104,7 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
   const isAi = page === "ai";
   const isHome = page === "home";
   if (isAi) return <div ref={shell} className={`${styles.app} ${styles.aiApp}`} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate>
-    <div className={styles.aiFullMain}>
-      <ChatWorkspace available account accountFullScreen />
-    </div>
+    <AiComingSoonPage backHref="/dashboard" backLabel={locale === "ar" ? "\u0627\u0644\u0639\u0648\u062f\u0629 \u0625\u0644\u0649 \u0627\u0644\u062d\u0633\u0627\u0628" : locale === "sv" ? "Tillbaka till kontot" : "Back to account"} />
   </div>;
   const accountLabel = text.account.split(" /")[0];
   return <div ref={shell} className={styles.app} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate>
@@ -115,7 +113,7 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
       <div className={styles.headerActions}>
         <nav className={styles.desktopNav} aria-label={text.accountNavigation}>
           <Link href="/dashboard" aria-current={page === "home" ? "page" : undefined}><Home size={18} aria-hidden="true" /><TextActionLabel underline={false}>{text.home}</TextActionLabel></Link>
-          <Link href="/blue-mind-ai"><Sparkles size={18} aria-hidden="true" /><TextActionLabel underline={false}>{text.ai}</TextActionLabel></Link>
+          <AiComingSoonLink href="/blue-mind-ai"><Sparkles size={18} aria-hidden="true" /><TextActionLabel underline={false}>{text.ai}</TextActionLabel></AiComingSoonLink>
           <Link href="/notifications" aria-current={page === "notifications" ? "page" : undefined}><MessageCircle size={18} aria-hidden="true" /><TextActionLabel underline={false}>{text.messages}</TextActionLabel></Link>
           <Link href="/account" aria-current={page === "account" ? "page" : undefined}><Settings size={18} aria-hidden="true" /><TextActionLabel underline={false}>{accountLabel}</TextActionLabel></Link>
         </nav>

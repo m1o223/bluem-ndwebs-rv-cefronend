@@ -18,16 +18,19 @@ for (const width of [320, 375, 768, 1440]) {
       const trigger = hero.getByRole("link", { name: locale.trigger, exact: true });
       await expect(trigger).toBeVisible();
       await expect(hero.locator('a[href="/quote"]')).toHaveCount(1);
-      await expect(hero.locator("h1 > span")).toHaveCount(3);
+      const widthBefore = await page.evaluate(() => document.documentElement.scrollWidth);
       await trigger.click();
-      await expect(page).toHaveURL(/\/ask-ai$/);
-      await expect(page.getByRole("heading", { name: "BlueMind AI" })).toBeVisible();
-      await expect(page.getByRole("textbox", { name: "Message", exact: true })).toBeVisible();
-      await expect(page.locator('header, footer, input[type="email"], input[type="password"]')).toHaveCount(0);
-      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-      await page.screenshot({ path: testInfo.outputPath("customer-chat.png") });
-      await page.getByRole("link", { name: "Close", exact: true }).click();
+      const scrollAtOpen = await page.evaluate(() => window.scrollY);
       await expect(page).toHaveURL(/\/$/);
+      await expect(page.getByRole("dialog")).toBeVisible();
+      await expect(page.getByRole("dialog").getByRole("heading", { name: /BlueMind AI/i })).toBeVisible();
+      await expect(page.getByRole("dialog")).toContainText(/coming soon|kommer snart|\u0642\u064a\u062f \u0627\u0644\u062a\u062c\u0647\u064a\u0632/i);
+      expect(await page.evaluate(() => window.scrollY)).toBe(scrollAtOpen);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(widthBefore);
+      await page.screenshot({ path: testInfo.outputPath("coming-soon.png") });
+      await page.getByRole("button", { name: /Got it|Okej|\u062a\u0645\u0627\u0645/i }).click();
+      await expect(page.getByRole("dialog")).toHaveCount(0);
+      expect(await page.evaluate(() => window.scrollY)).toBe(scrollAtOpen);
       expect(errors).toEqual([]);
     });
   }
@@ -36,4 +39,11 @@ test("Get Started navigation remains unchanged", async ({ page }) => {
   await page.goto("/");
   await page.locator('[data-hero] a[href="/quote"]').click();
   await expect(page).toHaveURL(/\/quote$/);
+});
+
+test("direct chat route shows the coming-soon page", async ({ page }) => {
+  await page.goto("/ask-ai");
+  await expect(page.getByRole("heading", { name: /BlueMind AI/i })).toBeVisible();
+  await expect(page.getByText(/coming soon|\u0642\u064a\u062f \u0627\u0644\u062a\u062c\u0647\u064a\u0632/i)).toBeVisible();
+  await expect(page.getByRole("link", { name: /Back to website/i })).toHaveAttribute("href", "/");
 });

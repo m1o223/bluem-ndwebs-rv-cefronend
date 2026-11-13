@@ -7,6 +7,7 @@ import type { Overview, Profile, Project } from "./workspace-types";
 import { workspaceCopy, type WorkspaceCopy } from "./workspace-copy";
 import styles from "./customer.module.css";
 import TextActionLabel from "../text-action-label";
+import { AiComingSoonLink } from "../ai-coming-soon";
 import SecuritySettings from "./security-settings";
 import ProfilePhoto from "./profile-photo";
 import { authCopy } from "../../app/sign-in/auth-copy";
@@ -135,7 +136,7 @@ function ProjectDashboard({ overview, locale }: { overview: Overview; locale: Lo
   return <div className={styles.homeDashboard} data-reveal-group="account-home">
     <p className={styles.homeEyebrow}>{t.home}</p>
     <h1 className={styles.welcomeTitle}>{t.welcome}{name ? `, ${name}` : ""}</h1>
-    {projects.length ? <div className={styles.homeProjects}>{projects.map((project, index) => <HomeProjectCard key={project.id || project.orderNumber || `${project.name}-${index}`} project={project} overview={overview} locale={locale} />)}</div> : <section className={`${styles.section} ${styles.emptyProject}`}><p className={styles.eyebrow}>{t.current}</p><Empty>{t.noProject}</Empty><Link className={styles.primary} href="/blue-mind-ai"><Sparkles size={17} /><TextActionLabel light underline={false}>{t.startProject}</TextActionLabel></Link></section>}
+    {projects.length ? <div className={styles.homeProjects}>{projects.map((project, index) => <HomeProjectCard key={project.id || project.orderNumber || `${project.name}-${index}`} project={project} overview={overview} locale={locale} />)}</div> : <section className={`${styles.section} ${styles.emptyProject}`}><p className={styles.eyebrow}>{t.current}</p><Empty>{t.noProject}</Empty><AiComingSoonLink className={styles.primary} href="/blue-mind-ai"><Sparkles size={17} /><TextActionLabel light underline={false}>{t.startProject}</TextActionLabel></AiComingSoonLink></section>}
   </div>;
 }
 function ProjectContent({ overview, locale, home }: { overview: Overview; locale: Locale; home: boolean }) {

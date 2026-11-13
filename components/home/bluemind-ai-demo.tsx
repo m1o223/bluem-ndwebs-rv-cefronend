@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useLocalization, type Locale } from "../localization-provider";
 import TextActionLabel from "../text-action-label";
+import { AiComingSoonLink } from "../ai-coming-soon";
 import styles from "./bluemind-ai-demo.module.css";
 
 type PlannerCopy = {
@@ -163,9 +163,9 @@ export default function BlueMindAiDemo() {
             <span className={styles.caret} aria-hidden="true" />
           </div>
         </div>
-        <Link href="/ask-ai?source=homepage-planner&new=1" className={styles.cta}>
+        <AiComingSoonLink href="/ask-ai?source=homepage-planner&new=1" className={styles.cta}>
           <TextActionLabel light underline={false}>{sectionText.cta}</TextActionLabel>
-        </Link>
+        </AiComingSoonLink>
       </div>
     </section>
   );

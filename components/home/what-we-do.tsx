@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 import { useLocalization } from "../localization-provider";
 import TextActionLabel from "../text-action-label";
+import { AiComingSoonLink } from "../ai-coming-soon";
 import { whatWeBuildCopy } from "./what-we-build-copy";
 import BlueMindAiDemo from "./bluemind-ai-demo";
 import CategoryDemoViewer from "./category-demo";
@@ -62,7 +62,7 @@ export default function WhatWeDo() {
         <p className={styles.invitationTitle}>{text.invitationTitle}</p>
         <p className={styles.invitationBody}>{text.invitationBody}</p>
       </div>
-      <Link href="/ask-ai?source=what-we-build&new=1" className={styles.cta}><TextActionLabel light underline={false}>{text.cta}</TextActionLabel><ArrowUpRight size={18} aria-hidden="true" /></Link>
+      <AiComingSoonLink href="/ask-ai?source=what-we-build&new=1" className={styles.cta}><TextActionLabel light underline={false}>{text.cta}</TextActionLabel><ArrowUpRight size={18} aria-hidden="true" /></AiComingSoonLink>
     </div>
     <BlueMindAiDemo />
     {selectedCategory && <CategoryDemoViewer category={selectedCategory} onClose={closeDemo} />}

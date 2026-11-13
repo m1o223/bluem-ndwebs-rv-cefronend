@@ -1,8 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 import homeStyles from "../../components/home/home.module.css";
 import buttonStyles from "../../components/home/hero.module.css";
 import pageStyles from "../../components/page-identity.module.css";
+import { AiComingSoonLink } from "../../components/ai-coming-soon";
 import styles from "./how-we-work.module.css";
 
 const steps = [
@@ -44,7 +44,7 @@ export default function HowWeWorkPage() {
               <h2 id="process-cta-title">Ready to start your website?</h2>
               <p>Tell us what you have in mind, and we’ll take it from there.</p>
             </div>
-            <Link href="/ask-ai" className={`${buttonStyles.ctaButton} ${buttonStyles.primaryCta}`}>Start with BlueMind AI</Link>
+            <AiComingSoonLink href="/ask-ai" className={`${buttonStyles.ctaButton} ${buttonStyles.primaryCta}`}>Start with BlueMind AI</AiComingSoonLink>
           </section>
         </div>
       </div>

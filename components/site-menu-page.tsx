@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight, ChevronLeft } from "lucide-react";
 import { BrandLockup } from "./brand-lockup";
 import { useLocalization } from "./localization-provider";
+import { AiComingSoonLink } from "./ai-coming-soon";
 import styles from "./site-menu-page.module.css";
 
 const links = [
@@ -35,7 +36,9 @@ export default function SiteMenuPage() {
         <h1>{labels.title}</h1>
         <p className={styles.intro}>{labels.intro}</p>
         <nav className={styles.linkList} aria-label={labels.eyebrow}>
-          {links.map(([href], index) => <Link key={href} href={href}><span>{labels.links[index]}</span><ArrowRight size={20} aria-hidden="true" /></Link>)}
+          {links.map(([href], index) => href === "/ask-ai"
+            ? <AiComingSoonLink key={href} href={href}><span>{labels.links[index]}</span><ArrowRight size={20} aria-hidden="true" /></AiComingSoonLink>
+            : <Link key={href} href={href}><span>{labels.links[index]}</span><ArrowRight size={20} aria-hidden="true" /></Link>)}
         </nav>
       </section>
     </main>

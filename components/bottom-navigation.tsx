@@ -5,6 +5,7 @@ import { Bell, Home, LogIn, Menu as MenuIcon, Settings, Sparkles } from "lucide-
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import styles from "./bottom-navigation.module.css";
+import { AiComingSoonLink } from "./ai-coming-soon";
 
 type NavigationItem = {
   href?: string;
@@ -125,6 +126,9 @@ export default function BottomNavigation({ menuOpen = false, onMenuOpenChange }:
           const content = <><Icon className={styles.icon} size={19} strokeWidth={1.8} aria-hidden="true" /><span className={styles.label}>{label}</span></>;
           if (kind === "menu") {
             return <button key="menu" className={styles.item} type="button" data-active={active || undefined} aria-expanded={menuOpen} onClick={() => onMenuOpenChange?.(!menuOpen)}>{content}</button>;
+          }
+          if (href === "/ask-ai" || href === "/blue-mind-ai") {
+            return <AiComingSoonLink key={href} href={href} className={styles.item} data-active={active || undefined} aria-current={active ? "page" : undefined}>{content}</AiComingSoonLink>;
           }
           return <Link key={href} href={href || "/"} className={styles.item} data-active={active || undefined} aria-current={active ? "page" : undefined}>{content}</Link>;
         })}

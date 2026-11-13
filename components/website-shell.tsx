@@ -34,8 +34,6 @@ export default function WebsiteShell({ children }: { children: ReactNode }) {
   if (pathname === "/ask-ai") return <>
     <RouteScrollState />
     <RouteTransition>{children}</RouteTransition>
-    <BottomNavigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpenWithPosition} />
-    <SiteMenuOverlay open={menuOpen} onClose={closeMenu} scrollPosition={menuScrollPosition.current} />
   </>;
 
   return <>

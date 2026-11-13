@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { ArrowUpRight, FileText } from "lucide-react";
 import { useLocalization } from "../localization-provider";
 import TextActionLabel from "../text-action-label";
+import { AiComingSoonLink } from "../ai-coming-soon";
 import { whatWeBuildCopy } from "./what-we-build-copy";
 import styles from "./what-we-build.module.css";
 
@@ -51,7 +51,7 @@ export default function WhatWeBuild() {
         <p className={styles.invitationTitle}>{text.invitationTitle}</p>
         <p className={styles.invitationBody}>{text.invitationBody}</p>
       </div>
-      <Link href="/ask-ai?source=what-we-build&new=1" className={styles.cta}><TextActionLabel light underline={false}>{text.cta}</TextActionLabel><ArrowUpRight size={18} aria-hidden="true" /></Link>
+      <AiComingSoonLink href="/ask-ai?source=what-we-build&new=1" className={styles.cta}><TextActionLabel light underline={false}>{text.cta}</TextActionLabel><ArrowUpRight size={18} aria-hidden="true" /></AiComingSoonLink>
       <section className={styles.payments} aria-labelledby="payment-methods-title">
         <h3 id="payment-methods-title" className={styles.paymentTitle}>{paymentTitles[locale]}</h3>
         <div className={styles.paymentViewport}>

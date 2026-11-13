@@ -1,9 +1,9 @@
 import Image from "next/image";
 import icons from "../../public/images/services/manifest.json";
-import Link from "next/link";
 import homeStyles from "../../components/home/home.module.css";
 import buttonStyles from "../../components/home/hero.module.css";
 import pageStyles from "../../components/page-identity.module.css";
+import { AiComingSoonLink } from "../../components/ai-coming-soon";
 import styles from "./services.module.css";
 
 const services = [
@@ -46,7 +46,7 @@ export default function ServicesPage() {
               <div className={styles.titleGroup}><ServiceIcon name="website-idea" className={styles.ctaIcon} /><h2 id="services-cta-title">Have an idea for your website?</h2></div>
               <p>Tell us what you have in mind. We’ll help turn it into a real website.</p>
             </div>
-            <Link href="/ask-ai" className={`${buttonStyles.ctaButton} ${buttonStyles.primaryCta}`}>Get Started with BlueMind AI</Link>
+            <AiComingSoonLink href="/ask-ai" className={`${buttonStyles.ctaButton} ${buttonStyles.primaryCta}`}>Get Started with BlueMind AI</AiComingSoonLink>
           </section>
         </div>
       </div>
