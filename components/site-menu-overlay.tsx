@@ -24,9 +24,9 @@ const localizedLinks = {
 } as const;
 
 const panelText = {
-  en: { close: "Close", title: "Menu", navigation: "Main navigation" },
-  sv: { close: "St\u00e4ng", title: "Meny", navigation: "Huvudnavigation" },
-  ar: { close: "\u0625\u063a\u0644\u0627\u0642", title: "\u0627\u0644\u0642\u0627\u0626\u0645\u0629", navigation: "\u0627\u0644\u062a\u0646\u0642\u0644 \u0627\u0644\u0631\u0626\u064a\u0633\u064a" },
+  en: { close: "Close", title: "Menu", navigation: "Main navigation", signIn: "Sign in" },
+  sv: { close: "St\u00e4ng", title: "Meny", navigation: "Huvudnavigation", signIn: "Logga in" },
+  ar: { close: "\u0625\u063a\u0644\u0627\u0642", title: "\u0627\u0644\u0642\u0627\u0626\u0645\u0629", navigation: "\u0627\u0644\u062a\u0646\u0642\u0644 \u0627\u0644\u0631\u0626\u064a\u0633\u064a", signIn: "\u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062f\u062e\u0648\u0644" },
 } as const;
 
 const closeDuration = 240;
@@ -137,6 +137,7 @@ export default function SiteMenuOverlay({ open, onClose, scrollPosition }: { ope
           <nav className={styles.linkList} aria-label={text.navigation}>
             {links.map(([href], index) => <Link key={href} href={href} onClick={requestClose}><span>{labels[index]}</span><ArrowRight size={20} aria-hidden="true" /></Link>)}
           </nav>
+          <Link className={styles.signInLink} href="/sign-in" onClick={requestClose}><span>{text.signIn}</span><ArrowRight size={20} aria-hidden="true" /></Link>
         </div>
       </section>
     </div>

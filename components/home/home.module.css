@@ -94,6 +94,11 @@
 .menuLabel, .menuSymbol { display: inline-flex; align-items: center; }
 .menuSymbol { width: 20px; height: 20px; place-items: center; color: var(--bluemind-blue); flex-shrink: 0; }
 .menuSymbol svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.compactMenuIcon { display: none; width: 20px; height: 16px; flex-direction: column; align-items: flex-start; justify-content: space-between; }
+.compactMenuIcon i { display: block; height: 2px; border-radius: 999px; background: currentColor; }
+.compactMenuIcon i:nth-child(1) { width: 20px; }
+.compactMenuIcon i:nth-child(2) { width: 14px; }
+.compactMenuIcon i:nth-child(3) { width: 9px; }
 @media (hover: hover) and (pointer: fine) {
   .header .signInLink:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):hover,
   .header .languageButton:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):hover,
@@ -233,7 +238,7 @@
   .viewerBadge { display: none; }
   .closeButton { font-size: 11px !important; padding: 9px; gap: 9px; }
 }
-/* Touch tablets, including landscape iPads, use the fixed navigation bar. */
+/* Touch phones and tablets use the compact top header. */
 @media (max-width: 1023px), (hover: none) and (pointer: coarse) {
   .header {
     position: static;
@@ -252,16 +257,17 @@
     line-height: 1;
   }
 
-  .header .signInLink,
-  .header .menuToggle,
-
+  .header .signInLink { display: none; }
+  .header .menuToggle { display: flex; }
+  .menuSymbol .desktopMenuIcon { display: none; }
+  .menuSymbol .compactMenuIcon { display: flex; }
   :global(html:has(header[data-scrolled])) { scroll-padding-top: 0; }
 }
 @media (max-width: 430px) {
   .headerInner { width: calc(100% - 24px); gap: 10px; }
-  .brand { font-size: 17px; gap: 7px; letter-spacing: 0; }
+  .brand { min-width: 0; font-size: 17px; gap: 7px; letter-spacing: 0; }
   .brandLogo { --logo-size: 48px; transform: none; }
-  .brandSub { display: none; }
+  .brand .mobileService { display: block; font-size: 7px; letter-spacing: .85px; }
   .headerControls { gap: 6px; }
   .languageMenu { min-width: 168px; max-width: calc(100vw - 24px); right: 0; }
 }

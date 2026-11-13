@@ -38,7 +38,10 @@
 .linkList { display: grid; border-top: 1px solid #e4e8ee; }
 .linkList a { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 62px; border-bottom: 1px solid #e4e8ee; color: #242b35; font-size: 17px; text-decoration: none; }
 .linkList a svg { color: #93a0af; }
+.signInLink { display: none; align-items: center; justify-content: space-between; gap: 20px; min-height: 62px; margin-top: 18px; border-top: 1px solid #dfe5ed; color: #242b35; font-size: 17px; text-decoration: none; }
+.signInLink svg { color: #93a0af; }
 [dir="rtl"] .linkList a svg { transform: rotate(180deg); }
+[dir="rtl"] .signInLink svg { transform: rotate(180deg); }
 
 @keyframes backdrop-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes backdrop-out { from { opacity: 1; } to { opacity: 0; } }
@@ -57,4 +60,9 @@
   .content { margin-top: 22px; }
   .header h2 { font-size: 32px; }
   .linkList a { min-height: 60px; font-size: 16px; }
+}
+
+/* Sign in is part of the mobile/tablet menu, while desktop keeps its header link. */
+@media (max-width: 1023px), (hover: none) and (pointer: coarse) {
+  .signInLink { display: flex; }
 }

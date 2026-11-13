@@ -41,7 +41,6 @@ export default function WebsiteShell({ children }: { children: ReactNode }) {
     <Navigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpenWithPosition} />
     <PageContent><RouteTransition>{children}</RouteTransition></PageContent>
     <Footer textEffects={pathname === "/"} />
-    <BottomNavigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpenWithPosition} />
     <SiteMenuOverlay open={menuOpen} onClose={closeMenu} scrollPosition={menuScrollPosition.current} />
   </>;
 }

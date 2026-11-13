@@ -9,9 +9,9 @@ import styles from "./home.module.css";
 import TextActionLabel from "../text-action-label";
 
 const languageUi = {
-  en: { selected: "Selected language: ", languages: "Languages", openMenu: "Open menu", closeMenu: "Close menu", mainNavigation: "Main navigation" },
-  sv: { selected: "Valt språk: ", languages: "Språk", openMenu: "Öppna meny", closeMenu: "Stäng meny", mainNavigation: "Huvudnavigation" },
-  ar: { selected: "اللغة المختارة: ", languages: "اللغات", openMenu: "فتح القائمة", closeMenu: "إغلاق القائمة", mainNavigation: "التنقل الرئيسي" },
+  en: { selected: "Selected language: ", languages: "Languages", openMenu: "Open menu", closeMenu: "Close menu", mainNavigation: "Main navigation", menu: "Menu", signIn: "Sign in" },
+  sv: { selected: "Valt språk: ", languages: "Språk", openMenu: "Öppna meny", closeMenu: "Stäng meny", mainNavigation: "Huvudnavigation", menu: "Meny", signIn: "Logga in" },
+  ar: { selected: "اللغة المختارة: ", languages: "اللغات", openMenu: "فتح القائمة", closeMenu: "إغلاق القائمة", mainNavigation: "التنقل الرئيسي", menu: "القائمة", signIn: "تسجيل الدخول" },
 } as const;
 
 type NavbarProps = {
@@ -85,7 +85,7 @@ export default function Navbar({ activePath = "/", menuOpen = false, onMenuOpenC
       <div className={styles.headerInner}>
         <Link className={styles.brand} href="/" aria-label="BlueMind Web Service home" onClick={() => { onMenuOpenChange(false); setLanguageOpen(false); }}><BrandLockup className={styles.headerBrand} logoClassName={styles.brandLogo} serviceClassName={styles.mobileService} priority solidLogo /></Link>
         {activePath !== "/sign-in" && activePath !== "/login" && <div className={styles.headerControls}>
-          <Link className={styles.signInLink} href="/sign-in" aria-current={activePath === "/sign-in" ? "page" : undefined} onClick={() => { onMenuOpenChange(false); setLanguageOpen(false); }}><TextActionLabel enabled={textEffects} underline={false}>Sign in</TextActionLabel></Link>
+          <Link className={styles.signInLink} href="/sign-in" aria-current={activePath === "/sign-in" ? "page" : undefined} onClick={() => { onMenuOpenChange(false); setLanguageOpen(false); }}><TextActionLabel enabled={textEffects} underline={false}>{languageText.signIn}</TextActionLabel></Link>
           <div className={styles.languageSelector} ref={languageRef} data-no-translate>
             <button ref={languageToggleRef} className={styles.languageButton} type="button" aria-label={`${languageText.selected}${selectedLanguage.nativeName}`} aria-haspopup="menu" aria-controls="header-languages" aria-expanded={languageOpen} onClick={() => { setLanguageOpen((open) => !open); onMenuOpenChange(false); }} onKeyDown={(event) => {
               if (event.key === "ArrowDown" || event.key === "ArrowUp") { event.preventDefault(); setLanguageOpen(true); onMenuOpenChange(false); }
@@ -127,8 +127,11 @@ export default function Navbar({ activePath = "/", menuOpen = false, onMenuOpenC
             </div>
           </div>
           <button ref={toggleRef} className={styles.menuToggle} type="button" aria-label={languageText.openMenu} aria-expanded={menuOpen} aria-controls="site-navigation-panel" data-expanded={menuOpen} onClick={() => { onMenuOpenChange(!menuOpen); setLanguageOpen(false); }}>
-            <span className={styles.menuLabel} aria-hidden="true"><TextActionLabel enabled={textEffects} underline={false}>Menu</TextActionLabel></span>
-            <span className={styles.menuSymbol} aria-hidden="true"><Menu size={20} /></span>
+            <span className={styles.menuLabel} aria-hidden="true"><TextActionLabel enabled={textEffects} underline={false}>{languageText.menu}</TextActionLabel></span>
+            <span className={styles.menuSymbol} aria-hidden="true">
+              <Menu className={styles.desktopMenuIcon} size={20} />
+              <span className={styles.compactMenuIcon}><i /><i /><i /></span>
+            </span>
           </button>
         </div>}
       </div>
