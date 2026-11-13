@@ -4,6 +4,7 @@ import { useLocalization } from "../localization-provider";
 import FaqList from "./faq-list";
 import { faqCopy } from "./faq-copy";
 import pageStyles from "../page-identity.module.css";
+import styles from "./faq-page.module.css";
 
 export default function FaqPageContent() {
   const { locale } = useLocalization();
@@ -11,7 +12,7 @@ export default function FaqPageContent() {
   const sectionTitle = locale === "ar" ? "الأسئلة" : locale === "sv" ? "Frågor" : "Questions";
   return (
     <>
-      <div className={`${pageStyles.intro} ${pageStyles.enter}`}>
+      <div className={`${pageStyles.intro} ${styles.intro} ${pageStyles.enter}`}>
         <h1>{copy.title}</h1>
         <p>{locale === "ar" ? "إجابات عن الأسئلة الشائعة حول BlueMind Web Service." : locale === "sv" ? "Svar på vanliga frågor om BlueMind Web Service." : "Answers to common questions about BlueMind Web Service."}</p>
       </div>

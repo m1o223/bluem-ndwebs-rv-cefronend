@@ -1,0 +1,20 @@
+.page {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+:global([data-route="/faq"]) {
+  width: 100%;
+}
+
+.intro h1 {
+  font-size: clamp(36px, 4vw, 46px);
+  letter-spacing: -1.5px;
+}
+
+@media (max-width: 620px) {
+  .intro h1 {
+    font-size: clamp(32px, 8vw, 36px);
+    letter-spacing: -1px;
+  }
+}
