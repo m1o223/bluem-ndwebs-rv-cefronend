@@ -24,7 +24,7 @@ export default function ServicesPage() {
   return (
     <div id="top" className={`${homeStyles.home} ${pageStyles.page}`}>
       <div className={pageStyles.body}>
-        <div className={`${homeStyles.container} ${pageStyles.content}`}>
+        <div className={`${homeStyles.container} ${pageStyles.content} ${styles.content}`}>
           <div className={`${pageStyles.intro} ${pageStyles.enter} ${styles.intro}`}>
             <div className={`${styles.titleGroup} ${styles.mainTitle}`}><ServiceIcon name="services-hand" className={styles.mainIcon} /><h1>Services</h1></div>
             <p className={`${styles.headline} ${styles.titleGroup}`}><ServiceIcon name="client-to-team" className={styles.headlineIcon} /><span>You bring the idea. We handle the rest.</span></p>
@@ -46,7 +46,7 @@ export default function ServicesPage() {
               <div className={styles.titleGroup}><ServiceIcon name="website-idea" className={styles.ctaIcon} /><h2 id="services-cta-title">Have an idea for your website?</h2></div>
               <p>Tell us what you have in mind. We’ll help turn it into a real website.</p>
             </div>
-            <Link href="/quote" className={`${buttonStyles.ctaButton} ${buttonStyles.primaryCta}`}>Request a Quote</Link>
+            <Link href="/ask-ai" className={`${buttonStyles.ctaButton} ${buttonStyles.primaryCta}`}>Get Started with BlueMind AI</Link>
           </section>
         </div>
       </div>
