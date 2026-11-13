@@ -13,10 +13,9 @@ import ProjectLoading from "./project-loading";
 import styles from "./project-viewer.module.css";
 
 export const deviceModes = [
-  { id: "desktop", label: "Desktop", width: 1440, height: 900 },
-  { id: "laptop", label: "Laptop", width: 1200, height: 800 },
+  { id: "mobile", label: "Phone", width: 390, height: 844 },
   { id: "ipad", label: "iPad", width: 768, height: 1024 },
-  { id: "mobile", label: "Mobile", width: 390, height: 844 },
+  { id: "desktop", label: "Desktop", width: 1440, height: 900 },
 ] as const;
 export type DeviceMode = (typeof deviceModes)[number]["id"];
 export type TabletOrientation = "portrait" | "landscape";
@@ -83,14 +82,14 @@ export default function DevicePreview({
       });
       if (!initialized.current && host.clientWidth > 0) {
         initialized.current = true;
+        const viewportWidth = window.innerWidth;
+        const touchDevice = window.matchMedia("(pointer: coarse)").matches;
         initializeDevice(
-          host.clientWidth < 700
+          viewportWidth < 600
             ? "mobile"
-            : host.clientWidth < 1000
+            : viewportWidth <= 1024 || (touchDevice && viewportWidth < 1180)
               ? "ipad"
-              : host.clientWidth < 1300
-                ? "laptop"
-                : "desktop",
+              : "desktop",
         );
       }
       fit();

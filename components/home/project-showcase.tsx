@@ -2,16 +2,21 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { templateConceptByProject } from "./template-concept-data";
 import { projects } from "../portfolio/registry";
 import ProductArt from "../portfolio/product-art";
 import ConceptReveal from "./concept-reveal";
 import portfolio from "../portfolio/showcase.module.css";
 import styles from "./home.module.css";
+import InteractiveProjectViewer from "./project-viewer";
 
 export default function ProjectShowcase({ headingAs: Heading = "h2" }: { headingAs?: "h1" | "h2" }) {
+  const [activeProject, setActiveProject] = useState<(typeof projects)[number]["id"] | null>(null);
+
   return (
-    <section
+    <>
+      <section
       id="selected-work"
       className={styles.showcase}
       aria-labelledby="work-title"
@@ -41,7 +46,12 @@ export default function ProjectShowcase({ headingAs: Heading = "h2" }: { heading
                 className={portfolio.card}
                 data-project-card={project.id}
                 href={templateConceptByProject[project.id].liveUrl}
-                aria-label={`View Website: ${project.brand}, ${project.category}`}
+                aria-haspopup="dialog"
+                aria-label={`Preview Website: ${project.brand}, ${project.category}`}
+                onClick={(event) => {
+                  event.preventDefault();
+                  setActiveProject(project.id);
+                }}
               >
                 <div className={portfolio.toolbar}>
                   <span className={portfolio.dots} aria-hidden="true">
@@ -100,7 +110,7 @@ export default function ProjectShowcase({ headingAs: Heading = "h2" }: { heading
                     )}
                   </div>
                   <span className={portfolio.cardCta} data-demo-cta>
-                    View Website
+                    Preview
                   </span>
                 </div>
                 <div className={portfolio.caption}>
@@ -117,6 +127,13 @@ export default function ProjectShowcase({ headingAs: Heading = "h2" }: { heading
           ))}
         </div>
       </div>
-    </section>
+      </section>
+      {activeProject && (
+        <InteractiveProjectViewer
+          project={activeProject}
+          onClose={() => setActiveProject(null)}
+        />
+      )}
+    </>
   );
 }

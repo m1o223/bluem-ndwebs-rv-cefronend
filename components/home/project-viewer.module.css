@@ -15,6 +15,13 @@
   box-shadow: 0 24px 80px #11111126;
   transform: none;
 }
+.dialog[data-viewer-phase="open"] {
+  animation: templateViewerIn 250ms cubic-bezier(.22, .75, .26, 1) both;
+}
+.dialog[data-viewer-phase="closing"] {
+  animation: templateViewerOut 250ms cubic-bezier(.55, 0, .78, .28) both;
+  pointer-events: none;
+}
 .dialog[data-expanded="true"] {
   width: 100%;
   height: 100dvh;
@@ -113,6 +120,14 @@
   gap: 5px;
   min-width: 0;
 }
+.demoLabel {
+  color: #7d8794;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  line-height: 1;
+  text-transform: uppercase;
+}
 .projectTitle strong {
   font-size: 13px;
   font-weight: 600;
@@ -160,13 +175,23 @@
   background: none;
   font-size: 12px;
   font-weight: 500;
-  color: #666;
+  color: #17365d;
   cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+.deviceControls button:hover {
+  border-color: #cfe4f5;
+  background: #edf5fc;
+  color: #4a8dcc;
 }
 .deviceControls button[aria-pressed="true"] {
-  border-color: #1d1d1d;
-  background: #1d1d1d;
-  color: #fff;
+  border-color: #b9d9f3;
+  background: #dcecf9;
+  color: #17365d;
+}
+.deviceControls button[aria-pressed="true"]:hover {
+  border-color: #a7cee9;
+  background: #cfe4f5;
 }
 .orientationControls {
   display: flex;
@@ -337,4 +362,18 @@
 .restoreDock:focus-visible:not(:disabled) {
   outline: 2px solid var(--bluemind-blue);
   outline-offset: 4px;
+}
+@keyframes templateViewerIn {
+  from { opacity: 0; transform: translateY(48px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes templateViewerOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(72px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dialog[data-viewer-phase="open"],
+  .dialog[data-viewer-phase="closing"] {
+    animation: none;
+  }
 }

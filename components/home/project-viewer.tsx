@@ -1,10 +1,14 @@
 "use client";
 
 import {
+  Component,
+  useEffect,
   useImperativeHandle,
   useLayoutEffect,
   useRef,
   useState,
+  type ErrorInfo,
+  type ReactNode,
   type Ref,
 } from "react";
 import {
@@ -24,6 +28,36 @@ import WindowIcon from "./window-icon";
 type ViewerPhase = "open" | "minimizing" | "minimized" | "closing";
 export type ProjectViewerHandle = { restore: () => void };
 
+type ProjectErrorBoundaryProps = { children: ReactNode };
+type ProjectErrorBoundaryState = { hasError: boolean };
+
+class ProjectErrorBoundary extends Component<
+  ProjectErrorBoundaryProps,
+  ProjectErrorBoundaryState
+> {
+  state: ProjectErrorBoundaryState = { hasError: false };
+
+  static getDerivedStateFromError(): ProjectErrorBoundaryState {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error("Project preview failed to render", error, info.componentStack);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className={styles.loading} role="alert">
+          <p>We couldn't load this demo.</p>
+          <small>Close the preview and try again.</small>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function DeviceIcon({ device }: { device: DeviceMode }) {
   return (
     <svg
@@ -39,11 +73,6 @@ function DeviceIcon({ device }: { device: DeviceMode }) {
         <>
           <rect x="3" y="4" width="18" height="13" rx="1.5" />
           <path d="M12 17v4m-4 0h8" />
-        </>
-      ) : device === "laptop" ? (
-        <>
-          <rect x="5" y="4" width="14" height="12" rx="1.5" />
-          <path d="m5 16-3 4h20l-3-4" />
         </>
       ) : (
         <>
@@ -68,7 +97,7 @@ export default function InteractiveProjectViewer({
 }: {
   project: ProjectId;
   onClose: () => void;
-  ref: Ref<ProjectViewerHandle>;
+  ref?: Ref<ProjectViewerHandle>;
 }) {
   const { translate } = useLocalization();
   const info = projects.find((item) => item.id === project)!;
@@ -79,6 +108,7 @@ export default function InteractiveProjectViewer({
   const releasePage = useRef<(() => void) | null>(null);
   const opener = useRef<HTMLElement | null>(null);
   const restoreButton = useRef<HTMLButtonElement>(null);
+  const exitTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const savedScroll = useRef<{ element: HTMLElement; x: number; y: number }[]>(
     [],
   );
@@ -252,6 +282,18 @@ export default function InteractiveProjectViewer({
     }
   }
 
+  function scheduleExit() {
+    if (exitTimer.current !== null) clearTimeout(exitTimer.current);
+    const duration = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? 0
+      : 250;
+    if (!duration) {
+      finishExit();
+      return;
+    }
+    exitTimer.current = setTimeout(finishExit, duration);
+  }
+
   function exit(intent: "closing" | "minimizing") {
     const current = phaseRef.current;
     if (current === "closing" || current === "minimized") return;
@@ -271,7 +313,7 @@ export default function InteractiveProjectViewer({
         }));
     }
     changePhase(intent);
-    finishExit();
+    scheduleExit();
   }
 
   function close() {
@@ -286,6 +328,10 @@ export default function InteractiveProjectViewer({
   }
 
   useImperativeHandle(ref, () => ({ restore }));
+
+  useEffect(() => () => {
+    if (exitTimer.current !== null) clearTimeout(exitTimer.current);
+  }, []);
 
   return (
     <>
@@ -351,6 +397,7 @@ export default function InteractiveProjectViewer({
                 <span className={styles.greenLight} />
               </span>
               <div className={styles.projectTitle}>
+                <span className={styles.demoLabel}>{translate("Demo website")}</span>
                 <strong id="project-viewer-title">{info.brand}</strong>
                 <span id="project-viewer-category">{info.category}</span>
               </div>
@@ -364,10 +411,10 @@ export default function InteractiveProjectViewer({
               <button
                 ref={firstControl}
                 className={styles.backButton}
-                aria-label={translate("Back to Concepts")}
+                aria-label={translate("Close preview")}
                 onClick={close}
               >
-                {translate("Back to Concepts")}
+                {translate("Close")} <span aria-hidden="true">×</span>
               </button>
               <button
                 className={styles.expandButton}
@@ -424,7 +471,9 @@ export default function InteractiveProjectViewer({
             orientation={orientation}
             initializeDevice={setDevice}
           >
-            <Project />
+            <ProjectErrorBoundary>
+              <Project />
+            </ProjectErrorBoundary>
           </DevicePreview>
         </div>
       </dialog>

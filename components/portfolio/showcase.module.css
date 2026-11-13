@@ -14,6 +14,7 @@
   text-align: left;
   cursor: pointer;
   color: #20242a;
+  position: relative;
 }
 .card:focus-visible:not(:disabled) {
   outline: 2px solid var(--bluemind-blue);
@@ -33,16 +34,32 @@ a.card {
   position: absolute;
   left: 50%;
   bottom: 20px;
-  transform: translateX(-50%);
+  transform: translate(-50%, 8px);
   white-space: nowrap;
   padding: 14px 24px;
-  border: 1px solid #fff;
-  border-radius: 12px;
+  border: 1px solid #dfe7f1;
+  border-radius: 999px;
   background: #fff;
-  color: #151515;
+  color: #17365d;
   font-size: 14px;
   font-weight: 600;
   box-shadow: 0 4px 18px #00000012;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+  transition: opacity 160ms ease, transform 160ms ease, background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+.card:hover .cardCta,
+.card:focus-visible .cardCta,
+.card:focus-within .cardCta {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+.card:hover .cardCta:hover {
+  background: var(--bluemind-blue, #2d66e6);
+  border-color: var(--bluemind-blue, #2d66e6);
+  color: #fff;
 }
 .category {
   display: block;
@@ -157,6 +174,13 @@ a.card {
 }
 .previewPhoto img {
   object-fit: cover;
+  transition: filter 160ms ease, transform 160ms ease;
+}
+.card:hover .previewPhoto img,
+.card:focus-visible .previewPhoto img,
+.card:focus-within .previewPhoto img {
+  filter: blur(2px);
+  transform: scale(1.025);
 }
 .preview[data-preview="photography"] .previewPhoto,
 .preview[data-preview="real-estate"] .previewPhoto,
@@ -242,5 +266,12 @@ a.card {
   }
   .caption {
     padding: 20px;
+  }
+}
+@media (hover: none), (pointer: coarse), (max-width: 1023px) {
+  .cardCta {
+    opacity: 1;
+    transform: translate(-50%, 0);
+    pointer-events: none;
   }
 }
