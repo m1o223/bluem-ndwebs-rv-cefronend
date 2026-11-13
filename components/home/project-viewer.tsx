@@ -17,13 +17,11 @@ import {
   type ProjectId,
 } from "../portfolio/registry";
 import DevicePreview, {
-  deviceModes,
   type DeviceMode,
   type TabletOrientation,
 } from "./device-preview";
 import styles from "./project-viewer.module.css";
-import { useLocalization } from "../localization-provider";
-import WindowIcon from "./window-icon";
+import PreviewToolbar from "./preview-toolbar";
 
 type ViewerPhase = "open" | "minimizing" | "minimized" | "closing";
 export type ProjectViewerHandle = { restore: () => void };
@@ -58,38 +56,6 @@ class ProjectErrorBoundary extends Component<
   }
 }
 
-function DeviceIcon({ device }: { device: DeviceMode }) {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      aria-hidden="true"
-    >
-      {device === "desktop" ? (
-        <>
-          <rect x="3" y="4" width="18" height="13" rx="1.5" />
-          <path d="M12 17v4m-4 0h8" />
-        </>
-      ) : (
-        <>
-          <rect
-            x={device === "ipad" ? 5 : 7}
-            y="2"
-            width={device === "ipad" ? 14 : 10}
-            height="20"
-            rx="2"
-          />
-          <path d="M11 19h2" />
-        </>
-      )}
-    </svg>
-  );
-}
-
 export default function InteractiveProjectViewer({
   project,
   onClose,
@@ -99,7 +65,6 @@ export default function InteractiveProjectViewer({
   onClose: () => void;
   ref?: Ref<ProjectViewerHandle>;
 }) {
-  const { translate } = useLocalization();
   const info = projects.find((item) => item.id === project)!;
   const Project = projectComponents[project];
   const dialog = useRef<HTMLDialogElement>(null);
@@ -113,7 +78,6 @@ export default function InteractiveProjectViewer({
     [],
   );
   const [phase, setPhase] = useState<ViewerPhase>("open");
-  const [expanded, setExpanded] = useState(false);
   const [device, setDevice] = useState<DeviceMode | null>(null);
   const [orientation, setOrientation] = useState<TabletOrientation>("portrait");
   const exiting = phase === "closing" || phase === "minimizing";
@@ -352,7 +316,6 @@ export default function InteractiveProjectViewer({
         data-viewer-phase={phase}
         inert={phase === "minimized"}
         aria-hidden={phase === "minimized" ? true : undefined}
-        data-expanded={expanded}
         aria-labelledby="project-viewer-title"
         aria-describedby="project-viewer-category"
         onCancel={(e) => {
@@ -389,83 +352,19 @@ export default function InteractiveProjectViewer({
         }}
       >
         <div className={styles.shell}>
-          <header className={styles.topBar}>
-            <div className={styles.windowIdentity}>
-              <span className={styles.trafficLights} aria-hidden="true">
-                <span className={styles.redLight} />
-                <span className={styles.yellowLight} />
-                <span className={styles.greenLight} />
-              </span>
-              <div className={styles.projectTitle}>
-                <span className={styles.demoLabel}>{translate("Demo website")}</span>
-                <strong id="project-viewer-title">{info.brand}</strong>
-                <span id="project-viewer-category">{info.category}</span>
-              </div>
-            </div>
-            <div
-              className={styles.windowActions}
-              role="group"
-              aria-label={translate("Preview window actions")}
-              data-no-translate
-            >
-              <button
-                ref={firstControl}
-                className={styles.backButton}
-                aria-label={translate("Close preview")}
-                onClick={close}
-              >
-                {translate("Close")} <span aria-hidden="true">×</span>
-              </button>
-              <button
-                className={styles.expandButton}
-                aria-label={
-                  expanded ? translate("Restore viewer size") : translate("Expand project viewer")
-                }
-                aria-pressed={expanded}
-                disabled={exiting}
-                onClick={() => setExpanded((value) => !value)}
-              >
-                <WindowIcon action="expand" expanded={expanded} />
-                <span>{translate(expanded ? "Restore" : "Expand")}</span>
-              </button>
-            </div>
-          </header>
-          <div className={styles.deviceBar}>
-            <div
-              className={styles.deviceControls}
-              role="group"
-              aria-label="Device preview"
-            >
-              {deviceModes.map((mode) => (
-                <button
-                  key={mode.id}
-                  aria-pressed={device === mode.id}
-                  onClick={() => setDevice(mode.id)}
-                  disabled={exiting}
-                >
-                  <DeviceIcon device={mode.id} />
-                  <span>{mode.label}</span>
-                </button>
-              ))}
-            </div>
-            {device === "ipad" && (
-              <div
-                className={styles.orientationControls}
-                role="group"
-                aria-label="iPad orientation"
-              >
-                {(["portrait", "landscape"] as const).map((value) => (
-                  <button
-                    key={value}
-                    aria-pressed={orientation === value}
-                    onClick={() => setOrientation(value)}
-                  >
-                    {value === "portrait" ? "Portrait" : "Landscape"}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <PreviewToolbar
+            brand={info.brand}
+            category={info.category}
+            titleId="project-viewer-title"
+            categoryId="project-viewer-category"
+            device={device}
+            orientation={orientation}
+            onDeviceChange={setDevice}
+            onOrientationChange={setOrientation}
+            onClose={close}
+            closeRef={firstControl}
+            disabled={exiting}
+          />
           <DevicePreview
             device={device}
             orientation={orientation}

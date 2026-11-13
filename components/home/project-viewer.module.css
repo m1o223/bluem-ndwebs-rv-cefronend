@@ -22,12 +22,6 @@
   animation: templateViewerOut 250ms cubic-bezier(.55, 0, .78, .28) both;
   pointer-events: none;
 }
-.dialog[data-expanded="true"] {
-  width: 100%;
-  height: 100dvh;
-  border-radius: 0;
-  border-width: 0;
-}
 .dialog::backdrop {
   background: #15151500;
   backdrop-filter: blur(3px);
@@ -40,9 +34,10 @@
   min-height: 0;
 }
 .topBar {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-areas: "identity devices actions";
   align-items: center;
-  justify-content: space-between;
   gap: 16px;
   padding: 9px 12px 9px 16px;
   min-height: 54px;
@@ -51,6 +46,7 @@
   background: #fff;
 }
 .windowIdentity {
+  grid-area: identity;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -79,6 +75,7 @@
   background: #28c840;
 }
 .windowActions {
+  grid-area: actions;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -126,7 +123,10 @@
   font-weight: 700;
   letter-spacing: 1.2px;
   line-height: 1;
+  overflow: visible;
+  text-overflow: clip;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 .projectTitle strong {
   font-size: 13px;
@@ -144,34 +144,45 @@
   text-overflow: ellipsis;
 }
 .deviceBar {
+  grid-area: devices;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 10px 18px;
-  padding: 9px 16px;
-  border-bottom: 1px solid #dededb;
-  flex-shrink: 0;
-  background: #fafafa;
+  gap: 8px;
+  min-width: 0;
 }
 .deviceControls {
+  position: relative;
   display: flex;
   gap: 4px;
   padding: 3px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: #fff;
+  width: 284px;
+  border: 1px solid #d9e2eb;
+  border-radius: 999px;
+  background: #f5f8fb;
+  overflow: hidden;
 }
-.deviceControls button {
+.deviceIndicator {
+  position: absolute;
+  inset: 3px auto 3px 3px;
+  z-index: 0;
+  width: calc((100% - 16px) / 3);
+  border-radius: 999px;
+  background: var(--bluemind-blue, #2d66e6);
+  box-shadow: 0 3px 10px rgb(45 102 230 / 18%);
+  transform: translateX(calc(var(--active-index, 2) * (100% + 4px)));
+  transition: transform 280ms cubic-bezier(.22, .75, .26, 1);
+}
+.deviceControls button,
+.orientationControls button {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-width: 80px;
-  min-height: 44px;
-  padding: 10px 14px;
+  min-height: 38px;
+  padding: 8px 10px;
   border: 1px solid transparent;
-  border-radius: 7px;
+  border-radius: 999px;
   background: none;
   font-size: 12px;
   font-weight: 500;
@@ -179,29 +190,49 @@
   cursor: pointer;
   transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
 }
+.deviceOption {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 0;
+  min-width: 0;
+  justify-content: center;
+}
 .deviceControls button:hover {
   border-color: #cfe4f5;
   background: #edf5fc;
   color: #4a8dcc;
 }
 .deviceControls button[aria-pressed="true"] {
-  border-color: #b9d9f3;
-  background: #dcecf9;
-  color: #17365d;
+  border-color: transparent;
+  background: transparent;
+  color: #fff;
 }
 .deviceControls button[aria-pressed="true"]:hover {
-  border-color: #a7cee9;
-  background: #cfe4f5;
+  border-color: transparent;
+  background: transparent;
+  color: #fff;
 }
 .orientationControls {
   display: flex;
   gap: 4px;
+  max-width: 220px;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transform: translateX(-6px);
+  transition: max-width 220ms ease, opacity 180ms ease, transform 220ms ease;
+}
+.orientationControls[data-visible="true"] {
+  max-width: 220px;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
 }
 .orientationControls button {
-  min-height: 44px;
-  padding: 8px 12px;
-  border: 1px solid #d5d5d5;
-  border-radius: 7px;
+  min-width: 86px;
+  white-space: nowrap;
+  border: 1px solid #d9e2eb;
+  border-radius: 999px;
   background: #fff;
   font-size: 11px;
   color: #626262;
@@ -209,8 +240,8 @@
 }
 .orientationControls button[aria-pressed="true"] {
   border-color: var(--bluemind-blue);
-  color: var(--bluemind-text);
-  background: #e9e9e7;
+  color: #17365d;
+  background: #dcecf9;
 }
 .dialog .topBar button:focus-visible,
 .dialog .deviceBar button:focus-visible {
@@ -240,15 +271,87 @@
   border-radius: 6px;
   background: #fff;
   box-shadow: 0 8px 24px #1515150d;
+  transition: width 340ms cubic-bezier(.22, .75, .26, 1), height 340ms cubic-bezier(.22, .75, .26, 1);
+  will-change: width, height;
 }
-.logicalFrame {
+.presentation[data-motion="forward"] {
+  animation: deviceFrameForward 360ms cubic-bezier(.22, .75, .26, 1) both;
+}
+.presentation[data-motion="backward"] {
+  animation: deviceFrameBackward 360ms cubic-bezier(.22, .75, .26, 1) both;
+}
+.presentation[data-motion="rotate"] .deviceBezel {
+  animation: ipadFrameRotate 420ms cubic-bezier(.22, .75, .26, 1) both;
+}
+.frameShell {
   position: absolute;
   inset: 0 auto auto 0;
+  transform-origin: top left;
+  transition: width 340ms cubic-bezier(.22, .75, .26, 1), height 340ms cubic-bezier(.22, .75, .26, 1);
+  will-change: width, height, transform;
+}
+.deviceBezel {
+  position: absolute;
+  inset: 0;
+  border: 1px solid #b9c0c8;
+  border-radius: 34px;
+  background: linear-gradient(145deg, #3d4752, #10151a 55%, #29323b);
+  box-shadow: 0 18px 34px rgb(18 37 56 / 22%), inset 0 0 0 1px rgb(255 255 255 / 12%);
+  transition: border-radius 340ms ease, background-color 340ms ease;
+}
+.frameShell[data-device-frame="ipad"] .deviceBezel {
+  border-radius: 24px;
+  background: linear-gradient(145deg, #9aa3ad, #333b43 42%, #171d23);
+}
+.frameShell[data-device-frame="desktop"] .deviceBezel {
+  border-radius: 14px 14px 8px 8px;
+  background: linear-gradient(145deg, #aab4bd, #39434d 38%, #151a1f);
+}
+.deviceScreen {
+  position: absolute;
+  z-index: 1;
+  overflow: hidden;
+  border: 1px solid #090d11;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 12%);
+  transition: width 340ms cubic-bezier(.22, .75, .26, 1), height 340ms cubic-bezier(.22, .75, .26, 1), top 340ms cubic-bezier(.22, .75, .26, 1), left 340ms cubic-bezier(.22, .75, .26, 1), border-radius 340ms ease;
+}
+.frameShell[data-device-frame="ipad"] .deviceScreen {
+  border-radius: 12px;
+}
+.frameShell[data-device-frame="desktop"] .deviceScreen {
+  border-radius: 7px 7px 3px 3px;
+}
+.phoneSpeaker {
+  position: absolute;
+  z-index: 2;
+  top: 11px;
+  left: 50%;
+  width: 54px;
+  height: 5px;
+  border-radius: 999px;
+  background: #080b0e;
+  transform: translateX(-50%);
+}
+.laptopBase {
+  position: absolute;
+  z-index: 0;
+  right: -4%;
+  bottom: -22px;
+  left: -4%;
+  height: 36px;
+  border: 1px solid #98a2ac;
+  border-radius: 0 0 18px 18px;
+  background: linear-gradient(#a9b2ba, #66717d 55%, #313a43);
+  box-shadow: 0 8px 14px rgb(18 37 56 / 20%);
+}
+.logicalFrame {
+  position: relative;
   display: flex;
   flex-direction: column;
-  transform-origin: top left;
   background: #fff;
-  border-radius: 6px;
+  border-radius: inherit;
   overflow: hidden;
 }
 .logicalFrame[data-ready="true"] {
@@ -283,9 +386,13 @@
     border-radius: 9px;
   }
   .topBar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "identity actions" "devices devices";
+    align-items: center;
+    row-gap: 8px;
     padding: 7px 8px 7px 10px;
     gap: 8px;
-    min-height: 50px;
+    min-height: 92px;
   }
   .projectTitle strong {
     font-size: 11px;
@@ -295,6 +402,7 @@
   }
   .windowActions {
     gap: 6px;
+    align-self: start;
   }
   .backButton,
   .expandButton {
@@ -308,17 +416,25 @@
     padding-inline: 10px;
   }
   .deviceBar {
-    padding: 7px 10px;
-    gap: 6px;
+    justify-content: center;
+    padding: 0;
+    gap: 5px;
   }
   .deviceControls {
-    width: 100%;
+    width: min(100%, 284px);
   }
   .deviceControls button {
     flex: 1;
     min-width: 0;
     padding: 10px 6px;
     gap: 5px;
+  }
+  .orientationControls[data-visible="true"] {
+    max-width: 180px;
+  }
+  .orientationControls button {
+    min-width: 0;
+    padding-inline: 8px;
   }
   .stage {
     padding: 10px;
@@ -371,9 +487,28 @@
   from { opacity: 1; transform: translateY(0); }
   to { opacity: 0; transform: translateY(72px); }
 }
+@keyframes deviceFrameForward {
+  from { opacity: .62; transform: translateX(28px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes deviceFrameBackward {
+  from { opacity: .62; transform: translateX(-28px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes ipadFrameRotate {
+  0% { transform: rotate(0deg) scale(1); }
+  45% { transform: rotate(90deg) scale(.92); }
+  100% { transform: rotate(0deg) scale(1); }
+}
 @media (prefers-reduced-motion: reduce) {
   .dialog[data-viewer-phase="open"],
-  .dialog[data-viewer-phase="closing"] {
+  .dialog[data-viewer-phase="closing"],
+  .presentation,
+  .frameShell,
+  .deviceScreen,
+  .deviceIndicator,
+  .orientationControls {
     animation: none;
+    transition: none;
   }
 }

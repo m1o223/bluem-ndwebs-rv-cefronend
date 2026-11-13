@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { ArrowRight, Check, ChevronDown, Menu, Plus, X } from "lucide-react";
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type FormEvent } from "react";
 import { createPortal } from "react-dom";
 import { useLocalization } from "../localization-provider";
 import {
@@ -12,22 +12,10 @@ import {
   type DemoCategoryId,
 } from "./category-demo-data";
 import styles from "./category-demo.module.css";
+import DevicePreview, { type DeviceMode, type TabletOrientation } from "./device-preview";
+import PreviewToolbar from "./preview-toolbar";
 
-type DeviceMode = "phone" | "ipad" | "desktop";
 type DemoStep = "browse" | "select" | "checkout" | "done";
-
-const deviceSizes: Record<DeviceMode, { label: string; width: number; height: number }> = {
-  phone: { label: "Phone", width: 390, height: 844 },
-  ipad: { label: "iPad", width: 768, height: 1024 },
-  desktop: { label: "Desktop", width: 1280, height: 820 },
-};
-
-function getInitialDevice(): DeviceMode {
-  if (typeof window === "undefined") return "desktop";
-  if (window.matchMedia("(max-width: 600px)").matches) return "phone";
-  if (window.matchMedia("(max-width: 1024px)").matches) return "ipad";
-  return "desktop";
-}
 
 const cartItems: Record<string, { name: string; detail: string; price: number }[]> = {
   restaurant: [
@@ -112,9 +100,8 @@ export default function CategoryDemoViewer({
   const category = getDemoCategory(categoryId);
   const { locale } = useLocalization();
   const closeButton = useRef<HTMLButtonElement>(null);
-  const stage = useRef<HTMLDivElement>(null);
-  const [device, setDevice] = useState<DeviceMode>("desktop");
-  const [scale, setScale] = useState(1);
+  const [device, setDevice] = useState<DeviceMode | null>(null);
+  const [orientation, setOrientation] = useState<TabletOrientation>("portrait");
   const [step, setStep] = useState<DemoStep>("browse");
   const [cart, setCart] = useState<Record<string, number>>({});
   const [selectedItem, setSelectedItem] = useState(0);
@@ -152,70 +139,37 @@ export default function CategoryDemoViewer({
     };
   }, [handleClose]);
 
-  useLayoutEffect(() => {
-    setDevice(getInitialDevice());
-  }, []);
-
-  useLayoutEffect(() => {
-    const host = stage.current;
-    if (!host) return;
-    const fit = () => {
-      const size = deviceSizes[device];
-      const availableWidth = Math.max(280, host.clientWidth - 28);
-      const availableHeight = Math.max(320, host.clientHeight - 28);
-      setScale(Math.min(1, availableWidth / size.width, availableHeight / size.height));
-    };
-    fit();
-    const observer = new ResizeObserver(fit);
-    observer.observe(host);
-    window.addEventListener("resize", fit);
-    return () => { observer.disconnect(); window.removeEventListener("resize", fit); };
-  }, [device]);
-
-  const size = deviceSizes[device];
-  const frameStyle = { width: size.width, height: size.height, transform: `scale(${scale})` };
-
   const viewer = (
     <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="demo-viewer-title" data-demo-phase={phase}>
       <div className={styles.viewer}>
-        <header className={styles.viewerHeader}>
-          <div className={styles.viewerIdentity}>
-            <span className={styles.viewerKicker}>Demo website</span>
-            <h2 id="demo-viewer-title">{category.brand} <span>· {categoryLabels[category.id]}</span></h2>
-          </div>
-          <div className={styles.viewerActions}>
-            <div className={styles.deviceControls} role="group" aria-label="Demo viewport">
-              {(Object.keys(deviceSizes) as DeviceMode[]).map((mode) => (
-                <button key={mode} type="button" aria-pressed={device === mode} onClick={() => setDevice(mode)}>
-                  {deviceSizes[mode].label}
-                </button>
-              ))}
-            </div>
-            <button ref={closeButton} type="button" className={styles.closeButton} onClick={handleClose} aria-label="Close demo">
-              Close <X size={17} aria-hidden="true" />
-            </button>
-          </div>
-        </header>
-        <div ref={stage} className={styles.stage}>
-          <div className={styles.frameWrap} style={{ width: size.width * scale, height: size.height * scale }}>
-            <div className={styles.logicalFrame} data-demo-viewport data-demo-device={device} style={frameStyle}>
-              <DemoSite
-                category={category}
-                locale={locale}
-                step={step}
-                setStep={setStep}
-                cart={cart}
-                setCart={setCart}
-                selectedItem={selectedItem}
-                setSelectedItem={setSelectedItem}
-                menuOpen={menuOpen}
-                setMenuOpen={setMenuOpen}
-                formMessage={formMessage}
-                setFormMessage={setFormMessage}
-              />
-            </div>
-          </div>
-        </div>
+        <PreviewToolbar
+          brand={category.brand}
+          category={categoryLabels[category.id]}
+          titleId="demo-viewer-title"
+          device={device}
+          orientation={orientation}
+          onDeviceChange={setDevice}
+          onOrientationChange={setOrientation}
+          onClose={handleClose}
+          closeRef={closeButton}
+          disabled={phase === "closing"}
+        />
+        <DevicePreview device={device} orientation={orientation} initializeDevice={setDevice}>
+          <DemoSite
+            category={category}
+            locale={locale}
+            step={step}
+            setStep={setStep}
+            cart={cart}
+            setCart={setCart}
+            selectedItem={selectedItem}
+            setSelectedItem={setSelectedItem}
+            menuOpen={menuOpen}
+            setMenuOpen={setMenuOpen}
+            formMessage={formMessage}
+            setFormMessage={setFormMessage}
+          />
+        </DevicePreview>
       </div>
     </div>
   );
