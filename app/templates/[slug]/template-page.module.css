@@ -6,6 +6,8 @@
   text-align: left;
 }
 
+:global(.page-content).mainContent > * { width: 100%; }
+
 .page {
   width: 100%;
   min-width: 0;

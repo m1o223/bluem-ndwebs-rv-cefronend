@@ -34,6 +34,12 @@
   width: min(1140px, calc(100% - 96px));
   margin-inline: auto;
 }
+.templatesPage .container {
+  width: min(1360px, calc(100% - 64px));
+}
+.templatesPage .sectionHeading > p {
+  width: min(100%, 420px);
+}
 .header {
   position: sticky;
   top: 0;
@@ -174,6 +180,7 @@
 }
 @media (max-width: 1120px) {
   .container { width: calc(100% - 56px); }
+  .templatesPage .container { width: calc(100% - 48px); }
   .actions { gap: 18px; }
   .primaryButton { padding: 14px 17px; gap: 24px; }
   .cta h2 { font-size: 40px; }
@@ -181,6 +188,7 @@
 }
 @media (max-width: 620px) {
   .container { width: calc(100% - 40px); }
+  .templatesPage .container { width: calc(100% - 32px); }
   .headerInner { width: calc(100% - 32px); min-height: 68px; }
   .brand { font-size: 19px; }
   .brandLogo { --logo-size: 54px; }

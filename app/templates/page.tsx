@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function TemplatesPage() {
-  return <div className={styles.home}><ProjectShowcase headingAs="h1" /></div>;
+  return <div className={`${styles.home} ${styles.templatesPage}`}><ProjectShowcase headingAs="h1" /></div>;
 }
