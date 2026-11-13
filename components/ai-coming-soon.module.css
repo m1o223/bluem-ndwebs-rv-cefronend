@@ -11,6 +11,7 @@
 }
 
 .dialog {
+  box-sizing: border-box;
   width: min(420px, calc(100vw - 32px));
   padding: 30px 28px 26px;
   border: 1px solid rgb(186 198 212 / 80%);
@@ -83,6 +84,7 @@
 }
 
 .pageCard {
+  box-sizing: border-box;
   width: min(500px, 100%);
   padding: 36px 30px 32px;
   border: 1px solid #d9e2ec;
