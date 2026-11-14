@@ -24,6 +24,8 @@ type RunningReply = {
   conversationId: string; controller: AbortController; assistantId: string; replaced?: Message;
   timeout?: number; thinkingTimer?: number; networkDone: boolean; visible: string;
 };
+const TEST_SITE = process.env.NEXT_PUBLIC_TEST_SITE === "true";
+const TEST_STORAGE_KEY = "bluemind-test-ai-conversations";
 const THINKING_MIN_MS = 2000;
 const guidedWelcome: Record<"en" | "ar" | "sv", string> = {
   en: "What website idea do you have in mind? Tell me about it in your own way. We’ll organize it together, define what you want the website to include, and prepare your request step by step.",
@@ -41,8 +43,9 @@ function serverConversation(value: unknown): Conversation | null {
   if (!Array.isArray(rawMessages)) return null;
   const messages = rawMessages.flatMap((item, index): Message[] => {
     if (!item || typeof item !== "object") return [];
-    const message = item as { id?: unknown; role?: unknown; content?: unknown; attachments?: unknown; card?: unknown };
-    if ((message.role !== "user" && message.role !== "assistant") || typeof message.content !== "string") return [];
+    const message = item as { id?: unknown; role?: unknown; content?: unknown; text?: unknown; attachments?: unknown; card?: unknown };
+    const content = typeof message.content === "string" ? message.content : typeof message.text === "string" ? message.text : null;
+    if ((message.role !== "user" && message.role !== "assistant") || content === null) return [];
     const attachments = Array.isArray(message.attachments) ? message.attachments.flatMap((file, fileIndex) => {
       if (!file || typeof file !== "object") return [];
       const value = file as { name?: unknown; type?: unknown; data?: unknown };
@@ -50,7 +53,7 @@ function serverConversation(value: unknown): Conversation | null {
       return [{ id: typeof message.id === "string" ? `${message.id}-${fileIndex}` : crypto.randomUUID(), name: value.name, type: value.type, data: value.data, size: 0 } as LocalAttachment];
     }) : [];
     const card = message.role === "assistant" ? validateMessageCard(message.card) : null;
-    return [{ id: typeof message.id === "string" ? message.id : crypto.randomUUID(), role: message.role, text: message.content, complete: true, ...(attachments.length ? { attachments } : {}), ...(card ? { card } : {}) }];
+    return [{ id: typeof message.id === "string" ? message.id : crypto.randomUUID(), role: message.role, text: content, complete: true, ...(attachments.length ? { attachments } : {}), ...(card ? { card } : {}) }];
   });
   if (!messages.length) return null;
   const id = typeof (value as { id?: unknown }).id === "string" ? (value as { id: string }).id : "";
@@ -93,6 +96,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
   const { locale } = useLocalization();
   const copy = chatCopy[locale];
   const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [testStorageReady, setTestStorageReady] = useState(!TEST_SITE);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [accountAuthenticated, setAccountAuthenticated] = useState<boolean | null>(null);
   const [draft, setDraft] = useState("");
@@ -123,6 +127,23 @@ export default function ChatWorkspace({ available, embedded = false, account = f
   const attachmentArea = useRef<HTMLDivElement>(null);
   const attachmentTrigger = useRef<HTMLButtonElement>(null);
   const menuId = useId();
+
+  useEffect(() => {
+    if (!TEST_SITE) return;
+    try {
+      const value = JSON.parse(window.localStorage.getItem(TEST_STORAGE_KEY) || "[]");
+      if (Array.isArray(value)) setConversations(value.flatMap(item => {
+        const conversation = serverConversation(item);
+        return conversation ? [conversation] : [];
+      }));
+    } catch { /* A blocked local storage should not prevent the test chat from opening. */ }
+    setTestStorageReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!TEST_SITE || !testStorageReady) return;
+    try { window.localStorage.setItem(TEST_STORAGE_KEY, JSON.stringify(conversations)); } catch { /* Storage is optional in private browsing. */ }
+  }, [conversations, testStorageReady]);
 
   function clearDrawerCloseTimer() {
     if (drawerCloseTimer.current !== null) {
@@ -266,6 +287,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
   }, []);
 
   useEffect(() => {
+    if (TEST_SITE) return;
     if (accountAuthenticated !== true || new URLSearchParams(window.location.search).has("conversation")) return;
     let active = true;
     fetch("/api/ai/conversations", { credentials: "same-origin", cache: "no-store" }).then(async response => {
