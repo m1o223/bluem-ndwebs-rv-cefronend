@@ -314,10 +314,6 @@
 .presentation {
   position: relative;
   flex-shrink: 0;
-  outline: 1px solid #d8d8d4;
-  border-radius: 6px;
-  background: #fff;
-  box-shadow: 0 8px 24px #1515150d;
   transition: width 340ms cubic-bezier(.22, .75, .26, 1), height 340ms cubic-bezier(.22, .75, .26, 1);
   will-change: width, height;
 }
@@ -331,92 +327,24 @@
   position: absolute;
   inset: 0 auto auto 0;
   transform-origin: top left;
-  transition: width 340ms cubic-bezier(.22, .75, .26, 1), height 340ms cubic-bezier(.22, .75, .26, 1), left 340ms cubic-bezier(.22, .75, .26, 1), top 340ms cubic-bezier(.22, .75, .26, 1);
+  transition: width 340ms cubic-bezier(.22, .75, .26, 1), height 340ms cubic-bezier(.22, .75, .26, 1), transform 340ms cubic-bezier(.22, .75, .26, 1);
   will-change: width, height, transform;
-}
-.deviceBezel {
-  position: absolute;
-  inset: 0;
-  border: 1px solid #b9c0c8;
-  border-radius: 34px;
-  background: linear-gradient(145deg, #3d4752, #10151a 55%, #29323b);
-  box-shadow: 0 18px 34px rgb(18 37 56 / 22%), inset 0 0 0 1px rgb(255 255 255 / 12%);
-  overflow: hidden;
-  transform-origin: center;
-  transition: border-radius 340ms ease, background-color 340ms ease, transform 420ms cubic-bezier(.22, .75, .26, 1);
-  will-change: transform;
-}
-.frameShell[data-device-frame="ipad"] .deviceBezel {
-  border-radius: 24px;
-  background: linear-gradient(145deg, #9aa3ad, #333b43 42%, #171d23);
-}
-.frameShell[data-device-frame="desktop"] .deviceBezel {
-  border-radius: 14px 14px 8px 8px;
-  background: linear-gradient(145deg, #aab4bd, #39434d 38%, #151a1f);
 }
 .deviceScreen {
   position: absolute;
+  inset: 0;
   z-index: 1;
   overflow: hidden;
-  border: 1px solid #090d11;
-  border-radius: 22px;
   background: #fff;
-  box-shadow: 0 0 0 1px rgb(255 255 255 / 12%);
-  transition: width 340ms cubic-bezier(.22, .75, .26, 1), height 340ms cubic-bezier(.22, .75, .26, 1), top 340ms cubic-bezier(.22, .75, .26, 1), left 340ms cubic-bezier(.22, .75, .26, 1), border-radius 340ms ease, transform 420ms cubic-bezier(.22, .75, .26, 1);
-  transform-origin: center;
-  will-change: transform;
-}
-.frameShell[data-device-frame="ipad"] .deviceScreen {
-  border-radius: 12px;
-}
-.frameShell[data-device-frame="ipad"][data-orientation="landscape"] .deviceBezel {
-  transform: rotate(90deg);
-}
-.frameShell[data-device-frame="ipad"][data-orientation="landscape"] .deviceScreen {
-  transform: translate(-50%, -50%);
-}
-.frameShell[data-device-frame="desktop"] .deviceScreen {
-  border-radius: 7px 7px 3px 3px;
-}
-.phoneSpeaker {
-  position: absolute;
-  z-index: 2;
-  top: 11px;
-  left: 50%;
-  width: 54px;
-  height: 5px;
-  border-radius: 999px;
-  background: #080b0e;
-  transform: translateX(-50%);
-}
-.laptopBase {
-  position: absolute;
-  z-index: 0;
-  right: -4%;
-  bottom: -22px;
-  left: -4%;
-  height: 36px;
-  border: 1px solid #98a2ac;
-  border-radius: 0 0 18px 18px;
-  background: linear-gradient(#a9b2ba, #66717d 55%, #313a43);
-  box-shadow: 0 8px 14px rgb(18 37 56 / 20%);
+  transition: width 340ms cubic-bezier(.22, .75, .26, 1), height 340ms cubic-bezier(.22, .75, .26, 1);
+  will-change: width, height;
 }
 .logicalFrame {
   position: relative;
   display: flex;
   flex-direction: column;
   background: #fff;
-  border-radius: inherit;
   overflow: hidden;
-}
-.frameShell[data-device-frame="ipad"][data-orientation="landscape"] .logicalFrame {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(-90deg);
-  transform-origin: center;
-}
-.logicalFrame[data-ready="true"] {
 }
 .loading {
   min-height: 100%;
@@ -565,7 +493,6 @@
   .dialog[data-viewer-phase="closing"],
   .presentation,
   .frameShell,
-  .deviceBezel,
   .deviceScreen,
   .deviceIndicator,
   .orientationIndicator,

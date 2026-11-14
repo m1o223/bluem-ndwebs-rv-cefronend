@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocalization } from "./localization-provider";
+import { ComingSoonLink } from "./ai-coming-soon";
 import styles from "./site-menu-overlay.module.css";
 
 const links = [
@@ -135,7 +136,15 @@ export default function SiteMenuOverlay({ open, onClose, scrollPosition }: { ope
         </header>
         <div className={styles.content}>
           <nav className={styles.linkList} aria-label={text.navigation}>
-            {links.map(([href], index) => <Link key={href} href={href} onClick={requestClose}><span>{labels[index]}</span><ArrowRight size={20} aria-hidden="true" /></Link>)}
+            {links.map(([href], index) => {
+              const kind = href === "/quote" ? "pricing" : href === "/care" ? "subscriptions" : null;
+              const content = <><span>{labels[index]}</span><ArrowRight size={20} aria-hidden="true" /></>;
+              return kind ? (
+                <ComingSoonLink key={href} href={href} kind={kind}>{content}</ComingSoonLink>
+              ) : (
+                <Link key={href} href={href} onClick={requestClose}>{content}</Link>
+              );
+            })}
           </nav>
           <Link className={styles.signInLink} href="/sign-in" onClick={requestClose}><span>{text.signIn}</span><ArrowRight size={20} aria-hidden="true" /></Link>
         </div>

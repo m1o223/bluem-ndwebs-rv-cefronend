@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { ComingSoonLink } from "../../components/ai-coming-soon";
 import { carePlans, priceFor, type Billing, type PlanName } from "../care/care-data";
 import { createStripeCheckout, sendEmailVerificationCode, verifyEmailVerificationCode } from "../lib/api-client";
 import { useLocalization } from "../../components/localization-provider";
@@ -446,7 +447,7 @@ export default function PurchaseFlow({ selectedPackage, onClose }: PurchaseCheck
               <section className={styles.careUpsell} aria-labelledby="care-upsell-title">
                 <h3 id="care-upsell-title">Keep your website running smoothly with BlueMind Care.</h3>
                 <div>{carePlans.map(plan => <button key={plan.id} type="button" onClick={() => { setCarePlan(plan.name); setStep("care"); }}><span>{plan.name}</span><strong>{priceFor(plan, "Monthly")} / month</strong></button>)}</div>
-                <Link href="/care" className={styles.checkoutGhost}>Learn More</Link>
+                <ComingSoonLink href="/care" kind="subscriptions" className={styles.checkoutGhost}>Learn More</ComingSoonLink>
               </section>
               <button type="button" className={styles.checkoutPrimary} onClick={() => setStep("final")}>Continue</button>
             </div>

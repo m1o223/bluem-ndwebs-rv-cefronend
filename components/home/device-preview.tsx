@@ -68,18 +68,8 @@ export default function DevicePreview({
     : device === "ipad" && orientation === "landscape"
       ? 768
       : preset.height;
-  const framePadding = device === "mobile" ? 16 : device === "ipad" ? 18 : 16;
-  const screenTop = device === "mobile" ? 26 : framePadding;
-  const baseHeight = device === "desktop" ? 48 : 0;
-  const normalFrameWidth = contentWidth + framePadding * 2;
-  const normalFrameHeight = contentHeight + screenTop + framePadding + baseHeight;
-  const rotatedTablet = device === "ipad" && orientation === "landscape";
-  const frameWidth = device === "ipad" ? deviceModes[1].width + framePadding * 2 : normalFrameWidth;
-  const frameHeight = device === "ipad" ? deviceModes[1].height + screenTop + framePadding : normalFrameHeight;
-  const frameLeft = rotatedTablet ? (frameHeight - frameWidth) / 2 : 0;
-  const frameTop = rotatedTablet ? (frameWidth - frameHeight) / 2 : 0;
-  const screenWidth = device === "ipad" ? deviceModes[1].width : contentWidth;
-  const screenHeight = device === "ipad" ? deviceModes[1].height : contentHeight;
+  const frameWidth = contentWidth;
+  const frameHeight = contentHeight;
 
   useEffect(() => {
     if (!device) return;
@@ -104,14 +94,11 @@ export default function DevicePreview({
       const w = element.clientWidth;
       const h = element.clientHeight;
       if (!w || !h || !host.clientWidth || !host.clientHeight) return;
-      const rotated = element.dataset.rotated === "true";
-      const visualWidth = rotated ? h : w;
-      const visualHeight = rotated ? w : h;
-      const scale = Math.min(1, host.clientWidth / visualWidth, host.clientHeight / visualHeight);
+      const scale = Math.min(1, host.clientWidth / w, host.clientHeight / h);
       element.style.transform = `scale(${scale})`;
       element.dataset.scale = String(scale);
-      box.style.width = `${visualWidth * scale}px`;
-      box.style.height = `${visualHeight * scale}px`;
+      box.style.width = `${w * scale}px`;
+      box.style.height = `${h * scale}px`;
     }
     const sizeObserver = new ResizeObserver(() => {
       if (!host.clientWidth || !host.clientHeight) return;
@@ -134,12 +121,12 @@ export default function DevicePreview({
       sizeObserver.disconnect();
       frameObserver.disconnect();
     };
-  }, [initializeDevice, device, frameWidth, frameHeight, rotatedTablet]);
+  }, [initializeDevice, device, frameWidth, frameHeight]);
 
   useLayoutEffect(() => {
     if (!device || !available.width || !available.height || !frame.current) return;
     frame.current.dataset.ready = "true";
-  }, [device, available, frameWidth, frameHeight, rotatedTablet]);
+  }, [device, available, frameWidth, frameHeight]);
 
   return (
     <div className={styles.stage}>
@@ -151,38 +138,31 @@ export default function DevicePreview({
             data-device-frame={device || "preparing"}
             data-orientation={orientation}
             data-native-mobile={nativeMobile}
-            data-rotated={rotatedTablet || undefined}
             style={{
               width: `${Math.max(1, frameWidth)}px`,
               height: `${Math.max(1, frameHeight)}px`,
-              left: `${frameLeft}px`,
-              top: `${frameTop}px`,
+              left: 0,
+              top: 0,
             }}
           >
-            <div className={styles.deviceBezel}>
-              {device === "mobile" && <span className={styles.phoneSpeaker} aria-hidden="true" />}
+            <div
+              className={styles.deviceScreen}
+              style={{
+                width: `${Math.max(1, frameWidth)}px`,
+                height: `${Math.max(1, frameHeight)}px`,
+              }}
+            >
               <div
-                className={styles.deviceScreen}
-                style={{
-                  width: `${Math.max(1, screenWidth)}px`,
-                  height: `${Math.max(1, screenHeight)}px`,
-                  top: rotatedTablet ? "50%" : `${screenTop}px`,
-                  left: rotatedTablet ? "50%" : `${framePadding}px`,
-                }}
+                className={styles.logicalFrame}
+                data-demo-viewport
+                data-demo-device={device || "preparing"}
+                style={{ width: `${Math.max(1, contentWidth)}px`, height: `${Math.max(1, contentHeight)}px` }}
               >
-                <div
-                  className={styles.logicalFrame}
-                  data-demo-viewport
-                  data-demo-device={device || "preparing"}
-                  style={{ width: `${Math.max(1, contentWidth)}px`, height: `${Math.max(1, contentHeight)}px` }}
-                >
-                  <ProjectViewport>
-                    {device && available.width ? children : <ProjectLoading />}
-                  </ProjectViewport>
-                </div>
+                <ProjectViewport>
+                  {device && available.width ? children : <ProjectLoading />}
+                </ProjectViewport>
               </div>
             </div>
-            {device === "desktop" && <div className={styles.laptopBase} aria-hidden="true" />}
           </div>
         </div>
       </div>
