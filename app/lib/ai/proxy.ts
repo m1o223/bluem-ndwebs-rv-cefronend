@@ -26,6 +26,10 @@ function requestIdentity(request: Request, visitorToken: string) {
   };
 }
 
+function isTestRequest(request: NextRequest) {
+  return TEST_SITE || request.nextUrl.hostname.endsWith(".vercel.app");
+}
+
 function testResponse(request: NextRequest) {
   const locale = (request.headers.get("accept-language") || "").toLowerCase();
   const text = locale.startsWith("ar")
@@ -73,12 +77,13 @@ async function readBody(request: Request, limit: number) {
 
 // This route forwards only AI traffic. The OpenAI key and execution stay on Render.
 export async function proxyAi(request: NextRequest) {
+  const testSite = isTestRequest(request);
   const origin = request.headers.get("origin");
   if (request.method !== "POST") return error(405, "invalid");
   const requestOrigin = new URL(request.url).origin;
-  if (!origin || (secure ? (TEST_SITE ? origin !== requestOrigin : !ALLOWED_SITES.has(origin)) : origin !== requestOrigin)) return error(403, "invalid");
+  if (!origin || (secure ? (testSite ? origin !== requestOrigin : !ALLOWED_SITES.has(origin)) : origin !== requestOrigin)) return error(403, "invalid");
   if (request.method === "POST" && request.headers.get("content-type")?.split(";")[0].trim() !== "application/json") return error(415, "invalid");
-  if (TEST_SITE) {
+  if (testSite) {
     await request.clone().text().catch(() => "");
     return testResponse(request);
   }
@@ -131,15 +136,16 @@ export async function proxyAi(request: NextRequest) {
 }
 
 export async function proxyConversations(request: NextRequest, path = "") {
+  const testSite = TEST_SITE || request.nextUrl.hostname.endsWith(".vercel.app");
   const origin = request.headers.get("origin");
   // Same-origin GET requests commonly omit Origin (notably in Safari). The
   // backend still requires the customer/visitor identity, so an absent
   // Origin is safe here; explicit cross-site origins remain rejected.
   const fetchSite = request.headers.get("sec-fetch-site");
   const requestOrigin = new URL(request.url).origin;
-  if (fetchSite === "cross-site" || (origin && (secure ? (TEST_SITE ? origin !== requestOrigin : !ALLOWED_SITES.has(origin)) : origin !== requestOrigin))) return error(403, "invalid");
+  if (fetchSite === "cross-site" || (origin && (secure ? (testSite ? origin !== requestOrigin : !ALLOWED_SITES.has(origin)) : origin !== requestOrigin))) return error(403, "invalid");
   if (request.method !== "GET") return error(405, "invalid");
-  if (TEST_SITE) return path ? error(404, "invalid") : NextResponse.json({ conversations: [] }, { headers: { "Cache-Control": "no-store, private" } });
+  if (testSite) return path ? error(404, "invalid") : NextResponse.json({ conversations: [] }, { headers: { "Cache-Control": "no-store, private" } });
   const visitorToken = cookieValue(request, AI_VISITOR_COOKIE);
   try {
     const response = await fetch(`${BACKEND}/api/ai/conversations${path}`, {

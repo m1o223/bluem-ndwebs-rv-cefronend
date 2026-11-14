@@ -1,5 +1,5 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "");
-const TEST_SITE = process.env.NEXT_PUBLIC_TEST_SITE === "true";
+const TEST_SITE = process.env.NEXT_PUBLIC_TEST_SITE === "true" || (typeof window !== "undefined" && window.location.hostname.endsWith(".vercel.app"));
 
 export type ApiResult = { success: true; message: string } | { success: false; error?: string; fields?: Record<string, string> };
 

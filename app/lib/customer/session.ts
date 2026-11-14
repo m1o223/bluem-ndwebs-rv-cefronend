@@ -16,7 +16,7 @@ function backend() {
   return RENDER;
 }
 export async function customerRequest(action: "login" | "session" | "logout" | "overview" | "messages" | "messages-welcome" | "messages-read" | "message" | "profile" | "contact" | "password" | "google-start" | "google-callback", token?: string, body?: string, signal?: AbortSignal) {
-  if (process.env.TEST_SITE === "true") return new Response(JSON.stringify({ code: "test_backend_disabled" }), { status: 503 });
+  if (process.env.TEST_SITE === "true" || process.env.VERCEL_ENV === "preview" || process.env.VERCEL_URL?.endsWith(".vercel.app")) return new Response(JSON.stringify({ code: "test_backend_disabled" }), { status: 503 });
   return fetch(`${backend()}/api/customer/${action}`, {
     method: action === "session" || action === "overview" || action === "messages" ? "GET" : "POST", cache: "no-store", redirect: "error",
     headers: { Origin: "https://bluemindwebservice.com", "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
