@@ -15,11 +15,18 @@ import type { Overview } from "./workspace-types";
 import TextActionLabel from "../text-action-label";
 import SessionRecovery from "./session-recovery";
 import LanguageSelector from "../language-selector";
+import ChatWorkspace from "../../app/ask-ai/chat-workspace";
 const demoOverview: Overview = {
   profile: { fullName: "", customerType: null, companyName: "", companyNumber: "", preferences: { project: false, team: false, billing: false, email: false }, loginMethods: [] },
   project: null,
   notifications: [],
 };
+const TEST_SITE_CONFIGURED = process.env.NEXT_PUBLIC_TEST_SITE === "true";
+
+function isTestHostname(hostname: string) {
+  return hostname.includes("-git-test-") || hostname.endsWith(".test.bluemindwebservice.com");
+}
+
 export default function CustomerShell({ user, page }: { user: Customer; page: CustomerPage }) {
   const { locale } = useLocalization();
   const text = customerCopy[locale];
@@ -33,7 +40,13 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
   const [overview, setOverview] = useState<Overview | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [reload, setReload] = useState(0);
+  const [testSite, setTestSite] = useState(TEST_SITE_CONFIGURED);
   const workspaceText = workspaceCopy[locale];
+
+  useEffect(() => {
+    if (TEST_SITE_CONFIGURED) return;
+    setTestSite(isTestHostname(window.location.hostname));
+  }, []);
   useEffect(() => {
     const controller = new AbortController();
     setOverview(null); setLoadError(false);
@@ -103,6 +116,9 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
   const pageTitle = page === "notifications" ? workspaceText.notifications : text[page];
   const isAi = page === "ai";
   const isHome = page === "home";
+  if (isAi && testSite) return <div ref={shell} className={`${styles.app} ${styles.aiApp}`} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate>
+    <ChatWorkspace available account accountFullScreen />
+  </div>;
   if (isAi) return <div ref={shell} className={`${styles.app} ${styles.aiApp}`} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate>
     <AiComingSoonPage backHref="/dashboard" backLabel={locale === "ar" ? "\u0627\u0644\u0639\u0648\u062f\u0629 \u0625\u0644\u0649 \u0627\u0644\u062d\u0633\u0627\u0628" : locale === "sv" ? "Tillbaka till kontot" : "Back to account"} />
   </div>;
