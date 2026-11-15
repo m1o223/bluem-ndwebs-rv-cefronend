@@ -27,11 +27,6 @@ type RunningReply = {
 const TEST_SITE = process.env.NEXT_PUBLIC_TEST_SITE === "true" || (typeof window !== "undefined" && window.location.hostname.endsWith(".vercel.app"));
 const TEST_STORAGE_KEY = "bluemind-test-ai-conversations";
 const THINKING_MIN_MS = 2000;
-const testAttachmentInfo: Record<"en" | "sv" | "ar", string> = {
-  en: "Up to 4 files, 2 MB each.",
-  sv: "Upp till 4 filer, 2 MB per fil.",
-  ar: "حتى 4 ملفات، بحجم 2 ميغابايت للملف.",
-};
 const guidedWelcome: Record<"en" | "ar" | "sv", string> = {
   en: "What website idea do you have in mind? Tell me about it in your own way. We’ll organize it together, define what you want the website to include, and prepare your request step by step.",
   ar: "شو فكرة الموقع اللي ببالك؟ احكيلي عنها بطريقتك. منرتّبها سوا، ومنحدّد شو بدك يكون بالموقع، ومنجهّز طلبك خطوة بخطوة.",
@@ -645,7 +640,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
           <BlueMindLogo className={styles.brandSymbol} solid priority />
           <h1>BlueMind AI</h1>
           <p>{copy.heading}</p>
-          <p className={styles.emptyIntro}>{copy.intro}</p>
+          {!TEST_SITE && <p className={styles.emptyIntro}>{copy.intro}</p>}
         </div>
         <div ref={history} className={styles.messageScroll} data-active={hasMessages} tabIndex={hasMessages ? 0 : -1} aria-label={copy.message}>
           <div ref={messageList} className={styles.messages} role="log" aria-label={copy.conversation} aria-live="polite" aria-relevant="additions text">
@@ -682,7 +677,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
               <button type="button" disabled={preparing !== null} onClick={() => cameraPicker.current?.click()}><Camera size={18} />{copy.takePhoto}</button>
               <button type="button" disabled={preparing !== null} onClick={() => documentPicker.current?.click()}><File size={18} />{copy.addFile}</button>
               <button type="button" disabled={preparing !== null} onClick={() => imagePicker.current?.click()}><ImageIcon size={18} />{copy.addImage}</button>
-              <p>{TEST_SITE ? testAttachmentInfo[locale] : copy.attachmentInfo}</p>
+              {!TEST_SITE && <p>{copy.attachmentInfo}</p>}
             </div>}
           </div>
           <textarea ref={input} className={styles.input} rows={1} aria-label={copy.message} placeholder={copy.placeholder} value={draft}
