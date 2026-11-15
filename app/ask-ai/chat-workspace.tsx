@@ -131,7 +131,6 @@ export default function ChatWorkspace({ available, embedded = false, account = f
   const [siteMenuOpen, setSiteMenuOpen] = useState(false);
   const [attachmentsOpen, setAttachmentsOpen] = useState(false);
   const [welcomeIndex, setWelcomeIndex] = useState(0);
-  const [welcomeFlipping, setWelcomeFlipping] = useState(false);
   const [files, setFiles] = useState<LocalAttachment[]>([]);
   const [fileError, setFileError] = useState("");
   const [preparing, setPreparing] = useState<number | null>(null);
@@ -244,24 +243,10 @@ export default function ChatWorkspace({ available, embedded = false, account = f
   useEffect(() => {
     if (!TEST_SITE) return;
     setWelcomeIndex(0);
-    setWelcomeFlipping(false);
-    let visibleTimer: number | null = null;
-    let flipTimer: number | null = null;
-    const scheduleNext = () => {
-      visibleTimer = window.setTimeout(() => {
-        setWelcomeFlipping(true);
-        flipTimer = window.setTimeout(() => {
-          setWelcomeIndex(index => (index + 1) % testWelcomeLines[locale].length);
-          setWelcomeFlipping(false);
-          scheduleNext();
-        }, 280);
-      }, 4000);
-    };
-    scheduleNext();
-    return () => {
-      if (visibleTimer !== null) window.clearTimeout(visibleTimer);
-      if (flipTimer !== null) window.clearTimeout(flipTimer);
-    };
+    const timer = window.setInterval(() => {
+      setWelcomeIndex(index => (index + 1) % testWelcomeLines[locale].length);
+    }, 4000);
+    return () => window.clearInterval(timer);
   }, [locale]);
 
   const active = conversations.find(conversation => conversation.id === activeId);
@@ -694,8 +679,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
           <h1>BlueMind AI</h1>
           {TEST_SITE
             ? <div className={styles.welcomeLineViewport} aria-live="polite">
-              <p className={styles.welcomeLine} data-state={welcomeFlipping ? "out" : "current"} dir={locale === "ar" ? "rtl" : "ltr"}>{testWelcomeLines[locale][welcomeIndex]}</p>
-              {welcomeFlipping && <p className={styles.welcomeLine} data-state="in" dir={locale === "ar" ? "rtl" : "ltr"}>{testWelcomeLines[locale][(welcomeIndex + 1) % testWelcomeLines[locale].length]}</p>}
+              <p className={styles.welcomeLine} dir={locale === "ar" ? "rtl" : "ltr"}>{testWelcomeLines[locale][welcomeIndex]}</p>
             </div>
             : <p>{copy.heading}</p>}
           {!TEST_SITE && <p className={styles.emptyIntro}>{copy.intro}</p>}

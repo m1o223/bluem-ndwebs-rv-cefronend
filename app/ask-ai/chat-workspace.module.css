@@ -87,7 +87,6 @@
   height: 74px;
   margin-top: 12px;
   overflow: hidden;
-  perspective: 720px;
 }
 .chat[data-test-site="true"] .welcomeLine {
   position: absolute;
@@ -103,20 +102,6 @@
   font-weight: 500;
   line-height: 1.4;
   text-align: center;
-  transform-origin: center top;
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  will-change: transform, opacity;
-}
-.chat[data-test-site="true"] .welcomeLine[data-state="out"] { animation: welcomeLineOut 280ms ease-in forwards; }
-.chat[data-test-site="true"] .welcomeLine[data-state="in"] { animation: welcomeLineIn 280ms ease-out forwards; }
-@keyframes welcomeLineOut {
-  from { opacity: 1; transform: rotateX(0deg); }
-  to { opacity: 0; transform: translateY(-8px) rotateX(-90deg); }
-}
-@keyframes welcomeLineIn {
-  from { opacity: 0; transform: translateY(8px) rotateX(90deg); }
-  to { opacity: 1; transform: translateY(0) rotateX(0deg); }
 }
 .messageScroll { height: 100%; overflow-y: auto; overscroll-behavior: contain; overflow-anchor: none; scrollbar-gutter: stable; padding: 16px 28px 28px; visibility: hidden; }
 .messageScroll[data-active="true"] { visibility: visible; }
@@ -268,8 +253,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .accountFullScreen .drawer { transition: none; }
-  .chat[data-test-site="true"] .welcomeLine[data-state="out"] { animation: none; opacity: 0; transform: none; }
-  .chat[data-test-site="true"] .welcomeLine[data-state="in"] { animation: none; opacity: 1; transform: none; }
 }
 
 /* The persistent public navigation floats above the viewport on small screens. */
