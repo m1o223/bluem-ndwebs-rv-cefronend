@@ -27,6 +27,7 @@ export default function WebsiteShell({ children }: { children: ReactNode }) {
   }, []);
   const customer = isCustomerPath(pathname);
   const excluded = pathname === "/dashboard-preview" || pathname === "/menu";
+  const testHome = TEST_SITE && pathname === "/";
 
   useEffect(() => { setMenuOpen(false); }, [pathname]);
 
@@ -56,7 +57,7 @@ export default function WebsiteShell({ children }: { children: ReactNode }) {
     <RouteScrollState />
     <Navigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpenWithPosition} />
     <PageContent><RouteTransition>{children}</RouteTransition></PageContent>
-    <Footer textEffects={pathname === "/"} />
+    {testHome ? null : <Footer textEffects={pathname === "/"} />}
     <SiteMenuOverlay open={menuOpen} onClose={closeMenu} scrollPosition={menuScrollPosition.current} currentPath={TEST_SITE ? pathname : undefined} />
   </>;
 }

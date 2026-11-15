@@ -1,0 +1,49 @@
+.section {
+  position: relative;
+  overflow: hidden;
+  padding: 96px 24px 34px;
+  background: linear-gradient(180deg, #fff 0%, #f5f8fc 22%, #cfe7fb 58%, #79c5ff 77%, #17365d 100%);
+}
+
+.inner { width: min(100%, 1160px); margin-inline: auto; }
+.ideaBlock { width: min(100%, 760px); margin: 0 auto; text-align: center; }
+.ideaBlock h2 { margin: 0; color: #17365d; font-size: clamp(28px, 3.6vw, 42px); font-weight: 600; line-height: 1.2; text-wrap: balance; }
+.ideaForm { display: flex; align-items: stretch; gap: 12px; margin-top: 28px; }
+.ideaForm textarea { flex: 1 1 auto; min-height: 66px; resize: vertical; padding: 18px 20px; border: 1px solid #cbd5e1; border-radius: 18px; background: #fff; color: #17365d; font: inherit; font-size: 16px; line-height: 1.45; box-shadow: 0 10px 28px rgb(23 54 93 / 8%); }
+.ideaForm textarea::placeholder { color: #748399; opacity: 1; }
+.ideaForm textarea:focus-visible { outline: 2px solid #174a87; outline-offset: 3px; }
+.ideaForm button { min-width: 112px; min-height: 66px; padding: 14px 24px; border: 1px solid #174a87; border-radius: 9999px; background: #174a87; color: #fff; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 160ms ease, transform 160ms ease, opacity 160ms ease; }
+.ideaForm button:hover:not(:disabled) { background: #123b6d; transform: translateY(-2px); }
+.ideaForm button:active:not(:disabled) { transform: scale(.98); }
+.ideaForm button:focus-visible { outline: 2px solid #17365d; outline-offset: 4px; }
+
+.linkCard { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 48px; margin-top: 56px; padding: 42px 46px 24px; border: 1px solid rgb(203 213 225 / 80%); border-radius: 28px; background: #fff; box-shadow: 0 20px 44px rgb(23 54 93 / 16%); }
+.brandColumn a { display: inline-flex; text-decoration: none; }
+.brandColumn p { max-width: 260px; margin: 18px 0 0; color: #46566a; font-size: 15px; line-height: 1.7; }
+.linkGroup h3 { margin: 2px 0 14px; color: #17365d; font-size: 16px; font-weight: 650; line-height: 1.4; }
+.linkGroup ul { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.linkGroup a { display: inline-flex; align-items: center; min-height: 38px; color: #46566a; font-size: 14px; font-weight: 600; line-height: 1.45; text-decoration: none; text-underline-offset: 4px; }
+.linkGroup a:hover, .linkGroup a:focus-visible { color: #174a87; text-decoration: underline; }
+.linkGroup a:focus-visible { outline: 2px solid #174a87; outline-offset: 4px; border-radius: 3px; }
+.cardBottom { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 16px; margin-top: 14px; padding-top: 18px; border-top: 1px solid #dbe4ef; color: #46566a; font-size: 11px; line-height: 1.6; }
+.visuallyHidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+@media (max-width: 900px) {
+  .section { padding-top: 76px; }
+  .linkCard { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 34px 40px; padding: 36px 34px 22px; }
+  .brandColumn { grid-column: 1 / -1; }
+}
+
+@media (max-width: 620px) {
+  .section { padding: 60px 20px 24px; }
+  .ideaBlock h2 { font-size: 28px; }
+  .ideaForm { display: grid; gap: 10px; margin-top: 20px; }
+  .ideaForm textarea { min-height: 74px; padding: 16px; }
+  .ideaForm button { width: 100%; min-height: 52px; }
+  .linkCard { grid-template-columns: minmax(0, 1fr); gap: 24px; margin-top: 40px; padding: 28px 24px 20px; border-radius: 22px; }
+  .brandColumn { grid-column: auto; }
+  .brandColumn p { margin-top: 14px; }
+  .linkGroup h3 { margin-bottom: 8px; }
+  .linkGroup a { min-height: 40px; }
+  .cardBottom { grid-column: auto; flex-direction: column; gap: 2px; margin-top: 4px; }
+}
