@@ -16,6 +16,7 @@ import { FILE_LIMITS, documentAccept, imageAccept, readAttachment, wireAttachmen
 import { attachmentErrorMessage, chatCopy } from "./chat-copy";
 import { useLocalization } from "../../components/localization-provider";
 import LanguageSelector from "../../components/language-selector";
+import SiteMenuOverlay from "../../components/site-menu-overlay";
 
 type Message = { id: string; text: string; role: "user" | "assistant"; complete: boolean; stopped?: boolean; feedback?: Feedback; card?: MessageCardContent; attachments?: LocalAttachment[] };
 type GuidedSource = "what-we-build";
@@ -127,6 +128,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
   const [collapsed, setCollapsed] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerClosing, setDrawerClosing] = useState(false);
+  const [siteMenuOpen, setSiteMenuOpen] = useState(false);
   const [attachmentsOpen, setAttachmentsOpen] = useState(false);
   const [welcomeIndex, setWelcomeIndex] = useState(0);
   const [welcomeFlipping, setWelcomeFlipping] = useState(false);
@@ -152,6 +154,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
   const attachmentArea = useRef<HTMLDivElement>(null);
   const attachmentTrigger = useRef<HTMLButtonElement>(null);
   const menuId = useId();
+  const closeSiteMenu = useCallback(() => setSiteMenuOpen(false), []);
 
   useEffect(() => {
     if (!TEST_SITE) return;
@@ -636,7 +639,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
   </div>;
 
   return <div ref={root} className={`${styles.chat} ${embedded ? styles.embedded : ""} ${account ? styles.account : ""} ${accountFullScreen ? styles.accountFullScreen : ""}`} data-embedded={embedded || undefined} data-account={account || undefined} data-account-fullscreen={accountFullScreen || undefined} data-collapsed={collapsed} data-welcome={!hasMessages} data-test-site={TEST_SITE || undefined} data-no-translate dir={locale === "ar" ? "rtl" : "ltr"}>
-    <aside id="ai-chat-sidebar" className={styles.sidebar} aria-label={copy.chatSidebar}>
+    {!TEST_SITE && <aside id="ai-chat-sidebar" className={styles.sidebar} aria-label={copy.chatSidebar}>
       <div className={styles.sidebarTop}>
         <span className={styles.sidebarTitle}>BlueMind AI</span>
         <button className={`${styles.iconControl} ${styles.sidebarToggle}`} type="button" onClick={() => setCollapsed(value => !value)}
@@ -645,9 +648,9 @@ export default function ChatWorkspace({ available, embedded = false, account = f
         {collapsed ? <PanelLeftOpen className={styles.toggleGlyph} size={20} aria-hidden="true" /> : <PanelLeftClose size={20} aria-hidden="true" />}
       </button></div>
           <History {...historyProps} compact={collapsed} />
-    </aside>
+    </aside>}
 
-    <dialog id="ai-chat-history" ref={drawer} className={styles.drawer} aria-label={copy.chatSidebar} data-open={drawerOpen ? "true" : "false"} data-closing={drawerClosing ? "true" : "false"} onClose={() => { setDrawerOpen(false); setDrawerClosing(false); }} onCancel={event => {
+    {!TEST_SITE && <dialog id="ai-chat-history" ref={drawer} className={styles.drawer} aria-label={copy.chatSidebar} data-open={drawerOpen ? "true" : "false"} data-closing={drawerClosing ? "true" : "false"} onClose={() => { setDrawerOpen(false); setDrawerClosing(false); }} onCancel={event => {
       if (accountFullScreen) {
         event.preventDefault();
         closeDrawer();
@@ -669,11 +672,13 @@ export default function ChatWorkspace({ available, embedded = false, account = f
         </div>
         <History {...historyProps} accountMode={accountFullScreen} />
       </div>
-    </dialog>
+    </dialog>}
 
     <main className={styles.main}>
       <div className={styles.topbar}>
-        {accountFullScreen ? <>
+        {TEST_SITE ? <>
+          <button className={`${styles.iconControl} ${accountFullScreen ? styles.accountMenuButton : styles.mobileMenu}`} type="button" aria-label={siteMenuOpen ? copy.closeSidebar : copy.menu} title={siteMenuOpen ? copy.closeSidebar : copy.menu} aria-expanded={siteMenuOpen} aria-controls="site-navigation-panel" onClick={() => setSiteMenuOpen(open => !open)}><Menu size={21} aria-hidden="true" /></button>
+        </> : accountFullScreen ? <>
           <button className={`${styles.iconControl} ${styles.accountMenuButton}`} type="button" aria-label={drawerOpen ? copy.closeSidebar : copy.menu} title={drawerOpen ? copy.closeSidebar : copy.menu} aria-expanded={drawerOpen} aria-controls="ai-chat-history" onClick={drawerOpen ? closeDrawer : openDrawer}><Menu size={21} aria-hidden="true" /></button>
         </> : <>
           <button className={`${styles.iconControl} ${styles.mobileMenu}`} type="button" aria-label={copy.openSidebar} title={copy.openSidebar} onClick={openDrawer}><Menu size={22} /></button>
@@ -748,6 +753,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
         {!TEST_SITE && <p className={styles.status} role="status">{available ? copy.availableStatus : copy.unavailableStatus}</p>}
       </div>
     </main>
+    {TEST_SITE && <SiteMenuOverlay open={siteMenuOpen} onClose={closeSiteMenu} currentPath={accountFullScreen ? "/blue-mind-ai" : "/ask-ai"} titleOverride="BlueMind AI" side={locale === "ar" ? "right" : "left"} />}
     {viewing && <ImageViewer file={viewing} onClose={() => setViewing(null)} />}
   </div>;
 }

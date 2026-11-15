@@ -4,11 +4,12 @@ import Link from "next/link";
 import { ArrowRight, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocalization } from "./localization-provider";
-import { ComingSoonLink } from "./ai-coming-soon";
+import { AiComingSoonLink, ComingSoonLink } from "./ai-coming-soon";
 import styles from "./site-menu-overlay.module.css";
 
 const links = [
   ["/", "Home"],
+  ["/ask-ai", "BlueMind AI"],
   ["/about", "About Us"],
   ["/services", "Services"],
   ["/templates", "Website Templates"],
@@ -19,9 +20,9 @@ const links = [
 ] as const;
 
 const localizedLinks = {
-  en: ["Home", "About Us", "Services", "Website Templates", "How We Work", "Subscriptions", "Contact Us", "Pricing"],
-  sv: ["Hem", "Om oss", "Tj\u00e4nster", "Webbplatsmallar", "S\u00e5 arbetar vi", "Prenumerationer", "Kontakta oss", "Priser"],
-  ar: ["\u0627\u0644\u0631\u0626\u064a\u0633\u064a\u0629", "\u0645\u0646 \u0646\u062d\u0646", "\u0627\u0644\u062e\u062f\u0645\u0627\u062a", "\u0642\u0648\u0627\u0644\u0628 \u0627\u0644\u0645\u0648\u0627\u0642\u0639", "\u0643\u064a\u0641 \u0646\u0639\u0645\u0644", "\u0627\u0644\u0627\u0634\u062a\u0631\u0627\u0643\u0627\u062a", "\u062a\u0648\u0627\u0635\u0644 \u0645\u0639\u0646\u0627", "\u0627\u0644\u0623\u0633\u0639\u0627\u0631"],
+  en: ["Home", "BlueMind AI", "About Us", "Services", "Website Templates", "How We Work", "Subscriptions", "Contact Us", "Pricing"],
+  sv: ["Hem", "BlueMind AI", "Om oss", "Tj\u00e4nster", "Webbplatsmallar", "S\u00e5 arbetar vi", "Prenumerationer", "Kontakta oss", "Priser"],
+  ar: ["\u0627\u0644\u0631\u0626\u064a\u0633\u064a\u0629", "BlueMind AI", "\u0645\u0646 \u0646\u062d\u0646", "\u0627\u0644\u062e\u062f\u0645\u0627\u062a", "\u0642\u0648\u0627\u0644\u0628 \u0627\u0644\u0645\u0648\u0627\u0642\u0639", "\u0643\u064a\u0641 \u0646\u0639\u0645\u0644", "\u0627\u0644\u0627\u0634\u062a\u0631\u0627\u0643\u0627\u062a", "\u062a\u0648\u0627\u0635\u0644 \u0645\u0639\u0646\u0627", "\u0627\u0644\u0623\u0633\u0639\u0627\u0631"],
 } as const;
 
 const panelText = {
@@ -32,8 +33,17 @@ const panelText = {
 
 const closeDuration = 240;
 type ScrollPosition = { x: number; y: number };
+const TEST_SITE = process.env.NEXT_PUBLIC_TEST_SITE === "true";
 
-export default function SiteMenuOverlay({ open, onClose, scrollPosition }: { open: boolean; onClose: () => void; scrollPosition?: ScrollPosition }) {
+function matchesCurrentPath(href: string, currentPath?: string) {
+  if (!currentPath) return false;
+  if (href === "/") return currentPath === "/";
+  if (href === "/templates") return currentPath === "/templates" || currentPath.startsWith("/templates/");
+  if (href === "/ask-ai") return currentPath === "/ask-ai" || currentPath === "/blue-mind-ai";
+  return href === currentPath;
+}
+
+export default function SiteMenuOverlay({ open, onClose, scrollPosition, currentPath, titleOverride, side = "right" }: { open: boolean; onClose: () => void; scrollPosition?: ScrollPosition; currentPath?: string; titleOverride?: string; side?: "left" | "right" }) {
   const { locale } = useLocalization();
   const close = useRef<HTMLButtonElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
@@ -44,6 +54,7 @@ export default function SiteMenuOverlay({ open, onClose, scrollPosition }: { ope
   const rtl = locale === "ar";
   const text = panelText[locale];
   const labels = localizedLinks[locale];
+  const visibleLinks = TEST_SITE ? links : links.filter(([href]) => href !== "/ask-ai");
 
   const requestClose = useCallback(() => {
     if (closeRequested.current) return;
@@ -128,19 +139,23 @@ export default function SiteMenuOverlay({ open, onClose, scrollPosition }: { ope
 
   if (!rendered) return null;
   return (
-    <div className={styles.overlay} data-closing={closing || undefined} role="presentation" onPointerDown={(event) => { if (event.target === event.currentTarget) requestClose(); }}>
+    <div className={styles.overlay} data-side={side} data-closing={closing || undefined} role="presentation" onPointerDown={(event) => { if (event.target === event.currentTarget) requestClose(); }}>
       <section id="site-navigation-panel" className={styles.panel} role="dialog" aria-modal="true" aria-labelledby="site-menu-title" dir={rtl ? "rtl" : "ltr"}>
         <header className={styles.header}>
-          <h2 id="site-menu-title">{text.title}</h2>
+          <h2 id="site-menu-title">{titleOverride || text.title}</h2>
           <button ref={close} className={styles.close} type="button" onClick={requestClose} aria-label={text.close}><X size={22} aria-hidden="true" /></button>
         </header>
         <div className={styles.content}>
           <nav className={styles.linkList} aria-label={text.navigation}>
-            {links.map(([href], index) => {
+            {visibleLinks.map(([href], index) => {
+              if (matchesCurrentPath(href, currentPath)) return null;
+              const originalIndex = links.findIndex(([candidate]) => candidate === href);
               const kind = href === "/quote" ? "pricing" : href === "/care" ? "subscriptions" : null;
-              const content = <><span>{labels[index]}</span><ArrowRight size={20} aria-hidden="true" /></>;
+              const content = <><span>{labels[originalIndex]}</span><ArrowRight size={20} aria-hidden="true" /></>;
               return kind ? (
-                <ComingSoonLink key={href} href={href} kind={kind}>{content}</ComingSoonLink>
+                <ComingSoonLink key={href} href={href} kind={kind} onOpen={TEST_SITE ? requestClose : undefined}>{content}</ComingSoonLink>
+              ) : href === "/ask-ai" ? (
+                <AiComingSoonLink key={href} href={href} onOpen={TEST_SITE ? requestClose : undefined}>{content}</AiComingSoonLink>
               ) : (
                 <Link key={href} href={href} onClick={requestClose}>{content}</Link>
               );

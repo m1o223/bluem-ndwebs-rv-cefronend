@@ -13,6 +13,7 @@ const languageUi = {
   sv: { selected: "Valt språk: ", languages: "Språk", openMenu: "Öppna meny", closeMenu: "Stäng meny", mainNavigation: "Huvudnavigation", menu: "Meny", signIn: "Logga in" },
   ar: { selected: "اللغة المختارة: ", languages: "اللغات", openMenu: "فتح القائمة", closeMenu: "إغلاق القائمة", mainNavigation: "التنقل الرئيسي", menu: "القائمة", signIn: "تسجيل الدخول" },
 } as const;
+const TEST_SITE = process.env.NEXT_PUBLIC_TEST_SITE === "true";
 
 type NavbarProps = {
   activePath?: string;
@@ -76,7 +77,7 @@ export default function Navbar({ activePath = "/", menuOpen = false, onMenuOpenC
   }, [languageOpen]);
 
   return (
-    <header ref={headerRef} className={styles.header} data-scrolled={scrolled} onKeyDown={(event) => {
+    <header ref={headerRef} className={styles.header} data-scrolled={scrolled} data-menu-open={TEST_SITE && menuOpen ? "true" : undefined} onKeyDown={(event) => {
       if (event.key === "Escape" && menuOpen) {
         onMenuOpenChange(false);
         toggleRef.current?.focus();
