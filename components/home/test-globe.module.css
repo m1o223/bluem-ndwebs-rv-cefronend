@@ -1,0 +1,65 @@
+.section {
+  position: relative;
+  overflow: hidden;
+  min-height: 520px;
+  padding: 36px 24px 54px;
+  background: #fff;
+}
+
+.viewport {
+  position: relative;
+  width: min(100%, 920px);
+  height: clamp(360px, 46vw, 520px);
+  margin: 0 auto;
+  overflow: visible;
+  isolation: isolate;
+}
+
+.viewport::before {
+  position: absolute;
+  inset: 12% 18%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(121 197 255 / 14%) 0%, rgb(121 197 255 / 7%) 46%, transparent 72%);
+  content: "";
+  filter: blur(18px);
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+  outline: none;
+}
+
+.canvas:active {
+  cursor: grabbing;
+}
+
+@media (max-width: 900px) {
+  .section {
+    min-height: 430px;
+    padding: 26px 20px 38px;
+  }
+
+  .viewport {
+    height: clamp(320px, 54vw, 430px);
+  }
+}
+
+@media (max-width: 620px) {
+  .section {
+    min-height: 350px;
+    padding: 18px 12px 30px;
+  }
+
+  .viewport {
+    height: min(360px, 92vw);
+  }
+
+  .viewport::before {
+    inset: 8% 8%;
+  }
+}
