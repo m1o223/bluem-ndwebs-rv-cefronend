@@ -27,6 +27,29 @@ type RunningReply = {
 const TEST_SITE = process.env.NEXT_PUBLIC_TEST_SITE === "true" || (typeof window !== "undefined" && window.location.hostname.endsWith(".vercel.app"));
 const TEST_STORAGE_KEY = "bluemind-test-ai-conversations";
 const THINKING_MIN_MS = 2000;
+const testWelcomeLines: Record<"en" | "sv" | "ar", string[]> = {
+  en: [
+    "How can I help you create your website?",
+    "Shall we plan your website together?",
+    "Let’s organize your ideas and decide what your website needs.",
+    "Do you want a website where customers can place orders?",
+    "I can help you prepare your website request.",
+  ],
+  sv: [
+    "Hur kan jag hjälpa dig att skapa din webbplats?",
+    "Ska vi planera din webbplats tillsammans?",
+    "Vi går igenom dina idéer och vad din webbplats behöver.",
+    "Vill du ha en webbplats där dina kunder kan beställa?",
+    "Jag kan hjälpa dig att förbereda din beställning.",
+  ],
+  ar: [
+    "كيف يمكنني مساعدتك في إنشاء موقعك؟",
+    "هل نضع خطة لموقعك معًا؟",
+    "لنرتّب أفكارك ونحدّد ما يحتاجه موقعك.",
+    "هل تريد موقعًا يستقبل طلبات عملائك؟",
+    "يمكنني مساعدتك في تجهيز طلب إنشاء موقعك.",
+  ],
+};
 const guidedWelcome: Record<"en" | "ar" | "sv", string> = {
   en: "What website idea do you have in mind? Tell me about it in your own way. We’ll organize it together, define what you want the website to include, and prepare your request step by step.",
   ar: "شو فكرة الموقع اللي ببالك؟ احكيلي عنها بطريقتك. منرتّبها سوا، ومنحدّد شو بدك يكون بالموقع، ومنجهّز طلبك خطوة بخطوة.",
@@ -105,6 +128,8 @@ export default function ChatWorkspace({ available, embedded = false, account = f
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerClosing, setDrawerClosing] = useState(false);
   const [attachmentsOpen, setAttachmentsOpen] = useState(false);
+  const [welcomeIndex, setWelcomeIndex] = useState(0);
+  const [welcomeFlipping, setWelcomeFlipping] = useState(false);
   const [files, setFiles] = useState<LocalAttachment[]>([]);
   const [fileError, setFileError] = useState("");
   const [preparing, setPreparing] = useState<number | null>(null);
@@ -212,6 +237,29 @@ export default function ChatWorkspace({ available, embedded = false, account = f
       else sessionStorage.removeItem("bluemind-ai-draft");
     } catch {}
   }, [draft, draftReady]);
+
+  useEffect(() => {
+    if (!TEST_SITE) return;
+    setWelcomeIndex(0);
+    setWelcomeFlipping(false);
+    let visibleTimer: number | null = null;
+    let flipTimer: number | null = null;
+    const scheduleNext = () => {
+      visibleTimer = window.setTimeout(() => {
+        setWelcomeFlipping(true);
+        flipTimer = window.setTimeout(() => {
+          setWelcomeIndex(index => (index + 1) % testWelcomeLines[locale].length);
+          setWelcomeFlipping(false);
+          scheduleNext();
+        }, 280);
+      }, 4000);
+    };
+    scheduleNext();
+    return () => {
+      if (visibleTimer !== null) window.clearTimeout(visibleTimer);
+      if (flipTimer !== null) window.clearTimeout(flipTimer);
+    };
+  }, [locale]);
 
   const active = conversations.find(conversation => conversation.id === activeId);
   const messages = active?.messages ?? [];
@@ -639,7 +687,12 @@ export default function ChatWorkspace({ available, embedded = false, account = f
         <div className={styles.empty} data-hidden={hasMessages} aria-hidden={hasMessages} inert={hasMessages}>
           <BlueMindLogo className={styles.brandSymbol} solid priority />
           <h1>BlueMind AI</h1>
-          <p>{copy.heading}</p>
+          {TEST_SITE
+            ? <div className={styles.welcomeLineViewport} aria-live="polite">
+              <p className={styles.welcomeLine} data-state={welcomeFlipping ? "out" : "current"} dir={locale === "ar" ? "rtl" : "ltr"}>{testWelcomeLines[locale][welcomeIndex]}</p>
+              {welcomeFlipping && <p className={styles.welcomeLine} data-state="in" dir={locale === "ar" ? "rtl" : "ltr"}>{testWelcomeLines[locale][(welcomeIndex + 1) % testWelcomeLines[locale].length]}</p>}
+            </div>
+            : <p>{copy.heading}</p>}
           {!TEST_SITE && <p className={styles.emptyIntro}>{copy.intro}</p>}
         </div>
         <div ref={history} className={styles.messageScroll} data-active={hasMessages} tabIndex={hasMessages ? 0 : -1} aria-label={copy.message}>
