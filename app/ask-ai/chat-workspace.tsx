@@ -587,7 +587,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
     <div className={styles.thinkingIndicator} data-ready={contentArrived && thinkingReply?.ready} aria-hidden="true"><span className={styles.thinkingDot} /></div>
   </div>;
 
-  return <div ref={root} className={`${styles.chat} ${embedded ? styles.embedded : ""} ${account ? styles.account : ""} ${accountFullScreen ? styles.accountFullScreen : ""}`} data-embedded={embedded || undefined} data-account={account || undefined} data-account-fullscreen={accountFullScreen || undefined} data-collapsed={collapsed} data-welcome={!hasMessages} data-no-translate dir={locale === "ar" ? "rtl" : "ltr"}>
+  return <div ref={root} className={`${styles.chat} ${embedded ? styles.embedded : ""} ${account ? styles.account : ""} ${accountFullScreen ? styles.accountFullScreen : ""}`} data-embedded={embedded || undefined} data-account={account || undefined} data-account-fullscreen={accountFullScreen || undefined} data-collapsed={collapsed} data-welcome={!hasMessages} data-test-site={TEST_SITE || undefined} data-no-translate dir={locale === "ar" ? "rtl" : "ltr"}>
     <aside id="ai-chat-sidebar" className={styles.sidebar} aria-label={copy.chatSidebar}>
       <div className={styles.sidebarTop}>
         <span className={styles.sidebarTitle}>BlueMind AI</span>
@@ -665,6 +665,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
             {copy.suggestions.map(suggestion => <button className={styles.chip} key={suggestion} type="button" onClick={() => { setDraft(suggestion); input.current?.focus(); }}>{suggestion}</button>)}
           </div></div>
         </div>
+        <div className={styles.composerWrap}>
         <form ref={composer} className={styles.composer} data-files={files.length > 0} onSubmit={event => { event.preventDefault(); send(); }}>
           {files.length > 0 && <div className={styles.attachmentTray}><AttachmentList files={files} onRemove={id => setFiles(current => current.filter(file => file.id !== id))} onOpen={setViewing} /></div>}
           <input ref={imagePicker} type="file" accept={imageAccept} multiple hidden aria-label={copy.addImage} onChange={event => { void selectFiles(event.target.files); event.target.value = ""; }} />
@@ -688,6 +689,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
             ? <button key="stop" className={styles.primarySend} type="button" onClick={stopReply} aria-label={copy.stopResponse} title={copy.stopResponse}><Square size={16} fill="currentColor" aria-hidden="true" /></button>
             : <button key="send" className={styles.primarySend} type="submit" disabled={(!draft.trim() && !files.length) || preparing !== null} aria-label={copy.sendMessage} title={copy.sendMessage}><ArrowUp size={21} aria-hidden="true" /></button>}
         </form>
+        </div>
         {preparing !== null && <div className={styles.fileStatus} role="status">{copy.preparing}: {preparing}% <button type="button" onClick={() => { fileRead.current?.abort(); fileRead.current = null; setPreparing(null); }}>{copy.cancel}</button></div>}
         {fileError && <div className={styles.fileStatus} role="alert">{fileError}</div>}
         <p className={styles.status} role="status">{available ? copy.availableStatus : copy.unavailableStatus}</p>
