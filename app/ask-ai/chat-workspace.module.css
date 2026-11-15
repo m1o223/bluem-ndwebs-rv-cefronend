@@ -313,19 +313,20 @@
   content: "";
   position: absolute;
   z-index: 0;
-  top: 46%;
-  left: -24%;
+  top: -54px;
   right: -24%;
-  height: 190px;
+  bottom: -54px;
+  left: -24%;
   pointer-events: none;
-  background: radial-gradient(ellipse 56% 88% at 50% 0%, rgba(23, 74, 135, .26) 0%, rgba(121, 197, 255, .24) 36%, rgba(121, 197, 255, 0) 78%);
-  filter: blur(18px);
+  background: radial-gradient(ellipse 58% 78% at 50% 50%, rgba(23, 74, 135, .34) 0%, rgba(121, 197, 255, .25) 38%, rgba(121, 197, 255, 0) 78%);
+  filter: blur(24px);
 }
 .chat[data-test-site="true"][data-welcome="true"] .composer { position: relative; z-index: 1; }
 
 @media (max-width: 767px), (min-width: 768px) and (max-width: 900px) and (orientation: portrait) {
   .chat[data-test-site="true"][data-welcome="true"] .composerWrap::before {
     top: 40%;
+    bottom: auto;
     left: -58%;
     right: -58%;
     height: 226px;
