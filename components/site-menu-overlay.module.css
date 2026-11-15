@@ -76,7 +76,22 @@
   .linkList a { min-height: 60px; font-size: 16px; }
 }
 
-/* Sign in is part of the mobile/tablet menu, while desktop keeps its header link. */
+/* Test restores the earlier shared menu layout without changing production. */
+.overlay[data-test-site="true"] .panel {
+  display: block;
+  padding: 24px 28px calc(30px + env(safe-area-inset-bottom));
+}
+.overlay[data-test-site="true"] .brand { display: inline-flex; text-decoration: none; }
+.overlay[data-test-site="true"] .content { min-height: auto; margin: clamp(62px, 12vh, 116px) 0 0; overflow: visible; }
+.overlay[data-test-site="true"] .content h2 { margin: 0 0 28px; color: #171a20; font-size: clamp(32px, 5vw, 46px); font-weight: 600; line-height: 1.05; letter-spacing: -1px; }
+
 @media (max-width: 1023px), (hover: none) and (pointer: coarse) {
   .signInLink { display: flex; }
+}
+
+@media (max-width: 620px) {
+  .overlay[data-test-site="true"] .panel { padding: 18px 18px calc(24px + env(safe-area-inset-bottom)); }
+  .overlay[data-test-site="true"] .content { margin-top: 72px; }
+  .overlay[data-test-site="true"] .content h2 { margin-bottom: 22px; font-size: 32px; }
+  .overlay[data-test-site="true"] .signInLink { display: none; }
 }

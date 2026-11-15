@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowRight, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { BrandLockup } from "./brand-lockup";
 import { useLocalization } from "./localization-provider";
 import { AiComingSoonLink, ComingSoonLink } from "./ai-coming-soon";
 import styles from "./site-menu-overlay.module.css";
@@ -139,13 +140,14 @@ export default function SiteMenuOverlay({ open, onClose, scrollPosition, current
 
   if (!rendered) return null;
   return (
-    <div className={styles.overlay} data-side={side} data-closing={closing || undefined} role="presentation" onPointerDown={(event) => { if (event.target === event.currentTarget) requestClose(); }}>
+    <div className={styles.overlay} data-side={side} data-test-site={TEST_SITE ? "true" : undefined} data-closing={closing || undefined} role="presentation" onPointerDown={(event) => { if (event.target === event.currentTarget) requestClose(); }}>
       <section id="site-navigation-panel" className={styles.panel} role="dialog" aria-modal="true" aria-labelledby="site-menu-title" dir={rtl ? "rtl" : "ltr"}>
         <header className={styles.header}>
-          <h2 id="site-menu-title">{titleOverride || text.title}</h2>
-          <button ref={close} className={styles.close} type="button" onClick={requestClose} aria-label={text.close}><X size={22} aria-hidden="true" /></button>
+          {TEST_SITE ? <Link href="/" className={styles.brand} aria-label="BlueMind Web Service home" onClick={requestClose}><BrandLockup solidLogo /></Link> : <h2 id="site-menu-title">{titleOverride || text.title}</h2>}
+          <button ref={close} className={styles.close} type="button" onClick={requestClose} aria-label={text.close}><X size={TEST_SITE ? 20 : 22} aria-hidden="true" />{TEST_SITE && <span>{text.close}</span>}</button>
         </header>
         <div className={styles.content}>
+          {TEST_SITE && <h2 id="site-menu-title">{titleOverride || text.title}</h2>}
           <nav className={styles.linkList} aria-label={text.navigation}>
             {visibleLinks.map(([href], index) => {
               if (matchesCurrentPath(href, currentPath)) return null;
@@ -161,7 +163,7 @@ export default function SiteMenuOverlay({ open, onClose, scrollPosition, current
               );
             })}
           </nav>
-          <Link className={styles.signInLink} href="/sign-in" onClick={requestClose}><span>{text.signIn}</span><ArrowRight size={20} aria-hidden="true" /></Link>
+          {!TEST_SITE && <Link className={styles.signInLink} href="/sign-in" onClick={requestClose}><span>{text.signIn}</span><ArrowRight size={20} aria-hidden="true" /></Link>}
         </div>
       </section>
     </div>
