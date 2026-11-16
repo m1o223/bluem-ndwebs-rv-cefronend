@@ -1,10 +1,17 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import * as countries from "i18n-iso-countries";
+import englishCountries from "i18n-iso-countries/langs/en.json";
+import swedishCountries from "i18n-iso-countries/langs/sv.json";
+import arabicCountries from "i18n-iso-countries/langs/ar.json";
 import worldAtlas from "world-atlas/countries-110m.json";
+import { useLocalization, type Locale } from "../localization-provider";
 import styles from "./test-globe.module.css";
+
+countries.registerLocale(englishCountries);
+countries.registerLocale(swedishCountries);
+countries.registerLocale(arabicCountries);
 
 type Topology = {
   transform: { scale: [number, number]; translate: [number, number] };
@@ -14,24 +21,19 @@ type Topology = {
       geometries: Array<{
         type: "Polygon" | "MultiPolygon";
         arcs: number[][] | number[][][];
+        id?: string;
+        properties?: { name?: string };
       }>;
     };
   };
 };
 
-const topology = worldAtlas as unknown as Topology;
-const globeRadius = 1.42;
 type GeoPoint = [number, number];
+type CountryGeometry = Topology["objects"]["countries"]["geometries"][number];
 
-function toSpherePoint(longitude: number, latitude: number, radius = globeRadius) {
-  const phi = (90 - latitude) * (Math.PI / 180);
-  const theta = (longitude + 180) * (Math.PI / 180);
-  return new THREE.Vector3(
-    -radius * Math.sin(phi) * Math.cos(theta),
-    radius * Math.cos(phi),
-    radius * Math.sin(phi) * Math.sin(theta),
-  );
-}
+const topology = worldAtlas as unknown as Topology;
+const viewBox = { x: -210, y: -110, width: 420, height: 220 };
+const maxPan = { x: 24, y: 18 };
 
 function decodeGeoArc(index: number): GeoPoint[] {
   const reversed = index < 0;
@@ -41,9 +43,10 @@ function decodeGeoArc(index: number): GeoPoint[] {
   const points = arc.map(([deltaX, deltaY]) => {
     x += deltaX;
     y += deltaY;
-    const longitude = x * topology.transform.scale[0] + topology.transform.translate[0];
-    const latitude = y * topology.transform.scale[1] + topology.transform.translate[1];
-    return [longitude, latitude] as GeoPoint;
+    return [
+      x * topology.transform.scale[0] + topology.transform.translate[0],
+      y * topology.transform.scale[1] + topology.transform.translate[1],
+    ] as GeoPoint;
   });
 
   return reversed ? points.reverse() : points;
@@ -56,20 +59,16 @@ function decodeRing(indexes: number[]): GeoPoint[] {
   });
 
   if (points.length > 1) {
-    const [firstLongitude, firstLatitude] = points[0];
-    const [lastLongitude, lastLatitude] = points[points.length - 1];
-    if (firstLongitude !== lastLongitude || firstLatitude !== lastLatitude) {
-      points.push(points[0]);
-    }
+    const first = points[0];
+    const last = points[points.length - 1];
+    if (first[0] !== last[0] || first[1] !== last[1]) points.push(first);
   }
 
   return points;
 }
 
 function unwrapRing(points: GeoPoint[], referenceLongitude = points[0]?.[0] ?? 0) {
-  if (!points.length) return points;
   let previousLongitude = referenceLongitude;
-
   return points.map(([longitude, latitude], index) => {
     let unwrappedLongitude = longitude;
     if (index === 0) {
@@ -91,187 +90,186 @@ function withoutClosingPoint(points: GeoPoint[]) {
   return first[0] === last[0] && first[1] === last[1] ? points.slice(0, -1) : points;
 }
 
-function addCountryLand(group: THREE.Group) {
-  const material = new THREE.MeshPhongMaterial({
-    color: 0xffffff,
-    emissive: 0xeaf2f3,
-    emissiveIntensity: 0.52,
-    shininess: 8,
-    specular: 0x8db9cf,
-    side: THREE.DoubleSide,
-  });
-
-  for (const geometry of topology.objects.countries.geometries) {
-    const polygons: number[][][] = geometry.type === "Polygon"
-      ? [geometry.arcs as number[][]]
-      : geometry.arcs as number[][][];
-
-    for (const polygon of polygons) {
-      const rings = polygon
-        .map(ring => withoutClosingPoint(unwrapRing(decodeRing(ring))))
-        .filter(ring => ring.length >= 4);
-      const outer = rings[0];
-      if (!outer) continue;
-
-      const shapePoints = outer.map(([longitude, latitude]) => new THREE.Vector2(longitude, latitude));
-      const triangles = THREE.ShapeUtils.triangulateShape(shapePoints, []);
-      if (!triangles.length) continue;
-
-      const positions = outer.flatMap(([longitude, latitude]) => (
-        toSpherePoint(longitude, latitude, globeRadius + 0.012).toArray()
-      ));
-      const indices = triangles.flatMap(([a, b, c]) => [a, b, c]);
-      const landGeometry = new THREE.BufferGeometry();
-      landGeometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
-      landGeometry.setIndex(indices);
-      landGeometry.computeVertexNormals();
-      group.add(new THREE.Mesh(landGeometry, material));
-    }
-  }
-
-  return material;
+function polygonArea(points: GeoPoint[]) {
+  return points.reduce((sum, [longitude, latitude], index) => {
+    const [nextLongitude, nextLatitude] = points[(index + 1) % points.length];
+    return sum + longitude * nextLatitude - nextLongitude * latitude;
+  }, 0) / 2;
 }
 
-function addCountryBoundaries(group: THREE.Group) {
-  const material = new THREE.LineBasicMaterial({
-    color: 0x718aa2,
-    transparent: true,
-    opacity: 0.7,
+function polygonCentroid(points: GeoPoint[]): GeoPoint {
+  const area = polygonArea(points);
+  if (Math.abs(area) < 0.0001) {
+    const totals = points.reduce(([longitude, latitude], point) => [longitude + point[0], latitude + point[1]], [0, 0]);
+    return [totals[0] / points.length, totals[1] / points.length];
+  }
+
+  let longitude = 0;
+  let latitude = 0;
+  points.forEach((point, index) => {
+    const next = points[(index + 1) % points.length];
+    const cross = point[0] * next[1] - next[0] * point[1];
+    longitude += (point[0] + next[0]) * cross;
+    latitude += (point[1] + next[1]) * cross;
   });
-  const usedArcs = new Set<number>();
 
-  for (const geometry of topology.objects.countries.geometries) {
-    const indexes: number[] = geometry.type === "Polygon"
-      ? (geometry.arcs as number[][]).flat()
-      : (geometry.arcs as number[][][]).flat(2);
+  return [longitude / (6 * area), latitude / (6 * area)];
+}
 
-    for (const rawIndex of indexes) {
-      const arcIndex = rawIndex < 0 ? ~rawIndex : rawIndex;
-      if (usedArcs.has(arcIndex)) continue;
-      usedArcs.add(arcIndex);
+function getCountryPolygons(geometry: CountryGeometry) {
+  return geometry.type === "Polygon"
+    ? [geometry.arcs as number[][]]
+    : geometry.arcs as number[][][];
+}
 
-      const points = decodeGeoArc(rawIndex).map(([longitude, latitude]) => (
-        toSpherePoint(longitude, latitude, globeRadius + 0.02)
-      ));
-      if (points.length < 2) continue;
-      const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), material);
-      group.add(line);
+function getCountryAnchor(geometry: CountryGeometry): GeoPoint | null {
+  let bestRing: GeoPoint[] | null = null;
+  let bestArea = 0;
+
+  for (const polygon of getCountryPolygons(geometry)) {
+    const ring = withoutClosingPoint(unwrapRing(decodeRing(polygon[0] ?? [])));
+    if (ring.length < 4) continue;
+    const area = Math.abs(polygonArea(ring));
+    if (area > bestArea) {
+      bestArea = area;
+      bestRing = ring;
     }
   }
 
-  return material;
+  if (!bestRing) return null;
+  const [longitude, latitude] = polygonCentroid(bestRing);
+  return [((longitude + 540) % 360) - 180, latitude];
+}
+
+function getCountryName(geometry: CountryGeometry, locale: Locale) {
+  const code = geometry.id ? countries.numericToAlpha2(geometry.id) : undefined;
+  return (code ? countries.getName(code, locale) : undefined) || geometry.properties?.name || geometry.id || "";
+}
+
+function ringPath(ringIndexes: number[], offset: number) {
+  const points = withoutClosingPoint(unwrapRing(decodeRing(ringIndexes)));
+  if (points.length < 3) return "";
+  return `${points.map(([longitude, latitude], index) => `${index === 0 ? "M" : "L"}${longitude + offset},${-latitude}`).join(" ")} Z`;
+}
+
+function getCountryPaths(geometry: CountryGeometry) {
+  return [-360, 0, 360].map(offset => getCountryPolygons(geometry)
+    .map(polygon => polygon.map(ring => ringPath(ring, offset)).filter(Boolean).join(" "))
+    .filter(Boolean)
+    .join(" "))
+    .filter(Boolean);
+}
+
+type CountryFeature = {
+  key: string;
+  name: string;
+  paths: string[];
+  anchor: GeoPoint;
+  area: number;
+  fontSize?: number;
+};
+
+function getCountryLabels(features: CountryFeature[]) {
+  const placed: Array<{ left: number; right: number; top: number; bottom: number }> = [];
+  return features
+    .map(feature => {
+      const fontSize = feature.area > 900 ? 3.2 : feature.area > 250 ? 2.7 : feature.area > 60 ? 2.25 : 1.75;
+      const width = Math.max(5, feature.name.length * fontSize * 0.45);
+      return { feature, fontSize, width };
+    })
+    .sort((a, b) => b.feature.area - a.feature.area)
+    .filter(({ feature, width, fontSize }) => {
+      const [x, y] = feature.anchor;
+      const box = { left: x - width / 2, right: x + width / 2, top: y - fontSize / 2, bottom: y + fontSize / 2 };
+      if (placed.some(other => box.left < other.right && box.right > other.left && box.top < other.bottom && box.bottom > other.top)) return false;
+      placed.push(box);
+      return true;
+    })
+    .map(({ feature, fontSize }) => ({ ...feature, fontSize }));
+}
+
+function buildCountryFeatures(locale: Locale) {
+  const features = topology.objects.countries.geometries.flatMap((geometry, index) => {
+    const anchor = getCountryAnchor(geometry);
+    const name = getCountryName(geometry, locale);
+    const paths = getCountryPaths(geometry);
+    if (!anchor || !name || !paths.length) return [];
+    const area = Math.max(...getCountryPolygons(geometry).map(polygon => {
+      const ring = withoutClosingPoint(unwrapRing(decodeRing(polygon[0] ?? [])));
+      return Math.abs(polygonArea(ring));
+    }));
+    return [{ key: geometry.id || `${name}-${index}`, name, paths, anchor, area }];
+  });
+
+  return getCountryLabels(features);
 }
 
 export default function TestGlobe() {
-  const viewportRef = useRef<HTMLDivElement>(null);
+  const { locale } = useLocalization();
+  const features = useMemo(() => buildCountryFeatures(locale), [locale]);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const panRef = useRef(pan);
+  const dragRef = useRef<{ pointerId: number; x: number; y: number; pan: { x: number; y: number } } | null>(null);
 
-  useEffect(() => {
-    const viewport = viewportRef.current;
-    if (!viewport) return;
+  const startDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    if (dragRef.current) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    dragRef.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, pan: panRef.current };
+  };
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
-    camera.position.set(0, 0.05, 6);
-
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.domElement.className = styles.canvas;
-    renderer.domElement.setAttribute("aria-hidden", "true");
-    viewport.appendChild(renderer.domElement);
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.45);
-    const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x174a87, 0.9);
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.5);
-    keyLight.position.set(-3, 4, 5);
-    const rimLight = new THREE.DirectionalLight(0x79c5ff, 1.1);
-    rimLight.position.set(4, -1, -4);
-    scene.add(ambientLight, hemisphereLight, keyLight, rimLight);
-
-    const globe = new THREE.Group();
-    const ocean = new THREE.Mesh(
-      new THREE.SphereGeometry(globeRadius, 64, 40),
-      new THREE.MeshPhongMaterial({
-        color: 0x8fd3ee,
-        shininess: 18,
-        specular: 0x5ba8d0,
-      }),
-    );
-    globe.add(ocean);
-
-    const atmosphere = new THREE.Mesh(
-      new THREE.SphereGeometry(globeRadius + 0.04, 64, 40),
-      new THREE.MeshBasicMaterial({
-        color: 0x79c5ff,
-        transparent: true,
-        opacity: 0.12,
-        side: THREE.BackSide,
-      }),
-    );
-    globe.add(atmosphere);
-
-    const landMaterial = addCountryLand(globe);
-    const boundaryMaterial = addCountryBoundaries(globe);
-    scene.add(globe);
-
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = false;
-    controls.enablePan = false;
-    controls.enableZoom = true;
-    controls.minDistance = 2.65;
-    controls.maxDistance = 6.2;
-    controls.rotateSpeed = 0.62;
-    controls.zoomSpeed = 0.7;
-    controls.target.set(0, 0, 0);
-    controls.update();
-
-    const resize = () => {
-      const width = Math.max(viewport.clientWidth, 1);
-      const height = Math.max(viewport.clientHeight, 1);
-      renderer.setSize(width, height, false);
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
+  const moveDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const deltaX = ((event.clientX - drag.x) / Math.max(bounds.width, 1)) * viewBox.width;
+    const deltaY = ((event.clientY - drag.y) / Math.max(bounds.height, 1)) * viewBox.height;
+    const next = {
+      x: Math.max(-maxPan.x, Math.min(maxPan.x, drag.pan.x + deltaX)),
+      y: Math.max(-maxPan.y, Math.min(maxPan.y, drag.pan.y + deltaY)),
     };
+    panRef.current = next;
+    setPan(next);
+  };
 
-    resize();
-    const observer = new ResizeObserver(resize);
-    observer.observe(viewport);
-
-    let frame = 0;
-    const render = () => {
-      controls.update();
-      renderer.render(scene, camera);
-      frame = window.requestAnimationFrame(render);
-    };
-    render();
-
-    return () => {
-      window.cancelAnimationFrame(frame);
-      observer.disconnect();
-      controls.dispose();
-      ocean.geometry.dispose();
-      (ocean.material as THREE.Material).dispose();
-      atmosphere.geometry.dispose();
-      (atmosphere.material as THREE.Material).dispose();
-      globe.traverse((child: THREE.Object3D) => {
-        if (child instanceof THREE.Line) {
-          child.geometry.dispose();
-          return;
-        }
-        if (child instanceof THREE.Mesh && child !== ocean && child !== atmosphere) {
-          child.geometry.dispose();
-        }
-      });
-      landMaterial.dispose();
-      boundaryMaterial.dispose();
-      renderer.dispose();
-      renderer.domElement.remove();
-    };
-  }, []);
+  const stopDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (dragRef.current?.pointerId === event.pointerId) dragRef.current = null;
+  };
 
   return (
-    <section className={styles.section} aria-label="Interactive globe" data-test-globe>
-      <div ref={viewportRef} className={styles.viewport} />
+    <section className={styles.section} aria-label="Interactive world map" data-test-globe>
+      <div className={styles.mapCard}>
+        <div
+          className={styles.mapFrame}
+          onPointerDown={startDrag}
+          onPointerMove={moveDrag}
+          onPointerUp={stopDrag}
+          onPointerCancel={stopDrag}
+        >
+          <svg className={styles.map} viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`} role="img" aria-label="Interactive world map">
+            <rect x={viewBox.x} y={viewBox.y} width={viewBox.width} height={viewBox.height} fill="#aee5f5" />
+            <g transform={`translate(${pan.x} ${pan.y})`}>
+              {features.flatMap(feature => feature.paths.map((path, index) => (
+                <path key={`${feature.key}-land-${index}`} d={path} className={styles.country} fillRule="evenodd">
+                  <title>{feature.name}</title>
+                </path>
+              )))}
+              {features.map(feature => feature.fontSize ? (
+                <text
+                  key={`${feature.key}-label`}
+                  x={feature.anchor[0]}
+                  y={feature.anchor[1]}
+                  className={styles.countryLabel}
+                  fontSize={feature.fontSize}
+                  direction={locale === "ar" ? "rtl" : "ltr"}
+                >
+                  {feature.name}
+                </text>
+              ) : null)}
+            </g>
+          </svg>
+        </div>
+      </div>
     </section>
   );
 }
