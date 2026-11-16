@@ -7,6 +7,7 @@ import swedishCountries from "i18n-iso-countries/langs/sv.json";
 import arabicCountries from "i18n-iso-countries/langs/ar.json";
 import worldAtlas from "world-atlas/countries-110m.json";
 import { useLocalization, type Locale } from "../localization-provider";
+import GoogleWorldMap from "./google-world-map";
 import styles from "./test-globe.module.css";
 
 countries.registerLocale(englishCountries);
@@ -204,7 +205,7 @@ function buildCountryFeatures(locale: Locale) {
   return getCountryLabels(features);
 }
 
-export default function TestGlobe() {
+function StaticWorldMap() {
   const { locale } = useLocalization();
   const features = useMemo(() => buildCountryFeatures(locale), [locale]);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -272,4 +273,16 @@ export default function TestGlobe() {
       </div>
     </section>
   );
+}
+
+const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+
+export default function TestGlobe() {
+  const [googleMapUnavailable, setGoogleMapUnavailable] = useState(false);
+
+  if (googleMapsApiKey && !googleMapUnavailable) {
+    return <GoogleWorldMap onUnavailable={() => setGoogleMapUnavailable(true)} />;
+  }
+
+  return <StaticWorldMap />;
 }

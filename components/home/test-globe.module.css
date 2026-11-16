@@ -41,6 +41,14 @@
   background: #aee5f5;
 }
 
+.googleMap {
+  width: 100%;
+  height: min(62vw, 570px);
+  min-height: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
 .country {
   fill: #fff;
   stroke: #718aa2;
@@ -72,7 +80,8 @@
   }
 
   .mapFrame,
-  .map {
+  .map,
+  .googleMap {
     min-height: 0;
   }
 }
@@ -88,7 +97,8 @@
   }
 
   .mapFrame,
-  .map {
+  .map,
+  .googleMap {
     min-height: 0;
   }
 }
