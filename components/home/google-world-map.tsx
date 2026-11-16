@@ -52,7 +52,7 @@ function loadGoogleMaps(language: string) {
   window.blueMindGoogleMapsPromise = new Promise<GoogleMapsApi>((resolve, reject) => {
     const callbackName = `blueMindGoogleMapsReady_${Date.now()}`;
     const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&v=weekly&language=${language}&callback=${callbackName}`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&v=weekly&language=${language}&loading=async&callback=${callbackName}`;
     script.async = true;
     script.defer = true;
     script.onerror = () => {
