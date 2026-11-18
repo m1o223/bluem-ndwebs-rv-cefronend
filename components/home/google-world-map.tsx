@@ -6,6 +6,8 @@ import styles from "./test-globe.module.css";
 
 type GoogleMap = {
   setOptions: (options: Record<string, unknown>) => void;
+  fitBounds: (bounds: { north: number; south: number; east: number; west: number }, padding?: number) => void;
+  getZoom: () => number | undefined;
 };
 
 type GoogleMapsApi = {
@@ -23,6 +25,7 @@ declare global {
 
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 const mapId = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID;
+const worldBounds = { north: 84, south: -58, west: -180, east: 180 };
 
 const mapStyles = [
   { featureType: "all", elementType: "labels.icon", stylers: [{ visibility: "off" }] },
@@ -82,6 +85,8 @@ export default function GoogleWorldMap({ onUnavailable }: GoogleWorldMapProps) {
 
   useEffect(() => {
     let cancelled = false;
+    let fitFrame = 0;
+    let resizeObserver: ResizeObserver | null = null;
     const language = languageCode(locale);
 
     loadGoogleMaps(language)
@@ -90,21 +95,42 @@ export default function GoogleWorldMap({ onUnavailable }: GoogleWorldMapProps) {
         const options: Record<string, unknown> = {
           center: { lat: 18, lng: 0 },
           zoom: 2,
-          minZoom: 1.5,
-          maxZoom: 4,
+          minZoom: 1,
+          maxZoom: 6,
           mapTypeId: "roadmap",
           gestureHandling: "greedy",
-          scrollwheel: false,
+          scrollwheel: true,
           disableDoubleClickZoom: true,
           keyboardShortcuts: false,
           mapTypeControl: false,
           streetViewControl: false,
           fullscreenControl: false,
           zoomControl: false,
+          restriction: { latLngBounds: worldBounds, strictBounds: true },
           styles: mapStyles,
         };
         if (mapId) options.mapId = mapId;
-        mapRef.current = new google.maps.Map(mapElement.current, options);
+        const map = new google.maps.Map(mapElement.current, options);
+        mapRef.current = map;
+
+        const fitWorld = () => {
+          window.cancelAnimationFrame(fitFrame);
+          fitFrame = window.requestAnimationFrame(() => {
+            if (cancelled || !mapElement.current) return;
+            map.fitBounds(worldBounds, 0);
+            window.setTimeout(() => {
+              if (cancelled) return;
+              const fittedZoom = map.getZoom();
+              if (typeof fittedZoom === "number") {
+                map.setOptions({ minZoom: fittedZoom });
+              }
+            }, 0);
+          });
+        };
+
+        resizeObserver = new ResizeObserver(fitWorld);
+        resizeObserver.observe(mapElement.current);
+        fitWorld();
       })
       .catch(() => {
         if (!cancelled) onUnavailable();
@@ -112,6 +138,8 @@ export default function GoogleWorldMap({ onUnavailable }: GoogleWorldMapProps) {
 
     return () => {
       cancelled = true;
+      resizeObserver?.disconnect();
+      window.cancelAnimationFrame(fitFrame);
       mapRef.current = null;
       if (mapElement.current) mapElement.current.replaceChildren();
     };

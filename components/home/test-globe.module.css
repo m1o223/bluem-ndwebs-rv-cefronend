@@ -1,28 +1,27 @@
 .section {
   position: relative;
   overflow: hidden;
-  padding: clamp(28px, 4vw, 54px) 20px clamp(42px, 5vw, 68px);
+  padding: clamp(28px, 4vw, 54px) clamp(12px, 2.4vw, 32px) clamp(42px, 5vw, 68px);
   background: #fff;
 }
 
 .mapCard {
-  width: min(100%, 1180px);
+  width: min(100%, 1480px);
   margin: 0 auto;
-  padding: clamp(12px, 2vw, 22px);
-  border: 1px solid #d7e2ec;
-  border-radius: 24px;
-  background: #fff;
-  box-shadow: 0 16px 40px rgb(23 54 93 / 9%);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .mapFrame {
   position: relative;
   width: 100%;
-  min-height: 0;
-  aspect-ratio: 1.95;
+  height: clamp(280px, 46vw, 640px);
   overflow: hidden;
-  border: 1px solid #c7d8e5;
-  border-radius: 18px;
+  border: 0;
+  border-radius: clamp(18px, 2.2vw, 30px);
   background: #aee5f5;
   cursor: grab;
   touch-action: none;
@@ -36,14 +35,14 @@
 .map {
   display: block;
   width: 100%;
-  height: min(62vw, 570px);
+  height: 100%;
   min-height: 0;
   background: #aee5f5;
 }
 
 .googleMap {
   width: 100%;
-  height: min(62vw, 570px);
+  height: 100%;
   min-height: 0;
   overflow: hidden;
   border-radius: inherit;
@@ -75,10 +74,6 @@
     padding: 28px 16px 46px;
   }
 
-  .mapCard {
-    border-radius: 20px;
-  }
-
   .mapFrame,
   .map,
   .googleMap {
@@ -89,11 +84,6 @@
 @media (max-width: 620px) {
   .section {
     padding: 22px 12px 38px;
-  }
-
-  .mapCard {
-    padding: 10px;
-    border-radius: 18px;
   }
 
   .mapFrame,

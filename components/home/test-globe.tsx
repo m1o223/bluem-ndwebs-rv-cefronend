@@ -154,7 +154,7 @@ function ringPath(ringIndexes: number[], offset: number) {
 }
 
 function getCountryPaths(geometry: CountryGeometry) {
-  return [-360, 0, 360].map(offset => getCountryPolygons(geometry)
+  return [0].map(offset => getCountryPolygons(geometry)
     .map(polygon => polygon.map(ring => ringPath(ring, offset)).filter(Boolean).join(" "))
     .filter(Boolean)
     .join(" "))
