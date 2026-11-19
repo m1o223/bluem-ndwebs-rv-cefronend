@@ -9,6 +9,9 @@ async function handler(request: NextRequest, context: { params: Promise<{ action
   if (action !== "login" && action !== "logout" && action !== "session" && action !== "overview" && action !== "messages" && action !== "messages-welcome" && action !== "messages-read" && action !== "message" && action !== "profile" && action !== "contact" && action !== "password") return result({ code: "missing" }, 404);
   const readOnly = action === "session" || action === "overview" || action === "messages";
   if (request.method !== (readOnly ? "GET" : "POST")) return result({ code: "method" }, 405);
+  if (process.env.TEST_SITE === "true" || process.env.VERCEL_ENV === "preview" || process.env.VERCEL_URL?.endsWith(".vercel.app")) {
+    return action === "logout" ? result({ success: true }) : result({ code: "test_backend_disabled" }, action === "session" ? 401 : 503);
+  }
   if (!readOnly) {
     const origin = request.headers.get("origin");
     const allowed = process.env.VERCEL ? ["https://bluemindwebservice.com", "https://www.bluemindwebservice.com"] : [request.nextUrl.origin];

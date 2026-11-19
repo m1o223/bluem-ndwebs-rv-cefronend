@@ -12,6 +12,8 @@ import RouteScrollState from "./route-scroll-state";
 import RouteTransition from "./route-transition";
 import SiteMenuOverlay from "./site-menu-overlay";
 
+const TEST_SITE = process.env.NEXT_PUBLIC_TEST_SITE === "true";
+
 export default function WebsiteShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -25,22 +27,37 @@ export default function WebsiteShell({ children }: { children: ReactNode }) {
   }, []);
   const customer = isCustomerPath(pathname);
   const excluded = pathname === "/dashboard-preview" || pathname === "/menu";
+  const testHome = TEST_SITE && pathname === "/";
 
   useEffect(() => { setMenuOpen(false); }, [pathname]);
 
   if (customer) return <><RouteScrollState /><RouteTransition>{children}</RouteTransition>{pathname !== "/blue-mind-ai" && <BottomNavigation />}</>;
   if (excluded) return children;
   if (pathname === "/sign-in" || pathname === "/login") return <main className="auth-page-main"><RouteScrollState /><RouteTransition>{children}</RouteTransition></main>;
-  if (pathname === "/ask-ai" || pathname === "/quote" || pathname === "/care") return <>
+  if (pathname === "/ask-ai") return <>
     <RouteScrollState />
     <RouteTransition>{children}</RouteTransition>
   </>;
+
+  if (pathname === "/quote" || pathname === "/care") {
+    if (!TEST_SITE) return <>
+      <RouteScrollState />
+      <RouteTransition>{children}</RouteTransition>
+    </>;
+    return <>
+      <RouteScrollState />
+      <Navigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpenWithPosition} />
+      <PageContent><RouteTransition>{children}</RouteTransition></PageContent>
+      <Footer textEffects={false} />
+      <SiteMenuOverlay open={menuOpen} onClose={closeMenu} scrollPosition={menuScrollPosition.current} currentPath={TEST_SITE ? pathname : undefined} />
+    </>;
+  }
 
   return <>
     <RouteScrollState />
     <Navigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpenWithPosition} />
     <PageContent><RouteTransition>{children}</RouteTransition></PageContent>
-    <Footer textEffects={pathname === "/"} />
-    <SiteMenuOverlay open={menuOpen} onClose={closeMenu} scrollPosition={menuScrollPosition.current} />
+    {testHome ? null : <Footer textEffects={pathname === "/"} />}
+    <SiteMenuOverlay open={menuOpen} onClose={closeMenu} scrollPosition={menuScrollPosition.current} currentPath={TEST_SITE ? pathname : undefined} />
   </>;
 }

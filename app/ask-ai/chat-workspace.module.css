@@ -78,6 +78,31 @@
 .chat .empty h1 { margin: 0; color: #000; font-size: 32px; line-height: 1.2; font-weight: 600; letter-spacing: 0; }
 .chat .empty p { margin: 12px 0 0; font-size: 17px; color: #525e6d; line-height: 1.5; }
 .chat .empty .emptyIntro { max-width: 52ch; margin-top: 6px; font-size: 14px; color: #697482; }
+.chat[data-test-site="true"] .welcomeLineViewport {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 760px);
+  height: 74px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+.chat[data-test-site="true"] .welcomeLine {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 8px;
+  color: #000;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+}
 .messageScroll { height: 100%; overflow-y: auto; overscroll-behavior: contain; overflow-anchor: none; scrollbar-gutter: stable; padding: 16px 28px 28px; visibility: hidden; }
 .messageScroll[data-active="true"] { visibility: visible; }
 .messages { display: flex; flex-direction: column; gap: 20px; width: min(100%, 800px); margin: 0 auto; }
@@ -118,6 +143,7 @@
 .replyError p { margin: 0 0 8px; }
 .replyError button { padding: 8px 12px; background: #fff; color: #142d4e; border: 1px solid #e0e5eb; border-radius: 6px; cursor: pointer; }
 .composerArea { width: min(100%, 1016px); min-width: 0; justify-self: center; padding: 16px 28px max(clamp(36px, 6dvh, 64px), env(safe-area-inset-bottom)); }
+.composerWrap { position: relative; min-width: 0; isolation: isolate; }
 .suggestionReveal { display: grid; grid-template-rows: 1fr; opacity: 1; }
 .suggestionReveal[data-hidden="true"] { grid-template-rows: 0fr; opacity: 0; visibility: hidden; }
 .suggestionClip { min-height: 0; overflow: hidden; }
@@ -141,6 +167,41 @@
 .fileStatus button { background: transparent; border: 0; color: #142d4e; text-decoration: underline; cursor: pointer; }
 .attachmentMenu p { margin: 8px 10px 4px; color: #697482; font-size: 12px; }
 .chat .status { margin: 10px 0 0; color: #697482; font-size: 12px; line-height: 1.4; text-align: center; }
+
+/* Keep the Test composer controls anchored while the input grows or the keyboard opens. */
+.chat[data-test-site="true"] .primarySend { align-self: end; margin-bottom: 0; transform: translateY(2px); transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease; }
+.chat[data-test-site="true"] .primarySend svg { width: 23px; height: 23px; stroke-width: 2.15; }
+.chat[data-test-site="true"] .primarySend:hover,
+.chat[data-test-site="true"] .primarySend:active,
+.chat[data-test-site="true"] .primarySend:focus-visible { transform: translateY(2px); }
+.chat[data-test-site="true"] .attachmentMenu {
+  left: auto;
+  right: auto;
+  inset-inline-start: 0;
+  bottom: calc(100% + 10px);
+  width: min(224px, calc(100vw - 32px));
+  padding: 7px;
+  border-color: #d7e2ee;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 14px 32px rgba(20, 45, 78, .16);
+}
+.chat[data-test-site="true"] .attachmentMenu button {
+  min-height: 42px;
+  padding: 10px 11px;
+  border-radius: 9px;
+  text-align: start;
+}
+.chat[data-test-site="true"] .attachmentMenu button:hover,
+.chat[data-test-site="true"] .attachmentMenu button:focus-visible { background: #edf5fd; }
+.chat[data-test-site="true"] .attachmentMenu button svg { flex: 0 0 auto; color: #174a87; }
+.chat[data-test-site="true"] { grid-template-columns: minmax(0, 1fr); }
+.chat[data-test-site="true"] .sidebar { display: none; }
+.chat[data-test-site="true"] .topbar { z-index: 130; pointer-events: none; }
+.chat[data-test-site="true"] .topbar .mobileMenu,
+.chat[data-test-site="true"] .topbar .accountMenuButton { position: relative; z-index: 131; pointer-events: auto; }
+.chat[data-test-site="true"] .mobileMenu { display: inline-flex; margin-right: 0; margin-inline-end: auto; }
+.chat[data-test-site="true"][dir="rtl"].accountFullScreen .topbar { right: max(16px, env(safe-area-inset-right)); left: auto; }
 .drawer { position: fixed; inset: 0 auto 0 0; width: min(288px, calc(100vw - 48px)); height: 100dvh; max-height: none; max-width: none; margin: 0; padding: 0; border: 0; background: #f7f8fa; color: #111; }
 .drawer::backdrop { background: #142d4e33; }
 .drawer[open] { }
@@ -159,6 +220,8 @@
   .empty .brandSymbol::before { mask-size: calc(72px * 1065 / 896) calc(72px * 1212 / 896); mask-position: calc(72px * -86 / 896) calc(72px * -300 / 896); }
   .chat .empty h1 { font-size: 27px; }
   .chat .empty p { font-size: 15px; margin-top: 10px; }
+  .chat[data-test-site="true"] .welcomeLineViewport { height: 84px; margin-top: 10px; }
+  .chat[data-test-site="true"] .welcomeLine { padding: 0 10px; font-size: 18px; line-height: 1.5; }
   .messageScroll { padding: 12px 16px 20px; }
   .message { max-width: 94%; padding: 12px 14px; }
   .message[data-attachments="true"] .messageText { padding: 12px 14px; }
@@ -181,6 +244,11 @@
   .accountFullScreen.chat[data-welcome="true"] .empty .brandSymbol { --logo-size: 84px; margin-bottom: 16px; }
   .accountFullScreen.chat[data-welcome="true"] .empty .brandSymbol::before { mask-size: calc(84px * 1065 / 896) calc(84px * 1212 / 896); mask-position: calc(84px * -86 / 896) calc(84px * -300 / 896); }
   .chat .empty .emptyIntro { max-width: 34ch; font-size: 13px; }
+}
+
+@media (min-width: 768px) and (max-width: 900px) and (orientation: portrait) {
+  .chat[data-test-site="true"] .welcomeLineViewport { height: 82px; }
+  .chat[data-test-site="true"] .welcomeLine { font-size: 20px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -277,3 +345,30 @@
 }
 
 .accountFullScreen.chat[data-welcome="true"] .main { grid-template-rows: minmax(0, 1fr) auto; }
+
+/* Test-only welcome glow: it sits behind the composer and disappears after the first message. */
+.chat[data-test-site="true"][data-welcome="true"] .composerWrap::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: -54px;
+  right: -24%;
+  bottom: -54px;
+  left: -24%;
+  pointer-events: none;
+  background: radial-gradient(ellipse 58% 78% at 50% 50%, rgba(23, 74, 135, .34) 0%, rgba(121, 197, 255, .25) 38%, rgba(121, 197, 255, 0) 78%);
+  filter: blur(24px);
+}
+.chat[data-test-site="true"][data-welcome="true"] .composer { position: relative; z-index: 1; }
+
+@media (max-width: 767px), (min-width: 768px) and (max-width: 900px) and (orientation: portrait) {
+  .chat[data-test-site="true"][data-welcome="true"] .composerWrap::before {
+    top: 40%;
+    bottom: auto;
+    left: -58%;
+    right: -58%;
+    height: 226px;
+    background: radial-gradient(ellipse 48% 82% at 50% 4%, rgba(23, 74, 135, .3) 0%, rgba(121, 197, 255, .3) 36%, rgba(121, 197, 255, 0) 80%);
+    filter: blur(20px);
+  }
+}

@@ -4,6 +4,7 @@ import { FILE_LIMITS } from "./attachments";
 
 const BACKEND = "https://bluemind-web-service-backend.onrender.com";
 const SITE = "https://bluemindwebservice.com";
+const TEST_SITE = process.env.TEST_SITE === "true";
 const ALLOWED_SITES = new Set([SITE, "https://bluemindwebservice.com", "https://www.bluemindwebservice.com"]);
 export const AI_VISITOR_COOKIE = "__Host-bluemind_ai_visitor";
 const CUSTOMER_COOKIE = "__Host-bluemind_customer";
@@ -23,6 +24,34 @@ function requestIdentity(request: Request, visitorToken: string) {
     ...(validToken(customer) ? { Authorization: `Bearer ${customer}` } : {}),
     ...(validToken(visitorToken) ? { "x-ai-visitor-token": visitorToken } : {}),
   };
+}
+
+function isTestRequest(request: NextRequest) {
+  return TEST_SITE || request.nextUrl.hostname.endsWith(".vercel.app");
+}
+
+function testResponse(request: NextRequest) {
+  const locale = (request.headers.get("accept-language") || "").toLowerCase();
+  const text = locale.startsWith("ar")
+    ? "رد تجريبي: أستطيع مساعدتك في ترتيب فكرة موقعك، واختيار الصفحات التي تحتاجها، وتجهيز تفاصيل مشروعك."
+    : locale.startsWith("sv")
+      ? "Testsvar: Jag kan hjälpa dig att strukturera din webbplatsidé, välja sidor och förbereda projektdetaljer."
+      : "Test response: I can help organize your website idea, choose the pages you need, and prepare your project details.";
+  const encoder = new TextEncoder();
+  const words = text.split(" ");
+  const stream = new ReadableStream<Uint8Array>({
+    async start(controller) {
+      try {
+        for (let index = 0; index < words.length; index += 1) {
+          controller.enqueue(encoder.encode(JSON.stringify({ type: "delta", text: `${index ? " " : ""}${words[index]}` }) + "\n"));
+          await new Promise(resolve => setTimeout(resolve, 28));
+        }
+        controller.enqueue(encoder.encode('{"type":"done"}\n'));
+        controller.close();
+      } catch { controller.error(new Error("test stream failed")); }
+    },
+  });
+  return new Response(stream, { status: 200, headers: { "Content-Type": "application/x-ndjson", "Cache-Control": "no-store, no-transform", "X-Content-Type-Options": "nosniff" } });
 }
 
 async function readBody(request: Request, limit: number) {
@@ -48,10 +77,16 @@ async function readBody(request: Request, limit: number) {
 
 // This route forwards only AI traffic. The OpenAI key and execution stay on Render.
 export async function proxyAi(request: NextRequest) {
+  const testSite = isTestRequest(request);
   const origin = request.headers.get("origin");
   if (request.method !== "POST") return error(405, "invalid");
-  if (!origin || (secure ? !ALLOWED_SITES.has(origin) : origin !== new URL(request.url).origin)) return error(403, "invalid");
+  const requestOrigin = new URL(request.url).origin;
+  if (!origin || (secure ? (testSite ? origin !== requestOrigin : !ALLOWED_SITES.has(origin)) : origin !== requestOrigin)) return error(403, "invalid");
   if (request.method === "POST" && request.headers.get("content-type")?.split(";")[0].trim() !== "application/json") return error(415, "invalid");
+  if (testSite) {
+    await request.clone().text().catch(() => "");
+    return testResponse(request);
+  }
   let body: string | undefined;
   let attachments = false;
   try {
@@ -101,13 +136,16 @@ export async function proxyAi(request: NextRequest) {
 }
 
 export async function proxyConversations(request: NextRequest, path = "") {
+  const testSite = TEST_SITE || request.nextUrl.hostname.endsWith(".vercel.app");
   const origin = request.headers.get("origin");
   // Same-origin GET requests commonly omit Origin (notably in Safari). The
   // backend still requires the customer/visitor identity, so an absent
   // Origin is safe here; explicit cross-site origins remain rejected.
   const fetchSite = request.headers.get("sec-fetch-site");
-  if (fetchSite === "cross-site" || (origin && (secure ? !ALLOWED_SITES.has(origin) : origin !== new URL(request.url).origin))) return error(403, "invalid");
+  const requestOrigin = new URL(request.url).origin;
+  if (fetchSite === "cross-site" || (origin && (secure ? (testSite ? origin !== requestOrigin : !ALLOWED_SITES.has(origin)) : origin !== requestOrigin))) return error(403, "invalid");
   if (request.method !== "GET") return error(405, "invalid");
+  if (testSite) return path ? error(404, "invalid") : NextResponse.json({ conversations: [] }, { headers: { "Cache-Control": "no-store, private" } });
   const visitorToken = cookieValue(request, AI_VISITOR_COOKIE);
   try {
     const response = await fetch(`${BACKEND}/api/ai/conversations${path}`, {

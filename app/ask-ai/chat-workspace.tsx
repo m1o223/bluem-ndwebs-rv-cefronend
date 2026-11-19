@@ -16,6 +16,7 @@ import { FILE_LIMITS, documentAccept, imageAccept, readAttachment, wireAttachmen
 import { attachmentErrorMessage, chatCopy } from "./chat-copy";
 import { useLocalization } from "../../components/localization-provider";
 import LanguageSelector from "../../components/language-selector";
+import SiteMenuOverlay from "../../components/site-menu-overlay";
 
 type Message = { id: string; text: string; role: "user" | "assistant"; complete: boolean; stopped?: boolean; feedback?: Feedback; card?: MessageCardContent; attachments?: LocalAttachment[] };
 type GuidedSource = "what-we-build";
@@ -24,7 +25,32 @@ type RunningReply = {
   conversationId: string; controller: AbortController; assistantId: string; replaced?: Message;
   timeout?: number; thinkingTimer?: number; networkDone: boolean; visible: string;
 };
+const TEST_SITE = process.env.NEXT_PUBLIC_TEST_SITE === "true" || (typeof window !== "undefined" && window.location.hostname.endsWith(".vercel.app"));
+const TEST_STORAGE_KEY = "bluemind-test-ai-conversations";
 const THINKING_MIN_MS = 2000;
+const testWelcomeLines: Record<"en" | "sv" | "ar", string[]> = {
+  en: [
+    "How can I help you create your website?",
+    "Shall we plan your website together?",
+    "Let’s organize your ideas and decide what your website needs.",
+    "Do you want a website where customers can place orders?",
+    "I can help you prepare your website request.",
+  ],
+  sv: [
+    "Hur kan jag hjälpa dig att skapa din webbplats?",
+    "Ska vi planera din webbplats tillsammans?",
+    "Vi går igenom dina idéer och vad din webbplats behöver.",
+    "Vill du ha en webbplats där dina kunder kan beställa?",
+    "Jag kan hjälpa dig att förbereda din beställning.",
+  ],
+  ar: [
+    "كيف يمكنني مساعدتك في إنشاء موقعك؟",
+    "هل نضع خطة لموقعك معًا؟",
+    "لنرتّب أفكارك ونحدّد ما يحتاجه موقعك.",
+    "هل تريد موقعًا يستقبل طلبات عملائك؟",
+    "يمكنني مساعدتك في تجهيز طلب إنشاء موقعك.",
+  ],
+};
 const guidedWelcome: Record<"en" | "ar" | "sv", string> = {
   en: "What website idea do you have in mind? Tell me about it in your own way. We’ll organize it together, define what you want the website to include, and prepare your request step by step.",
   ar: "شو فكرة الموقع اللي ببالك؟ احكيلي عنها بطريقتك. منرتّبها سوا، ومنحدّد شو بدك يكون بالموقع، ومنجهّز طلبك خطوة بخطوة.",
@@ -41,8 +67,9 @@ function serverConversation(value: unknown): Conversation | null {
   if (!Array.isArray(rawMessages)) return null;
   const messages = rawMessages.flatMap((item, index): Message[] => {
     if (!item || typeof item !== "object") return [];
-    const message = item as { id?: unknown; role?: unknown; content?: unknown; attachments?: unknown; card?: unknown };
-    if ((message.role !== "user" && message.role !== "assistant") || typeof message.content !== "string") return [];
+    const message = item as { id?: unknown; role?: unknown; content?: unknown; text?: unknown; attachments?: unknown; card?: unknown };
+    const content = typeof message.content === "string" ? message.content : typeof message.text === "string" ? message.text : null;
+    if ((message.role !== "user" && message.role !== "assistant") || content === null) return [];
     const attachments = Array.isArray(message.attachments) ? message.attachments.flatMap((file, fileIndex) => {
       if (!file || typeof file !== "object") return [];
       const value = file as { name?: unknown; type?: unknown; data?: unknown };
@@ -50,7 +77,7 @@ function serverConversation(value: unknown): Conversation | null {
       return [{ id: typeof message.id === "string" ? `${message.id}-${fileIndex}` : crypto.randomUUID(), name: value.name, type: value.type, data: value.data, size: 0 } as LocalAttachment];
     }) : [];
     const card = message.role === "assistant" ? validateMessageCard(message.card) : null;
-    return [{ id: typeof message.id === "string" ? message.id : crypto.randomUUID(), role: message.role, text: message.content, complete: true, ...(attachments.length ? { attachments } : {}), ...(card ? { card } : {}) }];
+    return [{ id: typeof message.id === "string" ? message.id : crypto.randomUUID(), role: message.role, text: content, complete: true, ...(attachments.length ? { attachments } : {}), ...(card ? { card } : {}) }];
   });
   if (!messages.length) return null;
   const id = typeof (value as { id?: unknown }).id === "string" ? (value as { id: string }).id : "";
@@ -93,6 +120,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
   const { locale } = useLocalization();
   const copy = chatCopy[locale];
   const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [testStorageReady, setTestStorageReady] = useState(!TEST_SITE);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [accountAuthenticated, setAccountAuthenticated] = useState<boolean | null>(null);
   const [draft, setDraft] = useState("");
@@ -100,7 +128,9 @@ export default function ChatWorkspace({ available, embedded = false, account = f
   const [collapsed, setCollapsed] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerClosing, setDrawerClosing] = useState(false);
+  const [siteMenuOpen, setSiteMenuOpen] = useState(false);
   const [attachmentsOpen, setAttachmentsOpen] = useState(false);
+  const [welcomeIndex, setWelcomeIndex] = useState(0);
   const [files, setFiles] = useState<LocalAttachment[]>([]);
   const [fileError, setFileError] = useState("");
   const [preparing, setPreparing] = useState<number | null>(null);
@@ -123,6 +153,24 @@ export default function ChatWorkspace({ available, embedded = false, account = f
   const attachmentArea = useRef<HTMLDivElement>(null);
   const attachmentTrigger = useRef<HTMLButtonElement>(null);
   const menuId = useId();
+  const closeSiteMenu = useCallback(() => setSiteMenuOpen(false), []);
+
+  useEffect(() => {
+    if (!TEST_SITE) return;
+    try {
+      const value = JSON.parse(window.localStorage.getItem(TEST_STORAGE_KEY) || "[]");
+      if (Array.isArray(value)) setConversations(value.flatMap(item => {
+        const conversation = serverConversation(item);
+        return conversation ? [conversation] : [];
+      }));
+    } catch { /* A blocked local storage should not prevent the test chat from opening. */ }
+    setTestStorageReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!TEST_SITE || !testStorageReady) return;
+    try { window.localStorage.setItem(TEST_STORAGE_KEY, JSON.stringify(conversations)); } catch { /* Storage is optional in private browsing. */ }
+  }, [conversations, testStorageReady]);
 
   function clearDrawerCloseTimer() {
     if (drawerCloseTimer.current !== null) {
@@ -191,6 +239,15 @@ export default function ChatWorkspace({ available, embedded = false, account = f
       else sessionStorage.removeItem("bluemind-ai-draft");
     } catch {}
   }, [draft, draftReady]);
+
+  useEffect(() => {
+    if (!TEST_SITE) return;
+    setWelcomeIndex(0);
+    const timer = window.setInterval(() => {
+      setWelcomeIndex(index => (index + 1) % testWelcomeLines[locale].length);
+    }, 4000);
+    return () => window.clearInterval(timer);
+  }, [locale]);
 
   const active = conversations.find(conversation => conversation.id === activeId);
   const messages = active?.messages ?? [];
@@ -266,6 +323,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
   }, []);
 
   useEffect(() => {
+    if (TEST_SITE) return;
     if (accountAuthenticated !== true || new URLSearchParams(window.location.search).has("conversation")) return;
     let active = true;
     fetch("/api/ai/conversations", { credentials: "same-origin", cache: "no-store" }).then(async response => {
@@ -565,8 +623,8 @@ export default function ChatWorkspace({ available, embedded = false, account = f
     <div className={styles.thinkingIndicator} data-ready={contentArrived && thinkingReply?.ready} aria-hidden="true"><span className={styles.thinkingDot} /></div>
   </div>;
 
-  return <div ref={root} className={`${styles.chat} ${embedded ? styles.embedded : ""} ${account ? styles.account : ""} ${accountFullScreen ? styles.accountFullScreen : ""}`} data-embedded={embedded || undefined} data-account={account || undefined} data-account-fullscreen={accountFullScreen || undefined} data-collapsed={collapsed} data-welcome={!hasMessages} data-no-translate dir={locale === "ar" ? "rtl" : "ltr"}>
-    <aside id="ai-chat-sidebar" className={styles.sidebar} aria-label={copy.chatSidebar}>
+  return <div ref={root} className={`${styles.chat} ${embedded ? styles.embedded : ""} ${account ? styles.account : ""} ${accountFullScreen ? styles.accountFullScreen : ""}`} data-embedded={embedded || undefined} data-account={account || undefined} data-account-fullscreen={accountFullScreen || undefined} data-collapsed={collapsed} data-welcome={!hasMessages} data-test-site={TEST_SITE || undefined} data-no-translate dir={locale === "ar" ? "rtl" : "ltr"}>
+    {!TEST_SITE && <aside id="ai-chat-sidebar" className={styles.sidebar} aria-label={copy.chatSidebar}>
       <div className={styles.sidebarTop}>
         <span className={styles.sidebarTitle}>BlueMind AI</span>
         <button className={`${styles.iconControl} ${styles.sidebarToggle}`} type="button" onClick={() => setCollapsed(value => !value)}
@@ -575,9 +633,9 @@ export default function ChatWorkspace({ available, embedded = false, account = f
         {collapsed ? <PanelLeftOpen className={styles.toggleGlyph} size={20} aria-hidden="true" /> : <PanelLeftClose size={20} aria-hidden="true" />}
       </button></div>
           <History {...historyProps} compact={collapsed} />
-    </aside>
+    </aside>}
 
-    <dialog id="ai-chat-history" ref={drawer} className={styles.drawer} aria-label={copy.chatSidebar} data-open={drawerOpen ? "true" : "false"} data-closing={drawerClosing ? "true" : "false"} onClose={() => { setDrawerOpen(false); setDrawerClosing(false); }} onCancel={event => {
+    {!TEST_SITE && <dialog id="ai-chat-history" ref={drawer} className={styles.drawer} aria-label={copy.chatSidebar} data-open={drawerOpen ? "true" : "false"} data-closing={drawerClosing ? "true" : "false"} onClose={() => { setDrawerOpen(false); setDrawerClosing(false); }} onCancel={event => {
       if (accountFullScreen) {
         event.preventDefault();
         closeDrawer();
@@ -599,11 +657,13 @@ export default function ChatWorkspace({ available, embedded = false, account = f
         </div>
         <History {...historyProps} accountMode={accountFullScreen} />
       </div>
-    </dialog>
+    </dialog>}
 
     <main className={styles.main}>
       <div className={styles.topbar}>
-        {accountFullScreen ? <>
+        {TEST_SITE ? <>
+          <button className={`${styles.iconControl} ${accountFullScreen ? styles.accountMenuButton : styles.mobileMenu}`} type="button" aria-label={siteMenuOpen ? copy.closeSidebar : copy.menu} title={siteMenuOpen ? copy.closeSidebar : copy.menu} aria-expanded={siteMenuOpen} aria-controls="site-navigation-panel" onClick={() => setSiteMenuOpen(open => !open)}><Menu size={21} aria-hidden="true" /></button>
+        </> : accountFullScreen ? <>
           <button className={`${styles.iconControl} ${styles.accountMenuButton}`} type="button" aria-label={drawerOpen ? copy.closeSidebar : copy.menu} title={drawerOpen ? copy.closeSidebar : copy.menu} aria-expanded={drawerOpen} aria-controls="ai-chat-history" onClick={drawerOpen ? closeDrawer : openDrawer}><Menu size={21} aria-hidden="true" /></button>
         </> : <>
           <button className={`${styles.iconControl} ${styles.mobileMenu}`} type="button" aria-label={copy.openSidebar} title={copy.openSidebar} onClick={openDrawer}><Menu size={22} /></button>
@@ -617,8 +677,12 @@ export default function ChatWorkspace({ available, embedded = false, account = f
         <div className={styles.empty} data-hidden={hasMessages} aria-hidden={hasMessages} inert={hasMessages}>
           <BlueMindLogo className={styles.brandSymbol} solid priority />
           <h1>BlueMind AI</h1>
-          <p>{copy.heading}</p>
-          <p className={styles.emptyIntro}>{copy.intro}</p>
+          {TEST_SITE
+            ? <div className={styles.welcomeLineViewport} aria-live="polite">
+              <p className={styles.welcomeLine} dir={locale === "ar" ? "rtl" : "ltr"}>{testWelcomeLines[locale][welcomeIndex]}</p>
+            </div>
+            : <p>{copy.heading}</p>}
+          {!TEST_SITE && <p className={styles.emptyIntro}>{copy.intro}</p>}
         </div>
         <div ref={history} className={styles.messageScroll} data-active={hasMessages} tabIndex={hasMessages ? 0 : -1} aria-label={copy.message}>
           <div ref={messageList} className={styles.messages} role="log" aria-label={copy.conversation} aria-live="polite" aria-relevant="additions text">
@@ -643,6 +707,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
             {copy.suggestions.map(suggestion => <button className={styles.chip} key={suggestion} type="button" onClick={() => { setDraft(suggestion); input.current?.focus(); }}>{suggestion}</button>)}
           </div></div>
         </div>
+        <div className={styles.composerWrap}>
         <form ref={composer} className={styles.composer} data-files={files.length > 0} onSubmit={event => { event.preventDefault(); send(); }}>
           {files.length > 0 && <div className={styles.attachmentTray}><AttachmentList files={files} onRemove={id => setFiles(current => current.filter(file => file.id !== id))} onOpen={setViewing} /></div>}
           <input ref={imagePicker} type="file" accept={imageAccept} multiple hidden aria-label={copy.addImage} onChange={event => { void selectFiles(event.target.files); event.target.value = ""; }} />
@@ -651,10 +716,10 @@ export default function ChatWorkspace({ available, embedded = false, account = f
           <div className={styles.attachmentArea} ref={attachmentArea}>
             <button ref={attachmentTrigger} className={styles.iconControl} type="button" aria-label={copy.addAttachment} title={copy.addAttachment} aria-expanded={attachmentsOpen} aria-controls={menuId} onClick={() => setAttachmentsOpen(value => !value)}><Plus size={22} /></button>
             {attachmentsOpen && <div className={styles.attachmentMenu} id={menuId} role="group" aria-label={copy.addAttachment}>
-              <button type="button" disabled={preparing !== null} onClick={() => imagePicker.current?.click()}><ImageIcon size={18} />{copy.addImage}</button>
-              <button type="button" disabled={preparing !== null} onClick={() => documentPicker.current?.click()}><File size={18} />{copy.addFile}</button>
               <button type="button" disabled={preparing !== null} onClick={() => cameraPicker.current?.click()}><Camera size={18} />{copy.takePhoto}</button>
-              <p>{copy.attachmentInfo}</p>
+              <button type="button" disabled={preparing !== null} onClick={() => documentPicker.current?.click()}><File size={18} />{copy.addFile}</button>
+              <button type="button" disabled={preparing !== null} onClick={() => imagePicker.current?.click()}><ImageIcon size={18} />{copy.addImage}</button>
+              {!TEST_SITE && <p>{copy.attachmentInfo}</p>}
             </div>}
           </div>
           <textarea ref={input} className={styles.input} rows={1} aria-label={copy.message} placeholder={copy.placeholder} value={draft}
@@ -666,11 +731,13 @@ export default function ChatWorkspace({ available, embedded = false, account = f
             ? <button key="stop" className={styles.primarySend} type="button" onClick={stopReply} aria-label={copy.stopResponse} title={copy.stopResponse}><Square size={16} fill="currentColor" aria-hidden="true" /></button>
             : <button key="send" className={styles.primarySend} type="submit" disabled={(!draft.trim() && !files.length) || preparing !== null} aria-label={copy.sendMessage} title={copy.sendMessage}><ArrowUp size={21} aria-hidden="true" /></button>}
         </form>
+        </div>
         {preparing !== null && <div className={styles.fileStatus} role="status">{copy.preparing}: {preparing}% <button type="button" onClick={() => { fileRead.current?.abort(); fileRead.current = null; setPreparing(null); }}>{copy.cancel}</button></div>}
         {fileError && <div className={styles.fileStatus} role="alert">{fileError}</div>}
-        <p className={styles.status} role="status">{available ? copy.availableStatus : copy.unavailableStatus}</p>
+        {!TEST_SITE && <p className={styles.status} role="status">{available ? copy.availableStatus : copy.unavailableStatus}</p>}
       </div>
     </main>
+    {TEST_SITE && <SiteMenuOverlay open={siteMenuOpen} onClose={closeSiteMenu} currentPath={accountFullScreen ? "/blue-mind-ai" : "/ask-ai"} titleOverride="BlueMind AI" side={locale === "ar" ? "right" : "left"} />}
     {viewing && <ImageViewer file={viewing} onClose={() => setViewing(null)} />}
   </div>;
 }

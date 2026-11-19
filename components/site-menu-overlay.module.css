@@ -13,12 +13,14 @@
 
 .overlay[data-closing="true"] { animation: backdrop-out 240ms cubic-bezier(.22, .8, .28, 1) both; }
 
+.overlay[data-side="left"] { justify-content: flex-start; }
+
 .panel {
   width: min(460px, calc(100vw - 16px));
   height: 100dvh;
   display: flex;
   flex-direction: column;
-  padding: 24px 28px calc(30px + env(safe-area-inset-bottom));
+  padding: calc(24px + var(--website-header-height, 86px)) 28px calc(30px + env(safe-area-inset-bottom));
   border-inline-start: 1px solid rgba(186, 198, 212, .9);
   border-radius: 24px 0 0 24px;
   background: rgba(255, 255, 255, .96);
@@ -30,6 +32,15 @@
 }
 
 .overlay[data-closing="true"] .panel { animation: panel-out 240ms cubic-bezier(.22, .8, .28, 1) both; pointer-events: none; }
+
+.overlay[data-side="left"] .panel {
+  border-inline-start: 0;
+  border-inline-end: 1px solid rgba(186, 198, 212, .9);
+  border-radius: 0 24px 24px 0;
+  box-shadow: 18px 0 60px rgba(20, 45, 78, .18);
+  animation-name: panel-in-left;
+}
+.overlay[data-side="left"][data-closing="true"] .panel { animation-name: panel-out-left; }
 
 .header { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex: 0 0 auto; }
 .header h2 { margin: 0; color: #171a20; font-size: clamp(30px, 4vw, 42px); font-weight: 600; line-height: 1.05; letter-spacing: -1px; }
@@ -47,6 +58,8 @@
 @keyframes backdrop-out { from { opacity: 1; } to { opacity: 0; } }
 @keyframes panel-in { from { transform: translate3d(100%, 0, 0); } to { transform: translate3d(0, 0, 0); } }
 @keyframes panel-out { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(100%, 0, 0); } }
+@keyframes panel-in-left { from { transform: translate3d(-100%, 0, 0); } to { transform: translate3d(0, 0, 0); } }
+@keyframes panel-out-left { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-100%, 0, 0); } }
 
 @media (prefers-reduced-motion: reduce) {
   .overlay,
@@ -56,13 +69,29 @@
 }
 
 @media (max-width: 620px) {
-  .panel { width: min(420px, calc(100vw - 10px)); padding: 18px 18px calc(24px + env(safe-area-inset-bottom)); border-radius: 20px 0 0 20px; }
+  .panel { width: min(420px, calc(100vw - 10px)); padding: calc(18px + var(--website-header-height, 86px)) 18px calc(24px + env(safe-area-inset-bottom)); border-radius: 20px 0 0 20px; }
+  .overlay[data-side="left"] .panel { border-radius: 0 20px 20px 0; }
   .content { margin-top: 22px; }
   .header h2 { font-size: 32px; }
   .linkList a { min-height: 60px; font-size: 16px; }
 }
 
-/* Sign in is part of the mobile/tablet menu, while desktop keeps its header link. */
+/* Test restores the earlier shared menu layout without changing production. */
+.overlay[data-test-site="true"] .panel {
+  display: block;
+  padding: 24px 28px calc(30px + env(safe-area-inset-bottom));
+}
+.overlay[data-test-site="true"] .brand { display: inline-flex; text-decoration: none; }
+.overlay[data-test-site="true"] .content { min-height: auto; margin: clamp(62px, 12vh, 116px) 0 0; overflow: visible; }
+.overlay[data-test-site="true"] .content h2 { margin: 0 0 28px; color: #171a20; font-size: clamp(32px, 5vw, 46px); font-weight: 600; line-height: 1.05; letter-spacing: -1px; }
+
 @media (max-width: 1023px), (hover: none) and (pointer: coarse) {
   .signInLink { display: flex; }
+}
+
+@media (max-width: 620px) {
+  .overlay[data-test-site="true"] .panel { padding: 18px 18px calc(24px + env(safe-area-inset-bottom)); }
+  .overlay[data-test-site="true"] .content { margin-top: 72px; }
+  .overlay[data-test-site="true"] .content h2 { margin-bottom: 22px; font-size: 32px; }
+  .overlay[data-test-site="true"] .signInLink { display: none; }
 }

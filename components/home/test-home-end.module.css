@@ -1,0 +1,90 @@
+.endFlow {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    #fff 0%,
+    #f5f8fc 8%,
+    #d9ecfb 30%,
+    #8bcfff 66%,
+    #174a87 88%,
+    #17365d 100%
+  );
+}
+
+.endFlow :global([data-home-faq]) {
+  margin-top: -18px;
+  padding-top: 0;
+}
+
+.endFlow :global([data-home-faq]) > div {
+  padding-bottom: 38px;
+}
+
+.endFlow :global([data-faq-list]) {
+  margin-top: 28px;
+  padding-top: 24px;
+}
+
+.section {
+  position: relative;
+  padding: 18px 24px 96px;
+}
+
+.footerCard.footerCard {
+  width: min(100%, 1220px);
+  margin: 0 auto;
+  padding: 54px 0 30px;
+  border: 1px solid rgb(203 213 225 / 86%);
+  border-radius: 32px;
+  background: #fff;
+  box-shadow: 0 28px 64px rgb(23 54 93 / 24%);
+  text-align: start;
+}
+
+.footerInner {
+  width: min(100% - 64px, 1160px);
+  margin-inline: auto;
+}
+
+.brandLink {
+  display: inline-flex;
+  text-decoration: none;
+}
+
+.footerCard :global(a) {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1050px) {
+  .section { padding-inline: 18px; }
+  .footerInner { width: min(100% - 48px, 900px); }
+}
+
+@media (max-width: 620px) {
+  .endFlow :global([data-home-faq]) {
+    margin-top: -10px;
+  }
+
+  .endFlow :global([data-home-faq]) > div {
+    padding-bottom: 26px;
+  }
+
+  .endFlow :global([data-faq-list]) {
+    margin-top: 20px;
+    padding-top: 20px;
+  }
+
+  .section {
+    padding: 12px 12px calc(112px + env(safe-area-inset-bottom));
+  }
+
+  .footerCard.footerCard {
+    padding: 34px 0 24px;
+    border-radius: 24px;
+  }
+
+  .footerInner {
+    width: min(100% - 36px, 520px);
+  }
+}

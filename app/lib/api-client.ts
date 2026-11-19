@@ -1,8 +1,10 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "");
+const TEST_SITE = process.env.NEXT_PUBLIC_TEST_SITE === "true" || (typeof window !== "undefined" && window.location.hostname.endsWith(".vercel.app"));
 
 export type ApiResult = { success: true; message: string } | { success: false; error?: string; fields?: Record<string, string> };
 
 export async function postApi(path: "/api/contact" | "/api/quote", payload: Record<string, string | undefined>): Promise<ApiResult> {
+  if (TEST_SITE) return { success: false, error: "Test environment: this form is not connected to live email or customer data." };
   if (!API_BASE_URL) {
     return { success: false, error: "Service is not configured yet. Please try again later." };
   }
@@ -65,10 +67,12 @@ async function postJson<T>(path: string, payload: Record<string, unknown>, fallb
 }
 
 export async function sendEmailVerificationCode(payload: { email: string; checkoutAttemptId: string; language: "en" | "sv" | "ar" }): Promise<EmailVerificationSendResult> {
+  if (TEST_SITE) return { success: false, error: "Test environment: email verification is disabled." };
   return postJson<Extract<EmailVerificationSendResult, { success: true }>>("/api/order-email-verification/send", payload, "We could not send the verification code. Please try again.") as Promise<EmailVerificationSendResult>;
 }
 
 export async function verifyEmailVerificationCode(payload: { email: string; checkoutAttemptId: string; code: string }): Promise<EmailVerificationVerifyResult> {
+  if (TEST_SITE) return { success: false, error: "Test environment: email verification is disabled." };
   return postJson<Extract<EmailVerificationVerifyResult, { success: true }>>("/api/order-email-verification/verify", payload, "We could not verify the code. Please try again.") as Promise<EmailVerificationVerifyResult>;
 }
 
@@ -97,6 +101,7 @@ export type StripeCheckoutStatus =
   | { success: false; error: string };
 
 export async function createStripeCheckout(payload: StripeCheckoutPayload): Promise<StripeCheckoutResult> {
+  if (TEST_SITE) return { success: false, error: "Test environment: no live payment checkout is connected." };
   if (!API_BASE_URL) return { success: false, error: "Service is not configured yet. Please try again later." };
 
   try {
@@ -120,6 +125,7 @@ export async function createStripeCheckout(payload: StripeCheckoutPayload): Prom
 }
 
 export async function getStripeCheckoutStatus(sessionId: string): Promise<StripeCheckoutStatus> {
+  if (TEST_SITE) return { success: false, error: "Test environment: live checkout status is disabled." };
   if (!API_BASE_URL) return { success: false, error: "Service is not configured yet. Please try again later." };
 
   try {
@@ -187,6 +193,7 @@ export type CareCancelResult =
   | { success: false; error: string; fields?: Record<string, string> };
 
 export async function createCareStripeCheckout(payload: CareCheckoutPayload): Promise<CareCheckoutResult> {
+  if (TEST_SITE) return { success: false, error: "Test environment: no live subscription checkout is connected." };
   if (!API_BASE_URL) return { success: false, error: "Service is not configured yet. Please try again later." };
   try {
     const response = await fetch(`${API_BASE_URL}/api/care/stripe/checkout`, {
@@ -209,6 +216,7 @@ export async function createCareStripeCheckout(payload: CareCheckoutPayload): Pr
 }
 
 export async function getCareCheckoutStatus(sessionId: string): Promise<CareCheckoutStatus> {
+  if (TEST_SITE) return { success: false, error: "Test environment: live subscription status is disabled." };
   if (!API_BASE_URL) return { success: false, error: "Service is not configured yet. Please try again later." };
   try {
     const response = await fetch(`${API_BASE_URL}/api/care/stripe/sessions/${encodeURIComponent(sessionId)}`, {
@@ -226,6 +234,7 @@ export async function getCareCheckoutStatus(sessionId: string): Promise<CareChec
 }
 
 export async function loadCareSubscriptions(payload: { email: string; checkoutAttemptId: string; emailVerificationToken: string }): Promise<CareManageResult> {
+  if (TEST_SITE) return { success: false, error: "Test environment: live subscription data is disabled." };
   return postJson<Extract<CareManageResult, { success: true }>>("/api/care/subscriptions/manage", payload, "We could not load your subscriptions. Please try again.") as Promise<CareManageResult>;
 }
 
@@ -237,5 +246,6 @@ export async function cancelCareSubscription(payload: {
   reason: string;
   reasonText?: string;
 }): Promise<CareCancelResult> {
+  if (TEST_SITE) return { success: false, error: "Test environment: live subscription changes are disabled." };
   return postJson<Extract<CareCancelResult, { success: true }>>("/api/care/subscriptions/cancel", payload, "We could not update your subscription. Please try again.") as Promise<CareCancelResult>;
 }

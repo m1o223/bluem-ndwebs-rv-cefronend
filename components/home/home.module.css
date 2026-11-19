@@ -48,6 +48,8 @@
   border-bottom: 1px solid var(--bluemind-divider);
   background: #fff;
 }
+.header[data-menu-open="true"] { z-index: 130; pointer-events: none; }
+.header[data-menu-open="true"] .menuToggle { position: relative; z-index: 131; pointer-events: auto; }
 .header[data-scrolled="true"] { box-shadow: 0 4px 18px #142d4e0a; }
 :global(html:has(header[data-scrolled])) { scroll-padding-top: calc(var(--website-header-height, 87px) + 12px); }
 .headerInner {
