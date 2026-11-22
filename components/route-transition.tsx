@@ -90,7 +90,7 @@ export default function RouteTransition({ children }: { children: ReactNode }) {
   }, [pathname]);
 
   return (
-    <div ref={stage} className={`${styles.stage} ${revealStyles.stage}`} data-route={pathname}>
+      <div ref={stage} className={`${styles.stage} ${revealStyles.stage}`} data-route={pathname} data-reviews-route={pathname === "/reviews" ? "true" : undefined}>
       {children}
     </div>
   );
