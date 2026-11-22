@@ -1,6 +1,6 @@
 "use client";
 
-import { Star, UserRound, X } from "lucide-react";
+import { Pencil, Star, UserRound, X } from "lucide-react";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useLocalization, type Locale } from "../localization-provider";
 import styles from "./reviews-page.module.css";
@@ -15,10 +15,12 @@ type DemoReview = {
 
 type PublicReview = {
   id: string;
+  name: string;
   rating: number;
   comment: string;
   locale: Locale;
   createdAt: string;
+  canEdit: boolean;
 };
 
 type ReviewsCopy = {
@@ -26,8 +28,12 @@ type ReviewsCopy = {
   description: string;
   addReview: string;
   modalTitle: string;
+  usernameLabel: string;
+  usernamePlaceholder: string;
   commentPlaceholder: string;
   publishReview: string;
+  editReview: string;
+  saveReview: string;
   close: string;
   ratingLabel: string;
   visitor: string;
@@ -35,6 +41,7 @@ type ReviewsCopy = {
   published: string;
   loading: string;
   genericError: string;
+  validationError: string;
   demoNotice: string;
   cards: DemoReview[];
 };
@@ -45,8 +52,12 @@ const copy: Record<Locale, ReviewsCopy> = {
     description: "Read what visitors have shared and add your own experience.",
     addReview: "Add your review",
     modalTitle: "Add your review",
+    usernameLabel: "Username",
+    usernamePlaceholder: "Enter your username",
     commentPlaceholder: "Write your comment...",
     publishReview: "Publish your review",
+    editReview: "Edit my review",
+    saveReview: "Save changes",
     close: "Close",
     ratingLabel: "Rating: {count} out of 5",
     visitor: "Website visitor",
@@ -54,6 +65,7 @@ const copy: Record<Locale, ReviewsCopy> = {
     published: "Published review",
     loading: "Loading reviews...",
     genericError: "We could not publish your review. Please try again.",
+    validationError: "Enter a username, choose a rating, and write a comment before publishing.",
     demoNotice: "Demo content - not a real review",
     cards: [
       { id: "demo-cafe", name: "Demo Caf\u00e9", service: "Restaurant website", quote: "A clear, welcoming layout made the menu easy to explore.", rating: 5 },
@@ -69,8 +81,12 @@ const copy: Record<Locale, ReviewsCopy> = {
     description: "L\u00e4s vad bes\u00f6kare har delat och l\u00e4gg till din egen upplevelse.",
     addReview: "L\u00e4gg till ditt omd\u00f6me",
     modalTitle: "L\u00e4gg till ditt omd\u00f6me",
+    usernameLabel: "Anv\u00e4ndarnamn",
+    usernamePlaceholder: "Ange ditt anv\u00e4ndarnamn",
     commentPlaceholder: "Skriv din kommentar...",
     publishReview: "Publicera ditt omd\u00f6me",
+    editReview: "Redigera mitt omd\u00f6me",
+    saveReview: "Spara \u00e4ndringar",
     close: "St\u00e4ng",
     ratingLabel: "Betyg: {count} av 5",
     visitor: "Webbplatsbes\u00f6kare",
@@ -78,6 +94,7 @@ const copy: Record<Locale, ReviewsCopy> = {
     published: "Publicerat omd\u00f6me",
     loading: "Laddar recensioner...",
     genericError: "Det gick inte att publicera ditt omd\u00f6me. F\u00f6rs\u00f6k igen.",
+    validationError: "Ange ett anv\u00e4ndarnamn, v\u00e4lj ett betyg och skriv en kommentar innan du publicerar.",
     demoNotice: "Demoinneh\u00e5ll - inte ett riktigt omd\u00f6me",
     cards: [
       { id: "demo-cafe", name: "Demo Caf\u00e9", service: "Restaurangwebbplats", quote: "En tydlig och v\u00e4lkomnande layout gjorde menyn enkel att utforska.", rating: 5 },
@@ -93,8 +110,12 @@ const copy: Record<Locale, ReviewsCopy> = {
     description: "\u0627\u0642\u0631\u0623 \u062a\u062c\u0627\u0631\u0628 \u0627\u0644\u0632\u0648\u0627\u0631 \u0648\u0623\u0636\u0641 \u062a\u062c\u0631\u0628\u062a\u0643.",
     addReview: "\u0623\u0636\u0641 \u062a\u0639\u0644\u064a\u0642\u0643",
     modalTitle: "\u0623\u0636\u0641 \u062a\u0639\u0644\u064a\u0642\u0643",
+    usernameLabel: "\u0627\u0633\u0645 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645",
+    usernamePlaceholder: "\u0627\u0643\u062a\u0628 \u0627\u0633\u0645 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645",
     commentPlaceholder: "\u0627\u0643\u062a\u0628 \u062a\u0639\u0644\u064a\u0642\u0643...",
     publishReview: "\u0627\u0646\u0634\u0631 \u062a\u0639\u0644\u064a\u0642\u0643",
+    editReview: "\u062a\u0639\u062f\u064a\u0644 \u062a\u0642\u064a\u064a\u0645\u064a",
+    saveReview: "\u062d\u0641\u0638 \u0627\u0644\u062a\u0639\u062f\u064a\u0644\u0627\u062a",
     close: "\u0625\u063a\u0644\u0627\u0642",
     ratingLabel: "\u0627\u0644\u062a\u0642\u064a\u064a\u0645: {count} \u0645\u0646 5",
     visitor: "\u0632\u0627\u0626\u0631 \u0627\u0644\u0645\u0648\u0642\u0639",
@@ -102,6 +123,7 @@ const copy: Record<Locale, ReviewsCopy> = {
     published: "\u062a\u0642\u064a\u064a\u0645 \u0645\u0646\u0634\u0648\u0631",
     loading: "\u062c\u0627\u0631\u064d \u062a\u062d\u0645\u064a\u0644 \u0627\u0644\u062a\u0642\u064a\u064a\u0645\u0627\u062a...",
     genericError: "\u062a\u0639\u0630\u0651\u0631 \u0646\u0634\u0631 \u062a\u0642\u064a\u064a\u0645\u0643. \u062d\u0627\u0648\u0644 \u0645\u0631\u0629 \u0623\u062e\u0631\u0649.",
+    validationError: "\u0627\u0643\u062a\u0628 \u0627\u0633\u0645 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645\u060c \u0648\u0627\u062e\u062a\u0631 \u062a\u0642\u064a\u064a\u0645\u064b\u0627\u060c \u0648\u0627\u0643\u062a\u0628 \u062a\u0639\u0644\u064a\u0642\u064b\u0627 \u0642\u0628\u0644 \u0627\u0644\u0646\u0634\u0631.",
     demoNotice: "\u0646\u0645\u0648\u0630\u062c \u062a\u062c\u0631\u064a\u0628\u064a - \u0644\u064a\u0633 \u062a\u0642\u064a\u064a\u0645\u064b\u0627 \u062d\u0642\u064a\u0642\u064a\u064b\u0627",
     cards: [
       { id: "demo-cafe", name: "Demo Caf\u00e9", service: "\u0645\u0648\u0642\u0639 \u0645\u0637\u0639\u0645", quote: "\u062a\u0635\u0645\u064a\u0645 \u0648\u0627\u0636\u062d \u0648\u0645\u0631\u062d\u0628 \u062c\u0639\u0644 \u0627\u0633\u062a\u0643\u0634\u0627\u0641 \u0627\u0644\u0642\u0627\u0626\u0645\u0629 \u0623\u0633\u0647\u0644.", rating: 5 },
@@ -132,6 +154,8 @@ export default function ReviewsPageContent() {
   const direction = locale === "ar" ? "rtl" : "ltr";
   const [publicReviews, setPublicReviews] = useState<PublicReview[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [draftName, setDraftName] = useState("");
   const [draftRating, setDraftRating] = useState(0);
   const [draftComment, setDraftComment] = useState("");
   const [submitError, setSubmitError] = useState("");
@@ -164,29 +188,52 @@ export default function ReviewsPageContent() {
   }, [dialogOpen, isSubmitting]);
 
   const reviews = useMemo(() => [
-    ...publicReviews.map((review) => ({ id: review.id, name: text.visitor, service: text.visitorService, quote: review.comment, rating: review.rating, published: true })),
-    ...text.cards.map((review) => ({ ...review, published: false })),
+    ...publicReviews.map((review) => ({ id: review.id, name: review.name || text.visitor, service: text.visitorService, quote: review.comment, rating: review.rating, published: true, canEdit: review.canEdit })),
+    ...text.cards.map((review) => ({ ...review, published: false, canEdit: false })),
   ], [publicReviews, text]);
+
+  function startNewReview() {
+    setEditingId(null);
+    setDraftName("");
+    setDraftRating(0);
+    setDraftComment("");
+    setSubmitError("");
+    setDialogOpen(true);
+  }
+
+  function startEditing(review: PublicReview) {
+    setEditingId(review.id);
+    setDraftName(review.name);
+    setDraftRating(review.rating);
+    setDraftComment(review.comment);
+    setSubmitError("");
+    setDialogOpen(true);
+  }
 
   async function publishReview(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const name = draftName.trim();
     const comment = draftComment.trim();
-    if (!draftRating || !comment) {
-      setSubmitError(text.genericError);
+    if (!name || !draftRating || !comment) {
+      setSubmitError(text.validationError);
       return;
     }
     setIsSubmitting(true);
     setSubmitError("");
     try {
       const response = await fetch("/api/reviews", {
-        method: "POST",
+        method: editingId ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rating: draftRating, comment, locale }),
+        body: JSON.stringify({ id: editingId, name, rating: draftRating, comment, locale }),
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok || data?.success !== true || !data.review) throw new Error("publish failed");
-      setPublicReviews((current) => [data.review, ...current]);
+      setPublicReviews((current) => editingId
+        ? current.map((review) => review.id === editingId ? data.review : review)
+        : [data.review, ...current]);
       setDialogOpen(false);
+      setEditingId(null);
+      setDraftName("");
       setDraftRating(0);
       setDraftComment("");
     } catch {
@@ -202,7 +249,7 @@ export default function ReviewsPageContent() {
         <div className={styles.heroMark} aria-hidden="true"><Star size={58} strokeWidth={1.3} /></div>
         <h1>{text.title}</h1>
         <p className={styles.description}>{text.description}</p>
-        <button className={styles.addReviewButton} type="button" onClick={() => { setSubmitError(""); setDialogOpen(true); }}>{text.addReview}</button>
+        <button className={styles.addReviewButton} type="button" onClick={startNewReview}>{text.addReview}</button>
       </header>
 
       <section className={styles.grid} aria-label={text.title}>
@@ -215,6 +262,12 @@ export default function ReviewsPageContent() {
             <RatingStars value={review.rating} label={text.ratingLabel.replace("{count}", String(review.rating))} />
             <p className={styles.quote}>{review.quote}</p>
             <p className={styles.demoNotice}>{review.published ? text.published : text.demoNotice}</p>
+            {review.published && review.canEdit && (
+              <button className={styles.editButton} type="button" onClick={() => { const ownerReview = publicReviews.find((item) => item.id === review.id); if (ownerReview) startEditing(ownerReview); }}>
+                <Pencil size={15} aria-hidden="true" />
+                <span>{text.editReview}</span>
+              </button>
+            )}
           </article>
         ))}
       </section>
@@ -223,12 +276,16 @@ export default function ReviewsPageContent() {
         <div className={styles.dialogBackdrop} role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !isSubmitting) setDialogOpen(false); }}>
           <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="reviews-dialog-title" dir={direction}>
             <button className={styles.dialogClose} type="button" aria-label={text.close} onClick={() => setDialogOpen(false)} disabled={isSubmitting}><X size={20} aria-hidden="true" /></button>
-            <h2 id="reviews-dialog-title">{text.modalTitle}</h2>
+            <h2 id="reviews-dialog-title">{editingId ? text.editReview : text.modalTitle}</h2>
             <form onSubmit={publishReview}>
+              <label className={styles.field} htmlFor="reviews-username">
+                <span>{text.usernameLabel}</span>
+                <input id="reviews-username" value={draftName} onChange={(event) => setDraftName(event.target.value)} placeholder={text.usernamePlaceholder} maxLength={120} autoComplete="nickname" />
+              </label>
               <RatingStars value={draftRating} onChange={setDraftRating} label={text.ratingLabel} />
-              <textarea value={draftComment} onChange={(event) => setDraftComment(event.target.value)} placeholder={text.commentPlaceholder} rows={5} maxLength={1200} autoFocus />
+              <textarea aria-label={text.commentPlaceholder} value={draftComment} onChange={(event) => setDraftComment(event.target.value)} placeholder={text.commentPlaceholder} rows={5} maxLength={1200} autoFocus />
               {submitError && <p className={styles.submitError} role="alert">{submitError}</p>}
-              <button className={styles.publishButton} type="submit" disabled={isSubmitting}>{isSubmitting ? text.loading : text.publishReview}</button>
+              <button className={styles.publishButton} type="submit" disabled={isSubmitting}>{isSubmitting ? text.loading : editingId ? text.saveReview : text.publishReview}</button>
             </form>
           </section>
         </div>

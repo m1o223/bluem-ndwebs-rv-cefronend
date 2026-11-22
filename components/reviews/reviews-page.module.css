@@ -18,6 +18,19 @@
 
 :global([data-reviews-route="true"]) { width: 100%; }
 
+:global(body:has(#top[data-reviews-page])) { background: #17365d; }
+:global(body:has(#top[data-reviews-page]) > header) { border-bottom: 0 !important; background: transparent !important; box-shadow: none !important; }
+:global(body:has(#top[data-reviews-page]) > header > div) { border-color: rgb(255 255 255 / 28%) !important; background: rgb(23 54 93 / 42%) !important; box-shadow: 0 10px 28px rgb(6 25 52 / 16%) !important; -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); }
+:global(body:has(#top[data-reviews-page])) .brand,
+:global(body:has(#top[data-reviews-page])) .signInLink,
+:global(body:has(#top[data-reviews-page])) .languageButton,
+:global(body:has(#top[data-reviews-page])) .menuToggle { color: #fff !important; }
+:global(body:has(#top[data-reviews-page])) .languageButton,
+:global(body:has(#top[data-reviews-page])) .menuToggle { border-color: rgb(255 255 255 / 35%) !important; background: rgb(255 255 255 / 10%) !important; }
+:global(body:has(#top[data-reviews-page])) .languageIcon,
+:global(body:has(#top[data-reviews-page])) .languageChevron,
+:global(body:has(#top[data-reviews-page])) .menuSymbol { color: #b9e3fa !important; }
+
 :global(body[data-reviews-page="true"] [data-site-footer]) {
   background: linear-gradient(180deg, #eaf0f7 0%, #b9e3fa 24%, #67b7eb 55%, #174a87 84%, #17365d 100%);
 }
@@ -88,9 +101,12 @@
 
 .addReviewButton:hover,
 .addReviewButton:focus-visible {
-  background: #eaf6ff;
+  background: #fff;
   border-color: #79c5ff;
+  box-shadow: 0 0 0 3px rgb(121 197 255 / 28%);
 }
+
+.addReviewButton:active { background: #fff; border-color: #79c5ff; color: #17365d; }
 
 .grid {
   position: relative;
@@ -199,6 +215,27 @@
   line-height: 1.5;
 }
 
+.editButton {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 7px;
+  min-height: 36px;
+  margin-top: 14px;
+  padding: 7px 12px;
+  border: 1px solid #b9e3fa;
+  border-radius: 999px;
+  background: #fff;
+  color: #174a87;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.editButton:hover,
+.editButton:focus-visible { background: #edf7ff; border-color: #79c5ff; }
+
 .dialogBackdrop {
   position: fixed;
   z-index: 200;
@@ -229,6 +266,9 @@
 .dialogClose:hover, .dialogClose:focus-visible { background: #edf7ff; }
 .dialog form { display: grid; gap: 18px; }
 .dialog .rating { margin-top: 0; }
+.field { display: grid; gap: 7px; color: #17365d; font-size: 13px; font-weight: 700; }
+.field input { width: 100%; min-height: 46px; padding: 11px 14px; border: 1px solid #cbd5e1; border-radius: 14px; outline: none; color: #17365d; background: #fff; font: inherit; font-weight: 400; }
+.field input:focus { border-color: #174a87; box-shadow: 0 0 0 3px rgb(121 197 255 / 22%); }
 .dialog textarea { width: 100%; min-height: 128px; resize: vertical; padding: 14px 16px; border: 1px solid #cbd5e1; border-radius: 14px; outline: none; color: #17365d; background: #fff; font: inherit; line-height: 1.65; }
 .dialog textarea:focus { border-color: #174a87; box-shadow: 0 0 0 3px rgb(121 197 255 / 22%); }
 .publishButton { min-height: 46px; padding: 10px 20px; border: 1px solid #174a87; border-radius: 999px; background: #174a87; color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; }
