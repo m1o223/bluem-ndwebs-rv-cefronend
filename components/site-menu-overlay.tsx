@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowRight, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocalization } from "./localization-provider";
-import { ComingSoonLink } from "./ai-coming-soon";
+import { AiComingSoonLink, ComingSoonLink } from "./ai-coming-soon";
 import styles from "./site-menu-overlay.module.css";
 
 const links = [
@@ -136,6 +136,7 @@ export default function SiteMenuOverlay({ open, onClose, scrollPosition }: { ope
         </header>
         <div className={styles.content}>
           <nav className={styles.linkList} aria-label={text.navigation}>
+            <AiComingSoonLink href="/ask-ai"><span>BlueMind AI</span><ArrowRight size={20} aria-hidden="true" /></AiComingSoonLink>
             {links.map(([href], index) => {
               const kind = href === "/quote" ? "pricing" : href === "/care" ? "subscriptions" : null;
               const content = <><span>{labels[index]}</span><ArrowRight size={20} aria-hidden="true" /></>;
