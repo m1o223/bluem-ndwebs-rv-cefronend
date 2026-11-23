@@ -25,7 +25,7 @@ type RunningReply = {
   conversationId: string; controller: AbortController; assistantId: string; replaced?: Message;
   timeout?: number; thinkingTimer?: number; networkDone: boolean; visible: string;
 };
-const TEST_SITE = process.env.NEXT_PUBLIC_TEST_SITE === "true" || (typeof window !== "undefined" && window.location.hostname.endsWith(".vercel.app"));
+const TEST_SITE = process.env.NEXT_PUBLIC_TEST_SITE === "true" || (typeof window !== "undefined" && (window.location.hostname.includes("-git-test-") || window.location.hostname.endsWith(".test.bluemindwebservice.com")));
 const TEST_STORAGE_KEY = "bluemind-test-ai-conversations";
 const THINKING_MIN_MS = 2000;
 const testWelcomeLines: Record<"en" | "sv" | "ar", string[]> = {

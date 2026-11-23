@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import homeStyles from "../../components/home/home.module.css";
 import pageStyles from "../../components/page-identity.module.css";
-import CareSubscriptionDemoFlow from "./care-subscription-demo-flow";
+import CareSubscriptionFlow from "./care-subscription-flow";
 import styles from "./care.module.css";
 
 export const metadata: Metadata = {
   title: "Subscriptions | BlueMind Web Service",
-  description: "Explore BlueMind subscription plans in the test environment.",
+  description: "Explore BlueMind website care subscriptions and their available plans.",
 };
 
 export default function CarePage() {
@@ -19,7 +19,7 @@ export default function CarePage() {
           <p className={styles.headline}>Your website. Our care.</p>
           <p>We take care of your website, so you can focus on your business.</p>
         </div>
-        <CareSubscriptionDemoFlow />
+        <CareSubscriptionFlow />
       </div>
     </div>
   </div>;

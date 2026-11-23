@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { Footer } from "./home/sections";
@@ -12,22 +12,20 @@ import RouteScrollState from "./route-scroll-state";
 import RouteTransition from "./route-transition";
 import SiteMenuOverlay from "./site-menu-overlay";
 
-const TEST_SITE = process.env.NEXT_PUBLIC_TEST_SITE === "true";
-
 export default function WebsiteShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = useCallback(() => setMenuOpen(false), []);
-  const menuScrollPosition = useRef({ x: 0, y: 0 });
+  const [menuScrollPosition, setMenuScrollPosition] = useState({ x: 0, y: 0 });
   const setMenuOpenWithPosition = useCallback((nextOpen: boolean) => {
     if (nextOpen) {
-      menuScrollPosition.current = { x: window.scrollX, y: window.scrollY };
+      setMenuScrollPosition({ x: window.scrollX, y: window.scrollY });
     }
     setMenuOpen(nextOpen);
   }, []);
   const customer = isCustomerPath(pathname);
-  const excluded = pathname === "/dashboard-preview" || pathname === "/menu";
-  const testHome = TEST_SITE && pathname === "/";
+  const excluded = pathname === "/dashboard-preview" || pathname === "/menu" || pathname.startsWith("/demo/restaurant");
+  const homePage = pathname === "/";
 
   useEffect(() => { setMenuOpen(false); }, [pathname]);
 
@@ -39,25 +37,11 @@ export default function WebsiteShell({ children }: { children: ReactNode }) {
     <RouteTransition>{children}</RouteTransition>
   </>;
 
-  if (pathname === "/quote" || pathname === "/care") {
-    if (!TEST_SITE) return <>
-      <RouteScrollState />
-      <RouteTransition>{children}</RouteTransition>
-    </>;
-    return <>
-      <RouteScrollState />
-      <Navigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpenWithPosition} />
-      <PageContent><RouteTransition>{children}</RouteTransition></PageContent>
-      <Footer textEffects={false} />
-      <SiteMenuOverlay open={menuOpen} onClose={closeMenu} scrollPosition={menuScrollPosition.current} currentPath={TEST_SITE ? pathname : undefined} />
-    </>;
-  }
-
   return <>
     <RouteScrollState />
     <Navigation menuOpen={menuOpen} onMenuOpenChange={setMenuOpenWithPosition} />
     <PageContent><RouteTransition>{children}</RouteTransition></PageContent>
-    {testHome ? null : <Footer textEffects={pathname === "/"} />}
-    <SiteMenuOverlay open={menuOpen} onClose={closeMenu} scrollPosition={menuScrollPosition.current} currentPath={TEST_SITE ? pathname : undefined} />
+    {homePage ? null : <Footer textEffects={pathname === "/"} />}
+    <SiteMenuOverlay open={menuOpen} onClose={closeMenu} scrollPosition={menuScrollPosition} currentPath={pathname} />
   </>;
 }

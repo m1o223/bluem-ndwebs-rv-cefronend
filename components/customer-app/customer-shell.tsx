@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Home, Sparkles, MessageCircle, Settings } from "lucide-react";
 import Image from "next/image";
 import { BrandLockup } from "../brand-lockup";
-import { AiComingSoonLink, AiComingSoonPage } from "../ai-coming-soon";
+import { AiComingSoonLink } from "../ai-coming-soon";
 import { useLocalization } from "../localization-provider";
 import { type Customer, type CustomerPage } from "../../app/lib/customer/routes";
 import { customerCopy } from "./copy";
@@ -21,12 +21,6 @@ const demoOverview: Overview = {
   project: null,
   notifications: [],
 };
-const TEST_SITE_CONFIGURED = process.env.NEXT_PUBLIC_TEST_SITE === "true";
-
-function isTestHostname(hostname: string) {
-  return hostname.includes("-git-test-") || hostname.endsWith(".test.bluemindwebservice.com");
-}
-
 export default function CustomerShell({ user, page }: { user: Customer; page: CustomerPage }) {
   const { locale } = useLocalization();
   const text = customerCopy[locale];
@@ -40,13 +34,7 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
   const [overview, setOverview] = useState<Overview | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [reload, setReload] = useState(0);
-  const [testSite, setTestSite] = useState(TEST_SITE_CONFIGURED);
   const workspaceText = workspaceCopy[locale];
-
-  useEffect(() => {
-    if (TEST_SITE_CONFIGURED) return;
-    setTestSite(isTestHostname(window.location.hostname));
-  }, []);
   useEffect(() => {
     const controller = new AbortController();
     setOverview(null); setLoadError(false);
@@ -116,11 +104,8 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
   const pageTitle = page === "notifications" ? workspaceText.notifications : text[page];
   const isAi = page === "ai";
   const isHome = page === "home";
-  if (isAi && testSite) return <div ref={shell} className={`${styles.app} ${styles.aiApp}`} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate>
-    <ChatWorkspace available account accountFullScreen />
-  </div>;
   if (isAi) return <div ref={shell} className={`${styles.app} ${styles.aiApp}`} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate>
-    <AiComingSoonPage backHref="/dashboard" backLabel={locale === "ar" ? "\u0627\u0644\u0639\u0648\u062f\u0629 \u0625\u0644\u0649 \u0627\u0644\u062d\u0633\u0627\u0628" : locale === "sv" ? "Tillbaka till kontot" : "Back to account"} />
+    <ChatWorkspace available account accountFullScreen />
   </div>;
   const accountLabel = text.account.split(" /")[0];
   return <div ref={shell} className={styles.app} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate>
@@ -137,7 +122,7 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
       </div>
     </header>
     <main className={styles.main} data-page-transition-surface>
-      {!isAi && <Image className={styles.watermark} src="/images/brand/bluemind-original-logo-transparent.png" width={1065} height={1212} alt="" aria-hidden="true" />}
+      {!isAi && <Image className={styles.watermark} src="/images/brand/bluemind-new-logo-transparent.png" width={1280} height={1280} alt="" aria-hidden="true" />}
       {!isAi && !isHome && <h1 data-reveal-group="account-page-title">{pageTitle}</h1>}
       {page !== "notifications" && loadError ? <div role="alert"><p>{workspaceText.loadError}</p><button className={styles.secondary} onClick={() => setReload(value => value + 1)}><TextActionLabel underline={false}>{workspaceText.retry}</TextActionLabel></button></div> : page !== "notifications" && !overview ? <p role="status">{workspaceText.loading}</p> : <WorkspaceContent key={page} page={page} overview={overview || demoOverview} user={user} locale={locale} signOut={() => void signOut()} signingOut={busy} />}
       {notice && <p className={styles.error} role="alert">{text.error}</p>}

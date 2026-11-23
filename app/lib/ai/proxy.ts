@@ -27,7 +27,7 @@ function requestIdentity(request: Request, visitorToken: string) {
 }
 
 function isTestRequest(request: NextRequest) {
-  return TEST_SITE || request.nextUrl.hostname.endsWith(".vercel.app");
+  return TEST_SITE || request.nextUrl.hostname.includes("-git-test-") || request.nextUrl.hostname.endsWith(".test.bluemindwebservice.com");
 }
 
 function testResponse(request: NextRequest) {
@@ -136,7 +136,7 @@ export async function proxyAi(request: NextRequest) {
 }
 
 export async function proxyConversations(request: NextRequest, path = "") {
-  const testSite = TEST_SITE || request.nextUrl.hostname.endsWith(".vercel.app");
+  const testSite = TEST_SITE || request.nextUrl.hostname.includes("-git-test-") || request.nextUrl.hostname.endsWith(".test.bluemindwebservice.com");
   const origin = request.headers.get("origin");
   // Same-origin GET requests commonly omit Origin (notably in Safari). The
   // backend still requires the customer/visitor identity, so an absent

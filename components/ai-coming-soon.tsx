@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { createPortal } from "react-dom";
 import type { AnchorHTMLAttributes, ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { BrandLockup } from "./brand-lockup";
 import { useLocalization, type Locale } from "./localization-provider";
 import styles from "./ai-coming-soon.module.css";
@@ -84,12 +84,6 @@ export type ComingSoonLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 
 
 type ScrollPosition = { x: number; y: number };
 
-const TEST_SITE_CONFIGURED = process.env.NEXT_PUBLIC_TEST_SITE === "true";
-
-function isTestHostname(hostname: string) {
-  return hostname.includes("-git-test-") || hostname.endsWith(".test.bluemindwebservice.com");
-}
-
 export function ComingSoonModal({ kind, onClose, initialScrollPosition }: { kind: ComingSoonKind; onClose: () => void; initialScrollPosition?: ScrollPosition }) {
   const { locale } = useLocalization();
   const text = copy[kind][locale];
@@ -139,36 +133,8 @@ export function ComingSoonModal({ kind, onClose, initialScrollPosition }: { kind
 }
 
 export function ComingSoonLink({ href, kind = "ai", children, onOpen, ...props }: ComingSoonLinkProps) {
-  const [open, setOpen] = useState(false);
-  const [scrollPosition, setScrollPosition] = useState<ScrollPosition>();
-  const [testSite, setTestSite] = useState(TEST_SITE_CONFIGURED);
-
-  useEffect(() => {
-    if (TEST_SITE_CONFIGURED) return;
-    setTestSite(isTestHostname(window.location.hostname));
-  }, []);
-
-  if (testSite) {
-    return <a {...props} href={href} onClick={onOpen ? () => onOpen() : undefined}>{children}</a>;
-  }
-
-  return (
-    <>
-      <a
-        {...props}
-        href={href}
-        onClick={(event) => {
-          event.preventDefault();
-          onOpen?.();
-          setScrollPosition({ x: window.scrollX, y: window.scrollY });
-          setOpen(true);
-        }}
-      >
-        {children}
-      </a>
-      {open && <ComingSoonModal kind={kind} initialScrollPosition={scrollPosition} onClose={() => setOpen(false)} />}
-    </>
-  );
+  void kind;
+  return <a {...props} href={href} onClick={() => onOpen?.()}>{children}</a>;
 }
 
 export function AiComingSoonLink(props: Omit<ComingSoonLinkProps, "kind">) {
