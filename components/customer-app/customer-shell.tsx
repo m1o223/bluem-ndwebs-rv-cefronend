@@ -105,7 +105,7 @@ export default function CustomerShell({ user, page }: { user: Customer; page: Cu
   const isAi = page === "ai";
   const isHome = page === "home";
   if (isAi) return <div ref={shell} className={`${styles.app} ${styles.aiApp}`} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate>
-    <ChatWorkspace available account accountFullScreen />
+    <ChatWorkspace available account accountFullScreen ambientPage />
   </div>;
   const accountLabel = text.account.split(" /")[0];
   return <div ref={shell} className={styles.app} dir={locale === "ar" ? "rtl" : "ltr"} data-no-translate>

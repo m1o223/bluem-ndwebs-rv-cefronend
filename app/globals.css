@@ -1,6 +1,6 @@
 :root {
-  --font-body-family: "Inter", "Segoe UI", Arial, sans-serif;
-  --font-heading-family: "Inter", "Segoe UI", Arial, sans-serif;
+  --font-body-family: "Inter Variable", "Inter", "Segoe UI", Arial, sans-serif;
+  --font-heading-family: "Inter Variable", "Inter", "Segoe UI", Arial, sans-serif;
   --control-radius: 999px;
   --icon-control-radius: 50%;
   --bluemind-text: #111111;
@@ -10,8 +10,19 @@
   --bluemind-divider: #d9e3ed;
   --bluemind-divider-subtle: #d7e1eb;
   --bluemind-surface: #ffffff;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
   --text-readable: clamp(0.95rem, 0.9rem + 0.2vw, 1.05rem);
   --text-small-readable: clamp(0.86rem, 0.82rem + 0.16vw, 0.95rem);
+  --security-ambient-gradient: radial-gradient(ellipse 84% 48% at 50% 7%, rgb(23 74 135 / 70%) 0%, rgb(23 74 135 / 42%) 43%, transparent 82%), linear-gradient(180deg, #174a87 0%, #215f9c 21%, #79c5ff 48%, #eaf6ff 72%, #fff 100%);
 }
 
 * {
@@ -25,8 +36,8 @@ html {
 }
 
 body {
-  --font-body-family: var(--font-sans), "Inter", "Segoe UI", Arial, sans-serif;
-  --font-heading-family: var(--font-sans), "Inter", "Segoe UI", Arial, sans-serif;
+  --font-body-family: "Inter Variable", "Inter", "Segoe UI", Arial, sans-serif;
+  --font-heading-family: "Inter Variable", "Inter", "Segoe UI", Arial, sans-serif;
   margin: 0;
   min-height: 100vh;
   min-height: 100dvh;
@@ -42,10 +53,40 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* The approved Security background is shared as one continuous page layer. */
+.site-ambient-shell {
+  position: relative;
+  isolation: isolate;
+  flex: 1 0 auto;
+  min-height: 100%;
+  background: #fff;
+}
+
+.site-ambient-shell::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 auto;
+  height: calc(clamp(500px, 48vw, 680px) + var(--website-header-height, 86px));
+  background: var(--security-ambient-gradient);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  content: "";
+  pointer-events: none;
+}
+
+.site-ambient-shell .page-content,
+.site-ambient-shell .page,
+.site-ambient-shell .body,
+.site-ambient-shell .auth-page-main,
+.site-ambient-shell .checking,
+.site-ambient-shell .app { background: transparent; }
+
+.site-ambient-shell .hero { background: transparent; }
+
 body:not([data-locale="ar"]) :where(h1, h2, h3):not([data-no-translate], [data-no-translate] *, [aria-hidden="true"], [aria-hidden="true"] *) {
   font-family: var(--font-body-family) !important;
   font-weight: 750;
-  line-height: 1.02;
+  line-height: 1.08;
   letter-spacing: 0;
 }
 

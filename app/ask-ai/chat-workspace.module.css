@@ -1,4 +1,5 @@
 .chat { position: fixed; inset: var(--chat-top, 0px) 0 auto; display: grid; grid-template-columns: 248px minmax(0, 1fr); height: var(--chat-height, 100dvh); overflow: hidden; background: #fff; color: #111; font-family: var(--font-body-family); }
+.chat[data-ambient-page="true"] { background: transparent; }
 .embedded.chat { position: relative; inset: auto; width: 100%; height: 100%; min-height: 0; max-height: none; border-radius: inherit; }
 .account.chat { position: relative; inset: auto; width: 100%; height: var(--chat-height, 100%); min-height: 0; max-height: none; border: 1px solid var(--bluemind-divider-subtle); border-radius: 18px; }
 .accountFullScreen.chat { position: fixed; inset: 0; width: 100%; height: var(--chat-height, 100dvh); max-height: none; grid-template-columns: minmax(0, 1fr); border: 0; border-radius: 0; --chat-height: 100dvh; }

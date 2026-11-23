@@ -116,7 +116,7 @@ function History({ conversations, activeId, compact = false, onSelect, onNew, ac
   </>;
 }
 
-export default function ChatWorkspace({ available, embedded = false, account = false, accountFullScreen = false }: { available: boolean; embedded?: boolean; account?: boolean; accountFullScreen?: boolean }) {
+export default function ChatWorkspace({ available, embedded = false, account = false, accountFullScreen = false, ambientPage = false }: { available: boolean; embedded?: boolean; account?: boolean; accountFullScreen?: boolean; ambientPage?: boolean }) {
   const { locale } = useLocalization();
   const copy = chatCopy[locale];
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -623,7 +623,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
     <div className={styles.thinkingIndicator} data-ready={contentArrived && thinkingReply?.ready} aria-hidden="true"><span className={styles.thinkingDot} /></div>
   </div>;
 
-  return <div ref={root} className={`${styles.chat} ${embedded ? styles.embedded : ""} ${account ? styles.account : ""} ${accountFullScreen ? styles.accountFullScreen : ""}`} data-embedded={embedded || undefined} data-account={account || undefined} data-account-fullscreen={accountFullScreen || undefined} data-collapsed={collapsed} data-welcome={!hasMessages} data-test-site={TEST_SITE || undefined} data-no-translate dir={locale === "ar" ? "rtl" : "ltr"}>
+  return <div ref={root} className={`${styles.chat} ${embedded ? styles.embedded : ""} ${account ? styles.account : ""} ${accountFullScreen ? styles.accountFullScreen : ""}`} data-embedded={embedded || undefined} data-account={account || undefined} data-account-fullscreen={accountFullScreen || undefined} data-ambient-page={ambientPage || undefined} data-collapsed={collapsed} data-welcome={!hasMessages} data-test-site={TEST_SITE || undefined} data-no-translate dir={locale === "ar" ? "rtl" : "ltr"}>
     {!TEST_SITE && <aside id="ai-chat-sidebar" className={styles.sidebar} aria-label={copy.chatSidebar}>
       <div className={styles.sidebarTop}>
         <span className={styles.sidebarTitle}>BlueMind AI</span>
