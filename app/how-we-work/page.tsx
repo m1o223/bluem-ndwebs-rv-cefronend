@@ -3,6 +3,7 @@ import homeStyles from "../../components/home/home.module.css";
 import buttonStyles from "../../components/home/hero.module.css";
 import pageStyles from "../../components/page-identity.module.css";
 import { AiComingSoonLink } from "../../components/ai-coming-soon";
+import ReadMoreLink from "./read-more-link";
 import styles from "./how-we-work.module.css";
 
 const steps = [
@@ -27,9 +28,9 @@ export default function HowWeWorkPage() {
               <AiComingSoonLink href="/ask-ai" className={`${buttonStyles.ctaButton} ${buttonStyles.primaryCta}`}>
                 Start with BlueMind AI
               </AiComingSoonLink>
-              <a href="#work-steps" className={`${buttonStyles.ctaButton} ${styles.secondaryButton}`}>
+              <ReadMoreLink className={`${buttonStyles.ctaButton} ${styles.secondaryButton}`}>
                 Read more
-              </a>
+              </ReadMoreLink>
             </div>
             <p className={styles.supporting}>A simple process designed to keep you involved from the first idea to the final delivery.</p>
           </div>
