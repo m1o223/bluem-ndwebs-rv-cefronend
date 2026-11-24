@@ -23,19 +23,39 @@ export default function HowWeWorkPage() {
           <div className={`${pageStyles.intro} ${pageStyles.enter} ${styles.intro}`}>
             <h1>How We Work</h1>
             <p className={styles.headline}>From your idea to a finished website.</p>
-            <p>A simple process designed to keep you involved from the first idea to the final delivery.</p>
+            <div className={styles.introActions}>
+              <AiComingSoonLink href="/ask-ai" className={`${buttonStyles.ctaButton} ${buttonStyles.primaryCta}`}>
+                Start with BlueMind AI
+              </AiComingSoonLink>
+              <a href="#work-steps" className={`${buttonStyles.ctaButton} ${styles.secondaryButton}`}>
+                Read more
+              </a>
+            </div>
+            <p className={styles.supporting}>A simple process designed to keep you involved from the first idea to the final delivery.</p>
           </div>
-          <ol className={`${styles.timeline} ${pageStyles.enter}`} aria-label="Our website project process">
+          <ol id="work-steps" className={`${styles.timeline} ${pageStyles.enter}`} aria-label="Our website project process">
             {steps.map((step, index) => (
-              <li key={step.icon} className={styles.step}>
-                <span className={styles.number} aria-hidden="true">0{index + 1}</span>
-                <div className={styles.stepContent}>
-                  <div className={styles.stepHeading}>
-                    <Image src={`/images/how-we-work/${step.icon}.svg`} width={120} height={100} alt="" aria-hidden="true" className={styles.icon} />
-                    <h2>{step.title}</h2>
+              <li key={step.icon} className={`${styles.step} ${index % 2 === 0 ? styles.stepLeft : styles.stepRight}`}>
+                <div className={styles.stage}>
+                  <div className={styles.visualCard}>
+                    <span className={styles.number} aria-hidden="true">0{index + 1}</span>
+                    <div className={styles.scene}>
+                      <Image
+                        src={`/images/how-we-work/${step.icon}.svg`}
+                        width={240}
+                        height={200}
+                        alt=""
+                        aria-hidden="true"
+                        className={styles.icon}
+                      />
+                    </div>
                   </div>
-                  <p>{step.text}</p>
+                  <article className={styles.copyCard} aria-labelledby={`how-step-${index + 1}`}>
+                    <h2 id={`how-step-${index + 1}`}>{step.title}</h2>
+                    <p>{step.text}</p>
+                  </article>
                 </div>
+                {index < steps.length - 1 && <span className={styles.connector} aria-hidden="true" />}
               </li>
             ))}
           </ol>
