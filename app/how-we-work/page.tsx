@@ -44,6 +44,7 @@ export default function HowWeWorkPage() {
                         src={`/images/how-we-work/${step.icon}.svg`}
                         width={240}
                         height={200}
+                        loading="eager"
                         alt=""
                         aria-hidden="true"
                         className={styles.icon}
