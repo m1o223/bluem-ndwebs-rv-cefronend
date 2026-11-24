@@ -3,16 +3,16 @@
 .titleGroup img { display: block; flex-shrink: 0; height: auto; object-fit: contain; }
 .titleGroup h1, .titleGroup h2 { min-width: 0; }
 .mainTitle { gap: 16px; }
-.sectionTitle { margin-bottom: 23px; }
+.sectionTitle { margin-bottom: 28px; }
 .teamIcon { width: 76px; }
 .qualityIcon { width: 38px; max-height: 40px; }
 .bulbsIcon { width: 64px; max-height: 38px; }
 .workflowIcon { width: 72px; max-height: 36px; }
 
-.sections { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
-.section { min-width: 0; padding-top: 24px; border-top: 1px solid var(--bluemind-border); background: #fff; }
+.sections { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(28px, 4vw, 48px); }
+.section { min-width: 0; padding-top: 28px; border-top: 1px solid var(--bluemind-border); background: #fff; }
 .section h2 { margin: 0; font-size: 21px; font-weight: 500; letter-spacing: -.6px; line-height: 1.35; }
-.section ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.section ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
 .section li { position: relative; padding-left: 15px; color: var(--bluemind-text); font-size: 14px; line-height: 1.8; }
 .section li::before { content: ""; position: absolute; left: 0; top: .85em; width: 3px; height: 3px; border-radius: 50%; background: var(--bluemind-blue); }
 .watermark { position: absolute; z-index: 0; top: -96px; right: clamp(-120px, -7vw, -64px); width: clamp(420px, 43vw, 640px); aspect-ratio: 1 / 1; opacity: .17; pointer-events: none; user-select: none; }
@@ -21,7 +21,7 @@
 @media (max-width: 1050px) {
   .sections { grid-template-columns: minmax(0, 1fr); gap: 26px; }
   .section { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.5fr); gap: 28px; }
-  .sectionTitle { margin-bottom: 0; }
+  .sectionTitle { margin-bottom: 4px; }
   .section ul { gap: 12px; }
   .watermark { width: clamp(360px, 52vw, 540px); top: -74px; right: clamp(-115px, -9vw, -62px); }
 }
@@ -30,7 +30,7 @@
   .mainTitle { gap: 12px; }
   .teamIcon { width: 60px; }
   .titleGroup { gap: 10px; }
-  .section { grid-template-columns: minmax(0, 1fr); gap: 18px; padding-top: 22px; }
+  .section { grid-template-columns: minmax(0, 1fr); gap: 20px; padding-top: 24px; }
   .section h2 { font-size: 20px; }
   .section ul { gap: 12px; }
   .watermark { width: min(330px, 82vw); top: -42px; right: -86px; opacity: .13; }

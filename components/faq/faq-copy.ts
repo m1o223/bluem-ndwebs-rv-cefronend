@@ -17,7 +17,7 @@ export const faqCopy: Record<Locale, FaqCopy> = {
     viewAll: "View all FAQs",
     items: [
       { question: "Who are we?", answer: "We are BlueMind, a company specializing in artificial intelligence and software development. We launched BlueMind Web Service to design and develop websites around each client's idea and project needs." },
-      { question: "How much does it cost to design a website?", answer: "Starting prices are 5,000 SEK for a 3-page website, 9,000 SEK for a website of up to 6 pages, and 15,000 SEK for a project of up to 10 pages, such as an online store. The final price depends on your project's details." },
+      { question: "How much does it cost to design a website?", answer: "Starting prices are 5,000 SEK for a 5-page website, 9,000 SEK for a website of up to 6 pages, and 15,000 SEK for a project of up to 10 pages, such as an online store. The final price depends on your project's details." },
       { question: "What is included in the price?", answer: "The price includes your complete website, designed to work on desktop and laptop computers, tablets, and mobile phones. Compatibility across all three screen sizes is included at no extra cost." },
       { question: "How long does it take to prepare my website?", answer: "We usually prepare your website within 3 to 5 days, depending on its size and the features you need." },
       { question: "What makes BlueMind Web Service different?", answer: "We design every website around your project idea, combining custom design, fast delivery, and suitable pricing." },
@@ -34,7 +34,7 @@ export const faqCopy: Record<Locale, FaqCopy> = {
     viewAll: "اقرأ المزيد من الأسئلة",
     items: [
       { question: "مين نحنا؟", answer: "نحنا BlueMind، شركة متخصّصة بالذكاء الاصطناعي والبرمجة. أطلقنا BlueMind Web Service لتصميم وتطوير المواقع حسب فكرة كل عميل واحتياجات مشروعه." },
-      { question: "قديش بيكلّف تصميم موقع؟", answer: "الأسعار المبدئية هي 5,000 كرون لموقع من 3 صفحات، 9,000 كرون لموقع حتى 6 صفحات، و15,000 كرون لمشروع حتى 10 صفحات، مثل متجر إلكتروني. السعر النهائي بيعتمد على تفاصيل مشروعك." },
+      { question: "قديش بيكلّف تصميم موقع؟", answer: "الأسعار المبدئية هي 5,000 كرون لموقع من 5 صفحات، 9,000 كرون لموقع حتى 6 صفحات، و15,000 كرون لمشروع حتى 10 صفحات، مثل متجر إلكتروني. السعر النهائي بيعتمد على تفاصيل مشروعك." },
       { question: "شو بيشمل السعر؟", answer: "السعر بيشمل موقعك كامل بتصميم مناسب للكمبيوتر واللابتوب، والآيباد، والجوال. التوافق مع الأحجام الثلاثة مشمول بدون تكلفة إضافية." },
       { question: "قديش بياخد تجهيز موقعي؟", answer: "عادةً منجهّز موقعك خلال 3 إلى 5 أيام، حسب حجمه والميزات المطلوبة." },
       { question: "شو بيميز BlueMind Web Service؟", answer: "منصمّم كل موقع حسب فكرة مشروعك، ومنجمع بين التصميم المخصّص وسرعة التنفيذ والأسعار المناسبة." },

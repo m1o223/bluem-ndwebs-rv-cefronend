@@ -1,22 +1,21 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
+import "@fontsource-variable/inter/wght.css";
 import { LocalizationProvider } from "../components/localization-provider";
 import TestEnvironmentBanner from "../components/test-environment-banner";
 import WebsiteShell from "../components/website-shell";
+import CookieConsent from "../components/cookie-consent";
 import faviconMetadata from "./favicon-metadata.json";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-sans",
-  display: "swap",
-});
+const isTestBuild = process.env.NEXT_PUBLIC_TEST_SITE === "true"
+  || process.env.TEST_SITE === "true"
+  || process.env.VERCEL_ENV === "preview"
+  || process.env.VERCEL_GIT_COMMIT_REF === "test";
 
 export const metadata: Metadata = {
   title: "BlueMind Web Service",
-  robots: { index: false, follow: false },
+  ...(isTestBuild ? { robots: { index: false, follow: false } } : {}),
   icons: faviconMetadata.icons,
   manifest: faviconMetadata.manifest,
 };
@@ -24,10 +23,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className={inter.variable}>
+      <body>
         <LocalizationProvider>
           <TestEnvironmentBanner />
           <WebsiteShell>{children}</WebsiteShell>
+          <CookieConsent />
         </LocalizationProvider>
       </body>
     </html>

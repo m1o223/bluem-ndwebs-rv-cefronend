@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import buttonStyles from "../../components/home/hero.module.css";
 import pageStyles from "../../components/page-identity.module.css";
 import { StarMark } from "../../components/star-mark";
@@ -99,7 +100,11 @@ export default function QuoteExperience() {
               </div>
             )}
             {"vatNote" in item && <p className={styles.customNote}>{item.vatNote}</p>}
-            <button type="button" className={buttonClass} disabled={!interactive} onClick={() => isFixedPackage(item) && setCheckoutPackage(item)}>{item.cta}</button>
+            {item.checkoutId === "showcase-website" ? (
+              <Link className={buttonClass} href="/demo/restaurant">{item.cta}</Link>
+            ) : (
+              <button type="button" className={buttonClass} disabled={!interactive} onClick={() => isFixedPackage(item) && setCheckoutPackage(item)}>{item.cta}</button>
+            )}
           </article>
         ))}
       </section>

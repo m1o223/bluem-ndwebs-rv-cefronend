@@ -10,7 +10,7 @@ export const footerConfig = {
   explore: [
     ["/", "Home"], ["/about", "About Us"], ["/services", "Services"],
     ["/how-we-work", "How We Work"], ["/#selected-work", "Website Concepts"], ["/faq", "FAQ"],
-    ["/quote", "Request a Quote"], ["/contact", "Contact"], ["/care", "Website Care"],
+    ["/quote", "Request a Quote"], ["/contact", "Contact"], ["/care", "Website Care"], ["/security", "Security"],
   ],
   services: [["/services", "Website Design"], ["/quote", "Business Websites"], ["/quote", "Online Stores"], ["/quote", "Custom Websites"], ["/care", "BlueMind Care"]],
   social: [
@@ -29,8 +29,8 @@ export const footerConfig = {
     { name: "Klarna", asset: "/images/footer/klarna.svg" },
   ] satisfies Payment[],
   legalLinks: [
-    { label: "Privacy Policy", href: null },
-    { label: "Terms & Conditions", href: null },
-    { label: "Cookie Policy", href: null },
+    { label: "Privacy Policy", href: "/privacy" },
+    { label: "Cookie Policy", href: "/cookies" },
+    { label: "Security Policy", href: "/security-policy" },
   ] satisfies Legal[],
 } as const;

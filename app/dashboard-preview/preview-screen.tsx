@@ -24,7 +24,7 @@ export default function DashboardPreview() {
       <Link href="/sign-in" className={customer.textLink}><ArrowLeft size={18} aria-hidden="true" /><TextActionLabel>{text.back}</TextActionLabel></Link>
     </header>
     <main className={`${customer.main} ${styles.enter}`}>
-      <Image className={customer.watermark} src="/images/brand/bluemind-original-logo-transparent.png" width={1065} height={1212} alt="" aria-hidden="true" />
+      <Image className={customer.watermark} src="/images/brand/bluemind-new-logo-transparent.png" width={1280} height={1280} alt="" aria-hidden="true" />
       <p className={customer.muted}>{text.preview}</p>
       <h1>{text.title}</h1>
       <p className={customer.welcome}>{text.note}</p>

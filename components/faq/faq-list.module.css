@@ -1,7 +1,7 @@
-.faq { width: min(100%, 920px); margin: 56px 0 0; padding-top: 30px; border-top: 1px solid var(--bluemind-border); text-align: start; }
+.faq { width: min(100%, 920px); margin: clamp(44px, 5vw, 60px) 0 0; padding-top: 32px; border-top: 1px solid var(--bluemind-border); text-align: start; }
 .faq h2 { margin: 0; font-size: 26px; font-weight: 500; letter-spacing: -.8px; line-height: 1.35; text-wrap: balance; }
 .subtitle { margin: 12px 0 0; color: var(--bluemind-text); font-size: 14px; line-height: 1.8; }
-.questions { width: 100%; margin-top: 24px; }
+.questions { width: 100%; margin-top: 28px; }
 .questions details { border-bottom: 1px solid var(--bluemind-border); }
 .questions summary { position: relative; display: flex; min-height: 56px; align-items: center; padding-block: 16px; padding-inline: 0 40px; color: var(--bluemind-text); font-size: 15px; font-weight: 500; cursor: pointer; list-style: none; line-height: 1.5; text-align: start; text-wrap: balance; }
 .questions summary::-webkit-details-marker { display: none; }
@@ -10,7 +10,7 @@
 .questions summary:focus-visible { outline: 2px solid var(--bluemind-blue); outline-offset: 3px; border-radius: 4px; }
 .questions p { max-width: 730px; margin: 0 0 18px; color: var(--bluemind-text); font-size: 13px; line-height: 1.8; text-align: start; }
 @media (max-width: 620px) {
-  .faq { margin-top: 40px; padding-top: 26px; }
+  .faq { margin-top: 36px; padding-top: 28px; }
   .faq h2 { font-size: 23px; }
   .questions summary { min-height: 52px; padding-block: 14px; padding-inline-end: 36px; font-size: 14px; }
   .questions p { font-size: 13px; }

@@ -1,15 +1,23 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import Link from "next/link";
 import { postApi } from "../lib/api-client";
+import { useLocalization, type Locale } from "../../components/localization-provider";
 import styles from "./contact.module.css";
 
 type RequiredField = "fullName" | "email" | "contactType" | "message";
 type FieldErrors = Partial<Record<RequiredField, string>>;
 const contactTypes = ["Company", "Freelancer", "Individual"] as const;
 const readyNotice = "Send us a message and we will get back to you.";
+const consentCopy: Record<Locale, string> = {
+  en: "By sending this form, you acknowledge that we may use the information to respond to your request. Read the Privacy Policy.",
+  sv: "När du skickar formuläret godkänner du att vi använder uppgifterna för att svara på din förfrågan. Läs integritetspolicyn.",
+  ar: "بإرسال هذا النموذج، تقرّ باستخدام المعلومات للرد على طلبك. اقرأ سياسة الخصوصية.",
+};
 
 export default function ContactForm() {
+  const { locale } = useLocalization();
   const [errors, setErrors] = useState<FieldErrors>({});
   const [notice, setNotice] = useState(readyNotice);
   const [interactive, setInteractive] = useState(false);
@@ -73,7 +81,7 @@ export default function ContactForm() {
   const disabled = !interactive || submitting;
 
   return (
-    <form className={styles.form} aria-labelledby="form-preview-title" aria-describedby="contact-required contact-preview" noValidate onSubmit={handleSubmit} onChange={() => setNotice(readyNotice)}>
+    <form className={styles.form} aria-labelledby="form-preview-title" aria-describedby="contact-required contact-consent contact-preview" noValidate onSubmit={handleSubmit} onChange={() => setNotice(readyNotice)}>
       <p id="contact-required" className={styles.requiredNote}>* Required</p>
       <div className={styles.formGrid}>
         <div className={styles.field}>
@@ -110,6 +118,7 @@ export default function ContactForm() {
         </div>
       </div>
       <button className={styles.sendButton} type="submit" disabled={disabled}>{submitting ? "Sending..." : "Send Message"}</button>
+      <p id="contact-consent" className={styles.formNotice} data-no-translate>{consentCopy[locale].replace(locale === "en" ? "Read the Privacy Policy." : locale === "sv" ? "Läs integritetspolicyn." : "اقرأ سياسة الخصوصية.", "")}{" "}<Link href="/privacy">{locale === "en" ? "Read the Privacy Policy." : locale === "sv" ? "Läs integritetspolicyn." : "اقرأ سياسة الخصوصية."}</Link></p>
       <p id="contact-preview" className={styles.formNotice} role="status">{notice}</p>
     </form>
   );

@@ -6,10 +6,10 @@ Prompt: Editorial photograph of a refined fictional white motor yacht with teak 
 
 # BlueMind logo
 
-The site header uses the user's supplied original BlueMind geometric symbol with the background removed and saved as `public/images/brand/bluemind-original-logo-transparent.png`.
+The site-wide brand mark uses the supplied transparent BlueMind logo saved as `public/images/brand/bluemind-new-logo-transparent.png`.
 
-The logo is intentionally visible only in the main header beside the BlueMind Web Service name. Decorative page watermarks and footer logo usage have been removed so the mark is not repeated inside page content.
+The shared brand lockup, footer, customer workspace, and preview surfaces all reference this same asset so the mark stays consistent across the site.
 
 `public/icons/` contains browser/app icon exports generated from the same transparent logo asset. `public/favicon.ico` contains 16/32/48/64-pixel frames. Next.js root metadata imports `app/favicon-metadata.json`, so every current route inherits the same browser icons.
 
-To reproduce favicon and app icon exports, run `node scripts/prepare-icons.mjs` from the frontend root. The script defaults to `public/images/brand/bluemind-original-logo-transparent.png` and can also receive a source image path argument.
+To reproduce favicon and app icon exports, run `node scripts/prepare-icons.mjs` from the frontend root. The script defaults to `public/images/brand/bluemind-new-logo-transparent.png` and can also receive a source image path argument.

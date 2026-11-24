@@ -3,13 +3,13 @@ export const packages = [
     id: "01",
     checkoutId: "showcase-website",
     title: "Showcase Website",
-    price: "4,990 SEK",
+    price: "5,000 SEK",
     delivery: "Delivery depends on the agreed content and project scope.",
-    scope: "Up to 3 pages of your choice",
+    scope: "Up to 5 pages of your choice",
     description: "A simple, professional website to show your work, products, or services.",
     features: [
       "Choose your colors and visual style.",
-      "Up to 3 pages, such as Home, Services, and Contact.",
+      "Up to 5 pages, such as Home, Menu, About Us, Gallery, and Contact.",
       "Show photos, information, and examples of your work.",
       "Contact form or WhatsApp contact option.",
       "Responsive layout for mobile, tablet, and computer.",
@@ -19,7 +19,7 @@ export const packages = [
       "Revisions Included - you can request changes before delivery within the agreed project scope.",
       "Best for businesses that want to be visible online without payments or orders."
     ],
-    cta: "Get Started",
+    cta: "Try the restaurant demo",
     popular: false,
     visibleFeatures: 6,
     vatNote: "Prices exclude VAT where VAT applies. Final VAT treatment appears on the invoice."

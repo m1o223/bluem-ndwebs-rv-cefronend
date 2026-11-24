@@ -55,7 +55,7 @@ function formatTime(value: string | null, locale: Locale) {
 }
 
 function TeamAvatar({ className = "" }: { className?: string }) {
-  return <span className={`${styles.teamAvatar} ${className}`} aria-hidden="true"><Image src="/images/brand/bluemind-original-logo-transparent.png" alt="" width={32} height={36} /></span>;
+  return <span className={`${styles.teamAvatar} ${className}`} aria-hidden="true"><Image src="/images/brand/bluemind-new-logo-transparent.png" alt="" width={32} height={32} /></span>;
 }
 
 export default function NotificationsMessages({ locale }: { locale: Locale }) {

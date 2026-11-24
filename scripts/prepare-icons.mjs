@@ -3,21 +3,21 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
-const sourcePath = process.argv[2] || fileURLToPath(new URL("../public/images/brand/bluemind-original-logo-transparent.png", import.meta.url));
+const sourcePath = process.argv[2] || fileURLToPath(new URL("../public/images/brand/bluemind-new-logo-transparent.png", import.meta.url));
 const source = await readFile(sourcePath);
 const hash = data => createHash("sha256").update(data).digest("hex");
 const publicDirectory = fileURLToPath(new URL("../public/", import.meta.url));
 const iconFiles = new Map([
-  [16, "bluemind-16-d2c4607c1f38.png"],
-  [32, "bluemind-32-2c109a90cab9.png"],
-  [48, "bluemind-48-874d3d572525.png"],
-  [64, "bluemind-64-4fc14061262e.png"],
-  [128, "bluemind-128-1e8b467efb6f.png"],
-  [152, "bluemind-152-b99b5f74776c.png"],
-  [167, "bluemind-167-0f7917de3d33.png"],
-  [180, "bluemind-180-4bf4c21ff471.png"],
-  [192, "bluemind-192-894db5406f99.png"],
-  [512, "bluemind-512-8e7ece442cf9.png"],
+  [16, "bluemind-new-16.png"],
+  [32, "bluemind-new-32.png"],
+  [48, "bluemind-new-48.png"],
+  [64, "bluemind-new-64.png"],
+  [128, "bluemind-new-128.png"],
+  [152, "bluemind-new-152.png"],
+  [167, "bluemind-new-167.png"],
+  [180, "bluemind-new-180.png"],
+  [192, "bluemind-new-192.png"],
+  [512, "bluemind-new-512.png"],
 ]);
 
 await mkdir(new URL("../public/icons/", import.meta.url), { recursive: true });

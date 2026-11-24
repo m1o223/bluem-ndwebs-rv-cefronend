@@ -1,14 +1,14 @@
 .content { width: min(1240px, calc(100% - 72px)); }
 :global(.how-we-work-page-content) > * { width: 100%; }
 
-.intro { max-width: 700px; }
+.intro { max-width: 700px; margin-bottom: clamp(38px, 4vw, 52px); }
 .intro .headline { margin-top: 20px; color: var(--bluemind-text); font-size: clamp(23px, 2.5vw, 30px); font-weight: 500; line-height: 1.3; letter-spacing: -.8px; }
-.intro .headline + p { margin-top: 14px; max-width: 590px; }
+.intro .headline + p { margin-top: 18px; max-width: 590px; }
 .timeline { list-style: none; margin: 0; padding: 0; }
 .step { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 24px; }
 .step:not(:last-child)::after { content: ""; position: absolute; left: 21px; top: 38px; width: 1px; height: 100%; background: var(--bluemind-border); }
 .number { position: relative; z-index: 1; align-self: start; margin-top: 24px; padding-block: 6px; background: #fff; text-align: center; color: var(--bluemind-text); font-size: 11px; line-height: 16px; letter-spacing: .5px; }
-.stepContent { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); align-items: center; gap: 40px; padding-block: 24px 28px; border-top: 1px solid var(--bluemind-border); min-height: 108px; background: #fff; }
+.stepContent { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); align-items: center; gap: clamp(28px, 4vw, 48px); padding-block: 28px 32px; border-top: 1px solid var(--bluemind-border); min-height: 116px; background: #fff; }
 .stepHeading { display: flex; align-items: center; gap: 16px; min-width: 0; }
 .icon { width: 52px; height: auto; flex-shrink: 0; object-fit: contain; }
 .step h2 { margin: 0; font-size: 21px; font-weight: 500; line-height: 1.35; letter-spacing: -.6px; }
@@ -40,7 +40,7 @@
   .step { grid-template-columns: 34px minmax(0, 1fr); gap: 12px; }
   .step:not(:last-child)::after { left: 16px; top: 34px; }
   .number { margin-top: 20px; }
-  .stepContent { padding-block: 20px 24px; }
+  .stepContent { padding-block: 22px 26px; }
   .stepHeading { gap: 12px; }
   .icon { width: 46px; }
   .step p { margin-left: 0; }
