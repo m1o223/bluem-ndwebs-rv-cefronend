@@ -6,16 +6,15 @@ import {
   LayoutTemplate,
   MessageSquare,
   MousePointer2,
-  Sparkles,
   type LucideIcon,
 } from "lucide-react";
 import homeStyles from "../../components/home/home.module.css";
 import pageStyles from "../../components/page-identity.module.css";
 import styles from "./about.module.css";
 
-type PreviewKind = "feedback" | "detail";
+type PreviewKind = "feedback" | "different";
 type AboutSection = { id: string; title: string; points: string[]; preview: PreviewKind };
-type WorkStep = { icon: string; title: string; text: string };
+type WorkStep = { src: string; title: string; text: string; alt: string };
 
 const aboutSections: AboutSection[] = [
   {
@@ -32,7 +31,7 @@ const aboutSections: AboutSection[] = [
   {
     id: "what-makes-us-different",
     title: "What Makes Us Different",
-    preview: "detail",
+    preview: "different",
     points: [
       "We have deep knowledge of web design and development.",
       "We pay attention to every detail.",
@@ -50,13 +49,13 @@ const workflowPrinciples = [
 ];
 
 const workSteps: WorkStep[] = [
-  { icon: "01-tell-us", title: "Tell Us What You Need", text: "Tell us about your idea, your business, and the website you have in mind." },
-  { icon: "02-review", title: "We Review Your Project", text: "We review your request, your requirements, and the best way to build your website." },
-  { icon: "03-choose", title: "Choose Your Direction", text: "We prepare up to four design concepts. You choose the direction you like most." },
-  { icon: "04-build", title: "We Build & Refine", text: "Once you choose a direction, we build the website and refine the details with you." },
-  { icon: "05-approve", title: "Review & Approval", text: "You review the finished website and make sure everything is right before final delivery." },
-  { icon: "06-payment", title: "Payment", text: "Once everything is approved, we complete the payment before the final handover." },
-  { icon: "07-delivery", title: "Final Delivery", text: "You receive your completed website, along with the files and access included in your project." },
+  { src: "/images/how-we-work/how-01-tell-us-what-you-need.jpg", alt: "A person explains a website idea at a laptop with a message preview and lightbulb.", title: "Tell Us What You Need", text: "Tell us about your idea, your business, and the website you have in mind." },
+  { src: "/images/how-we-work/how-02-we-review-your-project.jpg", alt: "A project plan is reviewed on a screen beside a checklist and magnifying glass.", title: "We Review Your Project", text: "We review your request, your requirements, and the best way to build your website." },
+  { src: "/images/how-we-work/how-03-choose-your-direction.jpg", alt: "Four website design concepts are shown while one selected concept is marked with a check.", title: "Choose Your Direction", text: "We prepare up to four design concepts. You choose the direction you like most." },
+  { src: "/images/how-we-work/how-04-we-build-and-refine.jpg", alt: "A website is refined in an editor with color, alignment, and spacing controls.", title: "We Build & Refine", text: "Once you choose a direction, we build the website and refine the details with you." },
+  { src: "/images/how-we-work/how-05-review-and-approval.jpg", alt: "A completed website is reviewed on desktop and mobile with a thumbs-up approval.", title: "Review & Approval", text: "You review the finished website and make sure everything is right before final delivery." },
+  { src: "/images/how-we-work/how-06-payment.jpg", alt: "A payment card, website preview, payment form, and approved receipt are shown together.", title: "Payment", text: "Once everything is approved, we complete the payment before the final handover." },
+  { src: "/images/how-we-work/how-07-final-delivery.jpg", alt: "A designer hands a blue website project folder to a client beside completed device previews.", title: "Final Delivery", text: "You receive your completed website, along with the files and access included in your project." },
 ];
 
 function BrowserBar() {
@@ -89,36 +88,26 @@ function FeedbackPreview() {
   </div>;
 }
 
-function DetailPreview() {
-  return <div className={`${styles.preview} ${styles.detailPreview}`} aria-hidden="true">
-    <span className={styles.previewGlow} />
-    <div className={styles.detailDesktop}>
-      <BrowserBar />
-      <div className={styles.detailLayout}>
-        <div className={styles.detailHero}><span /><span /><span /></div>
-        <div className={styles.detailRows}><i /><i /><i /></div>
-        <div className={styles.detailPalette}><i /><i /><i /><i /></div>
-      </div>
-    </div>
-    <div className={styles.detailCallout}>
-      <Sparkles size={17} strokeWidth={1.7} />
-      <span><i /><i /><i /></span>
-    </div>
-    <div className={styles.detailPhone}>
-      <span className={styles.phoneTop} /><span className={styles.phoneHero} />
-      <span className={styles.phoneRow} /><span className={styles.phoneRowShort} />
-    </div>
-    <span className={styles.detailLink} />
+function DifferentPreview() {
+  return <div className={`${styles.preview} ${styles.imagePreview}`}>
+    <Image
+      src="/images/about/about-what-makes-us-different.jpg"
+      width={1280}
+      height={853}
+      sizes="(max-width: 760px) calc(100vw - 32px), (max-width: 1050px) calc(100vw - 56px), 54vw"
+      alt="A website shown on a desktop computer, landscape tablet, and portrait phone."
+      className={styles.sectionImage}
+    />
   </div>;
 }
 
 function SectionPreview({ kind }: { kind: PreviewKind }) {
-  return kind === "feedback" ? <FeedbackPreview /> : <DetailPreview />;
+  return kind === "feedback" ? <FeedbackPreview /> : <DifferentPreview />;
 }
 
-function StepPreview({ icon }: { icon: string }) {
-  return <div className={styles.stepVisual} aria-hidden="true">
-    <Image src={`/images/how-we-work/${icon}.svg`} width={240} height={200} loading="eager" alt="" className={styles.stepImage} />
+function StepPreview({ src, alt, eager }: { src: string; alt: string; eager: boolean }) {
+  return <div className={styles.stepVisual}>
+    <Image src={src} width={1280} height={853} priority={eager} alt={alt} sizes="(max-width: 760px) calc(100vw - 72px), (max-width: 1050px) 54vw, 45vw" className={styles.stepImage} />
   </div>;
 }
 
@@ -167,11 +156,11 @@ export default function AboutPage() {
               </div>
 
               <ol className={styles.workflowSteps} aria-label="Our website project process">
-                {workSteps.map((step, index) => <li key={step.icon} className={`${styles.workflowStep} ${index % 2 ? styles.stepRight : styles.stepLeft}`}>
+                {workSteps.map((step, index) => <li key={step.src} className={`${styles.workflowStep} ${index % 2 ? styles.stepRight : styles.stepLeft}`}>
                   <div className={styles.stepCard}>
                     <div className={styles.stepVisualFrame}>
                       <span className={styles.stepNumber} aria-hidden="true">0{index + 1}</span>
-                      <StepPreview icon={step.icon} />
+                      <StepPreview src={step.src} alt={step.alt} eager={index === 0} />
                     </div>
                     <article className={styles.stepCopy} aria-labelledby={`about-work-step-${index + 1}`}>
                       <h3 id={`about-work-step-${index + 1}`}>{step.title}</h3>
