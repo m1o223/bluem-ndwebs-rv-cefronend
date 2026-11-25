@@ -10,10 +10,19 @@ type RequiredField = "fullName" | "email" | "contactType" | "message";
 type FieldErrors = Partial<Record<RequiredField, string>>;
 const contactTypes = ["Company", "Freelancer", "Individual"] as const;
 const readyNotice = "Send us a message and we will get back to you.";
-const consentCopy: Record<Locale, string> = {
-  en: "By sending this form, you acknowledge that we may use the information to respond to your request. Read the Privacy Policy.",
-  sv: "När du skickar formuläret godkänner du att vi använder uppgifterna för att svara på din förfrågan. Läs integritetspolicyn.",
-  ar: "بإرسال هذا النموذج، تقرّ باستخدام المعلومات للرد على طلبك. اقرأ سياسة الخصوصية.",
+const consentCopy: Record<Locale, { body: string; link: string }> = {
+  en: {
+    body: "By sending this form, you acknowledge that we may use the information to respond to your request.",
+    link: "Read the Privacy Policy.",
+  },
+  sv: {
+    body: "När du skickar formuläret godkänner du att vi använder uppgifterna för att svara på din förfrågan.",
+    link: "Läs integritetspolicyn.",
+  },
+  ar: {
+    body: "بإرسال هذا النموذج، تقرّ باستخدام المعلومات للرد على طلبك.",
+    link: "اقرأ سياسة الخصوصية.",
+  },
 };
 
 export default function ContactForm() {
@@ -58,13 +67,21 @@ export default function ContactForm() {
     const result = await postApi("/api/contact", {
       name: value("fullName"),
       email,
+      contactType: value("contactType"),
       company: value("company") || undefined,
-      subject: [value("contactType"), orderNumber ? `Order ${orderNumber}` : ""].filter(Boolean).join(" - ") || undefined,
-      message: value("message")
+      orderNumber: orderNumber || undefined,
+      message: value("message"),
     });
     setSubmitting(false);
 
     if (!result.success) {
+      const serverFields: FieldErrors = {
+        fullName: result.fields?.fullName || result.fields?.name,
+        email: result.fields?.email,
+        contactType: result.fields?.contactType,
+        message: result.fields?.message,
+      };
+      setErrors(serverFields);
       setNotice(result.error || "We could not send your message. Please try again.");
       return;
     }
@@ -79,6 +96,7 @@ export default function ContactForm() {
   }
 
   const disabled = !interactive || submitting;
+  const consent = consentCopy[locale];
 
   return (
     <form className={styles.form} aria-labelledby="form-preview-title" aria-describedby="contact-required contact-consent contact-preview" noValidate onSubmit={handleSubmit} onChange={() => setNotice(readyNotice)}>
@@ -86,12 +104,12 @@ export default function ContactForm() {
       <div className={styles.formGrid}>
         <div className={styles.field}>
           <label htmlFor="contact-fullName">Full Name <span aria-hidden="true">*</span></label>
-          <input id="contact-fullName" name="fullName" type="text" autoComplete="name" required aria-invalid={errors.fullName ? true : undefined} aria-describedby={errors.fullName ? "contact-fullName-error" : undefined} disabled={submitting} />
+          <input id="contact-fullName" name="fullName" type="text" autoComplete="name" maxLength={160} required aria-invalid={errors.fullName ? true : undefined} aria-describedby={errors.fullName ? "contact-fullName-error" : undefined} disabled={submitting} />
           {errorMessage("fullName")}
         </div>
         <div className={styles.field}>
           <label htmlFor="contact-email">Email Address <span aria-hidden="true">*</span></label>
-          <input id="contact-email" name="email" type="email" autoComplete="email" required aria-invalid={errors.email ? true : undefined} aria-describedby={errors.email ? "contact-email-error" : undefined} disabled={submitting} />
+          <input id="contact-email" name="email" type="email" autoComplete="email" maxLength={320} required aria-invalid={errors.email ? true : undefined} aria-describedby={errors.email ? "contact-email-error" : undefined} disabled={submitting} />
           {errorMessage("email")}
         </div>
         <div className={styles.field}>
@@ -104,21 +122,21 @@ export default function ContactForm() {
         </div>
         <div className={styles.field}>
           <label htmlFor="contact-company">Company / Brand Name <span className={styles.optional}>(Optional)</span></label>
-          <input id="contact-company" name="company" type="text" autoComplete="organization" disabled={submitting} />
+          <input id="contact-company" name="company" type="text" autoComplete="organization" maxLength={180} disabled={submitting} />
         </div>
         <div className={styles.field}>
           <label htmlFor="contact-orderNumber">Order Number <span className={styles.optional}>(Optional)</span></label>
-          <input id="contact-orderNumber" name="orderNumber" type="text" aria-describedby="contact-order-help" disabled={submitting} />
+          <input id="contact-orderNumber" name="orderNumber" type="text" maxLength={100} aria-describedby="contact-order-help" disabled={submitting} />
           <p id="contact-order-help" className={styles.fieldHelp}>For an existing order.</p>
         </div>
         <div className={`${styles.field} ${styles.fullWidth}`}>
           <label htmlFor="contact-message">Message <span aria-hidden="true">*</span></label>
-          <textarea id="contact-message" name="message" rows={5} required aria-invalid={errors.message ? true : undefined} aria-describedby={errors.message ? "contact-message-error" : undefined} disabled={submitting} />
+          <textarea id="contact-message" name="message" rows={5} maxLength={4000} required aria-invalid={errors.message ? true : undefined} aria-describedby={errors.message ? "contact-message-error" : undefined} disabled={submitting} />
           {errorMessage("message")}
         </div>
       </div>
       <button className={styles.sendButton} type="submit" disabled={disabled}>{submitting ? "Sending..." : "Send Message"}</button>
-      <p id="contact-consent" className={styles.formNotice} data-no-translate>{consentCopy[locale].replace(locale === "en" ? "Read the Privacy Policy." : locale === "sv" ? "Läs integritetspolicyn." : "اقرأ سياسة الخصوصية.", "")}{" "}<Link href="/privacy">{locale === "en" ? "Read the Privacy Policy." : locale === "sv" ? "Läs integritetspolicyn." : "اقرأ سياسة الخصوصية."}</Link></p>
+      <p id="contact-consent" className={styles.formNotice} data-no-translate>{consent.body}{" "}<Link href="/privacy">{consent.link}</Link></p>
       <p id="contact-preview" className={styles.formNotice} role="status">{notice}</p>
     </form>
   );
