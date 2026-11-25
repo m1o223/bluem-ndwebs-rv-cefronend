@@ -49,13 +49,13 @@ const workflowPrinciples = [
 ];
 
 const workSteps: WorkStep[] = [
-  { src: "/images/how-we-work/how-01-tell-us-what-you-need.jpg", alt: "A person explains a website idea at a laptop with a message preview and lightbulb.", title: "Tell Us What You Need", text: "Tell us about your idea, your business, and the website you have in mind." },
-  { src: "/images/how-we-work/how-02-we-review-your-project.jpg", alt: "A project plan is reviewed on a screen beside a checklist and magnifying glass.", title: "We Review Your Project", text: "We review your request, your requirements, and the best way to build your website." },
-  { src: "/images/how-we-work/how-03-choose-your-direction.jpg", alt: "Four website design concepts are shown while one selected concept is marked with a check.", title: "Choose Your Direction", text: "We prepare up to four design concepts. You choose the direction you like most." },
-  { src: "/images/how-we-work/how-04-we-build-and-refine.jpg", alt: "A website is refined in an editor with color, alignment, and spacing controls.", title: "We Build & Refine", text: "Once you choose a direction, we build the website and refine the details with you." },
-  { src: "/images/how-we-work/how-05-review-and-approval.jpg", alt: "A completed website is reviewed on desktop and mobile with a thumbs-up approval.", title: "Review & Approval", text: "You review the finished website and make sure everything is right before final delivery." },
-  { src: "/images/how-we-work/how-06-payment.jpg", alt: "A payment card, website preview, payment form, and approved receipt are shown together.", title: "Payment", text: "Once everything is approved, we complete the payment before the final handover." },
-  { src: "/images/how-we-work/how-07-final-delivery.jpg", alt: "A designer hands a blue website project folder to a client beside completed device previews.", title: "Final Delivery", text: "You receive your completed website, along with the files and access included in your project." },
+  { src: "/images/how-we-work/how-01-tell-us-what-you-need-v2.webp", alt: "A person explains a website idea at a laptop with a message preview and lightbulb.", title: "Tell Us What You Need", text: "Tell us about your idea, your business, and the website you have in mind." },
+  { src: "/images/how-we-work/how-02-we-review-your-project-v2.webp", alt: "A project plan is reviewed on a screen beside a checklist and magnifying glass.", title: "We Review Your Project", text: "We review your request, your requirements, and the best way to build your website." },
+  { src: "/images/how-we-work/how-03-choose-your-direction-v2.webp", alt: "Four website design concepts are shown while one selected concept is marked with a check.", title: "Choose Your Direction", text: "We prepare up to four design concepts. You choose the direction you like most." },
+  { src: "/images/how-we-work/how-04-we-build-and-refine-v2.webp", alt: "A website is refined in an editor with color, alignment, and spacing controls.", title: "We Build & Refine", text: "Once you choose a direction, we build the website and refine the details with you." },
+  { src: "/images/how-we-work/how-05-review-and-approval-v2.webp", alt: "A completed website is reviewed on desktop and mobile with a thumbs-up approval.", title: "Review & Approval", text: "You review the finished website and make sure everything is right before final delivery." },
+  { src: "/images/how-we-work/how-06-payment-v2.webp", alt: "A payment card, website preview, payment form, and approved receipt are shown together.", title: "Payment", text: "Once everything is approved, we complete the payment before the final handover." },
+  { src: "/images/how-we-work/how-07-final-delivery-v2.webp", alt: "A designer hands a blue website project folder to a client beside completed device previews.", title: "Final Delivery", text: "You receive your completed website, along with the files and access included in your project." },
 ];
 
 function BrowserBar() {
@@ -91,7 +91,7 @@ function FeedbackPreview() {
 function DifferentPreview() {
   return <div className={`${styles.preview} ${styles.imagePreview}`}>
     <Image
-      src="/images/about/about-what-makes-us-different.jpg"
+      src="/images/about/about-what-makes-us-different-v2.webp"
       width={1280}
       height={853}
       sizes="(max-width: 760px) calc(100vw - 32px), (max-width: 1050px) calc(100vw - 56px), 54vw"
