@@ -34,7 +34,7 @@ const panelText = {
   ar: { close: "\u0625\u063a\u0644\u0627\u0642", title: "\u0627\u0644\u0642\u0627\u0626\u0645\u0629", navigation: "\u0627\u0644\u062a\u0646\u0642\u0644 \u0627\u0644\u0631\u0626\u064a\u0633\u064a", signIn: "\u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062f\u062e\u0648\u0644" },
 } as const;
 
-const closeDuration = 240;
+const closeDuration = 320;
 type ScrollPosition = { x: number; y: number };
 const TEST_SITE = process.env.NEXT_PUBLIC_TEST_SITE === "true";
 
@@ -51,9 +51,11 @@ export default function SiteMenuOverlay({ open, onClose, scrollPosition, current
   const close = useRef<HTMLButtonElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
   const closeTimer = useRef<number | null>(null);
+  const openFrame = useRef<number | null>(null);
   const closeRequested = useRef(false);
   const [rendered, setRendered] = useState(open);
   const [closing, setClosing] = useState(false);
+  const [entered, setEntered] = useState(open);
   const rtl = locale === "ar";
   const text = panelText[locale];
   const labels = localizedLinks[locale];
@@ -62,11 +64,13 @@ export default function SiteMenuOverlay({ open, onClose, scrollPosition, current
   const requestClose = useCallback(() => {
     if (closeRequested.current) return;
     closeRequested.current = true;
+    if (openFrame.current) window.cancelAnimationFrame(openFrame.current);
     setClosing(true);
+    setEntered(false);
+    onClose();
     if (closeTimer.current) window.clearTimeout(closeTimer.current);
     closeTimer.current = window.setTimeout(() => {
       setRendered(false);
-      onClose();
       closeRequested.current = false;
     }, closeDuration);
   }, [onClose]);
@@ -74,16 +78,30 @@ export default function SiteMenuOverlay({ open, onClose, scrollPosition, current
   useEffect(() => {
     if (open) {
       if (closeTimer.current) window.clearTimeout(closeTimer.current);
+      if (openFrame.current) window.cancelAnimationFrame(openFrame.current);
       closeRequested.current = false;
       setRendered(true);
       setClosing(false);
+      setEntered(false);
+      openFrame.current = window.requestAnimationFrame(() => {
+        openFrame.current = window.requestAnimationFrame(() => setEntered(true));
+      });
       return;
     }
     if (!rendered || closeRequested.current) return;
     setClosing(true);
+    setEntered(false);
     closeTimer.current = window.setTimeout(() => setRendered(false), closeDuration);
-    return () => { if (closeTimer.current) window.clearTimeout(closeTimer.current); };
+    return () => {
+      if (closeTimer.current) window.clearTimeout(closeTimer.current);
+      if (openFrame.current) window.cancelAnimationFrame(openFrame.current);
+    };
   }, [open, rendered]);
+
+  useEffect(() => () => {
+    if (closeTimer.current) window.clearTimeout(closeTimer.current);
+    if (openFrame.current) window.cancelAnimationFrame(openFrame.current);
+  }, []);
 
   useEffect(() => {
     if (!rendered) return;
@@ -146,8 +164,8 @@ export default function SiteMenuOverlay({ open, onClose, scrollPosition, current
 
   if (!rendered) return null;
   return (
-    <div className={styles.overlay} data-side={side} data-test-site={TEST_SITE ? "true" : undefined} data-closing={closing || undefined} role="presentation" onPointerDown={(event) => { if (event.target === event.currentTarget) requestClose(); }}>
-      <section id="site-navigation-panel" className={styles.panel} role="dialog" aria-modal="true" aria-labelledby="site-menu-title" dir={rtl ? "rtl" : "ltr"}>
+    <div className={styles.overlay} data-side={side} data-test-site={TEST_SITE ? "true" : undefined} data-closing={closing || undefined} data-entered={entered ? "true" : undefined} role="presentation" onPointerDown={(event) => { if (event.target === event.currentTarget) requestClose(); }}>
+      <section id="site-navigation-panel" className={styles.panel} data-entered={entered ? "true" : undefined} role="dialog" aria-modal="true" aria-labelledby="site-menu-title" dir={rtl ? "rtl" : "ltr"}>
         <header className={styles.header}>
           {TEST_SITE ? <Link href="/" className={styles.brand} aria-label="BlueMind Web Service home" onClick={requestClose}><BrandLockup solidLogo /></Link> : <h2 id="site-menu-title">{titleOverride || text.title}</h2>}
           <button ref={close} className={styles.close} type="button" onClick={requestClose} aria-label={text.close}><X size={TEST_SITE ? 20 : 22} aria-hidden="true" />{TEST_SITE && <span>{text.close}</span>}</button>
