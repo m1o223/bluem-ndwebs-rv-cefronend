@@ -76,7 +76,7 @@
 .emailLabel { color: var(--bluemind-text); font-size: 12px; font-weight: 600; line-height: 1.4; }
 .emailAddress { color: var(--bluemind-blue); font-size: 16px; line-height: 1.5; overflow-wrap: anywhere; }
 .formSpace {
-  --contact-field-radius: 12px;
+  --contact-field-radius: var(--control-radius);
   min-width: 0;
   width: min(1100px, 100%);
   margin: 0 auto;
@@ -197,7 +197,7 @@
   min-height: 46px;
   padding: 11px 12px;
   border: 1px solid #dfe4eb;
-  border-radius: var(--contact-field-radius);
+  border-radius: var(--contact-field-radius) !important;
   background: #fff;
   color: var(--bluemind-text);
   font: inherit;
