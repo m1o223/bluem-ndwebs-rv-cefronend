@@ -207,21 +207,20 @@ export default function ContactForm() {
   const disabled = !interactive || submitting;
 
   return (
-    <form className={styles.form} aria-labelledby="form-preview-title" aria-describedby="contact-required" noValidate onSubmit={handleSubmit} onChange={() => setNotice("")}>
-      <p id="contact-required" className={styles.requiredNote}>* Required</p>
+    <form className={styles.form} aria-labelledby="form-preview-title" noValidate onSubmit={handleSubmit} onChange={() => setNotice("")}>
       <div className={styles.formGrid}>
         <div className={styles.field}>
-          <label htmlFor="contact-fullName">Full Name <span aria-hidden="true">*</span></label>
-          <input id="contact-fullName" name="fullName" type="text" autoComplete="name" maxLength={160} required aria-invalid={errors.fullName ? true : undefined} aria-describedby={errors.fullName ? "contact-fullName-error" : undefined} disabled={submitting} />
+          <label htmlFor="contact-fullName">Full Name <span className={styles.srOnly}>Required</span></label>
+          <input id="contact-fullName" name="fullName" type="text" autoComplete="name" maxLength={160} required aria-required="true" aria-invalid={errors.fullName ? true : undefined} aria-describedby={errors.fullName ? "contact-fullName-error" : undefined} disabled={submitting} />
           {errorMessage("fullName")}
         </div>
         <div className={styles.field}>
-          <label htmlFor="contact-email">Email Address <span aria-hidden="true">*</span></label>
-          <input id="contact-email" name="email" type="email" autoComplete="email" maxLength={320} required aria-invalid={errors.email ? true : undefined} aria-describedby={errors.email ? "contact-email-error" : undefined} disabled={submitting} />
+          <label htmlFor="contact-email">Email Address <span className={styles.srOnly}>Required</span></label>
+          <input id="contact-email" name="email" type="email" autoComplete="email" maxLength={320} required aria-required="true" aria-invalid={errors.email ? true : undefined} aria-describedby={errors.email ? "contact-email-error" : undefined} disabled={submitting} />
           {errorMessage("email")}
         </div>
         <div className={styles.field}>
-          <label htmlFor="contact-contactType">Contact Type <span aria-hidden="true">*</span></label>
+          <label htmlFor="contact-contactType">Contact Type <span className={styles.srOnly}>Required</span></label>
           <ContactTypeSelect value={contactType} onChange={value => { setContactType(value); setNotice(""); }} error={errors.contactType} disabled={disabled} />
           {errorMessage("contactType")}
         </div>
@@ -235,8 +234,8 @@ export default function ContactForm() {
           <p id="contact-order-help" className={styles.fieldHelp}>For an existing order.</p>
         </div>
         <div className={`${styles.field} ${styles.fullWidth}`}>
-          <label htmlFor="contact-message">Message <span aria-hidden="true">*</span></label>
-          <textarea id="contact-message" name="message" rows={5} maxLength={4000} required aria-invalid={errors.message ? true : undefined} aria-describedby={errors.message ? "contact-message-error" : undefined} disabled={submitting} />
+          <label htmlFor="contact-message">Message <span className={styles.srOnly}>Required</span></label>
+          <textarea id="contact-message" name="message" rows={5} maxLength={4000} required aria-required="true" aria-invalid={errors.message ? true : undefined} aria-describedby={errors.message ? "contact-message-error" : undefined} disabled={submitting} />
           {errorMessage("message")}
         </div>
       </div>

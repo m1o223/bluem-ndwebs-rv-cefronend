@@ -10,7 +10,7 @@ export default function ContactPage() {
         <div className={`${homeStyles.container} ${styles.content}`}>
           <div className={styles.intro}>
             <h1 id="contact-title">Contact Us</h1>
-            <p>Tell us about your idea, your question, or your existing order.</p>
+            <p>Have a question or need help? Get in touch with our team.</p>
           </div>
           <div className={styles.columns}>
             <aside className={styles.details} aria-label="Contact information">
