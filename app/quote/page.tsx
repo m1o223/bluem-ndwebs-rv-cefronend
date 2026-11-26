@@ -11,7 +11,6 @@ export default function QuotePage() {
           <div className={`${pageStyles.intro} ${pageStyles.enter} ${styles.intro}`}>
             <h1>Pricing</h1>
             <p className={styles.headline}>Find the right website for your project.</p>
-            <p>See our starting prices, compare what’s included, and tell us what you have in mind.</p>
           </div>
           <QuoteExperience />
         </div>

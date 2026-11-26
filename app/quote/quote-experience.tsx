@@ -68,10 +68,6 @@ export default function QuoteExperience() {
 
   return (
     <>
-      <div className={`${styles.valueIntro} ${pageStyles.enter}`}>
-        <StarMark className={styles.star} />
-        <div><h2>More included. No unnecessary extras.</h2><p>Professional websites built for desktop, tablet and mobile — included as standard.</p></div>
-      </div>
       <section className={`${styles.pricing} ${pageStyles.enter}`} aria-label="Website packages and starting prices">
         {packages.map(item => (
           <article key={item.id} className={`${styles.package} ${item.popular ? styles.popular : ""}`} aria-labelledby={`package-${item.id}`}>
@@ -155,10 +151,6 @@ export default function QuoteExperience() {
           </div>
         </div>
       )}
-      <div className={styles.disclaimer}>
-        <p>Starting prices. Final price and delivery time depend on your project requirements.</p>
-        <p>Third-party costs such as domains, hosting, shipping carrier fees, payment-provider fees, paid plugins, and external service subscriptions are not included unless stated otherwise.</p>
-      </div>
     </>
   );
 }
