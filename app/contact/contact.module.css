@@ -127,7 +127,8 @@
   }
 }
 .formGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 16px; }
-.field { min-width: 0; }
+.field { position: relative; z-index: 0; min-width: 0; }
+.field:has(.selectField[data-open="true"]) { z-index: 30; }
 .field label { display: block; margin-bottom: 8px; font-size: 12px; font-weight: 500; line-height: 1.6; }
 .optional { color: var(--bluemind-text); font-weight: 400; }
 .field input,
