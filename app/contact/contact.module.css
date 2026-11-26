@@ -269,9 +269,12 @@
 .formSpace .fieldHelp { margin-top: 7px; font-size: 12px; }
 .fullWidth { grid-column: 1 / -1; }
 .form .sendButton {
+  --send-button-min-width: 184px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
+  min-width: var(--send-button-min-width);
   min-height: 54px;
   margin-top: 24px;
   padding: 0 28px;
@@ -285,8 +288,21 @@
   cursor: pointer;
   touch-action: manipulation;
   align-self: flex-start;
+  overflow: visible;
+  white-space: nowrap;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, color 160ms ease;
 }
-.form .sendButton:focus-visible { outline: 2px solid var(--bluemind-blue); outline-offset: 4px; }
+.form .sendButton:hover:not(:disabled) { background: var(--bluemind-blue-hover); border-color: var(--bluemind-blue-hover); transform: none; filter: none; }
+.form .sendButton:focus-visible { outline: 2px solid #8dcfff; outline-offset: 4px; }
+.form .sendButton[data-send-phase="sent"] { background: #0d5fc1; border-color: #0d5fc1; }
+.form .sendButton:disabled { cursor: wait; }
+.sendButtonLabel { position: relative; z-index: 1; }
+.sendDock { position: relative; display: inline-flex; flex: 0 0 34px; align-items: center; justify-content: center; width: 34px; height: 28px; }
+.runway { position: absolute; left: 1px; right: 1px; top: 50%; height: 2px; border-radius: 999px; background: #b9e7ff; opacity: .92; }
+.sendPlaneButton { position: relative; z-index: 1; display: block; width: 25px; height: 25px; object-fit: contain; transform: rotate(90deg); transform-origin: center; transition: opacity 140ms ease; }
+.sendButton[data-send-phase="flying"] .sendPlaneButton { opacity: 0; }
+.sendCheck { position: relative; z-index: 1; color: #fff; }
+.flightPlane { position: fixed; z-index: 1200; display: block; width: 34px; height: 34px; object-fit: contain; pointer-events: none; transform-origin: center; will-change: left, top, transform, opacity; }
 .formSpace .formNotice { margin-top: 12px; font-size: 12px; }
 
 @media (max-width: 900px) {
@@ -315,5 +331,14 @@
   .orderField { grid-column: auto; max-width: none; }
   .emailCard { gap: 11px; padding-inline: 12px 16px; }
   .emailAddress { font-size: 15px; }
+  .sendDock { flex-basis: 30px; width: 30px; }
+  .sendPlaneButton { width: 23px; height: 23px; }
+  .flightPlane { width: 28px; height: 28px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form .sendButton,
+  .sendPlaneButton { transition: none; }
+  .flightPlane { display: none; }
 }
 

@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import { createPortal } from "react-dom";
+import { Check } from "lucide-react";
+import { useEffect, useRef, useState, type CSSProperties, type FormEvent, type KeyboardEvent } from "react";
+import { useLocalization } from "../../components/localization-provider";
 import { postApi } from "../lib/api-client";
 import styles from "./contact.module.css";
 
@@ -8,6 +11,21 @@ type RequiredField = "fullName" | "email" | "contactType" | "message";
 type FieldErrors = Partial<Record<RequiredField, string>>;
 const contactTypes = ["Company", "Freelancer", "Individual"] as const;
 type ContactType = typeof contactTypes[number];
+
+type SendPhase = "idle" | "sending" | "flying" | "sent";
+type FlightState = {
+  startX: number;
+  startY: number;
+  forward: number;
+  radius: number;
+  endY: number;
+};
+
+const sendCopy = {
+  en: { send: "Send Message", sending: "Sending...", sent: "Sent", flightLabel: "Message sent" },
+  sv: { send: "Skicka meddelande", sending: "Skickar...", sent: "Skickat", flightLabel: "Meddelandet skickat" },
+  ar: { send: "إرسال الرسالة", sending: "جارٍ الإرسال...", sent: "تم الإرسال", flightLabel: "تم إرسال الرسالة" },
+} as const;
 
 type ContactTypeSelectProps = {
   value: string;
@@ -133,14 +151,117 @@ function ContactTypeSelect({ value, onChange, error, disabled }: ContactTypeSele
   );
 }
 
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function cubicPoint(t: number, p0: [number, number], p1: [number, number], p2: [number, number], p3: [number, number]): [number, number] {
+  const inverse = 1 - t;
+  return [
+    inverse ** 3 * p0[0] + 3 * inverse ** 2 * t * p1[0] + 3 * inverse * t ** 2 * p2[0] + t ** 3 * p3[0],
+    inverse ** 3 * p0[1] + 3 * inverse ** 2 * t * p1[1] + 3 * inverse * t ** 2 * p2[1] + t ** 3 * p3[1],
+  ];
+}
+
+function cubicTangent(t: number, p0: [number, number], p1: [number, number], p2: [number, number], p3: [number, number]): [number, number] {
+  const inverse = 1 - t;
+  return [
+    3 * inverse ** 2 * (p1[0] - p0[0]) + 6 * inverse * t * (p2[0] - p1[0]) + 3 * t ** 2 * (p3[0] - p2[0]),
+    3 * inverse ** 2 * (p1[1] - p0[1]) + 6 * inverse * t * (p2[1] - p1[1]) + 3 * t ** 2 * (p3[1] - p2[1]),
+  ];
+}
+
 export default function ContactForm() {
+  const { locale } = useLocalization();
   const [errors, setErrors] = useState<FieldErrors>({});
   const [notice, setNotice] = useState("");
   const [contactType, setContactType] = useState("");
   const [interactive, setInteractive] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [sendPhase, setSendPhase] = useState<SendPhase>("idle");
+  const [flight, setFlight] = useState<FlightState | null>(null);
+  const [flightSuccessVisible, setFlightSuccessVisible] = useState(false);
+  const sendButtonRef = useRef<HTMLButtonElement>(null);
+  const flightPlaneRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => setInteractive(true), []);
+
+  useEffect(() => {
+    if (!flight) return;
+
+    const plane = flightPlaneRef.current;
+    if (!plane) return;
+
+    let frame = 0;
+    const startedAt = performance.now();
+    const duration = 2_150;
+    const straightEnd = 0.14;
+    const turnEnd = 0.48;
+    const forwardPoint: [number, number] = [flight.forward, 0];
+    const turnEndPoint: [number, number] = [flight.forward + flight.radius, -flight.radius];
+    const endPoint: [number, number] = [turnEndPoint[0], flight.endY];
+    const turnControlOne: [number, number] = [flight.forward + flight.radius * 0.7, 0];
+    const turnControlTwo: [number, number] = [turnEndPoint[0], -flight.radius * 0.42];
+
+    const draw = (now: number) => {
+      const progress = clamp((now - startedAt) / duration, 0, 1);
+      let point: [number, number];
+      let tangent: [number, number];
+
+      if (progress < straightEnd) {
+        const local = progress / straightEnd;
+        point = [flight.forward * local, 0];
+        tangent = [1, 0];
+      } else if (progress < turnEnd) {
+        const local = (progress - straightEnd) / (turnEnd - straightEnd);
+        point = cubicPoint(local, forwardPoint, turnControlOne, turnControlTwo, turnEndPoint);
+        tangent = cubicTangent(local, forwardPoint, turnControlOne, turnControlTwo, turnEndPoint);
+      } else {
+        const local = (progress - turnEnd) / (1 - turnEnd);
+        point = [turnEndPoint[0], turnEndPoint[1] + (endPoint[1] - turnEndPoint[1]) * local];
+        tangent = [0, -1];
+      }
+
+      const angle = Math.atan2(tangent[1], tangent[0]) * (180 / Math.PI) + 90;
+      const scale = 1 - Math.max(0, progress - 0.55) * 0.1;
+      const opacity = progress > 0.88 ? 1 - (progress - 0.88) / 0.12 : 1;
+      const transform = `translate(-50%, -50%) rotate(${angle}deg) scale(${scale})`;
+
+      plane.style.left = `${flight.startX + point[0]}px`;
+      plane.style.top = `${flight.startY + point[1]}px`;
+      plane.style.opacity = String(opacity);
+      plane.style.transform = transform;
+
+      if (progress < 1) {
+        frame = window.requestAnimationFrame(draw);
+        return;
+      }
+
+      setFlight(null);
+      setFlightSuccessVisible(true);
+      setSendPhase("sent");
+      setSubmitting(false);
+    };
+
+    const successTimer = window.setTimeout(() => setFlightSuccessVisible(true), 360);
+    frame = window.requestAnimationFrame(draw);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(successTimer);
+    };
+  }, [flight]);
+
+  function getFlightStart() {
+    const button = sendButtonRef.current;
+    if (!button) return null;
+    const rect = button.getBoundingClientRect();
+    const startX = rect.right - Math.min(32, rect.width * 0.18);
+    const startY = rect.top + rect.height / 2;
+    const availableRight = Math.max(54, window.innerWidth - startX - 24);
+    const forward = clamp(Math.min(50, window.innerWidth * 0.08), 25, Math.min(50, availableRight * 0.28));
+    const radius = clamp(Math.min(140, window.innerHeight * 0.15, availableRight - forward), 54, Math.max(54, availableRight - forward));
+    return { startX, startY, forward, radius, endY: -72 };
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -170,6 +291,8 @@ export default function ContactForm() {
     }
 
     setSubmitting(true);
+    setSendPhase("sending");
+    setFlightSuccessVisible(false);
     setNotice("Sending your message...");
     const orderNumber = value("orderNumber");
     const result = await postApi("/api/contact", {
@@ -180,9 +303,9 @@ export default function ContactForm() {
       orderNumber: orderNumber || undefined,
       message: value("message"),
     });
-    setSubmitting(false);
-
     if (!result.success) {
+      setSubmitting(false);
+      setSendPhase("idle");
       const serverFields: FieldErrors = {
         fullName: result.fields?.fullName || result.fields?.name,
         email: result.fields?.email,
@@ -198,6 +321,23 @@ export default function ContactForm() {
     setContactType("");
     setErrors({});
     setNotice(result.message);
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setSubmitting(false);
+      setSendPhase("sent");
+      setFlightSuccessVisible(true);
+      return;
+    }
+
+    const flightStart = getFlightStart();
+    if (!flightStart) {
+      setSubmitting(false);
+      setSendPhase("sent");
+      setFlightSuccessVisible(true);
+      return;
+    }
+    setSendPhase("flying");
+    setFlight(flightStart);
   }
 
   function errorMessage(field: RequiredField) {
@@ -205,9 +345,13 @@ export default function ContactForm() {
   }
 
   const disabled = !interactive || submitting;
+  const copy = sendCopy[locale];
+  const showSuccess = sendPhase === "sent" || flightSuccessVisible;
+  const buttonStyle = { "--send-button-min-width": locale === "ar" ? "194px" : "184px" } as CSSProperties;
 
   return (
-    <form className={styles.form} aria-labelledby="form-preview-title" noValidate onSubmit={handleSubmit} onChange={() => setNotice("")}>
+    <>
+      <form className={styles.form} aria-labelledby="form-preview-title" noValidate onSubmit={handleSubmit} onChange={() => { setNotice(""); if (!submitting && sendPhase === "sent") { setSendPhase("idle"); setFlightSuccessVisible(false); } }}>
       <div className={styles.formLayout}>
         <div className={styles.formDetails}>
           <div className={styles.formGrid}>
@@ -243,10 +387,27 @@ export default function ContactForm() {
             <textarea id="contact-message" name="message" rows={5} maxLength={4000} required aria-required="true" aria-invalid={errors.message ? true : undefined} aria-describedby={errors.message ? "contact-message-error" : undefined} disabled={submitting} />
             {errorMessage("message")}
           </div>
-          <button className={`${styles.sendButton} ${styles.revealItem}`} data-contact-reveal-group="send" type="submit" disabled={disabled}>{submitting ? "Sending..." : "Send Message"}</button>
+          <button
+            ref={sendButtonRef}
+            className={`${styles.sendButton} ${styles.revealItem}`}
+            data-contact-reveal-group="send"
+            data-send-phase={sendPhase}
+            style={buttonStyle}
+            type="submit"
+            disabled={disabled}
+            aria-busy={submitting}
+          >
+            <span className={styles.sendButtonLabel}>{showSuccess ? copy.sent : sendPhase === "sending" ? copy.sending : copy.send}</span>
+            <span className={styles.sendDock} aria-hidden="true">
+              <span className={styles.runway} />
+              {showSuccess ? <Check className={styles.sendCheck} size={19} strokeWidth={2.6} /> : sendPhase === "flying" ? null : <img className={styles.sendPlaneButton} src="/images/contact/send-plane.png" alt="" />}
+            </span>
+          </button>
         </div>
       </div>
       {notice ? <p id="contact-preview" className={styles.formNotice} role="status">{notice}</p> : null}
-    </form>
+      </form>
+      {flight && typeof document !== "undefined" ? createPortal(<img ref={flightPlaneRef} className={styles.flightPlane} src="/images/contact/send-plane.png" alt="" aria-label={copy.flightLabel} />, document.body) : null}
+    </>
   );
 }
