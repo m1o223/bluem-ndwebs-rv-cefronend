@@ -132,7 +132,7 @@
 .templateShowcase .sectionHeading > div { display: block; }
 .templateShowcase .sectionHeading h1 { color: #fff; font-size: clamp(36px, 4.2vw, 52px); letter-spacing: -1.4px; text-shadow: 0 2px 14px #102e5133; }
 .templateShowcase .sectionHeading > p { width: min(100%, 660px); margin: 0; color: #f1f8ff; font-size: clamp(14px, 1.35vw, 17px); line-height: 1.65; text-shadow: 0 1px 8px #102e5126; }
-#templates-reveal-root [data-page-reveal-group="template-card"] { --page-reveal-delay: var(--template-card-row-delay); }
+:global(#templates-reveal-root) [data-page-reveal-group="template-card"] { --page-reveal-delay: var(--template-card-row-delay); }
 .sectionHeading { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 31px; gap: 30px; }
 .sectionHeading .eyebrow { margin-bottom: 12px; }
 .sectionHeading h1,
@@ -218,7 +218,7 @@
   .templateShowcase .sectionHeading { gap: 12px; margin-bottom: 26px; }
   .templateShowcase .sectionHeading h1 { font-size: clamp(32px, 9vw, 40px); letter-spacing: -1px; }
   .templateShowcase .sectionHeading > p { width: min(100%, 330px); font-size: 14px; line-height: 1.7; }
-  #templates-reveal-root [data-page-reveal-group="template-card"] { --page-reveal-delay: var(--template-card-order-delay); }
+  :global(#templates-reveal-root) [data-page-reveal-group="template-card"] { --page-reveal-delay: var(--template-card-order-delay); }
   .sectionHeading { align-items: flex-start; flex-direction: column; gap: 14px; margin-bottom: 25px; }
   .sectionHeading h1,
   .sectionHeading h2 { font-size: 33px; }
