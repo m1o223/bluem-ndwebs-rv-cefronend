@@ -388,20 +388,21 @@ export default function ContactForm() {
             <textarea id="contact-message" name="message" rows={5} maxLength={4000} required aria-required="true" aria-invalid={errors.message ? true : undefined} aria-describedby={errors.message ? "contact-message-error" : undefined} disabled={submitting} />
             {errorMessage("message")}
           </div>
-          <button
-            ref={sendButtonRef}
-            className={`${styles.sendButton} ${revealStyles.item}`}
-            data-page-reveal-group="send"
-            data-send-phase={sendPhase}
-            style={buttonStyle}
-            type="submit"
-            disabled={disabled}
-            aria-busy={submitting}
-          >
-            {showSuccess ? <Check className={styles.sendCheck} size={19} strokeWidth={2.6} aria-hidden="true" /> : null}
-            <span className={styles.sendButtonLabel}>{showSuccess ? copy.sent : sendPhase === "sending" || sendPhase === "flying" ? copy.sending : copy.send}</span>
-            {sendPhase === "sending" ? <span className={styles.sendSpinner} aria-hidden="true" /> : null}
-          </button>
+          <div className={revealStyles.item} data-page-reveal-group="send">
+            <button
+              ref={sendButtonRef}
+              className={styles.sendButton}
+              data-send-phase={sendPhase}
+              style={buttonStyle}
+              type="submit"
+              disabled={disabled}
+              aria-busy={submitting}
+            >
+              {showSuccess ? <Check className={styles.sendCheck} size={19} strokeWidth={2.6} aria-hidden="true" /> : null}
+              <span className={styles.sendButtonLabel}>{showSuccess ? copy.sent : sendPhase === "sending" || sendPhase === "flying" ? copy.sending : copy.send}</span>
+              {sendPhase === "sending" ? <span className={styles.sendSpinner} aria-hidden="true" /> : null}
+            </button>
+          </div>
         </div>
       </div>
       {notice ? <p id="contact-preview" className={styles.formNotice} role="status">{notice}</p> : null}
