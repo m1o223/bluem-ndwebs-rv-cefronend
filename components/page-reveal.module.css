@@ -26,6 +26,16 @@
 .item[data-page-reveal-group="how-step-5"] { --page-reveal-delay: 400ms; }
 .item[data-page-reveal-group="how-step-6"] { --page-reveal-delay: 450ms; }
 .item[data-page-reveal-group="how-step-7"] { --page-reveal-delay: 500ms; }
+.item[data-page-reveal-group="services-intro-title"] { --page-reveal-delay: 0ms; }
+.item[data-page-reveal-group="services-intro-copy"] { --page-reveal-delay: 60ms; }
+.item[data-page-reveal-group="services-intro-action"] { --page-reveal-delay: 120ms; }
+.item[data-page-reveal-group="services-section-1"] { --page-reveal-delay: 160ms; }
+.item[data-page-reveal-group="services-section-2"] { --page-reveal-delay: 210ms; }
+.item[data-page-reveal-group="services-section-3"] { --page-reveal-delay: 260ms; }
+.item[data-page-reveal-group="services-section-4"] { --page-reveal-delay: 310ms; }
+.item[data-page-reveal-group="services-section-5"] { --page-reveal-delay: 360ms; }
+.item[data-page-reveal-group="services-section-6"] { --page-reveal-delay: 410ms; }
+.item[data-page-reveal-group="services-cta"] { --page-reveal-delay: 460ms; }
 
 :global([data-page-reveal="restarting"]) .item[data-page-reveal-group] {
   opacity: 0;
