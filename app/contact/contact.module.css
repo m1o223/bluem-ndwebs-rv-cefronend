@@ -255,9 +255,10 @@
   align-self: flex-start;
   overflow: visible;
   white-space: nowrap;
-  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, color 160ms ease;
+  transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, color 160ms ease, filter 160ms ease;
 }
-.form .sendButton:hover:not(:disabled) { background: var(--bluemind-blue-hover); border-color: var(--bluemind-blue-hover); transform: none; filter: none; }
+.form .sendButton:hover:not(:disabled):not([aria-busy="true"]) { background: #10243f; border-color: #10243f; transform: translateY(-2px); filter: none; }
+.form .sendButton:not(:disabled):not([aria-busy="true"]):active { transform: scale(.97); filter: brightness(.97); }
 .form .sendButton:focus-visible { outline: 2px solid #8dcfff; outline-offset: 4px; }
 .form .sendButton[data-send-phase="sent"] { background: #0d5fc1; border-color: #0d5fc1; }
 .form .sendButton:disabled { cursor: wait; }
