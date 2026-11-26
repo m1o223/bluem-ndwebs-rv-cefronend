@@ -1,23 +1,26 @@
-.page { position: relative; isolation: isolate; display: grid; grid-template-rows: auto minmax(0, 1fr); box-sizing: border-box; width: 100%; height: 100dvh; min-height: 100dvh; overflow: hidden; padding: 18px max(24px, calc((100% - 1140px) / 2)); background: transparent; color: #142d4e; }
-.topbar { position: relative; z-index: 3; display: flex; align-items: center; justify-content: flex-end; gap: 20px; min-width: 0; }
-.back { position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0; border: 0; background: transparent; box-shadow: none; color: inherit; text-decoration: none; font-size: 14px; }
-.stage { position: relative; width: 100vw; min-height: 0; height: auto; margin-inline: calc((100% - 100vw) / 2); display: grid; grid-template-rows: minmax(0, 1fr); align-items: center; overflow: hidden; }
+.page { position: relative; isolation: isolate; display: block; box-sizing: border-box; width: 100%; height: 100dvh; min-height: 100dvh; overflow: hidden; padding: 0; background: transparent; color: #111; }
+.topbar { position: absolute; z-index: 3; top: max(18px, env(safe-area-inset-top)); left: max(24px, calc((100% - 1140px) / 2)); display: block; min-width: 0; }
+.back { position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 10px; border: 0; background: transparent; box-shadow: none; color: #111; text-decoration: none; font-size: 14px; line-height: 1.35; }
+.stage { position: relative; width: 100%; min-height: 100dvh; height: 100dvh; margin: 0; display: grid; grid-template-rows: minmax(0, 1fr); align-items: center; overflow: hidden; }
 .center { position: relative; z-index: 1; display: grid; place-items: center; min-height: 0; height: 100%; overflow-y: auto; padding: 12px 16px; pointer-events: none; }
 .formArea { width: min(400px, 100%); box-sizing: border-box; padding: 32px; border: 0; background: transparent; box-shadow: none; pointer-events: auto; }
-.formArea h1 { margin: 0; text-align: center; font-size: 30px; font-weight: 600; line-height: 1.25; letter-spacing: 0; outline: none; }
-.subtitle { margin: 12px 0 30px; text-align: center; font-size: 14px; line-height: 1.6; color: #687383; }
+.formArea h1 { margin: 0; color: #111; text-align: center; font-size: 30px; font-weight: 600; line-height: 1.25; letter-spacing: 0; outline: none; }
+.subtitle { margin: 12px 0 30px; color: #111; text-align: center; font-size: 14px; line-height: 1.6; }
 .formArea form { display: flex; flex-direction: column; margin-top: 26px; }
-.formArea label { margin-bottom: 7px; font-size: 13px; font-weight: 500; }
-.formArea input, .formArea select { width: 100%; min-width: 0; height: 46px; box-sizing: border-box; margin: 0 0 16px; padding: 10px 12px; border: 1px solid #dce2e9; border-radius: 8px; background: #fff; color: #142d4e; font: inherit; font-size: 16px; }
+.formArea label { margin-bottom: 7px; color: #111; font-size: 13px; font-weight: 500; }
+.formArea input, .formArea select { width: 100%; min-width: 0; height: 50px; box-sizing: border-box; margin: 0 0 16px; padding: 12px 16px; border: 1px solid #c9d5e1; border-radius: 16px; background: #fff; color: #111; font: inherit; font-size: 16px; }
+.formArea input[type="password"] { padding-inline-end: 42px; }
+.formArea input::placeholder, .formArea select:invalid { color: #4b5563; opacity: 1; }
+.formArea input:-webkit-autofill { -webkit-text-fill-color: #111; box-shadow: 0 0 0 1000px #fff inset; }
 .formArea select { font-size: 14px; }
 .formArea button { font: inherit; cursor: pointer; }
-.primary { position: relative; margin-top: 6px; min-height: 48px; padding: 10px 36px; border: 1px solid #142d4e; border-radius: 8px; background: #142d4e; color: #fff; font-size: 14px !important; font-weight: 500 !important; }
+.primary { position: relative; margin-top: 6px; min-height: 48px; padding: 10px 36px; border: 1px solid #9cb6cf; border-radius: 16px; background: #edf3fa; color: #111; font-size: 14px !important; font-weight: 500 !important; }
 .providers { display: grid; gap: 14px; }
-.providers button { position: relative; display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%; min-height: 52px; padding: 12px 35px; border: 1px solid #dce2e9; border-radius: 8px; background: #fff; color: #142d4e; font-size: 13px; line-height: 1.45; text-align: center; }
+.providers button { position: relative; display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%; min-height: 52px; padding: 12px 35px; border: 1px solid #c9d5e1; border-radius: 16px; background: #fff; color: #111; font-size: 13px; line-height: 1.45; text-align: center; }
 .providers img, .providerIcon { position: absolute; inset-inline-start: 12px; object-fit: contain; }
 .providers button:disabled { cursor: not-allowed; opacity: .55; }
 .bankidNote { margin: -2px 0 0; color: #7a8491; font-size: 11px; text-align: center; line-height: 1.5; }
-.stepBack { display: flex; align-items: center; gap: 6px; padding: 0; min-height: 30px; margin: -7px 0 16px; border: 0; background: transparent; color: #637083; font-size: 12px !important; }
+.stepBack { display: flex; align-items: center; gap: 6px; padding: 0; min-height: 30px; margin: -7px 0 16px; border: 0; background: transparent; color: #111; font-size: 12px !important; }
 .existing { text-align: center; margin: 22px 0 4px; color: #687383; font-size: 12px; line-height: 1.6; }
 .existing button, .forgot { min-height: 36px; padding: 4px; border: 0; background: transparent; color: #245d8b; font-size: 12px !important; }
 .forgot { display: block; margin: 4px auto 0; }
@@ -27,13 +30,13 @@
 .notice:empty { display: none; }
 .page :is(input, select, button, a):focus-visible { outline: 2px solid #477bad; outline-offset: 3px; }
 .formArea :is(input, select, button) { }
-.formArea :is(input, select):focus { border-color: #477bad; box-shadow: 0 0 0 3px #477bad12; }
+.formArea :is(input, select):focus { border-color: #477bad; border-radius: 16px; box-shadow: 0 0 0 3px #477bad26; }
 .formArea button:disabled { cursor: not-allowed; }
 .spinner { position: absolute; inset-inline-end: 12px; top: calc(50% - 9px); }
 .step { }
 .page[dir="rtl"] .stepBack svg, .page[dir="rtl"] .back svg { transform: rotate(180deg); }
 @media (max-width: 767px), (max-width: 1100px) and (orientation: portrait), (hover: none) and (pointer: coarse) and (orientation: portrait) {
-  .page { padding: 10px 16px; }
+  .topbar { top: max(12px, env(safe-area-inset-top)); left: max(16px, env(safe-area-inset-left)); }
   .center { width: 100%; padding: 8px 12px; }
   .formArea { padding: 20px 18px; }
   .formArea h1 { font-size: 28px; }
