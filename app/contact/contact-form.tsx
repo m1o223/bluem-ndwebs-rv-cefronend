@@ -94,6 +94,7 @@ function ContactTypeSelect({ value, onChange, error, disabled }: ContactTypeSele
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls="contact-contactType-options"
+        aria-required="true"
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? "contact-contactType-error" : undefined}
         aria-label="Contact Type"
