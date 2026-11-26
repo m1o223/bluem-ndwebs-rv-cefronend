@@ -175,7 +175,7 @@
 }
 .field select { padding-right: 28px; }
 .field textarea { resize: vertical; min-height: 142px; }
-.messageField { display: flex; min-height: 100%; flex-direction: column; }
+.messageField { display: flex; flex-direction: column; }
 .messageField textarea { flex: 1; min-height: 246px; }
 .field input:focus-visible,
 .field select:focus-visible,
