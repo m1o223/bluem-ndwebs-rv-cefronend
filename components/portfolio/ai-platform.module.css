@@ -572,6 +572,14 @@
   border-top: 1px solid #e5dcec;
   padding-top: 18px;
 }
+.footer a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.footer a:hover {
+  color: #675389;
+}
 @container project (max-width:1050px) {
   .shell {
     grid-template-columns: 1fr;

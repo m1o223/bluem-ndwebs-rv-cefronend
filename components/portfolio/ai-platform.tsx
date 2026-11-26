@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import styles from "./ai-platform.module.css";
 
@@ -531,6 +532,7 @@ export default function AIPlatformProject() {
           <footer className={styles.footer}>
             <span>Made for the way you think.</span>
             <span>ASTER workspace concept.</span>
+            <Link href="/templates">Browse all concepts</Link>
           </footer>
         </main>
       </div>
