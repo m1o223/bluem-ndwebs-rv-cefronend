@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { templateConceptByProject } from "./template-concept-data";
 import { projects } from "../portfolio/registry";
 import ProductArt from "../portfolio/product-art";
@@ -10,6 +10,8 @@ import ConceptReveal from "./concept-reveal";
 import portfolio from "../portfolio/showcase.module.css";
 import styles from "./home.module.css";
 import InteractiveProjectViewer from "./project-viewer";
+import PageReveal from "../page-reveal";
+import revealStyles from "../page-reveal.module.css";
 
 type ProjectShowcaseProps = {
   headingAs?: "h1" | "h2";
@@ -26,14 +28,24 @@ export default function ProjectShowcase({ headingAs: Heading = "h2", compactIntr
       className={`${styles.showcase}${compactIntro ? ` ${styles.templateShowcase}` : ""}`}
       aria-labelledby="work-title"
     >
-      <div className={styles.container}>
+      <div id={compactIntro ? "templates-reveal-root" : undefined} className={styles.container}>
+        {compactIntro && <PageReveal rootId="templates-reveal-root" />}
         <ConceptReveal direction="up">
           <div className={styles.sectionHeading}>
             <div>
               {!compactIntro && <p className={styles.eyebrow}>INTERACTIVE DEMOS</p>}
-              <Heading id="work-title">Website Concepts</Heading>
+              <Heading
+                id="work-title"
+                className={compactIntro ? revealStyles.item : undefined}
+                data-page-reveal-group={compactIntro ? "intro-title" : undefined}
+              >
+                Website Concepts
+              </Heading>
             </div>
-            <p>
+            <p
+              className={compactIntro ? revealStyles.item : undefined}
+              data-page-reveal-group={compactIntro ? "intro-copy" : undefined}
+            >
               {compactIntro
                 ? "Explore interactive website demos for different types of businesses."
                 : "Explore original, interactive website concepts across different industries."}
@@ -49,8 +61,13 @@ export default function ProjectShowcase({ headingAs: Heading = "h2", compactIntr
               stagger={index % 2 === 1}
             >
               <Link
-                className={portfolio.card}
+                className={`${portfolio.card}${compactIntro ? ` ${revealStyles.item}` : ""}`}
                 data-project-card={project.id}
+                data-page-reveal-group={compactIntro ? "template-card" : undefined}
+                style={compactIntro ? {
+                  "--template-card-row-delay": `${120 + Math.floor(index / 2) * 60}ms`,
+                  "--template-card-order-delay": `${120 + index * 45}ms`,
+                } as CSSProperties : undefined}
                 href={templateConceptByProject[project.id].liveUrl}
                 aria-haspopup="dialog"
                 aria-label={`Preview Website: ${project.brand}, ${project.category}`}

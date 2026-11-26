@@ -1,0 +1,44 @@
+.item[data-page-reveal-group] {
+  --page-reveal-delay: 0ms;
+}
+
+.item[data-page-reveal-group="intro-title"] { --page-reveal-delay: 0ms; }
+.item[data-page-reveal-group="intro-copy"] { --page-reveal-delay: 60ms; }
+.item[data-page-reveal-group="email"] { --page-reveal-delay: 120ms; }
+.item[data-page-reveal-group="form-card"] { --page-reveal-delay: 180ms; }
+.item[data-page-reveal-group="name-email"] { --page-reveal-delay: 240ms; }
+.item[data-page-reveal-group="type-company"] { --page-reveal-delay: 300ms; }
+.item[data-page-reveal-group="order"] { --page-reveal-delay: 360ms; }
+.item[data-page-reveal-group="message"] { --page-reveal-delay: 420ms; }
+.item[data-page-reveal-group="send"] { --page-reveal-delay: 480ms; }
+
+:global([data-page-reveal="restarting"]) .item[data-page-reveal-group] {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+:global([data-page-reveal="ready"]) .item[data-page-reveal-group] {
+  animation: page-content-in 400ms cubic-bezier(.22, .8, .28, 1) both;
+  animation-delay: var(--page-reveal-delay);
+}
+
+@keyframes page-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item[data-page-reveal-group],
+  :global([data-page-reveal="restarting"]) .item[data-page-reveal-group],
+  :global([data-page-reveal="ready"]) .item[data-page-reveal-group] {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}

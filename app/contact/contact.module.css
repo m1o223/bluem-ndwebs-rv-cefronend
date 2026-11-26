@@ -104,50 +104,6 @@
   border: 0;
 }
 
-.revealItem[data-contact-reveal-group] {
-  --contact-reveal-delay: 0ms;
-}
-
-.revealItem[data-contact-reveal-group="intro-title"] { --contact-reveal-delay: 0ms; }
-.revealItem[data-contact-reveal-group="intro-copy"] { --contact-reveal-delay: 60ms; }
-.revealItem[data-contact-reveal-group="email"] { --contact-reveal-delay: 120ms; }
-.revealItem[data-contact-reveal-group="form-card"] { --contact-reveal-delay: 180ms; }
-.revealItem[data-contact-reveal-group="name-email"] { --contact-reveal-delay: 240ms; }
-.revealItem[data-contact-reveal-group="type-company"] { --contact-reveal-delay: 300ms; }
-.revealItem[data-contact-reveal-group="order"] { --contact-reveal-delay: 360ms; }
-.revealItem[data-contact-reveal-group="message"] { --contact-reveal-delay: 420ms; }
-.revealItem[data-contact-reveal-group="send"] { --contact-reveal-delay: 480ms; }
-
-:global([data-contact-reveal="restarting"]) .revealItem[data-contact-reveal-group] {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-:global([data-contact-reveal="ready"]) .revealItem[data-contact-reveal-group] {
-  animation: contact-content-in 400ms cubic-bezier(.22, .8, .28, 1) both;
-  animation-delay: var(--contact-reveal-delay);
-}
-
-@keyframes contact-content-in {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .revealItem[data-contact-reveal-group],
-  :global([data-contact-reveal="restarting"]) .revealItem[data-contact-reveal-group],
-  :global([data-contact-reveal="ready"]) .revealItem[data-contact-reveal-group] {
-    opacity: 1;
-    transform: none;
-    animation: none;
-  }
-}
 .formLayout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: clamp(28px, 4vw, 52px); align-items: stretch; }
 .formDetails,
 .messagePanel { min-width: 0; }
