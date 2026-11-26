@@ -134,7 +134,15 @@
 .field select { padding-right: 28px; }
 .field textarea { resize: vertical; min-height: 142px; }
 .messageField { display: flex; flex-direction: column; }
-.messageField textarea { flex: 1; min-height: 246px; }
+.messageField textarea {
+  flex: 1;
+  min-height: 246px;
+  border-radius: 16px;
+  padding: 16px;
+  text-align: start;
+  vertical-align: top;
+}
+.messageField textarea:focus-visible { border-radius: 16px; }
 .field input:hover,
 .field select:hover,
 .field textarea:hover,
