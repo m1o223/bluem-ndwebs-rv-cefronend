@@ -208,38 +208,44 @@ export default function ContactForm() {
 
   return (
     <form className={styles.form} aria-labelledby="form-preview-title" noValidate onSubmit={handleSubmit} onChange={() => setNotice("")}>
-      <div className={styles.formGrid}>
-        <div className={`${styles.field} ${styles.revealItem}`} data-contact-reveal-group="name-email">
-          <label htmlFor="contact-fullName">Full Name <span className={styles.srOnly}>Required</span></label>
-          <input id="contact-fullName" name="fullName" type="text" autoComplete="name" maxLength={160} required aria-required="true" aria-invalid={errors.fullName ? true : undefined} aria-describedby={errors.fullName ? "contact-fullName-error" : undefined} disabled={submitting} />
-          {errorMessage("fullName")}
+      <div className={styles.formLayout}>
+        <div className={styles.formDetails}>
+          <div className={styles.formGrid}>
+            <div className={`${styles.field} ${styles.revealItem}`} data-contact-reveal-group="name-email">
+              <label htmlFor="contact-fullName">Full Name <span className={styles.srOnly}>Required</span></label>
+              <input id="contact-fullName" name="fullName" type="text" autoComplete="name" maxLength={160} required aria-required="true" aria-invalid={errors.fullName ? true : undefined} aria-describedby={errors.fullName ? "contact-fullName-error" : undefined} disabled={submitting} />
+              {errorMessage("fullName")}
+            </div>
+            <div className={`${styles.field} ${styles.revealItem}`} data-contact-reveal-group="name-email">
+              <label htmlFor="contact-email">Email Address <span className={styles.srOnly}>Required</span></label>
+              <input id="contact-email" name="email" type="email" autoComplete="email" maxLength={320} required aria-required="true" aria-invalid={errors.email ? true : undefined} aria-describedby={errors.email ? "contact-email-error" : undefined} disabled={submitting} />
+              {errorMessage("email")}
+            </div>
+            <div className={`${styles.field} ${styles.revealItem}`} data-contact-reveal-group="type-company">
+              <label htmlFor="contact-contactType">Contact Type <span className={styles.srOnly}>Required</span></label>
+              <ContactTypeSelect value={contactType} onChange={value => { setContactType(value); setNotice(""); }} error={errors.contactType} disabled={disabled} />
+              {errorMessage("contactType")}
+            </div>
+            <div className={`${styles.field} ${styles.revealItem}`} data-contact-reveal-group="type-company">
+              <label htmlFor="contact-company">Company / Brand Name <span className={styles.optional}>(Optional)</span></label>
+              <input id="contact-company" name="company" type="text" autoComplete="organization" maxLength={180} disabled={submitting} />
+            </div>
+            <div className={`${styles.field} ${styles.orderField} ${styles.revealItem}`} data-contact-reveal-group="order">
+              <label htmlFor="contact-orderNumber">Order Number <span className={styles.optional}>(Optional)</span></label>
+              <input id="contact-orderNumber" name="orderNumber" type="text" maxLength={100} aria-describedby="contact-order-help" disabled={submitting} />
+              <p id="contact-order-help" className={styles.fieldHelp}>For an existing order.</p>
+            </div>
+          </div>
         </div>
-        <div className={`${styles.field} ${styles.revealItem}`} data-contact-reveal-group="name-email">
-          <label htmlFor="contact-email">Email Address <span className={styles.srOnly}>Required</span></label>
-          <input id="contact-email" name="email" type="email" autoComplete="email" maxLength={320} required aria-required="true" aria-invalid={errors.email ? true : undefined} aria-describedby={errors.email ? "contact-email-error" : undefined} disabled={submitting} />
-          {errorMessage("email")}
-        </div>
-        <div className={`${styles.field} ${styles.revealItem}`} data-contact-reveal-group="type-company">
-          <label htmlFor="contact-contactType">Contact Type <span className={styles.srOnly}>Required</span></label>
-          <ContactTypeSelect value={contactType} onChange={value => { setContactType(value); setNotice(""); }} error={errors.contactType} disabled={disabled} />
-          {errorMessage("contactType")}
-        </div>
-        <div className={`${styles.field} ${styles.revealItem}`} data-contact-reveal-group="type-company">
-          <label htmlFor="contact-company">Company / Brand Name <span className={styles.optional}>(Optional)</span></label>
-          <input id="contact-company" name="company" type="text" autoComplete="organization" maxLength={180} disabled={submitting} />
-        </div>
-        <div className={`${styles.field} ${styles.revealItem}`} data-contact-reveal-group="order">
-          <label htmlFor="contact-orderNumber">Order Number <span className={styles.optional}>(Optional)</span></label>
-          <input id="contact-orderNumber" name="orderNumber" type="text" maxLength={100} aria-describedby="contact-order-help" disabled={submitting} />
-          <p id="contact-order-help" className={styles.fieldHelp}>For an existing order.</p>
-        </div>
-        <div className={`${styles.field} ${styles.fullWidth} ${styles.revealItem}`} data-contact-reveal-group="message">
-          <label htmlFor="contact-message">Message <span className={styles.srOnly}>Required</span></label>
-          <textarea id="contact-message" name="message" rows={5} maxLength={4000} required aria-required="true" aria-invalid={errors.message ? true : undefined} aria-describedby={errors.message ? "contact-message-error" : undefined} disabled={submitting} />
-          {errorMessage("message")}
+        <div className={styles.messagePanel}>
+          <div className={`${styles.field} ${styles.messageField} ${styles.revealItem}`} data-contact-reveal-group="message">
+            <label htmlFor="contact-message">Message <span className={styles.srOnly}>Required</span></label>
+            <textarea id="contact-message" name="message" rows={5} maxLength={4000} required aria-required="true" aria-invalid={errors.message ? true : undefined} aria-describedby={errors.message ? "contact-message-error" : undefined} disabled={submitting} />
+            {errorMessage("message")}
+          </div>
+          <button className={`${styles.sendButton} ${styles.revealItem}`} data-contact-reveal-group="send" type="submit" disabled={disabled}>{submitting ? "Sending..." : "Send Message"}</button>
         </div>
       </div>
-      <button className={`${styles.sendButton} ${styles.revealItem}`} data-contact-reveal-group="send" type="submit" disabled={disabled}>{submitting ? "Sending..." : "Send Message"}</button>
       {notice ? <p id="contact-preview" className={styles.formNotice} role="status">{notice}</p> : null}
     </form>
   );
