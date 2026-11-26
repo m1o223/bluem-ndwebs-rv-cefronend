@@ -398,11 +398,9 @@ export default function ContactForm() {
             disabled={disabled}
             aria-busy={submitting}
           >
-            <span className={styles.sendButtonLabel}>{showSuccess ? copy.sent : sendPhase === "sending" ? copy.sending : copy.send}</span>
-            <span className={styles.sendDock} aria-hidden="true">
-              <span className={styles.runway} />
-              {showSuccess ? <Check className={styles.sendCheck} size={19} strokeWidth={2.6} /> : sendPhase === "flying" ? null : <img className={styles.sendPlaneButton} src="/images/contact/send-plane.png" alt="" />}
-            </span>
+            {showSuccess ? <Check className={styles.sendCheck} size={19} strokeWidth={2.6} aria-hidden="true" /> : null}
+            <span className={styles.sendButtonLabel}>{showSuccess ? copy.sent : sendPhase === "sending" || sendPhase === "flying" ? copy.sending : copy.send}</span>
+            {sendPhase === "sending" ? <span className={styles.sendSpinner} aria-hidden="true" /> : null}
           </button>
         </div>
       </div>
