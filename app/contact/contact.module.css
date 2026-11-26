@@ -76,6 +76,7 @@
 .emailLabel { color: var(--bluemind-text); font-size: 12px; font-weight: 600; line-height: 1.4; }
 .emailAddress { color: var(--bluemind-blue); font-size: 16px; line-height: 1.5; overflow-wrap: anywhere; }
 .formSpace {
+  --contact-field-radius: 12px;
   min-width: 0;
   width: min(1100px, 100%);
   margin: 0 auto;
@@ -166,20 +167,26 @@
   min-height: 46px;
   padding: 11px 12px;
   border: 1px solid #dfe4eb;
-  border-radius: 8px;
+  border-radius: var(--contact-field-radius);
   background: #fff;
   color: var(--bluemind-text);
   font: inherit;
   font-size: 16px;
   line-height: 1.5;
+  transition: border-color 160ms ease, box-shadow 160ms ease, outline-color 160ms ease;
 }
 .field select { padding-right: 28px; }
 .field textarea { resize: vertical; min-height: 142px; }
 .messageField { display: flex; flex-direction: column; }
 .messageField textarea { flex: 1; min-height: 246px; }
+.field input:hover,
+.field select:hover,
+.field textarea:hover,
+.selectTrigger:hover { border-color: #8dcfff; }
 .field input:focus-visible,
 .field select:focus-visible,
-.field textarea:focus-visible { outline: 2px solid var(--bluemind-blue); outline-offset: 3px; border-color: var(--bluemind-blue); }
+.field textarea:focus-visible,
+.selectTrigger:focus-visible { outline: 2px solid #8dcfff; outline-offset: 3px; border-color: var(--bluemind-blue); box-shadow: 0 0 0 3px #79c5ff33; }
 .selectField { position: relative; z-index: 1; }
 .selectField[data-open="true"] { z-index: 20; }
 .selectTrigger {
@@ -190,7 +197,7 @@
   min-height: 46px;
   padding: 11px 12px;
   border: 1px solid #dfe4eb;
-  border-radius: 8px;
+  border-radius: var(--contact-field-radius);
   background: #fff;
   color: var(--bluemind-text);
   font: inherit;
@@ -199,12 +206,6 @@
   text-align: start;
   cursor: pointer;
   touch-action: manipulation;
-}
-.selectTrigger:hover { border-color: #8dcfff; }
-.selectTrigger:focus-visible {
-  outline: 2px solid var(--bluemind-blue);
-  outline-offset: 3px;
-  border-color: var(--bluemind-blue);
 }
 .selectTrigger[aria-expanded="true"] {
   border-color: var(--bluemind-blue);
