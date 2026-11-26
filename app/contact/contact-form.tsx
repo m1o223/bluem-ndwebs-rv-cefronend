@@ -1,34 +1,141 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
-import Link from "next/link";
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { postApi } from "../lib/api-client";
-import { useLocalization, type Locale } from "../../components/localization-provider";
 import styles from "./contact.module.css";
 
 type RequiredField = "fullName" | "email" | "contactType" | "message";
 type FieldErrors = Partial<Record<RequiredField, string>>;
 const contactTypes = ["Company", "Freelancer", "Individual"] as const;
-const readyNotice = "Send us a message and we will get back to you.";
-const consentCopy: Record<Locale, { body: string; link: string }> = {
-  en: {
-    body: "By sending this form, you acknowledge that we may use the information to respond to your request.",
-    link: "Read the Privacy Policy.",
-  },
-  sv: {
-    body: "När du skickar formuläret godkänner du att vi använder uppgifterna för att svara på din förfrågan.",
-    link: "Läs integritetspolicyn.",
-  },
-  ar: {
-    body: "بإرسال هذا النموذج، تقرّ باستخدام المعلومات للرد على طلبك.",
-    link: "اقرأ سياسة الخصوصية.",
-  },
+type ContactType = typeof contactTypes[number];
+
+type ContactTypeSelectProps = {
+  value: string;
+  onChange: (value: ContactType) => void;
+  error?: string;
+  disabled: boolean;
 };
 
+function ContactTypeSelect({ value, onChange, error, disabled }: ContactTypeSelectProps) {
+  const [open, setOpen] = useState(false);
+  const [openUp, setOpenUp] = useState(false);
+  const [highlighted, setHighlighted] = useState(0);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const selectedIndex = contactTypes.indexOf(value as ContactType);
+
+  useEffect(() => {
+    if (!open) return;
+
+    function closeOnOutside(event: PointerEvent) {
+      const target = event.target as Node;
+      if (!triggerRef.current?.contains(target) && !menuRef.current?.contains(target)) setOpen(false);
+    }
+
+    function positionMenu() {
+      const rect = triggerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const estimatedHeight = contactTypes.length * 48 + 12;
+      setOpenUp(rect.bottom + estimatedHeight > window.innerHeight - 16 && rect.top > estimatedHeight);
+    }
+
+    positionMenu();
+    document.addEventListener("pointerdown", closeOnOutside);
+    window.addEventListener("resize", positionMenu);
+    window.addEventListener("scroll", positionMenu, true);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutside);
+      window.removeEventListener("resize", positionMenu);
+      window.removeEventListener("scroll", positionMenu, true);
+    };
+  }, [open]);
+
+  function choose(option: ContactType) {
+    onChange(option);
+    setOpen(false);
+    triggerRef.current?.focus();
+  }
+
+  function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
+    if (disabled) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      setOpen(false);
+      return;
+    }
+    if ((event.key === "Enter" || event.key === " ") && !open) {
+      event.preventDefault();
+      setHighlighted(selectedIndex >= 0 ? selectedIndex : 0);
+      setOpen(true);
+      return;
+    }
+    if (!open) return;
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      const step = event.key === "ArrowDown" ? 1 : -1;
+      setHighlighted(index => (index + step + contactTypes.length) % contactTypes.length);
+    } else if (event.key === "Home" || event.key === "End") {
+      event.preventDefault();
+      setHighlighted(event.key === "Home" ? 0 : contactTypes.length - 1);
+    } else if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      choose(contactTypes[highlighted]);
+    }
+  }
+
+  return (
+    <div className={styles.selectField} data-open={open || undefined} data-direction={openUp ? "up" : "down"}>
+      <button
+        ref={triggerRef}
+        id="contact-contactType"
+        className={styles.selectTrigger}
+        type="button"
+        role="combobox"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls="contact-contactType-options"
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? "contact-contactType-error" : undefined}
+        aria-label="Contact Type"
+        disabled={disabled}
+        onClick={() => {
+          setHighlighted(selectedIndex >= 0 ? selectedIndex : 0);
+          setOpen(current => !current);
+        }}
+        onKeyDown={handleKeyDown}
+      >
+        <span className={`${styles.selectValue} ${value ? "" : styles.selectPlaceholder}`}>{value || "Select contact type"}</span>
+        <span className={styles.selectChevron} aria-hidden="true" />
+      </button>
+      <input type="hidden" name="contactType" value={value} />
+      {open ? (
+        <div ref={menuRef} id="contact-contactType-options" className={styles.selectMenu} role="listbox" aria-label="Contact Type">
+          {contactTypes.map((option, index) => (
+            <button
+              key={option}
+              className={styles.selectOption}
+              type="button"
+              role="option"
+              aria-selected={value === option}
+              data-highlighted={highlighted === index || undefined}
+              data-selected={value === option || undefined}
+              onMouseEnter={() => setHighlighted(index)}
+              onClick={() => choose(option)}
+            >
+              <span>{option}</span>
+              {value === option ? <span className={styles.selectCheck} aria-hidden="true">✓</span> : null}
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 export default function ContactForm() {
-  const { locale } = useLocalization();
   const [errors, setErrors] = useState<FieldErrors>({});
-  const [notice, setNotice] = useState(readyNotice);
+  const [notice, setNotice] = useState("");
+  const [contactType, setContactType] = useState("");
   const [interactive, setInteractive] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -55,8 +162,8 @@ export default function ContactForm() {
     setErrors(nextErrors);
     const firstError = Object.keys(nextErrors)[0] as RequiredField | undefined;
     if (firstError) {
-      setNotice(readyNotice);
-      const input = form.elements.namedItem(firstError);
+      setNotice("");
+      const input = firstError === "contactType" ? document.getElementById("contact-contactType") : form.elements.namedItem(firstError);
       if (input instanceof HTMLElement) input.focus();
       return;
     }
@@ -87,6 +194,7 @@ export default function ContactForm() {
     }
 
     form.reset();
+    setContactType("");
     setErrors({});
     setNotice(result.message);
   }
@@ -96,10 +204,9 @@ export default function ContactForm() {
   }
 
   const disabled = !interactive || submitting;
-  const consent = consentCopy[locale];
 
   return (
-    <form className={styles.form} aria-labelledby="form-preview-title" aria-describedby="contact-required contact-consent contact-preview" noValidate onSubmit={handleSubmit} onChange={() => setNotice(readyNotice)}>
+    <form className={styles.form} aria-labelledby="form-preview-title" aria-describedby="contact-required" noValidate onSubmit={handleSubmit} onChange={() => setNotice("")}>
       <p id="contact-required" className={styles.requiredNote}>* Required</p>
       <div className={styles.formGrid}>
         <div className={styles.field}>
@@ -114,10 +221,7 @@ export default function ContactForm() {
         </div>
         <div className={styles.field}>
           <label htmlFor="contact-contactType">Contact Type <span aria-hidden="true">*</span></label>
-          <select id="contact-contactType" name="contactType" defaultValue="" required aria-invalid={errors.contactType ? true : undefined} aria-describedby={errors.contactType ? "contact-contactType-error" : undefined} disabled={submitting}>
-            <option value="" disabled>Select contact type</option>
-            {contactTypes.map(type => <option key={type} value={type}>{type}</option>)}
-          </select>
+          <ContactTypeSelect value={contactType} onChange={value => { setContactType(value); setNotice(""); }} error={errors.contactType} disabled={disabled} />
           {errorMessage("contactType")}
         </div>
         <div className={styles.field}>
@@ -136,8 +240,7 @@ export default function ContactForm() {
         </div>
       </div>
       <button className={styles.sendButton} type="submit" disabled={disabled}>{submitting ? "Sending..." : "Send Message"}</button>
-      <p id="contact-consent" className={styles.formNotice} data-no-translate>{consent.body}{" "}<Link href="/privacy">{consent.link}</Link></p>
-      <p id="contact-preview" className={styles.formNotice} role="status">{notice}</p>
+      {notice ? <p id="contact-preview" className={styles.formNotice} role="status">{notice}</p> : null}
     </form>
   );
 }
