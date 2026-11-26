@@ -10,6 +10,7 @@ import styles from "./site-menu-page.module.css";
 const links = [
   ["/services", "Services"],
   ["/about", "About Us"],
+  ["/how-we-work", "How We Work"],
   ["/templates", "Website Concepts"],
   ["/contact", "Contact Us"],
   ["/ask-ai", "BlueMind AI"],
@@ -19,9 +20,9 @@ export default function SiteMenuPage() {
   const { locale } = useLocalization();
   const rtl = locale === "ar";
   const labels = rtl
-    ? { back: "العودة", eyebrow: "التنقّل", title: "استكشف BlueMind", intro: "كل صفحات الموقع في مكان واحد.", links: ["الخدمات", "من نحن", "نماذج المواقع", "تواصل معنا", "BlueMind AI"] }
+    ? { back: "العودة", eyebrow: "التنقّل", title: "استكشف BlueMind", intro: "كل صفحات الموقع في مكان واحد.", links: ["الخدمات", "من نحن", "كيف نعمل", "نماذج المواقع", "تواصل معنا", "BlueMind AI"] }
     : locale === "sv"
-      ? { back: "Tillbaka", eyebrow: "Navigering", title: "Utforska BlueMind", intro: "Alla webbplatsens sidor på ett ställe.", links: ["Tjänster", "Om oss", "Webbplatskoncept", "Kontakta oss", "BlueMind AI"] }
+      ? { back: "Tillbaka", eyebrow: "Navigering", title: "Utforska BlueMind", intro: "Alla webbplatsens sidor på ett ställe.", links: ["Tjänster", "Om oss", "Så arbetar vi", "Webbplatskoncept", "Kontakta oss", "BlueMind AI"] }
       : { back: "Back", eyebrow: "Navigation", title: "Explore BlueMind", intro: "Every main page, in one clear place.", links: links.map(([, label]) => label) };
 
   return (

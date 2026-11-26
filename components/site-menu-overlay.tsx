@@ -12,6 +12,7 @@ const links = [
   ["/", "Home"],
   ["/ask-ai", "BlueMind AI"],
   ["/about", "About Us"],
+  ["/how-we-work", "How We Work"],
   ["/services", "Services"],
   ["/templates", "Website Templates"],
   ["/our-work", "Our Work"],
@@ -23,9 +24,9 @@ const links = [
 ] as const;
 
 const localizedLinks = {
-  en: ["Home", "BlueMind AI", "About Us", "Services", "Website Templates", "Our Work", "Subscriptions", "Contact Us", "Pricing", "Security", "Reviews"],
-  sv: ["Hem", "BlueMind AI", "Om oss", "Tj\u00e4nster", "Webbplatsmallar", "V\u00e5rt arbete", "Prenumerationer", "Kontakta oss", "Priser", "S\u00e4kerhet", "Recensioner"],
-  ar: ["\u0627\u0644\u0631\u0626\u064a\u0633\u064a\u0629", "BlueMind AI", "\u0645\u0646 \u0646\u062d\u0646", "\u0627\u0644\u062e\u062f\u0645\u0627\u062a", "\u0642\u0648\u0627\u0644\u0628 \u0627\u0644\u0645\u0648\u0627\u0642\u0639", "\u0623\u0639\u0645\u0627\u0644\u0646\u0627", "\u0627\u0644\u0627\u0634\u062a\u0631\u0627\u0643\u0627\u062a", "\u062a\u0648\u0627\u0635\u0644 \u0645\u0639\u0646\u0627", "\u0627\u0644\u0623\u0633\u0639\u0627\u0631", "\u0627\u0644\u0623\u0645\u0627\u0646", "\u0622\u0631\u0627\u0621 \u0627\u0644\u0639\u0645\u0644\u0627\u0621"],
+  en: ["Home", "BlueMind AI", "About Us", "How We Work", "Services", "Website Templates", "Our Work", "Subscriptions", "Contact Us", "Pricing", "Security", "Reviews"],
+  sv: ["Hem", "BlueMind AI", "Om oss", "Så arbetar vi", "Tjänster", "Webbplatsmallar", "Vårt arbete", "Prenumerationer", "Kontakta oss", "Priser", "Säkerhet", "Recensioner"],
+  ar: ["الرئيسية", "BlueMind AI", "من نحن", "كيف نعمل", "الخدمات", "قوالب المواقع", "أعمالنا", "الاشتراكات", "تواصل معنا", "الأسعار", "الأمان", "آراء العملاء"],
 } as const;
 
 const panelText = {

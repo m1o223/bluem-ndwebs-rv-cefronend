@@ -11,6 +11,21 @@
 .item[data-page-reveal-group="order"] { --page-reveal-delay: 360ms; }
 .item[data-page-reveal-group="message"] { --page-reveal-delay: 420ms; }
 .item[data-page-reveal-group="send"] { --page-reveal-delay: 480ms; }
+.item[data-page-reveal-group="about-intro-title"],
+.item[data-page-reveal-group="how-intro-title"] { --page-reveal-delay: 0ms; }
+.item[data-page-reveal-group="about-intro-copy"],
+.item[data-page-reveal-group="how-intro-headline"] { --page-reveal-delay: 60ms; }
+.item[data-page-reveal-group="how-intro-copy"] { --page-reveal-delay: 120ms; }
+.item[data-page-reveal-group="about-section-1"],
+.item[data-page-reveal-group="how-principles"] { --page-reveal-delay: 140ms; }
+.item[data-page-reveal-group="about-section-2"],
+.item[data-page-reveal-group="how-step-1"] { --page-reveal-delay: 200ms; }
+.item[data-page-reveal-group="how-step-2"] { --page-reveal-delay: 250ms; }
+.item[data-page-reveal-group="how-step-3"] { --page-reveal-delay: 300ms; }
+.item[data-page-reveal-group="how-step-4"] { --page-reveal-delay: 350ms; }
+.item[data-page-reveal-group="how-step-5"] { --page-reveal-delay: 400ms; }
+.item[data-page-reveal-group="how-step-6"] { --page-reveal-delay: 450ms; }
+.item[data-page-reveal-group="how-step-7"] { --page-reveal-delay: 500ms; }
 
 :global([data-page-reveal="restarting"]) .item[data-page-reveal-group] {
   opacity: 0;
