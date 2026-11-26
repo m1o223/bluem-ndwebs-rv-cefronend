@@ -1,6 +1,6 @@
 :root {
-  --font-body-family: "Inter Variable", "Inter", "Segoe UI", Arial, sans-serif;
-  --font-heading-family: "Inter Variable", "Inter", "Segoe UI", Arial, sans-serif;
+  --font-body-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-heading-family: "Playfair Display", Georgia, "Times New Roman", serif;
   --control-radius: 999px;
   --icon-control-radius: 50%;
   --bluemind-text: #111111;
@@ -36,8 +36,8 @@ html {
 }
 
 body {
-  --font-body-family: "Inter Variable", "Inter", "Segoe UI", Arial, sans-serif;
-  --font-heading-family: "Inter Variable", "Inter", "Segoe UI", Arial, sans-serif;
+  --font-body-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-heading-family: "Playfair Display", Georgia, "Times New Roman", serif;
   margin: 0;
   min-height: 100vh;
   min-height: 100dvh;
@@ -120,6 +120,8 @@ body[data-locale="ar"] :where(h1, h2, h3, h4, h5, h6, p, li, label, legend, summ
   font-family: var(--font-body-family) !important;
 }
 body[data-locale="ar"] {
+  --font-body-family: "Noto Naskh Arabic", Tahoma, Arial, sans-serif;
+  --font-heading-family: "Noto Naskh Arabic", Tahoma, Arial, sans-serif;
   font-family: var(--font-body-family);
 }
 
