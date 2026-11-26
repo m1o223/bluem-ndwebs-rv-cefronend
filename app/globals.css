@@ -3,8 +3,9 @@
   --font-heading-family: "Playfair Display", Georgia, "Times New Roman", serif;
   --control-radius: 999px;
   --icon-control-radius: 50%;
-  --bluemind-text: #111111;
-  --bluemind-blue: #142D4E;
+  --bluemind-text: #14243B;
+  --bluemind-blue: #14243B;
+  --bluemind-heading: #14243B;
   --bluemind-blue-hover: #EDF3FA;
   --bluemind-border: #d5dfeb;
   --bluemind-divider: #d9e3ed;
@@ -22,7 +23,7 @@
   --space-10: 64px;
   --text-readable: clamp(0.95rem, 0.9rem + 0.2vw, 1.05rem);
   --text-small-readable: clamp(0.86rem, 0.82rem + 0.16vw, 0.95rem);
-  --security-ambient-gradient: radial-gradient(ellipse 84% 48% at 50% 7%, rgb(23 74 135 / 70%) 0%, rgb(23 74 135 / 42%) 43%, transparent 82%), linear-gradient(180deg, #174a87 0%, #215f9c 21%, #79c5ff 48%, #eaf6ff 72%, #fff 100%);
+  --security-ambient-gradient: #ffffff;
 }
 
 * {
@@ -43,7 +44,7 @@ body {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: white;
+  background: #ffffff;
   color: var(--bluemind-text);
   font-family: var(--font-body-family);
   font-size: 16px;
@@ -53,13 +54,81 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Option B color system: soft navy text on pure-white page surfaces. */
+body :where(
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  nav,
+  nav a,
+  nav button,
+  header a,
+  header button,
+  label,
+  legend,
+  summary,
+  dt,
+  dd,
+  figcaption,
+  blockquote,
+  small,
+  [class*="eyebrow"],
+  [class*="Eyebrow"],
+  [class*="subtitle"],
+  [class*="Subtitle"],
+  [class*="subheading"],
+  [class*="Subheading"],
+  [class*="description"],
+  [class*="Description"]
+) {
+  color: #14243B !important;
+}
+
+body :where(
+  main,
+  section,
+  footer,
+  [class*="page"],
+  [class*="Page"],
+  [class*="section"],
+  [class*="Section"]
+) {
+  background-color: #FFFFFF !important;
+  background-image: none !important;
+}
+
+body :where(
+  button[class*="primary"],
+  button[class*="Primary"],
+  button[class*="sendButton"],
+  button[class*="publishButton"],
+  a[class*="primary"],
+  a[class*="Primary"],
+  a[class*="navCta"]
+),
+body :where(
+  button[class*="primary"],
+  button[class*="Primary"],
+  button[class*="sendButton"],
+  button[class*="publishButton"],
+  a[class*="primary"],
+  a[class*="Primary"],
+  a[class*="navCta"]
+) :where(span, strong, small) {
+  color: #FFFFFF !important;
+}
+
 /* The approved Security background is shared as one continuous page layer. */
 .site-ambient-shell {
   position: relative;
   isolation: isolate;
   flex: 1 0 auto;
   min-height: 100%;
-  background: #fff;
+  background: #ffffff;
 }
 
 .site-ambient-shell::before {
@@ -67,7 +136,7 @@ body {
   z-index: -1;
   inset: 0 0 auto;
   height: calc(clamp(500px, 48vw, 680px) + var(--website-header-height, 86px));
-  background: var(--security-ambient-gradient);
+  background: #ffffff;
   background-repeat: no-repeat;
   background-size: 100% 100%;
   content: "";
