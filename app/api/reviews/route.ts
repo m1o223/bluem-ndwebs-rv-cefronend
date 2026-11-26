@@ -25,19 +25,20 @@ function testBackendUnavailable(request: NextRequest) {
   );
 }
 
-async function forward(request: NextRequest) {
+export async function forwardReviewRequest(request: NextRequest, backendPath = "/api/reviews") {
   if (testSite && !BACKEND) return testBackendUnavailable(request);
   const body = ["POST", "PATCH"].includes(request.method) ? await request.text() : undefined;
   const guestCookie = request.cookies.get(GUEST_COOKIE)?.value || "";
   const guestToken = TOKEN_PATTERN.test(guestCookie) ? guestCookie : randomBytes(32).toString("hex");
   const customerToken = request.cookies.get(CUSTOMER_COOKIE)?.value || "";
   try {
-    const response = await fetch(`${BACKEND}/api/reviews`, {
+    const response = await fetch(`${BACKEND}${backendPath}`, {
       method: request.method,
       headers: {
         Origin: "https://bluemindwebservice.com",
         ...(TOKEN_PATTERN.test(customerToken) ? { Authorization: `Bearer ${customerToken}` } : {}),
         "x-review-guest-token": guestToken,
+        ...(request.headers.get("x-review-idempotency-key") ? { "x-review-idempotency-key": request.headers.get("x-review-idempotency-key")! } : {}),
         ...(body ? { "Content-Type": "application/json" } : {}),
       },
       body,
@@ -61,13 +62,13 @@ async function forward(request: NextRequest) {
 }
 
 export function GET(request: NextRequest) {
-  return forward(request);
+  return forwardReviewRequest(request);
 }
 
 export function POST(request: NextRequest) {
-  return forward(request);
+  return forwardReviewRequest(request);
 }
 
 export function PATCH(request: NextRequest) {
-  return forward(request);
+  return forwardReviewRequest(request);
 }
