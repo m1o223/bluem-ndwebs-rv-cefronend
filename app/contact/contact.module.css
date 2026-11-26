@@ -259,6 +259,7 @@
 }
 .form .sendButton:hover:not(:disabled):not([aria-busy="true"]) { background: #10243f; border-color: #10243f; transform: translateY(-2px); filter: none; }
 .form .sendButton:not(:disabled):not([aria-busy="true"]):active { transform: scale(.97); filter: brightness(.97); }
+.form .sendButton:hover:not(:disabled):not([aria-busy="true"]):active { transform: scale(.97); filter: brightness(.97); }
 .form .sendButton:focus-visible { outline: 2px solid #8dcfff; outline-offset: 4px; }
 .form .sendButton[data-send-phase="sent"] { background: #0d5fc1; border-color: #0d5fc1; }
 .form .sendButton:disabled { cursor: wait; }
