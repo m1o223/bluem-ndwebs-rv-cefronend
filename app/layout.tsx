@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "@fontsource-variable/inter/wght.css";
+import "./fonts.css";
 import { LocalizationProvider } from "../components/localization-provider";
 import TestEnvironmentBanner from "../components/test-environment-banner";
 import WebsiteShell from "../components/website-shell";
