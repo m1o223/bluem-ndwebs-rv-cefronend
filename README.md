@@ -19,6 +19,7 @@ Website Concepts presents original fictional demo brands created by BlueMind Web
 | FORM & FIELD | Furniture / Interior | Product browsing, finish options, saved edit, quantities and demo consultation                                       |
 | HAVEN        | Real Estate          | Property filters, sorting, saved homes, photo galleries and demo viewing enquiry                                     |
 | SERA         | Restaurant           | Menu categories, dietary filtering, dish details and a three-step demo reservation                                   |
+| VERRA        | Online Store         | Product search, filters, options, bag, demo checkout and newsletter                                                |
 
 Orders, enquiries and reservations are browser demonstrations only. No payment is collected, no booking is made and no form data is sent. ASTER creates deterministic sample text locally; it does not call an AI service. Saved selections persist while a concept is open or minimized, and reset when it is closed or replaced by another concept. Stock photos illustrate fictional concepts, not actual products or properties for sale.
 

@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import {
   useEffect,
+  useId,
   useRef,
   useState,
   type KeyboardEvent,
@@ -59,9 +61,48 @@ export function ProjectNav({
   onAction?: (event: MouseEvent<HTMLButtonElement>) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [menuMounted, setMenuMounted] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
+  const menuId = `preview-menu-${useId().replace(/:/g, "")}`;
+
+  useEffect(() => {
+    if (!menuMounted) return;
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      setOpen(false);
+      toggle.current?.focus({ preventScroll: true });
+    };
+    const onPointerDown = (event: PointerEvent) => {
+      if (!navRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("pointerdown", onPointerDown);
+    };
+  }, [menuMounted]);
+
+  useEffect(() => {
+    if (open || !menuMounted) return;
+    const timer = window.setTimeout(() => setMenuMounted(false), 240);
+    return () => window.clearTimeout(timer);
+  }, [open, menuMounted]);
+
+  function toggleMenu() {
+    if (open) {
+      setOpen(false);
+      return;
+    }
+    setMenuMounted(true);
+    window.requestAnimationFrame(() => setOpen(true));
+  }
+
   return (
     <header
+      ref={navRef}
       className={styles.nav}
       onKeyDown={(e) => {
         if (open && e.key === "Escape") {
@@ -73,6 +114,7 @@ export function ProjectNav({
       }}
     >
       <button
+        type="button"
         className={styles.brand}
         onClick={(e) => scrollToSection(e.currentTarget, "home")}
       >
@@ -82,6 +124,7 @@ export function ProjectNav({
       <nav aria-label={`${brand} navigation`} className={styles.desktopLinks}>
         {links.map(([label, id]) => (
           <button
+            type="button"
             key={id}
             onClick={(e) => scrollToSection(e.currentTarget, id)}
           >
@@ -91,30 +134,36 @@ export function ProjectNav({
       </nav>
       <div className={styles.navActions}>
         {action && (
-          <button className={styles.navAction} onClick={onAction}>
+          <button type="button" className={styles.navAction} onClick={onAction}>
             {action}
           </button>
         )}
         <button
           ref={toggle}
+          type="button"
           className={styles.menuButton}
           aria-expanded={open}
+          aria-controls={menuId}
+          aria-haspopup="menu"
           aria-label={`${open ? "Close" : "Open"} ${brand} menu`}
           onClick={(e) => {
             e.currentTarget.focus({ preventScroll: true });
-            setOpen((value) => !value);
+            toggleMenu();
           }}
         >
           {open ? "Close" : "Menu"}
         </button>
       </div>
-      {open && (
+      {menuMounted && (
         <nav
+          id={menuId}
           className={styles.mobileMenu}
+          data-state={open ? "open" : "closed"}
           aria-label={`${brand} mobile navigation`}
         >
           {links.map(([label, id]) => (
             <button
+              type="button"
               key={id}
               onClick={(e) => {
                 scrollToSection(e.currentTarget, id);
@@ -256,6 +305,9 @@ export function DemoFooter({
     <footer className={styles.footer}>
       <strong>{brand}</strong>
       {children}
+      <Link className={styles.footerLink} href="/templates">
+        Browse all concepts
+      </Link>
       <small>
         Demo concept. Orders and enquiries are simulated.
       </small>

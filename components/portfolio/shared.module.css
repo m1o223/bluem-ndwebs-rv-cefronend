@@ -13,6 +13,7 @@
   height: 100%;
   min-height: 0;
   overflow: auto;
+  overflow-x: hidden;
   overscroll-behavior: contain;
   scrollbar-width: thin;
 }
@@ -140,6 +141,20 @@
   background: var(--paper);
   border-bottom: 1px solid #7773;
   box-shadow: 0 12px 25px #0001;
+  max-height: min(70vh, 520px);
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: opacity 220ms ease, transform 220ms ease, visibility 0s linear 220ms;
+  visibility: hidden;
+}
+.mobileMenu[data-state="open"] {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition: opacity 220ms ease, transform 220ms ease;
+  visibility: visible;
 }
 .mobileMenu button {
   text-align: left;
@@ -226,6 +241,15 @@
   line-height: 1.6;
   max-width: 330px;
 }
+.footerLink {
+  color: inherit;
+  font-size: 12px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.footerLink:hover {
+  color: var(--accent);
+}
 @container project (max-width: 1050px) {
   .desktopLinks {
     display: none;
@@ -268,5 +292,12 @@
   .footer {
     align-items: flex-start;
     flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobileMenu {
+    transition: none;
+    transform: none;
   }
 }
