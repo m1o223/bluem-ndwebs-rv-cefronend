@@ -11,29 +11,35 @@ import portfolio from "../portfolio/showcase.module.css";
 import styles from "./home.module.css";
 import InteractiveProjectViewer from "./project-viewer";
 
-export default function ProjectShowcase({ headingAs: Heading = "h2" }: { headingAs?: "h1" | "h2" }) {
+type ProjectShowcaseProps = {
+  headingAs?: "h1" | "h2";
+  compactIntro?: boolean;
+};
+
+export default function ProjectShowcase({ headingAs: Heading = "h2", compactIntro = false }: ProjectShowcaseProps) {
   const [activeProject, setActiveProject] = useState<(typeof projects)[number]["id"] | null>(null);
 
   return (
     <>
       <section
       id="selected-work"
-      className={styles.showcase}
+      className={`${styles.showcase}${compactIntro ? ` ${styles.templateShowcase}` : ""}`}
       aria-labelledby="work-title"
     >
       <div className={styles.container}>
         <ConceptReveal direction="up">
           <div className={styles.sectionHeading}>
             <div>
-              <p className={styles.eyebrow}>INTERACTIVE DEMOS</p>
+              {!compactIntro && <p className={styles.eyebrow}>INTERACTIVE DEMOS</p>}
               <Heading id="work-title">Website Concepts</Heading>
             </div>
             <p>
-              Explore original, interactive website concepts across different
-              industries.
+              {compactIntro
+                ? "Explore interactive website demos for different types of businesses."
+                : "Explore original, interactive website concepts across different industries."}
             </p>
           </div>
-          <p className={portfolio.disclosure}>Demo concepts by BlueMind Web Service.</p>
+          {!compactIntro && <p className={portfolio.disclosure}>Demo concepts by BlueMind Web Service.</p>}
         </ConceptReveal>
         <div className={portfolio.grid}>
           {projects.map((project, index) => (
