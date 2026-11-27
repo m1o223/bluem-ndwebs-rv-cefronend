@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import homeStyles from "../../components/home/home.module.css";
-import pageStyles from "../../components/page-identity.module.css";
-import OurWorkPageContent from "../../components/our-work/our-work-page";
+import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Our Work | BlueMind Web Service",
@@ -9,13 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function OurWorkPage() {
-  return (
-    <div id="top" className={`${homeStyles.home} ${pageStyles.page}`}>
-      <div className={pageStyles.body}>
-        <div className={`${homeStyles.container} ${pageStyles.content}`}>
-          <OurWorkPageContent />
-        </div>
-      </div>
-    </div>
-  );
+  notFound();
 }
