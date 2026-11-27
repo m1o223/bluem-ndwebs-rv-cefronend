@@ -58,24 +58,42 @@
   border: 1px solid var(--bluemind-blue);
   border-radius: 999px;
   background: var(--bluemind-blue);
-  color: #fff;
+  color: #fff !important;
+  opacity: 1;
   font-size: 14px;
   font-weight: 600;
   line-height: 1.35;
   text-align: center;
-  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  transition: background-color 170ms ease, border-color 170ms ease, box-shadow 170ms ease, transform 170ms ease;
 }
 
-.aiButton:hover {
-  background: #123e72;
-  border-color: #123e72;
-  box-shadow: 0 8px 20px rgb(23 74 135 / 16%);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .aiButton:hover {
+    background: #1f3d60 !important;
+    border-color: #1f3d60 !important;
+    color: #fff !important;
+    box-shadow: 0 8px 20px rgb(20 36 59 / 18%);
+    filter: none !important;
+    transform: translateY(-2px) !important;
+  }
 }
 
 .aiButton:focus-visible {
+  background: var(--bluemind-blue) !important;
+  border-color: var(--bluemind-blue) !important;
+  color: #fff !important;
+  filter: none !important;
   outline: 2px solid var(--bluemind-blue);
   outline-offset: 5px;
+}
+
+.aiButton:active,
+.aiButton:hover:active {
+  background: #1a3454 !important;
+  border-color: #1a3454 !important;
+  color: #fff !important;
+  filter: none !important;
+  transform: scale(.97) !important;
 }
 
 .sections {
