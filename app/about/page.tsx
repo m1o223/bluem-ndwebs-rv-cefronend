@@ -29,7 +29,6 @@ export default function AboutPage() {
                 data-page-reveal-group={`about-section-${index + 1}`}
                 aria-labelledby={`${section.id}-title`}
               >
-                <div className={styles.sectionMarker} aria-hidden="true">0{index + 1}</div>
                 <div className={styles.sectionCopy}>
                   <h2 id={`${section.id}-title`}>{section.title}</h2>
                   <PointList points={section.points} />
