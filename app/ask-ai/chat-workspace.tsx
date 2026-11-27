@@ -659,7 +659,7 @@ export default function ChatWorkspace({ available, embedded = false, account = f
       </div>
     </dialog>}
 
-    <main className={styles.main}>
+    <main className={styles.main} data-chat-main={ambientPage ? "true" : undefined}>
       <div className={styles.topbar}>
         {TEST_SITE ? <>
           <button className={`${styles.iconControl} ${accountFullScreen ? styles.accountMenuButton : styles.mobileMenu}`} type="button" aria-label={siteMenuOpen ? copy.closeSidebar : copy.menu} title={siteMenuOpen ? copy.closeSidebar : copy.menu} aria-expanded={siteMenuOpen} aria-controls="site-navigation-panel" onClick={() => setSiteMenuOpen(open => !open)}><Menu size={21} aria-hidden="true" /></button>

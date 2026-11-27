@@ -152,6 +152,59 @@ body :where(
 
 .site-ambient-shell .hero { background: transparent; }
 
+/*
+ * The approved blue ambient background is intentionally scoped to the three
+ * routes that use it. Keeping it here avoids changing shared page surfaces or
+ * the websites rendered inside the template previews.
+ */
+.site-ambient-shell:has([data-templates-page="true"])::before,
+.site-ambient-shell:has(main[data-security-page="true"])::before,
+.site-ambient-shell.ai-ambient::before {
+  background: linear-gradient(
+    180deg,
+    #174a87 0%,
+    #2f8fcd 24%,
+    #79c5ff 52%,
+    #d9ecfb 78%,
+    #ffffff 100%
+  );
+}
+
+.site-ambient-shell:has([data-templates-page="true"]) [data-templates-page="true"],
+.site-ambient-shell:has([data-templates-page="true"]) [data-templates-page="true"] > *,
+.site-ambient-shell:has([data-templates-page="true"]) .page-content,
+.site-ambient-shell:has([data-templates-page="true"]) .page-content > [data-route],
+.site-ambient-shell:has([data-templates-page="true"]) [class*="sectionHeading"],
+.site-ambient-shell:has(main[data-security-page="true"]) .page-content,
+.site-ambient-shell:has(main[data-security-page="true"]) .page-content > [data-route],
+.site-ambient-shell:has(main[data-security-page="true"]) main[data-security-page="true"],
+.site-ambient-shell:has(main[data-security-page="true"]) main[data-security-page="true"] [class*="_page"],
+.site-ambient-shell:has(main[data-security-page="true"]) main[data-security-page="true"] [class*="_hero"],
+.site-ambient-shell:has(main[data-security-page="true"]) main[data-security-page="true"] [class*="_cardsSection"],
+.site-ambient-shell:has(main[data-security-page="true"]) main[data-security-page="true"] [class*="_groupsSection"],
+.site-ambient-shell:has(main[data-security-page="true"]) main[data-security-page="true"] [class*="_securityGroup"] {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* The compact header is transparent on touch screens; retain a light glass
+ * surface there so the existing logo and navigation stay legible over blue. */
+@media (max-width: 1023px), (hover: none) and (pointer: coarse) {
+  .site-ambient-shell:has([data-templates-page="true"]) .headerInner {
+    border: 1px solid rgba(210, 218, 228, .9);
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, .88);
+    box-shadow: 0 10px 28px rgba(20, 45, 78, .07);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+}
+
+.site-ambient-shell.ai-ambient [data-chat-main="true"] {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
 body:not([data-locale="ar"]) :where(h1, h2, h3):not([data-no-translate], [data-no-translate] *, [aria-hidden="true"], [aria-hidden="true"] *) {
   font-family: var(--font-body-family) !important;
   font-weight: 750;
