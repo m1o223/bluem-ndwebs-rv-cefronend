@@ -1,29 +1,23 @@
 .endFlow {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(
-    180deg,
-    #fff 0%,
-    #f5f8fc 8%,
-    #d9ecfb 30%,
-    #8bcfff 66%,
-    #174a87 88%,
-    #17365d 100%
-  );
+  background: transparent;
 }
 
 .endFlow :global([data-home-faq]) {
-  margin-top: -18px;
+  margin-top: 0;
   padding-top: 0;
+  background: #fff;
 }
 
 .endFlow :global([data-home-faq]) > div {
-  padding-bottom: 38px;
+  padding-bottom: 80px;
 }
 
 .endFlow :global([data-faq-list]) {
-  margin-top: 28px;
-  padding-top: 24px;
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
 }
 
 .section {
@@ -63,16 +57,17 @@
 
 @media (max-width: 620px) {
   .endFlow :global([data-home-faq]) {
-    margin-top: -10px;
+    margin-top: 0;
   }
 
   .endFlow :global([data-home-faq]) > div {
-    padding-bottom: 26px;
+    padding-bottom: 48px;
   }
 
   .endFlow :global([data-faq-list]) {
-    margin-top: 20px;
-    padding-top: 20px;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
   }
 
   .section {

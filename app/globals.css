@@ -172,7 +172,7 @@ body [data-site-footer] {
 }
 
 body [data-home-end-flow] {
-  background: var(--site-bottom-ambient-gradient) !important;
+  background: transparent !important;
 }
 
 .site-ambient-shell .auth-page-main,
