@@ -17,8 +17,10 @@ export default function HowWeWorkPage() {
         <div id="how-we-work-reveal-root" className={`${homeStyles.container} ${pageStyles.content} ${styles.content}`}>
           <header className={styles.intro}>
             <h1 className={revealStyles.item} data-page-reveal-group="how-intro-title">How We Work</h1>
-            <p className={`${styles.headline} ${revealStyles.item}`} data-page-reveal-group="how-intro-headline">{workflowHeadline}</p>
-            <p className={`${styles.supporting} ${revealStyles.item}`} data-page-reveal-group="how-intro-copy">{workflowSupporting}</p>
+            <div className={`${styles.introCopy} ${revealStyles.item}`} data-page-reveal-group="how-intro-copy">
+              <p className={styles.headline}>{workflowHeadline}</p>
+              <p className={styles.supporting}>{workflowSupporting}</p>
+            </div>
           </header>
 
           <section className={`${styles.principles} ${revealStyles.item}`} data-page-reveal-group="how-principles" aria-label="How We Work principles">
