@@ -8,10 +8,10 @@ import { postApi } from "../lib/api-client";
 import styles from "./contact.module.css";
 import revealStyles from "../../components/page-reveal.module.css";
 
-type RequiredField = "fullName" | "email" | "contactType" | "message";
-type FieldErrors = Partial<Record<RequiredField, string>>;
-const contactTypes = ["Company", "Freelancer", "Individual"] as const;
-type ContactType = typeof contactTypes[number];
+type FocusableField = "fullName" | "email" | "subject" | "message";
+type FieldErrors = Partial<Record<FocusableField, string>>;
+const contactSubjects = ["General Inquiry", "Support", "Quote Request", "Partnership"] as const;
+type ContactSubject = typeof contactSubjects[number];
 
 type SendPhase = "idle" | "sending" | "flying" | "sent";
 type FlightState = {
@@ -28,20 +28,20 @@ const sendCopy = {
   ar: { send: "إرسال الرسالة", sending: "جارٍ الإرسال...", sent: "تم الإرسال", flightLabel: "تم إرسال الرسالة" },
 } as const;
 
-type ContactTypeSelectProps = {
+type SubjectSelectProps = {
   value: string;
-  onChange: (value: ContactType) => void;
+  onChange: (value: ContactSubject) => void;
   error?: string;
   disabled: boolean;
 };
 
-function ContactTypeSelect({ value, onChange, error, disabled }: ContactTypeSelectProps) {
+function SubjectSelect({ value, onChange, error, disabled }: SubjectSelectProps) {
   const [open, setOpen] = useState(false);
   const [openUp, setOpenUp] = useState(false);
   const [highlighted, setHighlighted] = useState(0);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
-  const selectedIndex = contactTypes.indexOf(value as ContactType);
+  const selectedIndex = contactSubjects.indexOf(value as ContactSubject);
 
   useEffect(() => {
     if (!open) return;
@@ -54,7 +54,7 @@ function ContactTypeSelect({ value, onChange, error, disabled }: ContactTypeSele
     function positionMenu() {
       const rect = triggerRef.current?.getBoundingClientRect();
       if (!rect) return;
-      const estimatedHeight = contactTypes.length * 48 + 12;
+      const estimatedHeight = contactSubjects.length * 48 + 12;
       setOpenUp(rect.bottom + estimatedHeight > window.innerHeight - 16 && rect.top > estimatedHeight);
     }
 
@@ -69,7 +69,7 @@ function ContactTypeSelect({ value, onChange, error, disabled }: ContactTypeSele
     };
   }, [open]);
 
-  function choose(option: ContactType) {
+  function choose(option: ContactSubject) {
     onChange(option);
     setOpen(false);
     triggerRef.current?.focus();
@@ -92,13 +92,13 @@ function ContactTypeSelect({ value, onChange, error, disabled }: ContactTypeSele
     if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       event.preventDefault();
       const step = event.key === "ArrowDown" ? 1 : -1;
-      setHighlighted(index => (index + step + contactTypes.length) % contactTypes.length);
+      setHighlighted(index => (index + step + contactSubjects.length) % contactSubjects.length);
     } else if (event.key === "Home" || event.key === "End") {
       event.preventDefault();
-      setHighlighted(event.key === "Home" ? 0 : contactTypes.length - 1);
+      setHighlighted(event.key === "Home" ? 0 : contactSubjects.length - 1);
     } else if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
-      choose(contactTypes[highlighted]);
+      choose(contactSubjects[highlighted]);
     }
   }
 
@@ -106,17 +106,16 @@ function ContactTypeSelect({ value, onChange, error, disabled }: ContactTypeSele
     <div className={styles.selectField} data-open={open || undefined} data-direction={openUp ? "up" : "down"}>
       <button
         ref={triggerRef}
-        id="contact-contactType"
+        id="contact-subject"
         className={styles.selectTrigger}
         type="button"
         role="combobox"
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-controls="contact-contactType-options"
-        aria-required="true"
+        aria-controls="contact-subject-options"
         aria-invalid={error ? true : undefined}
-        aria-describedby={error ? "contact-contactType-error" : undefined}
-        aria-label="Contact Type"
+        aria-describedby={error ? "contact-subject-error" : undefined}
+        aria-label="Subject"
         disabled={disabled}
         onClick={() => {
           setHighlighted(selectedIndex >= 0 ? selectedIndex : 0);
@@ -124,13 +123,13 @@ function ContactTypeSelect({ value, onChange, error, disabled }: ContactTypeSele
         }}
         onKeyDown={handleKeyDown}
       >
-        <span className={`${styles.selectValue} ${value ? "" : styles.selectPlaceholder}`}>{value || "Select contact type"}</span>
+        <span className={`${styles.selectValue} ${value ? "" : styles.selectPlaceholder}`}>{value || "Select subject"}</span>
         <span className={styles.selectChevron} aria-hidden="true" />
       </button>
-      <input type="hidden" name="contactType" value={value} />
+      <input type="hidden" name="subject" value={value} />
       {open ? (
-        <div ref={menuRef} id="contact-contactType-options" className={styles.selectMenu} role="listbox" aria-label="Contact Type">
-          {contactTypes.map((option, index) => (
+        <div ref={menuRef} id="contact-subject-options" className={styles.selectMenu} role="listbox" aria-label="Subject">
+          {contactSubjects.map((option, index) => (
             <button
               key={option}
               className={styles.selectOption}
@@ -176,7 +175,7 @@ export default function ContactForm() {
   const { locale } = useLocalization();
   const [errors, setErrors] = useState<FieldErrors>({});
   const [notice, setNotice] = useState("");
-  const [contactType, setContactType] = useState("");
+  const [subject, setSubject] = useState("");
   const [interactive, setInteractive] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [sendPhase, setSendPhase] = useState<SendPhase>("idle");
@@ -277,16 +276,13 @@ export default function ContactForm() {
     if (!email || !emailInput.validity.valid || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       nextErrors.email = "Please enter a valid email address.";
     }
-    if (!contactTypes.some(type => type === value("contactType"))) {
-      nextErrors.contactType = "Please select a contact type.";
-    }
     if (!value("message")) nextErrors.message = "Please enter your message.";
 
     setErrors(nextErrors);
-    const firstError = Object.keys(nextErrors)[0] as RequiredField | undefined;
+    const firstError = Object.keys(nextErrors)[0] as FocusableField | undefined;
     if (firstError) {
       setNotice("");
-      const input = firstError === "contactType" ? document.getElementById("contact-contactType") : form.elements.namedItem(firstError);
+      const input = firstError === "subject" ? document.getElementById("contact-subject") : form.elements.namedItem(firstError);
       if (input instanceof HTMLElement) input.focus();
       return;
     }
@@ -299,7 +295,7 @@ export default function ContactForm() {
     const result = await postApi("/api/contact", {
       name: value("fullName"),
       email,
-      contactType: value("contactType"),
+      subject: value("subject") || undefined,
       company: value("company") || undefined,
       orderNumber: orderNumber || undefined,
       message: value("message"),
@@ -310,7 +306,7 @@ export default function ContactForm() {
       const serverFields: FieldErrors = {
         fullName: result.fields?.fullName || result.fields?.name,
         email: result.fields?.email,
-        contactType: result.fields?.contactType,
+        subject: result.fields?.subject,
         message: result.fields?.message,
       };
       setErrors(serverFields);
@@ -319,7 +315,7 @@ export default function ContactForm() {
     }
 
     form.reset();
-    setContactType("");
+    setSubject("");
     setErrors({});
     setNotice(result.message);
 
@@ -341,7 +337,7 @@ export default function ContactForm() {
     setFlight(flightStart);
   }
 
-  function errorMessage(field: RequiredField) {
+  function errorMessage(field: FocusableField) {
     return errors[field] ? <p id={`contact-${field}-error`} className={styles.fieldError}>{errors[field]}</p> : null;
   }
 
@@ -367,9 +363,9 @@ export default function ContactForm() {
               {errorMessage("email")}
             </div>
             <div className={`${styles.field} ${revealStyles.item}`} data-page-reveal-group="type-company">
-              <label htmlFor="contact-contactType">Contact Type <span className={styles.srOnly}>Required</span></label>
-              <ContactTypeSelect value={contactType} onChange={value => { setContactType(value); setNotice(""); }} error={errors.contactType} disabled={disabled} />
-              {errorMessage("contactType")}
+              <label htmlFor="contact-subject">Subject <span className={styles.optional}>(Optional)</span></label>
+              <SubjectSelect value={subject} onChange={value => { setSubject(value); setNotice(""); }} error={errors.subject} disabled={disabled} />
+              {errorMessage("subject")}
             </div>
             <div className={`${styles.field} ${revealStyles.item}`} data-page-reveal-group="type-company">
               <label htmlFor="contact-company">Company / Brand Name <span className={styles.optional}>(Optional)</span></label>
