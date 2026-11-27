@@ -107,8 +107,8 @@
 
 .step {
   display: grid;
-  grid-template-columns: 64px minmax(0, 1fr);
-  gap: 20px;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 14px;
   align-items: start;
   padding: clamp(30px, 4vw, 48px) 0;
   border-top: 1px solid rgb(23 74 135 / 14%);
@@ -158,7 +158,7 @@
   .principles { padding-bottom: 24px; }
   .pointList { gap: 10px; }
   .pointList li { padding-inline-start: 19px; font-size: .96rem; }
-  .step { grid-template-columns: 42px minmax(0, 1fr); gap: 12px; padding-block: 28px; }
+  .step { grid-template-columns: 32px minmax(0, 1fr); gap: 10px; padding-block: 28px; }
   .stepNumber { padding-top: 5px; font-size: .7rem; }
   .stepContent h2 { font-size: clamp(27px, 8.5vw, 36px); }
   .stepContent .pointList { margin-top: 18px; }
