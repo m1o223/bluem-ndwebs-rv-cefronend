@@ -26,7 +26,7 @@ export default function SiteMenuPage() {
       : { back: "Back", eyebrow: "Navigation", title: "Explore BlueMind", intro: "Every main page, in one clear place.", links: links.map(([, label]) => label) };
 
   return (
-    <main className={styles.page} dir={rtl ? "rtl" : "ltr"}>
+    <main className={styles.page} data-site-menu-page="true" dir={rtl ? "rtl" : "ltr"}>
       <header className={styles.header}>
         <Link href="/" className={styles.brand} aria-label="BlueMind Web Service home"><BrandLockup solidLogo priority /></Link>
         <Link href="/" className={styles.back}><ChevronLeft size={17} aria-hidden="true" />{labels.back}</Link>

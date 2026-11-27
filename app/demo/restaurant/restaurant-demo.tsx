@@ -257,7 +257,7 @@ export default function RestaurantDemo() {
   }
 
   return (
-    <div className={`${styles.previewStage} ${fullscreen ? styles.previewFullscreen : ""}`} dir={locale === "ar" ? "rtl" : "ltr"}>
+    <div className={`${styles.previewStage} ${fullscreen ? styles.previewFullscreen : ""}`} data-demo-preview="true" dir={locale === "ar" ? "rtl" : "ltr"}>
       <PreviewToolbar text={text} demoType={demoType} device={device} variant={variant} fullscreen={fullscreen} onDemoTypeChange={setDemoType} onDeviceChange={setDevice} onFullscreenChange={setFullscreen} />
       <div className={styles.previewViewport} data-device={device} style={{ width: device === "mobile" ? "min(100%, 420px)" : device === "tablet" ? "min(100%, 900px)" : "100%", maxWidth: "none" }}>
         <div className={styles.demo}>

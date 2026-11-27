@@ -24,6 +24,14 @@
   --text-readable: clamp(0.95rem, 0.9rem + 0.2vw, 1.05rem);
   --text-small-readable: clamp(0.86rem, 0.82rem + 0.16vw, 0.95rem);
   --security-ambient-gradient: #ffffff;
+  --site-bottom-ambient-gradient: linear-gradient(
+    0deg,
+    #174a87 0%,
+    #2f8fcd 24%,
+    #79c5ff 52%,
+    #d9ecfb 78%,
+    #ffffff 100%
+  );
 }
 
 * {
@@ -45,6 +53,10 @@ body {
   display: flex;
   flex-direction: column;
   background: #ffffff;
+  background-image: var(--site-bottom-ambient-gradient);
+  background-position: bottom;
+  background-repeat: no-repeat;
+  background-size: 100% clamp(360px, 42vw, 620px);
   color: var(--bluemind-text);
   font-family: var(--font-body-family);
   font-size: 16px;
@@ -128,7 +140,7 @@ body :where(
   isolation: isolate;
   flex: 1 0 auto;
   min-height: 100%;
-  background: #ffffff;
+  background: transparent;
 }
 
 .site-ambient-shell::before {
@@ -151,6 +163,29 @@ body :where(
 .site-ambient-shell .app { background: transparent; }
 
 .site-ambient-shell .hero { background: transparent; }
+
+/* The bottom ambient layer belongs to the document, so it ends with the
+ * page instead of sticking to the viewport while the user scrolls. */
+body [data-site-footer] {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+body [data-home-end-flow] {
+  background: var(--site-bottom-ambient-gradient) !important;
+}
+
+.site-ambient-shell .auth-page-main,
+.site-ambient-shell.auth-ambient .auth-page-main > main,
+.site-ambient-shell [data-chat-main="true"] {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+body [data-site-menu-page] {
+  background-color: transparent !important;
+  background-image: none !important;
+}
 
 /*
  * The approved blue ambient background is intentionally scoped to the three
